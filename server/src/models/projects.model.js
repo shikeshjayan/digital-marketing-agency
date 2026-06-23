@@ -1,3 +1,4 @@
+// Defines the Projects collection structure
 import mongoose from "mongoose";
 
 const projectsSchema = new mongoose.Schema(

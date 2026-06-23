@@ -1,13 +1,17 @@
+// Handles everything related to services (CRUD + public listing)
 import Services from "../models/services.model.js";
 
+// Create a new service (admin only)
 export const createService = async (req, res) => {
   try {
     const { service_name, short_description, description, image, status } = req.body;
 
+    // Validate required fields
     if (!service_name || !short_description || !description || !image) {
       return res.status(400).json({ success: false, message: "Missing required fields" });
     }
 
+    // Prevent duplicate service names
     const existing = await Services.findOne({ service_name });
     if (existing) {
       return res.status(409).json({ success: false, message: "Service already exists" });
@@ -25,6 +29,7 @@ export const createService = async (req, res) => {
   }
 };
 
+// Get all services with search, status filter, and pagination (admin only)
 export const getAllServices = async (req, res) => {
   try {
     const { search, status, page = 1, limit = 10 } = req.query;
@@ -56,6 +61,7 @@ export const getAllServices = async (req, res) => {
   }
 };
 
+// Get a single service by its ID (public)
 export const getServiceById = async (req, res) => {
   try {
     const service = await Services.findById(req.params.id);
@@ -68,6 +74,7 @@ export const getServiceById = async (req, res) => {
   }
 };
 
+// Update an existing service (admin only)
 export const updateService = async (req, res) => {
   try {
     const { service_name, short_description, description, image, status } = req.body;
@@ -94,6 +101,7 @@ export const updateService = async (req, res) => {
   }
 };
 
+// Delete a service by its ID (admin only)
 export const deleteService = async (req, res) => {
   try {
     const service = await Services.findByIdAndDelete(req.params.id);
@@ -106,6 +114,7 @@ export const deleteService = async (req, res) => {
   }
 };
 
+// Get all services (including inactive ones) with filters for admin panel
 export const getAllAdminServices = async (req, res) => {
   try {
     const { search, status, page = 1, limit = 10 } = req.query;

@@ -1,3 +1,4 @@
+// Defines the Admin collection structure in the database
 import mongoose from "mongoose";
 import bcrypt from "bcryptjs";
 
@@ -11,7 +12,7 @@ const AdminSchema = new mongoose.Schema(
     email: {
       type: String,
       required: [true, "Please add an email address"],
-      unique: true,
+      unique: true,                // No two admins can have the same email
       trim: true,
       lowercase: true,
       match: [
@@ -23,7 +24,11 @@ const AdminSchema = new mongoose.Schema(
       type: String,
       required: [true, "Please add a password"],
       minlength: [6, "Password must be at least 6 characters long"],
-      select: false,
+      select: false,               // Don't include password in normal queries for safety
+    },
+    photo: {
+      type: String,
+      default: "",
     },
     role: {
       type: String,
@@ -32,10 +37,11 @@ const AdminSchema = new mongoose.Schema(
     },
   },
   {
-    timestamps: true,
+    timestamps: true,              // Adds createdAt and updatedAt automatically
   },
 );
 
+// Before saving, hash the password if it was changed
 AdminSchema.pre("save", async function () {
   if (!this.isModified("password")) return;
 
@@ -43,6 +49,7 @@ AdminSchema.pre("save", async function () {
   this.password = await bcrypt.hash(this.password, salt);
 });
 
+// Compare entered password with the stored hash
 AdminSchema.methods.matchPassword = async function (enteredPassword) {
   return await bcrypt.compare(enteredPassword, this.password);
 };

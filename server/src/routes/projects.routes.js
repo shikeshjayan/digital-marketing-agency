@@ -1,3 +1,4 @@
+// Public routes - visitors can view active projects
 import express from "express";
 import {
   getAllProjects,

@@ -1,3 +1,4 @@
+// Defines the Services collection structure
 import mongoose from "mongoose";
 
 const servicesSchema = new mongoose.Schema(

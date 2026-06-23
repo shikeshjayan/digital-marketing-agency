@@ -1,3 +1,4 @@
+// Routes for admin to manage projects
 import express from "express";
 import {
   createProject,

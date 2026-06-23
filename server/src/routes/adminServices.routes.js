@@ -1,3 +1,4 @@
+// Routes for admin to manage services
 import express from "express";
 import { createService, updateService, deleteService, getAllAdminServices } from "../controllers/service.controller.js";
 import { protect } from "../middleware/auth.js";
