@@ -57,7 +57,7 @@ export default function Navbar() {
                     </NavLink>
                     {servicesOpen && (
                       <div className="absolute left-0 top-full pt-2 w-64">
-                        <div className="bg-white border border-gray-200 rounded-xl shadow-lg p-2 max-h-80 overflow-y-auto">
+                        <div className="bg-white border border-gray-200 rounded-xl shadow-lg p-2">
                           <NavLink
                             to="/services"
                             className="block px-3 py-2 rounded-lg text-sm font-semibold hover:bg-red-50 hover:text-red-700 border-b border-gray-100 mb-1"
