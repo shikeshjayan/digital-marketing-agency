@@ -22,6 +22,7 @@ import adminReviewsRoutes from "./routes/adminReviews.routes.js";
 import publicReviewsRoutes from "./routes/publicReviews.routes.js";
 import contactRoutes from "./routes/contact.routes.js";
 import adminContactRoutes from "./routes/adminContact.routes.js";
+import errorHandler from "./middleware/errorHandler.js";
 
 const app = express();
 
@@ -48,6 +49,8 @@ app.use("/api/v1/admin/reviews", adminReviewsRoutes);
 app.use("/api/v1/reviews", publicReviewsRoutes);
 app.use("/api/v1/contact", contactRoutes);
 app.use("/api/v1/admin/contact", adminContactRoutes);
+
+app.use(errorHandler);
 
 // Start the server after connecting to the database
 const startServer = async () => {
