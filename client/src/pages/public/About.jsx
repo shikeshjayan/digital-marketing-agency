@@ -1,14 +1,17 @@
+// About page — company intro and leadership profiles
 import HeroSplit from '../../components/public/HeroSplit.jsx'
+import ImagePlaceholder from '../../components/ui/ImagePlaceholder.jsx'
 
-function ProfileRow({ name, title, description, imageEmoji, reverse }) {
+// One leader row — image on one side, bio on the other (reverse swaps order on desktop)
+function ProfileRow({ name, title, description, reverse }) {
   return (
-    <div className={`mt-10 grid grid-cols-1 md:grid-cols-2 gap-8 items-center ${reverse ? 'md:flex-row-reverse' : ''}`}>
-      <div className="flex justify-center">
+    <div className="mt-10 grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+      <div className={`flex justify-center ${reverse ? 'md:order-2' : 'md:order-1'}`}>
         <div className="w-full max-w-md rounded-3xl bg-gray-100 border border-gray-200 aspect-[16/10] flex items-center justify-center">
-          <div className="text-6xl">{imageEmoji}</div>
+          <ImagePlaceholder label="Image" />
         </div>
       </div>
-      <div className="text-gray-800">
+      <div className={`text-gray-800 ${reverse ? 'md:order-1' : 'md:order-2'}`}>
         <div className="text-2xl font-extrabold text-gray-900">{name}</div>
         <div className="mt-1 text-sm font-semibold text-red-700">{title}</div>
         <p className="mt-4 leading-relaxed text-justify">
@@ -23,7 +26,7 @@ export default function About() {
   return (
     <div>
       <HeroSplit
-        title="About Us"
+        title="Us"
         titleHighlight="About"
         subtitle="Welcome to a team that blends creative design, reliable development, and performance marketing."
         leftColor="bg-gray-900"
@@ -44,7 +47,6 @@ export default function About() {
           <ProfileRow
             name="Niyas Noushad"
             title="Chief Executive Officer (CEO)"
-            imageEmoji="🧠"
             description="As CEO, Niyas focuses on strategy, delivery quality, and building strong partnerships. He leads the team to turn ideas into scalable digital solutions—always with measurable outcomes and clear communication."
           />
 
@@ -52,7 +54,6 @@ export default function About() {
             name="Mubeena Nasif"
             title="Chief Operating Officer (COO)"
             reverse
-            imageEmoji="⚙️"
             description="Mubeena oversees operations, workflows, and delivery timelines. She ensures each project stays organized, transparent, and client-friendly—from planning through execution and post-launch improvements."
           />
         </div>

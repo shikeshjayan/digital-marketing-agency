@@ -1,3 +1,4 @@
+// Simple admin login token stored in the browser (demo only — not for production security)
 const TOKEN_KEY = 'adminToken'
 
 export function getAdminToken() {
@@ -12,7 +13,7 @@ export function setAdminToken(token) {
   try {
     localStorage.setItem(TOKEN_KEY, token)
   } catch {
-    // ignore
+    // Storage may be blocked in private mode — fail silently
   }
 }
 
@@ -23,4 +24,3 @@ export function clearAdminToken() {
     // ignore
   }
 }
-

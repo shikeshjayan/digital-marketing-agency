@@ -1,3 +1,4 @@
+// Reusable section title block (eyebrow + heading + subtitle)
 export default function SectionHeading({ eyebrow, title, subtitle }) {
   return (
     <div className="text-center">

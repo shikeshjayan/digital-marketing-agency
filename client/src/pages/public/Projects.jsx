@@ -1,6 +1,8 @@
+// Projects portfolio page — filterable grid of client work
 import { useEffect, useMemo, useState } from 'react'
 import { publicGetProjects } from '../../services/mockApi.js'
 import HeroSplit from '../../components/public/HeroSplit.jsx'
+import ImagePlaceholder from '../../components/ui/ImagePlaceholder.jsx'
 
 const categories = ['All', 'Static', 'Dynamic', 'Landing Pages']
 
@@ -24,7 +26,7 @@ function ProjectCard({ project }) {
       className="group block bg-white border border-gray-100 rounded-3xl p-4 shadow-sm hover:shadow-md transition"
     >
       <div className={`h-36 rounded-2xl bg-gradient-to-br ${gradient} border border-gray-100 flex items-center justify-center`}>
-        <div className="text-4xl">{project.category === 'Landing Pages' ? '🧲' : project.category === 'Static' ? '🧱' : '🧠'}</div>
+        <ImagePlaceholder label="Image" />
       </div>
       <div className="mt-4">
         <div className="font-extrabold text-gray-900">{project.project_name}</div>

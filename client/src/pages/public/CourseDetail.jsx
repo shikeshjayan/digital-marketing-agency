@@ -1,3 +1,4 @@
+// Single course detail page — modules, fee, and enquiry button
 import { Link, useParams } from 'react-router-dom'
 import HeroSplit from '../../components/public/HeroSplit.jsx'
 import Button from '../../components/ui/Button.jsx'
@@ -12,7 +13,7 @@ function ModuleList({ items }) {
           className="flex items-start gap-3 rounded-xl p-3 transition hover:bg-red-50"
         >
           <span className="mt-0.5 text-red-600 font-bold shrink-0" aria-hidden="true">
-            ➜
+            &gt;
           </span>
           <span className="text-gray-700 leading-relaxed">{item}</span>
         </li>
@@ -53,7 +54,7 @@ export default function CourseDetail() {
                 </div>
 
                 <div className="mt-8">
-                  <Button as="a" href="/contact" variant="primary">
+                  <Button as={Link} to="/contact" variant="primary">
                     Enquire Now
                   </Button>
                 </div>

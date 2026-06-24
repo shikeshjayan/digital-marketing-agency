@@ -1,3 +1,4 @@
+// Admin — manage team members
 import { useEffect, useMemo, useState } from 'react'
 import {
   adminCreateTeamMember,
@@ -6,6 +7,7 @@ import {
   adminUpdateTeamMember,
 } from '../../services/mockApi.js'
 import Button from '../../components/ui/Button.jsx'
+import ImagePlaceholder from '../../components/ui/ImagePlaceholder.jsx'
 
 function FileToDataUrl({ file }) {
   return new Promise((resolve, reject) => {
@@ -129,7 +131,7 @@ export default function AdminTeam() {
           <form onSubmit={onSubmit} className="mt-4 space-y-4">
             <div className="flex items-center gap-4">
               <div className="w-16 h-16 rounded-2xl border border-gray-200 bg-gray-100 overflow-hidden flex items-center justify-center text-2xl">
-                {form.photo ? <img src={form.photo} alt="preview" className="w-full h-full object-cover" /> : '👤'}
+                {form.photo ? <img src={form.photo} alt="preview" className="w-full h-full object-cover" /> : <ImagePlaceholder compact />}
               </div>
               <div className="flex-1">
                 <label className="text-sm font-semibold text-gray-800">Photo</label>
@@ -230,7 +232,7 @@ export default function AdminTeam() {
                     <td className="py-3 pr-3">
                       <div className="flex items-center gap-3">
                         <div className="w-10 h-10 rounded-xl bg-gray-100 border border-gray-200 overflow-hidden flex items-center justify-center">
-                          {m.photo ? <img src={m.photo} alt="" className="w-full h-full object-cover" /> : '👤'}
+                          {m.photo ? <img src={m.photo} alt="" className="w-full h-full object-cover" /> : <ImagePlaceholder compact />}
                         </div>
                         <div>
                           <div className="font-bold text-gray-900">{m.name}</div>

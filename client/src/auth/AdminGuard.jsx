@@ -1,3 +1,4 @@
+// Blocks admin routes until the user is logged in
 import { Navigate, Outlet } from 'react-router-dom'
 import { getAdminToken } from './adminAuth.js'
 
@@ -6,4 +7,3 @@ export default function AdminGuard() {
   if (!token) return <Navigate to="/admin/login" replace />
   return <Outlet />
 }
-

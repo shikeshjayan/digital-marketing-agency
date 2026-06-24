@@ -1,3 +1,4 @@
+// 404 page — shown when URL does not match any route
 import { Link } from 'react-router-dom'
 
 export default function NotFound() {

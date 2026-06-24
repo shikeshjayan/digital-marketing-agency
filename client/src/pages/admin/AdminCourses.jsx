@@ -1,3 +1,4 @@
+// Admin — manage courses
 import { useEffect, useMemo, useState } from 'react'
 import {
   adminCreateCourse,

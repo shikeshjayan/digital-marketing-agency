@@ -1,11 +1,13 @@
+// Services listing page — grid of all active services
 import { useEffect, useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { publicGetServices } from '../../services/mockApi.js'
 import HeroSplit from '../../components/public/HeroSplit.jsx'
-import { slugify } from '../../utils/slugify.js'
+import ImagePlaceholder from '../../components/ui/ImagePlaceholder.jsx'
 
+// Single service card in the grid
 function ServiceCard({ service }) {
-  const detailPath = `/services/${slugify(service.service_name)}`
+  const detailPath = `/services/${service.service_id}`
   const gradient = useMemo(() => {
     const c = service.service_id % 5
     const map = [
@@ -18,23 +20,13 @@ function ServiceCard({ service }) {
     return map[c] ?? map[0]
   }, [service.service_id])
 
-  const icon = service.service_name.includes('Video')
-    ? '🎬'
-    : service.service_name.includes('E-Commerce')
-      ? '🛒'
-      : service.service_name.includes('App')
-        ? '📱'
-        : service.service_name.includes('Graphic')
-          ? '🎨'
-          : '✨'
-
   return (
     <Link
       to={detailPath}
       className="group block bg-white border border-gray-100 rounded-3xl p-5 shadow-sm hover:shadow-md hover:border-red-100 transition"
     >
       <div className={`h-28 rounded-2xl border border-gray-100 bg-gradient-to-br ${gradient} flex items-center justify-center`}>
-        <div className="text-3xl">{icon}</div>
+        <ImagePlaceholder label="Image" />
       </div>
       <h3 className="mt-4 text-lg font-extrabold text-gray-900 group-hover:text-red-700 transition">{service.service_name}</h3>
       <p className="mt-2 text-sm text-gray-600 leading-relaxed line-clamp-3">{service.short_description}</p>

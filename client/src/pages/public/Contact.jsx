@@ -1,8 +1,11 @@
+// Contact page — enquiry form and contact details
 import { useEffect, useState } from 'react'
 import { publicGetServices, publicSubmitContactEnquiry } from '../../services/mockApi.js'
 import HeroSplit from '../../components/public/HeroSplit.jsx'
+import ContactIcon from '../../components/ui/ContactIcon.jsx'
 
-function ContactCard({ title, value, href, icon }) {
+// Clickable card for phone, email, or address
+function ContactCard({ title, value, href, iconType }) {
   return (
     <a
       href={href}
@@ -14,7 +17,7 @@ function ContactCard({ title, value, href, icon }) {
     >
       <div className="flex items-center gap-3">
         <div className="w-10 h-10 rounded-2xl bg-red-50 border border-red-100 flex items-center justify-center text-red-700">
-          {icon}
+          <ContactIcon type={iconType} />
         </div>
         <div>
           <div className="text-sm font-semibold text-gray-900">{title}</div>
@@ -90,14 +93,14 @@ export default function Contact() {
 
   return (
     <div>
-      <HeroSplit title="Contact Us" titleHighlight=" " subtitle="Get in touch and let’s plan your next growth step." leftColor="bg-gray-900" />
+      <HeroSplit title="Contact Us" subtitle="Get in touch and let’s plan your next growth step." leftColor="bg-gray-900" />
 
       <section className="py-12 bg-gray-50">
         <div className="max-w-6xl mx-auto px-4">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <ContactCard title="Phone" value="+91 8891212323" href="tel:+918891212323" icon="☎" />
-            <ContactCard title="Mail" value="info@s.com" href="mailto:info@s.com" icon="✉" />
-            <ContactCard title="Address" value="Kochi, India" href="#" icon="📍" />
+            <ContactCard title="Phone" value="+91 8891212323" href="tel:+918891212323" iconType="phone" />
+            <ContactCard title="Mail" value="info@s.com" href="mailto:info@s.com" iconType="mail" />
+            <ContactCard title="Address" value="Kochi, India" href="#" iconType="address" />
           </div>
 
           <div className="mt-10 grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
@@ -112,13 +115,17 @@ export default function Contact() {
                 </p>
                 <div className="mt-6 space-y-2 text-sm text-gray-200">
                   <div className="flex items-center gap-3">
-                    <span className="w-8 h-8 rounded-xl bg-white/10 flex items-center justify-center">☎</span>
+                    <span className="w-8 h-8 rounded-xl bg-white/10 flex items-center justify-center">
+                      <ContactIcon type="phone" className="text-white" />
+                    </span>
                     <a className="hover:text-white" href="tel:+918891212323">
                       +91 8891212323
                     </a>
                   </div>
                   <div className="flex items-center gap-3">
-                    <span className="w-8 h-8 rounded-xl bg-white/10 flex items-center justify-center">✉</span>
+                    <span className="w-8 h-8 rounded-xl bg-white/10 flex items-center justify-center">
+                      <ContactIcon type="mail" className="text-white" />
+                    </span>
                     <a className="hover:text-white" href="mailto:info@s.com">
                       info@s.com
                     </a>

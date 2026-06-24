@@ -1,3 +1,4 @@
+// Static course content for the public courses pages
 export const coursePrograms = {
   'digital-marketing': {
     slug: 'digital-marketing',
@@ -7,7 +8,6 @@ export const coursePrograms = {
       'Learn campaign planning, content strategy, and performance marketing through guided, hands-on training.',
     heroHighlight: 'Digital Marketing',
     heroTitle: 'Job Training',
-    icon: '📣',
     fee: '₹15,000 + GST',
     overview:
       'A guided path from fundamentals to execution. Learn campaign planning, content strategy, and performance optimization with hands-on tasks that mirror real agency workflows.',
@@ -35,7 +35,6 @@ export const coursePrograms = {
       'Build real Laravel applications with routing, databases, authentication, and deployment-ready project skills.',
     heroHighlight: 'Laravel',
     heroTitle: 'development Job Training',
-    icon: '💻',
     fee: '₹15,000 + GST',
     overview:
       'Build real web applications with Laravel through practical modules covering routing, data modeling, authentication, and deployment-ready patterns used in production teams.',
@@ -57,6 +56,7 @@ export const coursePrograms = {
   },
 }
 
+// Links for navbar and course cards
 export const courseNavLinks = Object.values(coursePrograms).map((program) => ({
   label: program.navLabel,
   to: `/courses/${program.slug}`,
