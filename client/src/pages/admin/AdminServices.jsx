@@ -1,4 +1,3 @@
-// Admin — manage services (add, edit, delete, search)
 import { useEffect, useMemo, useState } from 'react'
 import {
   adminCreateService,

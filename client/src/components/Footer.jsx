@@ -1,11 +1,6 @@
-// Site footer — logo, service links, company links, contact info
 import { Link } from 'react-router-dom'
-import { serviceNavLinks } from '../data/serviceLinks.js'
 
 export default function Footer() {
-  // Show first 3 services in the footer
-  const featuredServices = serviceNavLinks.slice(0, 3)
-
   return (
     <footer className="bg-gray-900 text-white mt-10">
       <div className="max-w-7xl mx-auto px-4 py-10">
@@ -20,9 +15,9 @@ export default function Footer() {
             </p>
             <div className="mt-4 flex gap-3 text-sm text-gray-300">
               {['Facebook', 'Instagram', 'LinkedIn', 'YouTube'].map((x) => (
-                <span key={x} className="text-gray-400">
+                <a key={x} href="#" className="hover:text-white" onClick={(e) => e.preventDefault()}>
                   {x}
-                </span>
+                </a>
               ))}
             </div>
           </div>
@@ -31,26 +26,28 @@ export default function Footer() {
             <div>
               <div className="text-sm font-semibold mb-3">Services</div>
               <ul className="space-y-2 text-sm text-gray-300">
-                {featuredServices.map((service) => (
-                  <li key={service.to}>
-                    <Link to={service.to} className="hover:text-white transition">
-                      {service.label}
-                    </Link>
-                  </li>
-                ))}
+                <li>
+                  <Link to="/services">Brand &amp; PR</Link>
+                </li>
+                <li>
+                  <Link to="/services">Creative Production</Link>
+                </li>
+                <li>
+                  <Link to="/services">Digital Marketing</Link>
+                </li>
               </ul>
             </div>
             <div>
               <div className="text-sm font-semibold mb-3">Company</div>
               <ul className="space-y-2 text-sm text-gray-300">
                 <li>
-                  <Link to="/about" className="hover:text-white transition">About</Link>
+                  <Link to="/about">About</Link>
                 </li>
                 <li>
-                  <Link to="/projects" className="hover:text-white transition">Projects</Link>
+                  <Link to="/projects">Projects</Link>
                 </li>
                 <li>
-                  <Link to="/contact" className="hover:text-white transition">Contact</Link>
+                  <Link to="/contact">Contact</Link>
                 </li>
               </ul>
             </div>
@@ -59,18 +56,8 @@ export default function Footer() {
           <div>
             <div className="text-sm font-semibold mb-3">Contact</div>
             <div className="text-sm text-gray-300 space-y-2">
-              <div>
-                Phone:{' '}
-                <a href="tel:+918891212323" className="hover:text-white transition">
-                  +91 8891212323
-                </a>
-              </div>
-              <div>
-                Email:{' '}
-                <a href="mailto:info@s.com" className="hover:text-white transition">
-                  info@s.com
-                </a>
-              </div>
+              <div>Phone: +91 8891212323</div>
+              <div>Email: info@s.com</div>
               <div className="text-gray-400">Address: Kochi, India</div>
             </div>
           </div>
@@ -83,3 +70,4 @@ export default function Footer() {
     </footer>
   )
 }
+

@@ -1,9 +1,6 @@
-// Mock API — simulates a backend using browser localStorage
-// Public functions: anyone can call. Admin functions: require login token.
 import { seed } from '../data/seedData.js'
 import { getAdminToken } from '../auth/adminAuth.js'
 
-// Keys used to store each data list in localStorage
 const LS_KEYS = {
   services: 'mock_services',
   projects: 'mock_projects',
@@ -15,10 +12,8 @@ const LS_KEYS = {
   servicesSeedVersion: 'mock_services_seed_version',
 }
 
-// Bump this when seed services change so browsers get fresh data
 const SERVICES_SEED_VERSION = '2'
 
-// Safely parse JSON — returns fallback if invalid
 function safeParse(json, fallback) {
   try {
     return JSON.parse(json) ?? fallback
@@ -46,7 +41,6 @@ function writeList(key, list) {
   }
 }
 
-// Fill localStorage with default data on first visit
 function ensureSeeded() {
   // Seed only once per browser storage space.
   // If any list is missing, we re-seed that list from seedData.
@@ -69,7 +63,6 @@ function ensureSeeded() {
   }
 }
 
-// Admin routes call this — throws if user is not logged in
 function getAdminOrThrow() {
   const token = getAdminToken()
   if (!token) throw new Error('Unauthorized')
@@ -153,16 +146,16 @@ export async function publicGetTeam() {
 
 export async function publicGetApprovedReviews() {
   ensureSeeded()
-  const reviews = [...readList(LS_KEYS.reviews, seed.reviews).filter((r) => r.status === 'Approved')]
+  const reviews = readList(LS_KEYS.reviews, seed.reviews).filter((r) => r.status === 'Approved')
   // Sort newest-first for slider
   reviews.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
   return toListResponse(reviews, reviews.length)
 }
 
-export async function publicSubmitContactEnquiry({ name, email, phone, service, message } = {}) {
+export async function publicSubmitContactEnquiry({ name, email, service, message } = {}) {
   ensureSeeded()
   if (!name || !email || !service || !message) {
-    return { success: false, error: { message: 'Missing required fields.' } }
+    return { success: false, error: { message: 'Missing fields or invalid email schema' } }
   }
   const enquiries = readList(LS_KEYS.enquiries, seed.enquiries)
   const nextId = Math.max(0, ...enquiries.map((e) => e.enquiry_id)) + 1
@@ -170,7 +163,6 @@ export async function publicSubmitContactEnquiry({ name, email, phone, service, 
     enquiry_id: nextId,
     name,
     email,
-    phone: phone ?? '',
     service,
     message,
     status: 'New',
@@ -513,8 +505,7 @@ export async function adminRejectReview(review_id) {
 
 export async function adminGetContactEnquiries({ search, status, date, page = 1, limit = 5 } = {}) {
   getAdminOrThrow()
-  const allEnquiries = readList(LS_KEYS.enquiries, seed.enquiries)
-  let enquiries = [...allEnquiries]
+  let enquiries = readList(LS_KEYS.enquiries, seed.enquiries)
   if (status) enquiries = enquiries.filter((e) => e.status === status)
   if (date) {
     const q = String(date).slice(0, 10)
@@ -523,12 +514,13 @@ export async function adminGetContactEnquiries({ search, status, date, page = 1,
   if (search) enquiries = filterSearch(enquiries, search, 'name')
   enquiries.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
   const { items, count } = paginate(enquiries, page, limit)
+  // Shape: include counters like workbook in at least some pages
   const counters = {
-    total: allEnquiries.length,
-    new: allEnquiries.filter((x) => x.status === 'New').length,
-    pending: allEnquiries.filter((x) => x.status === 'Pending').length,
-    replied: allEnquiries.filter((x) => x.status === 'Replied').length,
-    spam: allEnquiries.filter((x) => x.status === 'Spam').length,
+    total: readList(LS_KEYS.enquiries, seed.enquiries).length,
+    new: enquiries.filter((x) => x.status === 'New').length,
+    pending: enquiries.filter((x) => x.status === 'Pending').length,
+    replied: enquiries.filter((x) => x.status === 'Replied').length,
+    spam: enquiries.filter((x) => x.status === 'Spam').length,
   }
   return { success: true, count, counters, data: items }
 }

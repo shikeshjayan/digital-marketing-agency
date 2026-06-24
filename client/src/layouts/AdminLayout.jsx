@@ -1,4 +1,3 @@
-// Admin shell — sidebar on the left, page content on the right
 import { Outlet } from 'react-router-dom'
 import AdminSidebar from '../components/admin/AdminSidebar.jsx'
 
@@ -21,3 +20,4 @@ export default function AdminLayout() {
     </div>
   )
 }
+

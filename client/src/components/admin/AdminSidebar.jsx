@@ -1,4 +1,3 @@
-// Admin sidebar navigation — links to all admin sections + logout
 import { NavLink, useNavigate } from 'react-router-dom'
 import { useMemo, useState } from 'react'
 import { clearAdminToken } from '../../auth/adminAuth.js'

@@ -1,4 +1,3 @@
-// Admin — view and manage contact form enquiries
 import { useEffect, useState } from 'react'
 import {
   adminDeleteEnquiry,
@@ -161,7 +160,6 @@ export default function AdminMessages() {
                   <td className="py-3 pr-3">
                     <div className="font-bold text-gray-900">{e.name}</div>
                     <div className="text-xs text-gray-500">{e.email}</div>
-                    {e.phone ? <div className="text-xs text-gray-500">{e.phone}</div> : null}
                   </td>
                   <td className="py-3 pr-3 text-gray-600">{e.service}</td>
                   <td className="py-3 pr-3">

@@ -1,4 +1,3 @@
-// Default demo data — copied into localStorage on first visit
 export const seed = {
   services: [
     {

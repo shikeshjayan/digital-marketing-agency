@@ -1,8 +1,5 @@
-// Testimonials page — submit a review and view approved reviews
 import { useEffect, useState } from 'react'
 import HeroSplit from '../../components/public/HeroSplit.jsx'
-import ContactIcon from '../../components/ui/ContactIcon.jsx'
-import ImagePlaceholder from '../../components/ui/ImagePlaceholder.jsx'
 import { publicGetApprovedReviews, publicSubmitReview } from '../../services/mockApi.js'
 
 function StarPicker({ value, onChange }) {
@@ -63,9 +60,11 @@ export default function Testimonials() {
     setReviews(latest.data ?? [])
   }
 
+  const approvedCount = reviews.length
+
   return (
     <div>
-      <HeroSplit title="Testimonials" subtitle="Submit feedback and see approved reviews from our learners." leftColor="bg-gray-900" />
+      <HeroSplit title="Testimonials" titleHighlight=" " subtitle="Submit feedback and see approved reviews from our learners." leftColor="bg-gray-900" />
 
       <section className="py-12 bg-gray-50">
         <div className="max-w-6xl mx-auto px-4">
@@ -81,17 +80,13 @@ export default function Testimonials() {
 
               <div className="mt-6 space-y-2 text-sm text-gray-200">
                 <div className="flex items-center gap-3">
-                  <span className="w-8 h-8 rounded-xl bg-white/10 flex items-center justify-center">
-                    <ContactIcon type="phone" className="text-white" />
-                  </span>
-                  <a className="hover:text-white" href="tel:+918891212323">
+                  <span className="w-8 h-8 rounded-xl bg-white/10 flex items-center justify-center">☎</span>
+                  <a className="hover:text-white" href="tel:+91 8891212323">
                     +91 8891212323
                   </a>
                 </div>
                 <div className="flex items-center gap-3">
-                  <span className="w-8 h-8 rounded-xl bg-white/10 flex items-center justify-center">
-                    <ContactIcon type="mail" className="text-white" />
-                  </span>
+                  <span className="w-8 h-8 rounded-xl bg-white/10 flex items-center justify-center">✉</span>
                   <a className="hover:text-white" href="mailto:info@s.com">
                     info@s.com
                   </a>
@@ -100,9 +95,12 @@ export default function Testimonials() {
             </div>
 
             <div className="bg-white border border-red-100 rounded-3xl p-6">
-              <div>
-                <div className="text-sm font-semibold text-red-700">Share Your Experience!</div>
-                <div className="mt-1 text-2xl font-extrabold text-gray-900">Send Review</div>
+              <div className="flex items-start justify-between gap-4">
+                <div>
+                  <div className="text-sm font-semibold text-red-700">Share Your Experience!</div>
+                  <div className="mt-1 text-2xl font-extrabold text-gray-900">Send Review</div>
+                </div>
+                <div className="text-xs text-gray-500">Approved: {approvedCount}</div>
               </div>
 
               <form onSubmit={onSubmit} className="mt-6 space-y-4">
@@ -168,8 +166,8 @@ export default function Testimonials() {
                 reviews.slice(0, 4).map((r) => (
                   <div key={r.review_id} className="bg-white border border-gray-200 rounded-3xl p-6 shadow-sm">
                     <div className="flex items-center gap-3">
-                      <div className="w-12 h-12 rounded-full bg-gray-100 border border-gray-200 flex items-center justify-center overflow-hidden">
-                        <ImagePlaceholder compact />
+                      <div className="w-12 h-12 rounded-full bg-gray-100 border border-gray-200 flex items-center justify-center">
+                        👤
                       </div>
                       <div>
                         <div className="font-extrabold text-gray-900">{r.name}</div>

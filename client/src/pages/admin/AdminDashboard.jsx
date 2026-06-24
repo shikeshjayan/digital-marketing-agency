@@ -1,4 +1,3 @@
-// Admin dashboard — overview counts and quick links
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import {

@@ -1,4 +1,3 @@
-// Admin — manage projects
 import { useEffect, useMemo, useState } from 'react'
 import {
   adminCreateProject,

@@ -1,6 +1,4 @@
-// Admin — update profile photo and settings
 import { useEffect, useState } from 'react'
-import ImagePlaceholder from '../../components/ui/ImagePlaceholder.jsx'
 import { adminGetSettings, adminUpdateSettings } from '../../services/mockApi.js'
 
 function FileToDataUrl({ file }) {
@@ -80,7 +78,7 @@ export default function AdminSettings() {
                 {preview ? (
                   <img src={preview} alt="preview" className="w-full h-full object-cover" />
                 ) : (
-                  <ImagePlaceholder compact />
+                  '👤'
                 )}
               </div>
               <div className="flex-1">

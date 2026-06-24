@@ -1,4 +1,3 @@
-// Admin login page
 import { useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { setAdminToken } from '../../auth/adminAuth.js'

@@ -1,7 +1,5 @@
-// Courses listing page — links to training program details
 import { Link } from 'react-router-dom'
 import HeroSplit from '../../components/public/HeroSplit.jsx'
-import ImagePlaceholder from '../../components/ui/ImagePlaceholder.jsx'
 import { courseDetailPath, courseList } from '../../data/coursePrograms.js'
 
 function CourseCard({ course, index }) {
@@ -19,7 +17,7 @@ function CourseCard({ course, index }) {
       <div
         className={`h-28 rounded-2xl border border-gray-100 bg-gradient-to-br ${gradients[index % gradients.length]} flex items-center justify-center`}
       >
-        <ImagePlaceholder label="Image" />
+        <div className="text-3xl">{course.icon}</div>
       </div>
       <h3 className="mt-4 text-lg font-extrabold text-gray-900 group-hover:text-red-700 transition">{course.title}</h3>
       <p className="mt-2 text-sm text-gray-600 leading-relaxed line-clamp-3">{course.short_description}</p>

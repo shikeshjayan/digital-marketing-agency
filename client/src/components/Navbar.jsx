@@ -1,17 +1,14 @@
-// Main site navigation — desktop dropdowns + mobile menu
 import { NavLink, Link, useLocation } from 'react-router-dom'
-import { useEffect, useMemo, useState } from 'react'
-import { serviceNavLinks, serviceDetailPath } from '../data/serviceLinks.js'
+import { useMemo, useState } from 'react'
+import { serviceNavLinks } from '../data/serviceLinks.js'
 import { courseNavLinks } from '../data/coursePrograms.js'
-import { publicGetServices } from '../services/mockApi.js'
 
-// Main menu links shown in the header
 const navItems = [
   { to: '/', label: 'Home' },
   { to: '/about', label: 'About Us' },
-  { to: '/services', label: 'Our Services', dropdown: 'services' },
+  { to: '/services', label: 'Our Services', dropdown: true },
   { to: '/projects', label: 'Our Projects' },
-  { to: '/courses', label: 'Our Courses', dropdown: 'courses' },
+  { to: '/courses', label: 'Our Courses', dropdown: true },
   { to: '/team', label: 'Our Team' },
   { to: '/testimonials', label: 'Testimonials' },
   { to: '/contact', label: 'Contact Us' },
@@ -22,23 +19,9 @@ export default function Navbar() {
   const [mobileOpen, setMobileOpen] = useState(false)
   const [servicesOpen, setServicesOpen] = useState(false)
   const [coursesOpen, setCoursesOpen] = useState(false)
-  const [serviceLinks, setServiceLinks] = useState(serviceNavLinks)
 
-  // Refresh service dropdown from API so it stays in sync with admin changes
-  useEffect(() => {
-    publicGetServices({ page: 1, limit: 50 })
-      .then((res) => {
-        const links = (res.data ?? []).map((service) => ({
-          label: service.service_name,
-          to: serviceDetailPath(service.service_id),
-        }))
-        if (links.length) setServiceLinks(links)
-      })
-      .catch(() => {})
-  }, [])
-
-  // Highlight Services/Courses menu when viewing those sections
   const isActive = useMemo(() => {
+    // Helps keep dropdown highlighting consistent when deep-linking
     if (location.pathname.startsWith('/services')) return 'services'
     if (location.pathname.startsWith('/courses')) return 'courses'
     return null
@@ -55,7 +38,7 @@ export default function Navbar() {
 
           <nav className="hidden md:flex items-center gap-2">
             {navItems.map((item) => {
-              if (item.dropdown === 'services') {
+              if (item.dropdown && item.label === 'Our Services') {
                 const active = isActive === 'services'
                 return (
                   <div
@@ -81,7 +64,7 @@ export default function Navbar() {
                           >
                             All Services
                           </NavLink>
-                          {serviceLinks.map((service) => (
+                          {serviceNavLinks.map((service) => (
                             <NavLink
                               key={service.to}
                               to={service.to}
@@ -97,7 +80,7 @@ export default function Navbar() {
                 )
               }
 
-              if (item.dropdown === 'courses') {
+              if (item.dropdown && item.label === 'Our Courses') {
                 const active = isActive === 'courses'
                 return (
                   <div
@@ -177,49 +160,20 @@ export default function Navbar() {
 
       {mobileOpen && (
         <div className="md:hidden border-t border-gray-200 bg-white">
-          <div className="max-w-7xl mx-auto px-4 py-3 flex flex-col gap-1">
+          <div className="max-w-7xl mx-auto px-4 py-3 flex flex-col gap-2">
             {navItems.map((item) => (
-              <div key={item.to ?? item.label}>
-                <NavLink
-                  to={item.to}
-                  className={({ isActive: active }) =>
-                    `block px-3 py-2 rounded-lg text-sm font-medium ${
-                      active ? 'text-red-700 bg-red-50' : 'text-gray-700 hover:text-red-700 hover:bg-red-50'
-                    }`
-                  }
-                  onClick={() => setMobileOpen(false)}
-                >
-                  {item.label}
-                </NavLink>
-                {item.dropdown === 'services' && (
-                  <div className="ml-3 border-l border-gray-200 pl-3 pb-2">
-                    {serviceLinks.map((service) => (
-                      <NavLink
-                        key={service.to}
-                        to={service.to}
-                        className="block px-3 py-1.5 rounded-lg text-sm text-gray-600 hover:text-red-700 hover:bg-red-50"
-                        onClick={() => setMobileOpen(false)}
-                      >
-                        {service.label}
-                      </NavLink>
-                    ))}
-                  </div>
-                )}
-                {item.dropdown === 'courses' && (
-                  <div className="ml-3 border-l border-gray-200 pl-3 pb-2">
-                    {courseNavLinks.map((course) => (
-                      <NavLink
-                        key={course.to}
-                        to={course.to}
-                        className="block px-3 py-1.5 rounded-lg text-sm text-gray-600 hover:text-red-700 hover:bg-red-50"
-                        onClick={() => setMobileOpen(false)}
-                      >
-                        {course.label}
-                      </NavLink>
-                    ))}
-                  </div>
-                )}
-              </div>
+              <NavLink
+                key={item.to ?? item.label}
+                to={item.to}
+                className={({ isActive: active }) =>
+                  `px-3 py-2 rounded-lg text-sm font-medium ${
+                    active ? 'text-red-700 bg-red-50' : 'text-gray-700 hover:text-red-700 hover:bg-red-50'
+                  }`
+                }
+                onClick={() => setMobileOpen(false)}
+              >
+                {item.label}
+              </NavLink>
             ))}
             <NavLink
               to="/contact"
@@ -234,3 +188,4 @@ export default function Navbar() {
     </header>
   )
 }
+

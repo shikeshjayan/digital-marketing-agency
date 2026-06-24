@@ -1,4 +1,3 @@
-// Admin — approve or reject customer reviews
 import { useEffect, useMemo, useState } from 'react'
 import {
   adminApproveReview,

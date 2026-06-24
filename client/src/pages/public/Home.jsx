@@ -1,12 +1,9 @@
-// Home page — hero carousel, stats, services slider, tech stack, team teaser, testimonials
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { publicGetApprovedReviews, publicGetServices } from '../../services/mockApi.js'
 import { serviceDetailPath } from '../../data/serviceLinks.js'
 import AnimatedCounter from '../../components/ui/AnimatedCounter.jsx'
-import ImagePlaceholder from '../../components/ui/ImagePlaceholder.jsx'
 
-// Shows filled/empty stars for a review rating
 function StarRow({ rating }) {
   const full = Math.floor(rating)
   return (
@@ -20,7 +17,6 @@ function StarRow({ rating }) {
   )
 }
 
-// Top red banner with auto-rotating slides
 function HeroCarousel() {
   const slides = useMemo(
     () => [
@@ -40,9 +36,7 @@ function HeroCarousel() {
 
   const [index, setIndex] = useState(0)
   const [animating, setAnimating] = useState(false)
-  const animTimerRef = useRef(null)
 
-  // Auto-advance every 5 seconds
   useEffect(() => {
     const t = setInterval(() => {
       setIndex((v) => (v + 1) % slides.length)
@@ -50,19 +44,11 @@ function HeroCarousel() {
     return () => clearInterval(t)
   }, [slides.length])
 
-  // Clean up animation timer when user leaves the page
-  useEffect(() => {
-    return () => {
-      if (animTimerRef.current) clearTimeout(animTimerRef.current)
-    }
-  }, [])
-
   function go(next) {
     if (animating) return
     setAnimating(true)
     setIndex(next)
-    if (animTimerRef.current) clearTimeout(animTimerRef.current)
-    animTimerRef.current = window.setTimeout(() => setAnimating(false), 450)
+    window.setTimeout(() => setAnimating(false), 450)
   }
 
   return (
@@ -75,7 +61,7 @@ function HeroCarousel() {
 
       <div className="max-w-7xl mx-auto px-4 py-12">
         <div className="relative">
-          <div className="relative overflow-hidden rounded-3xl bg-white/5 border border-white/15">
+          <div className="overflow-hidden rounded-3xl bg-white/5 border border-white/15">
             <div
               className="flex transition-transform duration-500 ease-out"
               style={{ transform: `translateX(-${index * 100}%)` }}
@@ -85,7 +71,10 @@ function HeroCarousel() {
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
                     <div className="relative">
                       <div className="w-full max-w-sm mx-auto md:mx-0 aspect-[4/3] rounded-2xl bg-white/10 border border-white/15 flex items-center justify-center">
-                        <ImagePlaceholder label="Image" className="text-white/70 [&_div]:border-white/30 [&_div]:bg-white/10" />
+                        <div className="text-white/90 text-center">
+                          <div className="text-5xl font-extrabold">😊</div>
+                          <div className="mt-2 text-sm">Character</div>
+                        </div>
                       </div>
                     </div>
                     <div className="text-white">
@@ -99,25 +88,25 @@ function HeroCarousel() {
                 </div>
               ))}
             </div>
+          </div>
 
-            <div className="absolute inset-y-0 left-0 right-0 flex items-center justify-between px-3 md:px-6 pointer-events-none">
-              <button
-                type="button"
-                className="pointer-events-auto w-10 h-10 rounded-full bg-white/15 border border-white/20 hover:bg-white/25 text-white"
-                onClick={() => go((index - 1 + slides.length) % slides.length)}
-                aria-label="Previous slide"
-              >
-                ‹
-              </button>
-              <button
-                type="button"
-                className="pointer-events-auto w-10 h-10 rounded-full bg-white/15 border border-white/20 hover:bg-white/25 text-white"
-                onClick={() => go((index + 1) % slides.length)}
-                aria-label="Next slide"
-              >
-                ›
-              </button>
-            </div>
+          <div className="absolute inset-y-0 left-0 right-0 flex items-center justify-between px-3 md:px-6 pointer-events-none">
+            <button
+              type="button"
+              className="pointer-events-auto w-10 h-10 rounded-full bg-white/15 border border-white/20 hover:bg-white/25 text-white"
+              onClick={() => go((index - 1 + slides.length) % slides.length)}
+              aria-label="Previous slide"
+            >
+              ‹
+            </button>
+            <button
+              type="button"
+              className="pointer-events-auto w-10 h-10 rounded-full bg-white/15 border border-white/20 hover:bg-white/25 text-white"
+              onClick={() => go((index + 1) % slides.length)}
+              aria-label="Next slide"
+            >
+              ›
+            </button>
           </div>
 
           <div className="flex items-center justify-center gap-2 mt-4">
@@ -139,7 +128,6 @@ function HeroCarousel() {
   )
 }
 
-// Featured services slider — side buttons on desktop, below card on mobile
 function ServicesCarousel({ services }) {
   const [index, setIndex] = useState(0)
 
@@ -162,103 +150,80 @@ function ServicesCarousel({ services }) {
   return (
     <section className="py-12 bg-gray-50">
       <div className="max-w-6xl mx-auto px-4">
-        <div className="flex items-center gap-3 md:gap-5">
-          {/* Desktop: previous button sits outside the card */}
-          <button
-            type="button"
-            className="hidden md:flex shrink-0 w-12 h-12 rounded-full bg-white border border-gray-200 shadow-md hover:bg-gray-50 items-center justify-center text-xl leading-none"
-            onClick={() => go((index - 1 + services.length) % services.length)}
-            aria-label="Previous service"
-          >
-            ‹
-          </button>
-
-          <div className="flex-1 min-w-0">
-            <div className="bg-white rounded-3xl shadow-sm border border-gray-100">
-              <div className="px-6 py-10 md:px-10">
-                <div className="flex items-stretch gap-6">
-                  <div className="hidden md:flex items-center justify-center">
-                    <div className="w-24 h-24 rounded-3xl bg-red-50 border border-red-100 flex items-center justify-center">
-                      <div className="text-4xl font-extrabold text-red-700">{index + 1}</div>
-                    </div>
+        <div className="relative">
+          <div className="bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden">
+            <div className="px-6 py-10 md:px-10">
+              <div className="flex items-stretch gap-6">
+                <div className="hidden md:flex items-center justify-center">
+                  <div className="w-24 h-24 rounded-3xl bg-red-50 border border-red-100 flex items-center justify-center">
+                    <div className="text-4xl font-extrabold text-red-700">{index + 1}</div>
                   </div>
+                </div>
 
-                  <div className="flex-1">
-                    <div className="text-sm text-gray-500">Featured Service</div>
-                    <h3 className="mt-2 text-2xl font-extrabold text-gray-900">
-                      {current.service_name.split(' ').slice(0, 2).join(' ')}{' '}
-                      <span className="text-red-700">
-                        {current.service_name.split(' ').slice(2).join(' ')}
-                      </span>
-                    </h3>
-                    <p className="mt-3 text-gray-600 leading-relaxed max-w-xl line-clamp-4">
-                      {current.short_description}
-                    </p>
-                    <div className="mt-6">
-                      <Link
-                        to={serviceDetailPath(current.service_id)}
-                        className="inline-flex items-center rounded-full bg-red-600 text-white px-5 py-2.5 text-sm font-semibold hover:bg-orange-500 transition"
-                      >
-                        Read More
-                      </Link>
-                    </div>
+                <div className="flex-1">
+                  <div className="text-sm text-gray-500">Featured Service</div>
+                  <h3 className="mt-2 text-2xl font-extrabold text-gray-900">
+                    {current.service_name.split(' ').slice(0, 2).join(' ')}{' '}
+                    <span className="text-red-700">
+                      {current.service_name.split(' ').slice(2).join(' ')}
+                    </span>
+                  </h3>
+                  <p className="mt-3 text-gray-600 leading-relaxed max-w-xl">
+                    {current.description}
+                  </p>
+                  <div className="mt-6">
+                    <Link
+                      to={serviceDetailPath(current.service_name)}
+                      className="inline-flex items-center rounded-full bg-red-600 text-white px-5 py-2.5 text-sm font-semibold hover:bg-orange-500 transition"
+                    >
+                      Read More
+                    </Link>
                   </div>
                 </div>
               </div>
             </div>
-
-            <div className="mt-4 md:mt-6 flex items-center justify-center gap-3">
-              {/* Mobile: prev/next buttons beside the dots */}
-              <button
-                type="button"
-                className="md:hidden w-10 h-10 rounded-full bg-white border border-gray-200 shadow-md hover:bg-gray-50 flex items-center justify-center text-lg leading-none shrink-0"
-                onClick={() => go((index - 1 + services.length) % services.length)}
-                aria-label="Previous service"
-              >
-                ‹
-              </button>
-
-              <div className="flex items-center justify-center gap-2">
-                {services.map((s, i) => (
-                  <button
-                    key={s.service_id}
-                    type="button"
-                    className={`w-2.5 h-2.5 rounded-full transition ${
-                      i === index ? 'bg-red-700' : 'bg-red-200 hover:bg-red-400'
-                    }`}
-                    onClick={() => go(i)}
-                    aria-label={`Go to service ${i + 1}`}
-                  />
-                ))}
-              </div>
-
-              <button
-                type="button"
-                className="md:hidden w-10 h-10 rounded-full bg-white border border-gray-200 shadow-md hover:bg-gray-50 flex items-center justify-center text-lg leading-none shrink-0"
-                onClick={() => go((index + 1) % services.length)}
-                aria-label="Next service"
-              >
-                ›
-              </button>
-            </div>
           </div>
 
-          {/* Desktop: next button sits outside the card */}
-          <button
-            type="button"
-            className="hidden md:flex shrink-0 w-12 h-12 rounded-full bg-white border border-gray-200 shadow-md hover:bg-gray-50 items-center justify-center text-xl leading-none"
-            onClick={() => go((index + 1) % services.length)}
-            aria-label="Next service"
-          >
-            ›
-          </button>
+          <div className="hidden md:block absolute left-0 -translate-x-1/2 top-1/2 -translate-y-1/2">
+            <button
+              type="button"
+              className="w-12 h-12 rounded-full bg-white border border-gray-200 shadow-sm hover:bg-gray-50"
+              onClick={() => go((index - 1 + services.length) % services.length)}
+              aria-label="Previous service"
+            >
+              ‹
+            </button>
+          </div>
+          <div className="hidden md:block absolute right-0 -translate-x-1/2 top-1/2 -translate-y-1/2">
+            <button
+              type="button"
+              className="w-12 h-12 rounded-full bg-white border border-gray-200 shadow-sm hover:bg-gray-50"
+              onClick={() => go((index + 1) % services.length)}
+              aria-label="Next service"
+            >
+              ›
+            </button>
+          </div>
+
+          <div className="flex items-center justify-center gap-2 mt-6">
+            {services.map((s, i) => (
+              <button
+                key={s.service_id}
+                type="button"
+                className={`w-2.5 h-2.5 rounded-full transition ${
+                  i === index ? 'bg-red-700' : 'bg-red-200 hover:bg-red-400'
+                }`}
+                onClick={() => go(i)}
+                aria-label={`Go to service ${i + 1}`}
+              />
+            ))}
+          </div>
         </div>
       </div>
     </section>
   )
 }
 
-// Technology logos section
 function TechnologyStack() {
   const items = [
     { name: 'WordPress', code: 'WP' },
@@ -297,10 +262,9 @@ function TechnologyStack() {
   )
 }
 
-// Scrolling client logo strip
 function LogoMarquee() {
   const logos = ['HR Consultancy', 'Selfy LinguaTrainer', 'Rising Moon', 'StepUp', 'Tymos']
-  // Duplicate the list so the scroll loops seamlessly
+  // Duplicate list to create a seamless loop.
   const loop = [...logos, ...logos]
   return (
     <section className="bg-gray-50 py-10">
@@ -329,7 +293,6 @@ function LogoMarquee() {
   )
 }
 
-// Rotating approved reviews from the API
 function TestimonialsCarousel({ reviews }) {
   const [index, setIndex] = useState(0)
 
@@ -354,7 +317,7 @@ function TestimonialsCarousel({ reviews }) {
         <div className="mt-8 flex justify-center">
           <div className="w-full max-w-xl border border-gray-200 rounded-3xl px-6 py-8 bg-gray-50 text-center">
             <div className="mx-auto w-16 h-16 rounded-full overflow-hidden bg-gray-200 flex items-center justify-center">
-              <ImagePlaceholder compact />
+              <div className="text-2xl">👤</div>
             </div>
             <div className="mt-4 font-bold text-gray-900">{current.name}</div>
             <div className="text-sm text-gray-500">{current.location}</div>
@@ -383,7 +346,6 @@ function TestimonialsCarousel({ reviews }) {
   )
 }
 
-// Animated stats counters (years, projects, clients)
 function StatsSection() {
   return (
     <section className="bg-gray-50 py-12">
@@ -438,14 +400,9 @@ export default function Home() {
   const [reviews, setReviews] = useState([])
   const navigate = useNavigate()
 
-  // Load services and reviews when the page opens
   useEffect(() => {
-    publicGetServices({ page: 1, limit: 10 })
-      .then((res) => setServices(res.data ?? []))
-      .catch(() => setServices([]))
-    publicGetApprovedReviews()
-      .then((res) => setReviews(res.data ?? []))
-      .catch(() => setReviews([]))
+    publicGetServices({ page: 1, limit: 10 }).then((res) => setServices(res.data ?? []))
+    publicGetApprovedReviews().then((res) => setReviews(res.data ?? []))
   }, [])
 
   return (
