@@ -26,16 +26,13 @@ export const createService = asyncHandler(async (req, res) => {
   });
 });
 
-// Get all services with search, status filter, and pagination (admin only)
+// Get active services with search and pagination (public)
 export const getAllServices = asyncHandler(async (req, res) => {
-  const { search, status, page = 1, limit = 10 } = req.query;
+  const { search, page = 1, limit = 10 } = req.query;
 
-  const filter = {};
+  const filter = { status: "Active" };
   if (search) {
     filter.service_name = { $regex: search, $options: "i" };
-  }
-  if (status) {
-    filter.status = status;
   }
 
   const skip = (Number(page) - 1) * Number(limit);

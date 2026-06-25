@@ -8,16 +8,25 @@ export const createCourse = asyncHandler(async (req, res) => {
 
   // Validate required fields
   if (!course_name || !description) {
-    return res.status(400).json({ success: false, message: "Missing required fields" });
+    return res
+      .status(400)
+      .json({ success: false, message: "Missing required fields" });
   }
 
   // Prevent duplicate course names
   const existing = await Courses.findOne({ course_name });
   if (existing) {
-    return res.status(409).json({ success: false, message: "Course name already exists" });
+    return res
+      .status(409)
+      .json({ success: false, message: "Course name already exists" });
   }
 
-  const course = await Courses.create({ course_name, description, category, status });
+  const course = await Courses.create({
+    course_name,
+    description,
+    category,
+    status,
+  });
 
   res.status(201).json({
     success: true,
@@ -60,7 +69,9 @@ export const updateCourse = asyncHandler(async (req, res) => {
 
   // Make sure at least one field is being updated
   if (!course_name && !description && !category && !status) {
-    return res.status(400).json({ success: false, message: "Invalid input data" });
+    return res
+      .status(400)
+      .json({ success: false, message: "Invalid input data" });
   }
 
   const course = await Courses.findByIdAndUpdate(
@@ -69,7 +80,9 @@ export const updateCourse = asyncHandler(async (req, res) => {
     { new: true, runValidators: true },
   );
   if (!course) {
-    return res.status(404).json({ success: false, message: "Course record not found" });
+    return res
+      .status(404)
+      .json({ success: false, message: "Course record not found" });
   }
   res.status(200).json({
     success: true,
@@ -82,9 +95,16 @@ export const updateCourse = asyncHandler(async (req, res) => {
 export const deleteCourse = asyncHandler(async (req, res) => {
   const course = await Courses.findByIdAndDelete(req.params.course_id);
   if (!course) {
-    return res.status(404).json({ success: false, message: "Target course not found" });
+    return res
+      .status(404)
+      .json({ success: false, message: "Target course not found" });
   }
-  res.status(200).json({ success: true, message: "Course has been permanently deleted from the database." });
+  res
+    .status(200)
+    .json({
+      success: true,
+      message: "Course has been permanently deleted from the database.",
+    });
 });
 
 // Get only active courses for public visitors
@@ -95,5 +115,19 @@ export const getPublicCourses = asyncHandler(async (req, res) => {
     success: true,
     count: courses.length,
     data: courses,
+  });
+});
+
+// Get a single course by its ID (public route)
+export const getCourseById = asyncHandler(async (req, res) => {
+  const course = await Courses.findById(req.params.course_id);
+  if (!course) {
+    return res
+      .status(404)
+      .json({ success: false, message: "Course not found" });
+  }
+  res.status(200).json({
+    success: true,
+    data: course,
   });
 });
