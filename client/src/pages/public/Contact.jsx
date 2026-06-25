@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react'
 import { publicGetServices, publicSubmitContactEnquiry } from '../../services/mockApi.js'
 import HeroSplit from '../../components/public/HeroSplit.jsx'
+import { countryCodes, defaultCountryCode } from '../../data/countryCodes.js'
+import DropdownSelect from '../../components/ui/DropdownSelect.jsx'
 
 function ContactCard({ title, value, href, icon }) {
   return (
@@ -30,6 +32,7 @@ export default function Contact() {
 
   const [form, setForm] = useState({
     name: '',
+    countryCode: defaultCountryCode,
     phone: '',
     email: '',
     service: '',
@@ -77,7 +80,7 @@ export default function Contact() {
       email: form.email.trim(),
       service: form.service,
       message: form.message.trim(),
-      phone: form.phone.trim(),
+      phone: `${form.countryCode}${form.phone.trim()}`,
     })
 
     if (!res.success) {
@@ -85,7 +88,7 @@ export default function Contact() {
       return
     }
     setSuccess('Thanks! Your enquiry has been submitted successfully.')
-    setForm({ name: '', phone: '', email: '', service: '', message: '' })
+    setForm({ name: '', countryCode: defaultCountryCode, phone: '', email: '', service: '', message: '' })
   }
 
   return (
@@ -144,13 +147,28 @@ export default function Contact() {
 
                 <div>
                   <label className="text-sm font-semibold text-gray-800">Phone No.</label>
-                  <input
-                    value={form.phone}
-                    onChange={(e) => setForm((f) => ({ ...f, phone: e.target.value }))}
-                    className="mt-2 w-full rounded-xl border border-gray-200 px-4 py-2 outline-none focus:ring-2 focus:ring-red-100"
-                    placeholder="Numeric phone"
-                    inputMode="numeric"
-                  />
+                  <div className="mt-2 flex items-stretch">
+                    <DropdownSelect
+                      value={form.countryCode}
+                      onChange={(countryCode) => setForm((f) => ({ ...f, countryCode }))}
+                      options={countryCodes.map((c) => ({
+                        value: c.code,
+                        label: `${c.code} ${c.label}`,
+                        triggerLabel: c.code,
+                      }))}
+                      className="shrink-0 w-[5.75rem]"
+                      triggerClassName="rounded-l-xl rounded-r-none border-r-0 bg-gray-50 px-3"
+                      menuClassName="min-w-[14rem]"
+                      aria-label="Country code"
+                    />
+                    <input
+                      value={form.phone}
+                      onChange={(e) => setForm((f) => ({ ...f, phone: e.target.value.replace(/\D/g, '') }))}
+                      className="flex-1 min-w-0 h-10 rounded-r-xl border border-gray-200 px-4 text-sm outline-none focus:ring-2 focus:ring-red-100"
+                      placeholder="Phone number"
+                      inputMode="numeric"
+                    />
+                  </div>
                 </div>
 
                 <div>
@@ -166,18 +184,19 @@ export default function Contact() {
 
                 <div>
                   <label className="text-sm font-semibold text-gray-800">Our Services</label>
-                  <select
+                  <DropdownSelect
                     value={form.service}
-                    onChange={(e) => setForm((f) => ({ ...f, service: e.target.value }))}
-                    className="mt-2 w-full rounded-xl border border-gray-200 px-4 py-2 outline-none focus:ring-2 focus:ring-red-100"
-                  >
-                    <option value="">Select a service</option>
-                    {services.map((s) => (
-                      <option key={s.service_id} value={s.service_name}>
-                        {s.service_name}
-                      </option>
-                    ))}
-                  </select>
+                    onChange={(service) => setForm((f) => ({ ...f, service }))}
+                    placeholder="Select a service"
+                    className="mt-2"
+                    options={[
+                      { value: '', label: 'Select a service' },
+                      ...services.map((s) => ({
+                        value: s.service_name,
+                        label: s.service_name,
+                      })),
+                    ]}
+                  />
                 </div>
 
                 <div>

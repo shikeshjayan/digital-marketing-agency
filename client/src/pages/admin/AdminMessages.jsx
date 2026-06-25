@@ -5,6 +5,15 @@ import {
   adminUpdateEnquiryStatus,
 } from '../../services/mockApi.js'
 import Button from '../../components/ui/Button.jsx'
+import DropdownSelect from '../../components/ui/DropdownSelect.jsx'
+
+const enquiryStatusOptions = [
+  { value: '', label: 'All statuses' },
+  { value: 'New', label: 'New' },
+  { value: 'Pending', label: 'Pending' },
+  { value: 'Replied', label: 'Replied' },
+  { value: 'Spam', label: 'Spam' },
+]
 
 function statusChip(status) {
   const map = {
@@ -90,17 +99,12 @@ export default function AdminMessages() {
             value={search}
             onChange={(e) => setSearch(e.target.value)}
           />
-          <select
-            className="rounded-xl border border-gray-200 px-4 py-2 outline-none focus:ring-2 focus:ring-red-100"
+          <DropdownSelect
             value={status}
-            onChange={(e) => setStatus(e.target.value)}
-          >
-            <option value="">All statuses</option>
-            <option value="New">New</option>
-            <option value="Pending">Pending</option>
-            <option value="Replied">Replied</option>
-            <option value="Spam">Spam</option>
-          </select>
+            onChange={setStatus}
+            placeholder="All statuses"
+            options={enquiryStatusOptions}
+          />
           <input
             type="date"
             className="rounded-xl border border-gray-200 px-4 py-2 outline-none focus:ring-2 focus:ring-red-100"

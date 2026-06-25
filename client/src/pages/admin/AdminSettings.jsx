@@ -1,14 +1,6 @@
 import { useEffect, useState } from 'react'
 import { adminGetSettings, adminUpdateSettings } from '../../services/mockApi.js'
-
-function FileToDataUrl({ file }) {
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader()
-    reader.onerror = reject
-    reader.onload = () => resolve(reader.result)
-    reader.readAsDataURL(file)
-  })
-}
+import ImageFileInput from '../../components/admin/ImageFileInput.jsx'
 
 export default function AdminSettings() {
   const [settings, setSettings] = useState(null)
@@ -33,13 +25,6 @@ export default function AdminSettings() {
       }))
     })
   }, [])
-
-  async function onPickImage(e) {
-    const file = e.target.files?.[0]
-    if (!file) return
-    const dataUrl = await FileToDataUrl({ file })
-    setForm((f) => ({ ...f, profile_image: dataUrl }))
-  }
 
   async function onSubmit(e) {
     e.preventDefault()
@@ -83,7 +68,9 @@ export default function AdminSettings() {
               </div>
               <div className="flex-1">
                 <label className="text-sm font-semibold text-gray-800">Profile Image</label>
-                <input type="file" accept="image/*" className="mt-2 w-full" onChange={onPickImage} />
+                <ImageFileInput
+                  onChange={(dataUrl) => setForm((f) => ({ ...f, profile_image: dataUrl }))}
+                />
               </div>
             </div>
           </div>

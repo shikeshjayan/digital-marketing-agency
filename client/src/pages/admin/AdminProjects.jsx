@@ -6,17 +6,28 @@ import {
   adminUpdateProject,
 } from '../../services/mockApi.js'
 import Button from '../../components/ui/Button.jsx'
-
-function FileToDataUrl({ file }) {
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader()
-    reader.onerror = reject
-    reader.onload = () => resolve(reader.result)
-    reader.readAsDataURL(file)
-  })
-}
+import ImageFileInput from '../../components/admin/ImageFileInput.jsx'
+import DropdownSelect from '../../components/ui/DropdownSelect.jsx'
 
 const categories = ['Static', 'Dynamic', 'Landing Pages']
+
+const categoryFilterOptions = [
+  { value: '', label: 'All categories' },
+  ...categories.map((category) => ({ value: category, label: category })),
+]
+
+const categoryFormOptions = categories.map((category) => ({ value: category, label: category }))
+
+const statusFilterOptions = [
+  { value: '', label: 'All statuses' },
+  { value: 'Active', label: 'Active' },
+  { value: 'Inactive', label: 'Inactive' },
+]
+
+const statusFormOptions = [
+  { value: 'Active', label: 'Active' },
+  { value: 'Inactive', label: 'Inactive' },
+]
 
 export default function AdminProjects() {
   const [items, setItems] = useState([])
@@ -69,13 +80,6 @@ export default function AdminProjects() {
     return () => clearTimeout(t)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [search, category, status])
-
-  async function onPickImage(e) {
-    const file = e.target.files?.[0]
-    if (!file) return
-    const dataUrl = await FileToDataUrl({ file })
-    setForm((f) => ({ ...f, image: dataUrl }))
-  }
 
   async function onSubmit(e) {
     e.preventDefault()
@@ -143,27 +147,18 @@ export default function AdminProjects() {
             value={search}
             onChange={(e) => setSearch(e.target.value)}
           />
-          <select
-            className="rounded-xl border border-gray-200 px-4 py-2 outline-none focus:ring-2 focus:ring-red-100"
+          <DropdownSelect
             value={category}
-            onChange={(e) => setCategory(e.target.value)}
-          >
-            <option value="">All categories</option>
-            {categories.map((c) => (
-              <option key={c} value={c}>
-                {c}
-              </option>
-            ))}
-          </select>
-          <select
-            className="rounded-xl border border-gray-200 px-4 py-2 outline-none focus:ring-2 focus:ring-red-100"
+            onChange={setCategory}
+            placeholder="All categories"
+            options={categoryFilterOptions}
+          />
+          <DropdownSelect
             value={status}
-            onChange={(e) => setStatus(e.target.value)}
-          >
-            <option value="">All statuses</option>
-            <option value="Active">Active</option>
-            <option value="Inactive">Inactive</option>
-          </select>
+            onChange={setStatus}
+            placeholder="All statuses"
+            options={statusFilterOptions}
+          />
           <Button type="button" variant="outline" className="w-full justify-center" onClick={() => setForm(emptyForm)}>
             Reset Form
           </Button>
@@ -186,28 +181,21 @@ export default function AdminProjects() {
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div>
                 <label className="text-sm font-semibold text-gray-800">Category</label>
-                <select
-                  className="mt-2 w-full rounded-xl border border-gray-200 px-4 py-2 outline-none focus:ring-2 focus:ring-red-100"
+                <DropdownSelect
                   value={form.category}
-                  onChange={(e) => setForm((f) => ({ ...f, category: e.target.value }))}
-                >
-                  {categories.map((c) => (
-                    <option key={c} value={c}>
-                      {c}
-                    </option>
-                  ))}
-                </select>
+                  onChange={(category) => setForm((f) => ({ ...f, category }))}
+                  className="mt-2"
+                  options={categoryFormOptions}
+                />
               </div>
               <div>
                 <label className="text-sm font-semibold text-gray-800">Status</label>
-                <select
-                  className="mt-2 w-full rounded-xl border border-gray-200 px-4 py-2 outline-none focus:ring-2 focus:ring-red-100"
+                <DropdownSelect
                   value={form.status}
-                  onChange={(e) => setForm((f) => ({ ...f, status: e.target.value }))}
-                >
-                  <option value="Active">Active</option>
-                  <option value="Inactive">Inactive</option>
-                </select>
+                  onChange={(status) => setForm((f) => ({ ...f, status }))}
+                  className="mt-2"
+                  options={statusFormOptions}
+                />
               </div>
             </div>
             <div>
@@ -229,7 +217,10 @@ export default function AdminProjects() {
             </div>
             <div>
               <label className="text-sm font-semibold text-gray-800">Image</label>
-              <input type="file" accept="image/*" className="mt-2 w-full" onChange={onPickImage} />
+              <ImageFileInput
+                key={form.project_id ?? 'new-project'}
+                onChange={(dataUrl) => setForm((f) => ({ ...f, image: dataUrl }))}
+              />
             </div>
 
             {error && <div className="text-sm text-red-600">{error}</div>}

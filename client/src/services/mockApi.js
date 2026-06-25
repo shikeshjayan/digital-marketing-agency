@@ -152,7 +152,7 @@ export async function publicGetApprovedReviews() {
   return toListResponse(reviews, reviews.length)
 }
 
-export async function publicSubmitContactEnquiry({ name, email, service, message } = {}) {
+export async function publicSubmitContactEnquiry({ name, email, service, message, phone } = {}) {
   ensureSeeded()
   if (!name || !email || !service || !message) {
     return { success: false, error: { message: 'Missing fields or invalid email schema' } }
@@ -165,6 +165,7 @@ export async function publicSubmitContactEnquiry({ name, email, service, message
     email,
     service,
     message,
+    phone: phone ?? '',
     status: 'New',
     date: new Date().toISOString(),
   }
