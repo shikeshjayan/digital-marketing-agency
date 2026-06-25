@@ -1,79 +1,84 @@
-import { useEffect, useMemo, useState } from 'react'
-import { useParams, Link } from 'react-router-dom'
-import { publicGetServices } from '../../services/mockApi.js'
-import HeroSplit from '../../components/public/HeroSplit.jsx'
-import { slugify } from '../../utils/slugify.js'
-
-function serviceIcon(name) {
-  if (name.includes('Video')) return '🎬'
-  if (name.includes('E-Commerce')) return '🛒'
-  if (name.includes('App')) return '📱'
-  if (name.includes('Graphic')) return '🎨'
-  if (name.includes('Branding')) return '📣'
-  if (name.includes('Performance')) return '📈'
-  if (name.includes('Influencer')) return '🤝'
-  if (name.includes('Content')) return '✍️'
-  return '✨'
-}
+import { useEffect, useState } from "react";
+import { useParams, Link } from "react-router-dom";
+import { slugify } from "../../utils/slugify.js";
+import useServiceStore from "../../store/serviceStore";
 
 export default function ServiceDetail() {
-  const { slug } = useParams()
-  const [service, setService] = useState(null)
+  const { slug } = useParams();
+  const { services, loading, fetchServices } = useServiceStore();
+  const [error, setError] = useState(null);
 
   useEffect(() => {
-    publicGetServices({ page: 1, limit: 50 }).then((res) => {
-      const found = (res.data ?? []).find((s) => slugify(s.service_name) === slug)
-      setService(found ?? null)
-    })
-  }, [slug])
+    fetchServices().catch((e) => setError(e.message));
+  }, [slug, fetchServices]);
 
-  const paragraphs = useMemo(() => {
-    const text = service?.description ?? ''
-    if (!text) return []
-    return text.split('.').map((p) => p.trim()).filter(Boolean)
-  }, [service])
+  const service =
+    (services ?? []).find((s) => slugify(s.service_name) === slug) ?? null;
+
+  if (loading)
+    return <div className="text-center py-32 text-gray-400">Loading...</div>;
+
+  if (error)
+    return (
+      <div className="text-center py-32">
+        <p className="text-red-500">{error}</p>
+        <Link
+          to="/services"
+          className="mt-4 inline-flex items-center rounded-full bg-red-600 text-white px-5 py-2.5 text-sm font-semibold hover:bg-red-500 transition">
+          Back to Services
+        </Link>
+      </div>
+    );
+
+  if (!service)
+    return (
+      <div className="text-center py-32">
+        <h2 className="text-2xl font-bold text-gray-900">Service Not Found</h2>
+        <p className="mt-3 text-gray-500">No service found for this URL.</p>
+        <Link
+          to="/services"
+          className="mt-6 inline-flex items-center rounded-full bg-red-600 text-white px-5 py-2.5 text-sm font-semibold hover:bg-red-500 transition">
+          Back to Services
+        </Link>
+      </div>
+    );
 
   return (
     <div>
-      <HeroSplit
-        title="Services"
-        titleHighlight="Our"
-        subtitle={service ? service.service_name : 'Service details'}
-      />
-
-      <section className="py-14 bg-white">
+      <section className="py-16 md:py-24 bg-white">
         <div className="max-w-4xl mx-auto px-4 text-center">
-          <h2 className="text-3xl md:text-4xl font-extrabold text-gray-900">
-            {service?.service_name ?? 'Service Not Found'}
-          </h2>
-          <div className="mt-6 flex justify-center">
-            <div className="w-full max-w-xl aspect-[16/9] rounded-3xl bg-gray-100 border border-gray-200 flex items-center justify-center text-6xl">
-              {service ? serviceIcon(service.service_name) : '🧩'}
-            </div>
+          <h1 className="text-4xl md:text-5xl lg:text-6xl font-extrabold text-gray-900 leading-tight">
+            {service.service_name}
+          </h1>
+          <div className="mt-10 flex justify-center">
+            <img
+              src={service.image}
+              alt={service.service_name}
+              loading="lazy"
+              decoding="async"
+              className="w-full max-w-2xl h-64 md:h-80 object-cover rounded-2xl shadow-md bg-gray-100"
+            />
           </div>
-          <div className="mt-8 text-gray-700 leading-relaxed text-left">
-            {paragraphs.length ? (
-              <div className="space-y-3">
-                {paragraphs.map((p, i) => (
-                  <p key={i} className="text-justify">
-                    {p}.
-                  </p>
-                ))}
-              </div>
-            ) : (
-              <p className="text-center text-gray-500">No service found for this URL.</p>
-            )}
+          <div className="mt-10 max-w-3xl mx-auto text-gray-700 leading-relaxed space-y-4">
+            {service.description
+              .split(".")
+              .map((p) => p.trim())
+              .filter(Boolean)
+              .map((para, i) => (
+                <p key={i} className="text-justify text-base md:text-lg leading-8">
+                  {para}.
+                </p>
+              ))}
           </div>
-          <div className="mt-8">
+          <div className="mt-12">
             <Link
               to="/services"
-              className="inline-flex items-center rounded-full bg-red-600 text-white px-5 py-2.5 text-sm font-semibold hover:bg-orange-500 transition"
-            >
+              className="inline-flex items-center rounded-full bg-red-600 text-white px-6 py-3 text-sm font-semibold hover:bg-red-500 transition shadow-md">
               Back to Services
             </Link>
           </div>
         </div>
       </section>
     </div>
-  )
+  );
 }

@@ -1,6 +1,12 @@
 // Load environment variables from .env file
 import dotenv from "dotenv";
-dotenv.config();
+import { fileURLToPath } from "url";
+import { dirname, join } from "path";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+
+dotenv.config({ path: join(__dirname, "..", ".env") });
 
 import express from "express";
 import cors from "cors";
@@ -27,7 +33,7 @@ import errorHandler from "./middleware/errorHandler.js";
 const app = express();
 
 // Allow requests from the React frontend running on port 5173
-app.use(cors({ origin: "http://localhost:5173", credentials: true }));
+app.use(cors({ origin: process.env.CLIENT_URL, credentials: true }));
 // Convert incoming JSON data so we can read it easily
 app.use(express.json());
 // Read cookies from the browser

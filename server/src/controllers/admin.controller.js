@@ -15,7 +15,7 @@ const sendTokenResponse = (admin, statusCode, res) => {
   res
     .status(statusCode)
     .cookie("token", token, {
-      httpOnly: true,              // Browser can't read this cookie via JavaScript (more secure)
+      httpOnly: true, // Browser can't read this cookie via JavaScript (more secure)
       secure: process.env.NODE_ENV === "production",
       sameSite: "lax",
       maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days in milliseconds
@@ -23,7 +23,12 @@ const sendTokenResponse = (admin, statusCode, res) => {
     .json({
       success: true,
       token,
-      data: { id: admin._id, name: admin.name, email: admin.email, role: admin.role },
+      data: {
+        id: admin._id,
+        name: admin.name,
+        email: admin.email,
+        role: admin.role,
+      },
     });
 };
 
@@ -34,7 +39,9 @@ export const registerAdmin = asyncHandler(async (req, res) => {
   // Check if an admin with this email already exists
   const existingAdmin = await Admin.findOne({ email });
   if (existingAdmin) {
-    return res.status(400).json({ success: false, message: "Admin already exists" });
+    return res
+      .status(400)
+      .json({ success: false, message: "Admin already exists" });
   }
 
   // Create the admin and send back a token
@@ -49,13 +56,17 @@ export const loginAdmin = asyncHandler(async (req, res) => {
   // Find admin by email and include the password field (it's hidden by default)
   const admin = await Admin.findOne({ email }).select("+password");
   if (!admin) {
-    return res.status(401).json({ success: false, message: "Invalid credentials" });
+    return res
+      .status(401)
+      .json({ success: false, message: "Invalid credentials" });
   }
 
   // Check if the password matches the stored hash
   const isMatch = await admin.matchPassword(password);
   if (!isMatch) {
-    return res.status(401).json({ success: false, message: "Invalid credentials" });
+    return res
+      .status(401)
+      .json({ success: false, message: "Invalid credentials" });
   }
 
   sendTokenResponse(admin, 200, res);
@@ -95,11 +106,18 @@ export const updateAdminProfile = asyncHandler(async (req, res) => {
   if (currentPassword && newPassword) {
     const isMatch = await admin.matchPassword(currentPassword);
     if (!isMatch) {
-      return res.status(400).json({ success: false, message: "Current password is incorrect" });
+      return res
+        .status(400)
+        .json({ success: false, message: "Current password is incorrect" });
     }
     admin.password = newPassword;
   } else if (newPassword && !currentPassword) {
-    return res.status(400).json({ success: false, message: "Current password is required to set a new password" });
+    return res
+      .status(400)
+      .json({
+        success: false,
+        message: "Current password is required to set a new password",
+      });
   }
 
   // Save changes (the password will be hashed automatically by the model's pre-save hook)
