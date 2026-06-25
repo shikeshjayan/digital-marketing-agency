@@ -194,7 +194,7 @@ function ServicesCarousel({ services }) {
               ‹
             </button>
           </div>
-          <div className="hidden md:block absolute right-0 -translate-x-1/2 top-1/2 -translate-y-1/2">
+          <div className="hidden md:block absolute right-0 translate-x-1/2 top-1/2 -translate-y-1/2">
             <button
               type="button"
               className="w-12 h-12 rounded-full bg-white border border-gray-200 shadow-sm hover:bg-gray-50"

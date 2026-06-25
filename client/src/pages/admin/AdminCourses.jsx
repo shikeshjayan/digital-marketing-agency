@@ -6,6 +6,18 @@ import {
   adminUpdateCourse,
 } from '../../services/mockApi.js'
 import Button from '../../components/ui/Button.jsx'
+import DropdownSelect from '../../components/ui/DropdownSelect.jsx'
+
+const statusFilterOptions = [
+  { value: '', label: 'All statuses' },
+  { value: 'Active', label: 'Active' },
+  { value: 'Inactive', label: 'Inactive' },
+]
+
+const statusFormOptions = [
+  { value: 'Active', label: 'Active' },
+  { value: 'Inactive', label: 'Inactive' },
+]
 
 export default function AdminCourses() {
   const [items, setItems] = useState([])
@@ -131,14 +143,12 @@ export default function AdminCourses() {
             </div>
             <div>
               <label className="text-sm font-semibold text-gray-800">Status</label>
-              <select
-                className="mt-2 w-full rounded-xl border border-gray-200 px-4 py-2 outline-none focus:ring-2 focus:ring-red-100"
+              <DropdownSelect
                 value={form.status}
-                onChange={(e) => setForm((f) => ({ ...f, status: e.target.value }))}
-              >
-                <option value="Active">Active</option>
-                <option value="Inactive">Inactive</option>
-              </select>
+                onChange={(status) => setForm((f) => ({ ...f, status }))}
+                className="mt-2"
+                options={statusFormOptions}
+              />
             </div>
 
             {error && <div className="text-sm text-red-600">{error}</div>}
@@ -163,15 +173,12 @@ export default function AdminCourses() {
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
               />
-              <select
-                className="rounded-xl border border-gray-200 px-4 py-2 outline-none focus:ring-2 focus:ring-red-100"
+              <DropdownSelect
                 value={status}
-                onChange={(e) => setStatus(e.target.value)}
-              >
-                <option value="">All statuses</option>
-                <option value="Active">Active</option>
-                <option value="Inactive">Inactive</option>
-              </select>
+                onChange={setStatus}
+                placeholder="All statuses"
+                options={statusFilterOptions}
+              />
             </div>
           </div>
 

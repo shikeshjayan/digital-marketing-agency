@@ -6,15 +6,19 @@ import {
   adminUpdateTeamMember,
 } from '../../services/mockApi.js'
 import Button from '../../components/ui/Button.jsx'
+import ImageFileInput from '../../components/admin/ImageFileInput.jsx'
+import DropdownSelect from '../../components/ui/DropdownSelect.jsx'
 
-function FileToDataUrl({ file }) {
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader()
-    reader.onerror = reject
-    reader.onload = () => resolve(reader.result)
-    reader.readAsDataURL(file)
-  })
-}
+const statusFilterOptions = [
+  { value: '', label: 'All statuses' },
+  { value: 'Active', label: 'Active' },
+  { value: 'Inactive', label: 'Inactive' },
+]
+
+const statusFormOptions = [
+  { value: 'Active', label: 'Active' },
+  { value: 'Inactive', label: 'Inactive' },
+]
 
 export default function AdminTeam() {
   const [items, setItems] = useState([])
@@ -59,13 +63,6 @@ export default function AdminTeam() {
     return () => clearTimeout(t)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [search, status])
-
-  async function onPickImage(e) {
-    const file = e.target.files?.[0]
-    if (!file) return
-    const dataUrl = await FileToDataUrl({ file })
-    setForm((f) => ({ ...f, photo: dataUrl }))
-  }
 
   async function onSubmit(e) {
     e.preventDefault()
@@ -133,7 +130,10 @@ export default function AdminTeam() {
               </div>
               <div className="flex-1">
                 <label className="text-sm font-semibold text-gray-800">Photo</label>
-                <input type="file" accept="image/*" className="mt-2 w-full" onChange={onPickImage} />
+                <ImageFileInput
+                  key={form.member_id ?? 'new-member'}
+                  onChange={(dataUrl) => setForm((f) => ({ ...f, photo: dataUrl }))}
+                />
               </div>
             </div>
 
@@ -167,14 +167,12 @@ export default function AdminTeam() {
               </div>
               <div>
                 <label className="text-sm font-semibold text-gray-800">Status</label>
-                <select
-                  className="mt-2 w-full rounded-xl border border-gray-200 px-4 py-2 outline-none focus:ring-2 focus:ring-red-100"
+                <DropdownSelect
                   value={form.status}
-                  onChange={(e) => setForm((f) => ({ ...f, status: e.target.value }))}
-                >
-                  <option value="Active">Active</option>
-                  <option value="Inactive">Inactive</option>
-                </select>
+                  onChange={(status) => setForm((f) => ({ ...f, status }))}
+                  className="mt-2"
+                  options={statusFormOptions}
+                />
               </div>
             </div>
 
@@ -200,15 +198,12 @@ export default function AdminTeam() {
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
               />
-              <select
-                className="rounded-xl border border-gray-200 px-4 py-2 outline-none focus:ring-2 focus:ring-red-100"
+              <DropdownSelect
                 value={status}
-                onChange={(e) => setStatus(e.target.value)}
-              >
-                <option value="">All statuses</option>
-                <option value="Active">Active</option>
-                <option value="Inactive">Inactive</option>
-              </select>
+                onChange={setStatus}
+                placeholder="All statuses"
+                options={statusFilterOptions}
+              />
             </div>
           </div>
 
