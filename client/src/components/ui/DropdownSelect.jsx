@@ -31,10 +31,10 @@ export default function DropdownSelect({
 
   const selected = options.find((option) => option.value === value)
   const hasValue = value !== '' && value != null
-  const displayLabel = selected?.label ?? placeholder
+  const displayLabel = selected?.triggerLabel ?? selected?.label ?? placeholder
 
   return (
-    <div ref={rootRef} className={`relative ${className}`}>
+    <div ref={rootRef} className={`relative flex ${className}`}>
       <button
         type="button"
         disabled={disabled}
@@ -42,7 +42,7 @@ export default function DropdownSelect({
         aria-haspopup="listbox"
         aria-expanded={open}
         onClick={() => setOpen((v) => !v)}
-        className={`w-full flex items-center justify-between gap-2 rounded-xl border border-gray-200 bg-white px-4 py-2 text-sm text-left outline-none transition focus:ring-2 focus:ring-red-100 hover:bg-red-50/40 disabled:cursor-not-allowed disabled:opacity-60 ${
+        className={`w-full h-full min-h-10 flex items-center justify-between gap-2 rounded-xl border border-gray-200 bg-white px-4 py-2 text-sm text-left outline-none transition focus:ring-2 focus:ring-red-100 hover:bg-red-50/40 disabled:cursor-not-allowed disabled:opacity-60 ${
           hasValue ? 'text-gray-900' : 'text-gray-500'
         } ${triggerClassName}`}
       >
@@ -56,7 +56,7 @@ export default function DropdownSelect({
         <div className={`absolute z-30 top-full pt-2 left-0 w-full min-w-[12rem] ${menuClassName}`}>
           <div
             role="listbox"
-            className="bg-white border border-gray-200 rounded-xl shadow-lg p-2 max-h-60 overflow-y-auto"
+            className="bg-white border border-gray-200 rounded-xl shadow-lg p-2"
           >
             {options.map((option) => {
               const isSelected = option.value === value

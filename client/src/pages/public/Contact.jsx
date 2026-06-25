@@ -147,15 +147,16 @@ export default function Contact() {
 
                 <div>
                   <label className="text-sm font-semibold text-gray-800">Phone No.</label>
-                  <div className="mt-2 flex">
+                  <div className="mt-2 flex items-stretch">
                     <DropdownSelect
                       value={form.countryCode}
                       onChange={(countryCode) => setForm((f) => ({ ...f, countryCode }))}
                       options={countryCodes.map((c) => ({
                         value: c.code,
                         label: `${c.code} ${c.label}`,
+                        triggerLabel: c.code,
                       }))}
-                      className="shrink-0 max-w-[9.5rem]"
+                      className="shrink-0 w-[5.75rem]"
                       triggerClassName="rounded-l-xl rounded-r-none border-r-0 bg-gray-50 px-3"
                       menuClassName="min-w-[14rem]"
                       aria-label="Country code"
@@ -163,7 +164,7 @@ export default function Contact() {
                     <input
                       value={form.phone}
                       onChange={(e) => setForm((f) => ({ ...f, phone: e.target.value.replace(/\D/g, '') }))}
-                      className="flex-1 min-w-0 rounded-r-xl border border-gray-200 px-4 py-2 outline-none focus:ring-2 focus:ring-red-100"
+                      className="flex-1 min-w-0 h-10 rounded-r-xl border border-gray-200 px-4 text-sm outline-none focus:ring-2 focus:ring-red-100"
                       placeholder="Phone number"
                       inputMode="numeric"
                     />
