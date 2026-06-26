@@ -12,8 +12,32 @@ import express from "express";
 import cors from "cors";
 import cookieParser from "cookie-parser";
 import path from "path";
+import { RateLimiterMemory } from "rate-limiter-flexible";
+import mongoSanitize from "./middleware/mongoSanitize.js";
 
+import mongoose from "mongoose";
 import connectDB from "./config/db.js";
+
+// Rate limiters
+const generalLimiter = new RateLimiterMemory({
+  points: 100,
+  duration: 60,
+});
+
+const authLimiter = new RateLimiterMemory({
+  points: 5,
+  duration: 900,
+});
+
+// Middleware wrapper
+const rateLimitMiddleware = (limiter, message) => async (req, res, next) => {
+  try {
+    await limiter.consume(req.ip);
+    next();
+  } catch {
+    res.status(429).json({ success: false, message });
+  }
+};
 
 import serviceRoutes from "./routes/services.routes.js";
 import adminServicesRoutes from "./routes/adminServices.routes.js";
@@ -38,8 +62,17 @@ app.use(cors({ origin: process.env.CLIENT_URL, credentials: true }));
 app.use(express.json());
 // Read cookies from the browser
 app.use(cookieParser());
+// Sanitize data to prevent NoSQL injection
+app.use(mongoSanitize);
 // Serve uploaded images from the "uploads" folder when someone visits "/uploads/filename"
 app.use("/uploads", express.static(path.join(process.cwd(), "uploads")));
+
+// Apply general rate limit to all API routes
+app.use("/api/v1", rateLimitMiddleware(generalLimiter, "Too many requests, try again later"));
+
+// Strict rate limit for auth endpoints (login/register)
+app.use("/api/v1/admin/login", rateLimitMiddleware(authLimiter, "Too many attempts, try again later"));
+app.use("/api/v1/admin/register", rateLimitMiddleware(authLimiter, "Too many attempts, try again later"));
 
 // Connect each route group to its URL path
 app.use("/api/v1/services", serviceRoutes);
@@ -63,9 +96,22 @@ const startServer = async () => {
   try {
     await connectDB();
 
-    app.listen(process.env.PORT, () => {
+    const server = app.listen(process.env.PORT, () => {
       console.log(`Server is running on port ${process.env.PORT}`);
     });
+
+    // Graceful shutdown handlers
+    const shutdown = async (signal) => {
+      console.log(`${signal} received. Shutting down...`);
+      server.close(async () => {
+        await mongoose.connection.close();
+        console.log("MongoDB connection closed.");
+        process.exit(0);
+      });
+    };
+
+    process.on("SIGTERM", () => shutdown("SIGTERM"));
+    process.on("SIGINT", () => shutdown("SIGINT"));
   } catch (error) {
     console.error(`Error starting server: ${error.message}`);
     process.exit(1);
