@@ -1,5 +1,7 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faAngleLeft, faAngleRight } from '@fortawesome/free-solid-svg-icons'
 import { publicGetApprovedReviews, publicGetServices } from '../../services/mockApi.js'
 import { serviceDetailPath } from '../../data/serviceLinks.js'
 import AnimatedCounter from '../../components/ui/AnimatedCounter.jsx'
@@ -125,93 +127,157 @@ function HeroCarousel() {
         </div>
       </div>
     </section>
-  )
+  );
 }
 
 function ServicesCarousel({ services }) {
   const [index, setIndex] = useState(0)
+  const [paused, setPaused] = useState(false)
+  const touchRef = useRef(null)
 
   useEffect(() => {
-    if (services.length === 0) return
+    if (services.length === 0 || paused) return
     const t = setInterval(() => {
       setIndex((v) => (v + 1) % services.length)
     }, 3500)
     return () => clearInterval(t)
-  }, [services.length])
+  }, [services.length, paused])
 
   function go(next) {
     setIndex(next)
   }
 
-  if (services.length === 0) return null
+  const handleTouchStart = useCallback((e) => {
+    touchRef.current = e.touches[0].clientX
+  }, [])
 
-  const current = services[index]
+  const handleTouchEnd = useCallback(
+    (e) => {
+      if (touchRef.current === null) return
+      const diff = touchRef.current - e.changedTouches[0].clientX
+      const threshold = 50
+      if (Math.abs(diff) > threshold) {
+        if (diff > 0) {
+          go((index + 1) % services.length)
+        } else {
+          go((index - 1 + services.length) % services.length)
+        }
+      }
+      touchRef.current = null
+    },
+    [index, services.length],
+  )
+
+  if (services.length === 0) {
+    return (
+      <section className="py-12 bg-gray-50">
+        <div className="max-w-6xl mx-auto px-4">
+          <div className="bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden">
+            <div className="px-6 py-10 md:px-10">
+              <div className="animate-pulse space-y-4">
+                <div className="h-4 w-24 bg-gray-200 rounded" />
+                <div className="h-6 w-64 bg-gray-200 rounded" />
+                <div className="h-16 w-full max-w-xl bg-gray-200 rounded" />
+                <div className="h-10 w-28 bg-gray-200 rounded-full" />
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    );
+  }
+
+  const current = services[index];
 
   return (
     <section className="py-12 bg-gray-50">
       <div className="max-w-6xl mx-auto px-4">
         <div className="relative">
-          <div className="bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden">
-            <div className="px-6 py-10 md:px-10">
-              <div className="flex items-stretch gap-6">
-                <div className="hidden md:flex items-center justify-center">
-                  <div className="w-24 h-24 rounded-3xl bg-red-50 border border-red-100 flex items-center justify-center">
-                    <div className="text-4xl font-extrabold text-red-700">{index + 1}</div>
+          <div className="relative">
+            <div
+              className="bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden touch-pan-y"
+              onMouseEnter={() => setPaused(true)}
+              onMouseLeave={() => setPaused(false)}
+              onTouchStart={handleTouchStart}
+              onTouchEnd={handleTouchEnd}>
+              <div className="px-6 py-10 md:px-10">
+                <div className="flex items-stretch gap-6">
+                  <div className="hidden md:flex items-center justify-center">
+                    <div className="w-24 h-24 rounded-3xl flex items-center justify-center">
+                      <div className="text-8xl font-extrabold text-gray-300">
+                        {index + 1}
+                      </div>
+                    </div>
                   </div>
-                </div>
 
-                <div className="flex-1">
-                  <div className="text-sm text-gray-500">Featured Service</div>
-                  <h3 className="mt-2 text-2xl font-extrabold text-gray-900">
-                    {current.service_name.split(' ').slice(0, 2).join(' ')}{' '}
-                    <span className="text-red-700">
-                      {current.service_name.split(' ').slice(2).join(' ')}
-                    </span>
-                  </h3>
-                  <p className="mt-3 text-gray-600 leading-relaxed max-w-xl">
-                    {current.description}
-                  </p>
-                  <div className="mt-6">
-                    <Link
-                      to={serviceDetailPath(current.service_name)}
-                      className="inline-flex items-center rounded-full bg-red-600 text-white px-5 py-2.5 text-sm font-semibold hover:bg-orange-500 transition"
-                    >
-                      Read More
-                    </Link>
+                  <div className="flex-1 text-center md:text-left">
+                    <div className="text-sm text-gray-500">Featured Service</div>
+                    <h3 className="mt-2 text-2xl font-extrabold text-gray-900">
+                      {current.service_name.split(" ").slice(0, 2).join(" ")}{" "}
+                      <span className="text-red-700">
+                        {current.service_name.split(" ").slice(2).join(" ")}
+                      </span>
+                    </h3>
+                    <p className="mt-3 text-gray-600 leading-relaxed max-w-xl line-clamp-3 mx-auto md:mx-0">
+                      {current.description}
+                    </p>
+                    <div className="mt-6 flex items-center justify-center md:justify-start gap-3">
+                      <button
+                        type="button"
+                        className="md:hidden w-10 h-10 rounded-full bg-gray-100 border border-gray-200 hover:bg-gray-200 flex items-center justify-center"
+                        onClick={() =>
+                          go((index - 1 + services.length) % services.length)
+                        }
+                        aria-label="Previous service">
+                        <FontAwesomeIcon icon={faAngleLeft} className="text-sm" />
+                      </button>
+                      <Link
+                        to={serviceDetailPath(current.service_name)}
+                        className="inline-flex items-center rounded-full bg-red-600 text-white px-5 py-2.5 text-sm font-semibold hover:bg-red-500 transition">
+                        Read More
+                      </Link>
+                      <button
+                        type="button"
+                        className="md:hidden w-10 h-10 rounded-full bg-gray-100 border border-gray-200 hover:bg-gray-200 flex items-center justify-center"
+                        onClick={() => go((index + 1) % services.length)}
+                        aria-label="Next service">
+                        <FontAwesomeIcon icon={faAngleRight} className="text-sm" />
+                      </button>
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
-          </div>
 
-          <div className="hidden md:block absolute left-0 -translate-x-1/2 top-1/2 -translate-y-1/2">
-            <button
-              type="button"
-              className="w-12 h-12 rounded-full bg-white border border-gray-200 shadow-sm hover:bg-gray-50"
-              onClick={() => go((index - 1 + services.length) % services.length)}
-              aria-label="Previous service"
-            >
-              ‹
-            </button>
-          </div>
-          <div className="hidden md:block absolute right-0 -translate-x-1/2 top-1/2 -translate-y-1/2">
-            <button
-              type="button"
-              className="w-12 h-12 rounded-full bg-white border border-gray-200 shadow-sm hover:bg-gray-50"
-              onClick={() => go((index + 1) % services.length)}
-              aria-label="Next service"
-            >
-              ›
-            </button>
+            <div className="hidden md:block absolute left-0 -translate-x-1/2 top-1/2 -translate-y-1/2 z-10">
+              <button
+                type="button"
+                className="w-12 h-12 rounded-full bg-white border border-gray-200 shadow-sm hover:bg-gray-50 flex items-center justify-center"
+                onClick={() =>
+                  go((index - 1 + services.length) % services.length)
+                }
+                aria-label="Previous service">
+                <FontAwesomeIcon icon={faAngleLeft} />
+              </button>
+            </div>
+            <div className="hidden md:block absolute right-0 translate-x-1/2 top-1/2 -translate-y-1/2 z-10">
+              <button
+                type="button"
+                className="w-12 h-12 rounded-full bg-white border border-gray-200 shadow-sm hover:bg-gray-50 flex items-center justify-center"
+                onClick={() => go((index + 1) % services.length)}
+                aria-label="Next service">
+                <FontAwesomeIcon icon={faAngleRight} />
+              </button>
+            </div>
           </div>
 
           <div className="flex items-center justify-center gap-2 mt-6">
             {services.map((s, i) => (
               <button
-                key={s.service_id}
+                key={s._id}
                 type="button"
                 className={`w-2.5 h-2.5 rounded-full transition ${
-                  i === index ? 'bg-red-700' : 'bg-red-200 hover:bg-red-400'
+                  i === index ? "bg-red-700" : "bg-red-200 hover:bg-red-400"
                 }`}
                 onClick={() => go(i)}
                 aria-label={`Go to service ${i + 1}`}
