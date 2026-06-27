@@ -3,6 +3,7 @@
 @layer base {
   body {
     @apply antialiased;
+    font-family: "Poppins", sans-serif;
   }
 }
 
@@ -10,18 +11,22 @@
   from {
     transform: translateX(0);
   }
+
   to {
     transform: translateX(-50%);
   }
 }
 
 .logo-marquee {
-  animation: logo-marquee 18s linear infinite;
+  display: flex;
+  width: max-content;
+  animation: logo-marquee 20s linear infinite;
 }
+
 .logo-marquee:hover {
   animation-play-state: paused;
 }
 
 .font-cursive {
-  font-family: ui-rounded, "Comic Sans MS", "Segoe Print", cursive;
+  font-family: "Great Vibes", cursive;
 }

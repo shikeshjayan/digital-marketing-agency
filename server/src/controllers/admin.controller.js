@@ -8,21 +8,20 @@ const generateToken = (id) => {
   return jwt.sign({ id }, process.env.JWT_SECRET, { expiresIn: "7d" });
 };
 
-// Send back the token both as a cookie and in the JSON response
+// Send back the token as an httpOnly cookie
 const sendTokenResponse = (admin, statusCode, res) => {
   const token = generateToken(admin._id);
 
   res
     .status(statusCode)
     .cookie("token", token, {
-      httpOnly: true, // Browser can't read this cookie via JavaScript (more secure)
+      httpOnly: true,
       secure: process.env.NODE_ENV === "production",
       sameSite: "lax",
-      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days in milliseconds
+      maxAge: 7 * 24 * 60 * 60 * 1000,
     })
     .json({
       success: true,
-      token,
       data: {
         id: admin._id,
         name: admin.name,
@@ -34,7 +33,7 @@ const sendTokenResponse = (admin, statusCode, res) => {
 
 // Register a new admin account
 export const registerAdmin = asyncHandler(async (req, res) => {
-  const { name, email, password, role } = req.body;
+  const { name, email, password } = req.body;
 
   // Check if an admin with this email already exists
   const existingAdmin = await Admin.findOne({ email });
@@ -44,8 +43,8 @@ export const registerAdmin = asyncHandler(async (req, res) => {
       .json({ success: false, message: "Admin already exists" });
   }
 
-  // Create the admin and send back a token
-  const admin = await Admin.create({ name, email, password, role });
+  // Create the admin and send back a token (role defaults to "admin" in schema)
+  const admin = await Admin.create({ name, email, password });
   sendTokenResponse(admin, 201, res);
 });
 

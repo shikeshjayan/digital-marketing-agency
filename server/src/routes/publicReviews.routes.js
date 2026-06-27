@@ -1,23 +1,25 @@
 // Public routes - visitors can view approved reviews and submit new ones (rate-limited)
 import express from "express";
 import { getPublicReviews, submitReview } from "../controllers/review.controller.js";
-import rateLimit from "express-rate-limit";
+import { RateLimiterMemory } from "rate-limiter-flexible";
 
 const router = express.Router();
 
-// Limit to 5 reviews per 15 minutes to prevent spam
-const submitLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000,
-  max: 5,
-  message: {
-    success: false,
-    message: "Too Many Requests (Rate limit tripped to prevent spam)",
-  },
-  standardHeaders: true,
-  legacyHeaders: false,
+const submitLimiter = new RateLimiterMemory({
+  points: 5,
+  duration: 900,
 });
 
+const submitLimiterMiddleware = async (req, res, next) => {
+  try {
+    await submitLimiter.consume(req.ip);
+    next();
+  } catch {
+    res.status(429).json({ success: false, message: "Too Many Requests (Rate limit tripped to prevent spam)" });
+  }
+};
+
 router.get("/", getPublicReviews);
-router.post("/submit", submitLimiter, submitReview);
+router.post("/submit", submitLimiterMiddleware, submitReview);
 
 export default router;

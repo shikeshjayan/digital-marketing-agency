@@ -1,22 +1,24 @@
 // Public route - visitors can submit a contact enquiry (rate-limited)
 import express from "express";
 import { submitEnquiry } from "../controllers/contact.controller.js";
-import rateLimit from "express-rate-limit";
+import { RateLimiterMemory } from "rate-limiter-flexible";
 
 const router = express.Router();
 
-// Limit to 5 submissions per 15 minutes to prevent spam
-const submitLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000,
-  max: 5,
-  message: {
-    success: false,
-    message: "Too Many Requests (Rate limit triggered to stop bot spam)",
-  },
-  standardHeaders: true,
-  legacyHeaders: false,
+const submitLimiter = new RateLimiterMemory({
+  points: 5,
+  duration: 900,
 });
 
-router.post("/submit", submitLimiter, submitEnquiry);
+const submitLimiterMiddleware = async (req, res, next) => {
+  try {
+    await submitLimiter.consume(req.ip);
+    next();
+  } catch {
+    res.status(429).json({ success: false, message: "Too Many Requests (Rate limit triggered to stop bot spam)" });
+  }
+};
+
+router.post("/submit", submitLimiterMiddleware, submitEnquiry);
 
 export default router;

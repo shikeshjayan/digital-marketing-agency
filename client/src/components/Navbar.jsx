@@ -2,6 +2,8 @@ import { NavLink, Link, useLocation } from 'react-router-dom'
 import { useMemo, useState } from 'react'
 import { serviceNavLinks } from '../data/serviceLinks.js'
 import { courseNavLinks } from '../data/coursePrograms.js'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faBars, faTimes } from '@fortawesome/free-solid-svg-icons'
 
 const navItems = [
   { to: '/', label: 'Home' },
@@ -153,7 +155,7 @@ export default function Navbar() {
             onClick={() => setMobileOpen((v) => !v)}
             aria-label="Toggle menu"
           >
-            <span className="text-lg">{mobileOpen ? '×' : '≡'}</span>
+            <span className="text-lg">{mobileOpen ? <FontAwesomeIcon icon={faTimes} /> : <FontAwesomeIcon icon={faBars} />}</span>
           </button>
         </div>
       </div>
