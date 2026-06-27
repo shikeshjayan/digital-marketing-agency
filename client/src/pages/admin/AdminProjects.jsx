@@ -12,13 +12,17 @@ function FileToDataUrl({ file }) {
   });
 }
 
-const categories = ["Static", "Dynamic", "Landing Pages"];
-
 export default function AdminProjects() {
-  const { fetchAdminProjects, createProject, updateProject, deleteProject } =
-    useProjectStore();
+  const {
+    fetchAdminProjects,
+    fetchCategories,
+    createProject,
+    updateProject,
+    deleteProject,
+  } = useProjectStore();
 
   const [items, setItems] = useState([]);
+  const [categories, setCategories] = useState([]);
   const [search, setSearch] = useState("");
   const [category, setCategory] = useState("");
   const [status, setStatus] = useState("");
@@ -62,7 +66,10 @@ export default function AdminProjects() {
   };
 
   useEffect(() => {
-    const t = setTimeout(() => load(), 0);
+    const t = setTimeout(() => {
+      load();
+      fetchCategories().then((cats) => setCategories(cats));
+    }, 0);
     return () => clearTimeout(t);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -232,6 +239,7 @@ export default function AdminProjects() {
                 onChange={(e) =>
                   setForm((f) => ({ ...f, project_name: e.target.value }))
                 }
+                placeholder="e.g. E-commerce Website"
               />
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -239,15 +247,13 @@ export default function AdminProjects() {
                 <label className="text-sm font-semibold text-gray-800">
                   Category
                 </label>
-                <Select
+                <input
+                  className="mt-2 w-full rounded border border-gray-200 px-4 py-2 outline-none focus:ring-2 focus:ring-red-100"
                   value={form.category}
-                  onChange={(val) => setForm((f) => ({ ...f, category: val }))}
-                  className="mt-2"
-                  options={[
-                    { value: "Static", label: "Static" },
-                    { value: "Dynamic", label: "Dynamic" },
-                    { value: "Landing Pages", label: "Landing Pages" },
-                  ]}
+                  onChange={(e) =>
+                    setForm((f) => ({ ...f, category: e.target.value }))
+                  }
+                  placeholder="e.g. Static, Dynamic"
                 />
               </div>
               <div>
@@ -275,6 +281,7 @@ export default function AdminProjects() {
                 onChange={(e) =>
                   setForm((f) => ({ ...f, short_description: e.target.value }))
                 }
+                placeholder="Brief summary of the project"
               />
             </div>
             <div>
@@ -288,6 +295,7 @@ export default function AdminProjects() {
                 onChange={(e) =>
                   setForm((f) => ({ ...f, description: e.target.value }))
                 }
+                placeholder="Detailed description of the project"
               />
             </div>
             <div>
@@ -379,7 +387,7 @@ export default function AdminProjects() {
               <button
                 type="submit"
                 disabled={submitting}
-                className="flex-1 rounded bg-red-600 text-white py-2.5 font-extrabold hover:bg-orange-500 transition disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer">
+                className="flex-1 rounded bg-red-600 text-white py-2.5 font-extrabold hover:bg-red-500 transition disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer">
                 {submitting
                   ? "Saving..."
                   : form.project_id
@@ -422,10 +430,10 @@ export default function AdminProjects() {
                       </span>
                     </td>
                     <td className="py-3 pr-3">
-                      <div className="font-bold text-gray-900">
+                      <div className="font-bold text-gray-900 truncate max-w-[200px]">
                         {p.project_name}
                       </div>
-                      <div className="text-gray-500 text-xs sm:text-sm">
+                      <div className="text-gray-500 text-xs sm:text-sm truncate max-w-[200px]">
                         {p.short_description}
                       </div>
                     </td>

@@ -354,7 +354,7 @@ export default function AdminDashboard() {
 
   return (
     <div>
-      <div className="flex items-start justify-between gap-4 flex-wrap">
+      <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4">
         <div>
           <h2 className="text-xl font-extrabold text-gray-900">
             {greeting()}, {user?.name ?? "Admin"} 👋

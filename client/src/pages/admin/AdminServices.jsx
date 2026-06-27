@@ -203,6 +203,7 @@ export default function AdminServices() {
                 onChange={(e) =>
                   setForm((f) => ({ ...f, service_name: e.target.value }))
                 }
+                placeholder="e.g. SEO Optimization"
               />
             </div>
             <div>
@@ -215,6 +216,7 @@ export default function AdminServices() {
                 onChange={(e) =>
                   setForm((f) => ({ ...f, short_description: e.target.value }))
                 }
+                placeholder="Brief summary of the service"
               />
             </div>
             <div>
@@ -228,6 +230,7 @@ export default function AdminServices() {
                 onChange={(e) =>
                   setForm((f) => ({ ...f, description: e.target.value }))
                 }
+                placeholder="Detailed description of the service"
               />
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -331,10 +334,10 @@ export default function AdminServices() {
                       </span>
                     </td>
                     <td className="py-3 pr-3">
-                      <div className="font-bold text-gray-900">
+                      <div className="font-bold text-gray-900 truncate max-w-[200px]">
                         {s.service_name}
                       </div>
-                      <div className="text-gray-500 text-xs sm:text-sm">{s.short_description}</div>
+                      <div className="text-gray-500 text-xs sm:text-sm truncate max-w-[200px]">{s.short_description}</div>
                     </td>
                     <td className="py-3 pr-3">
                       <span
