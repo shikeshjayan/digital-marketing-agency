@@ -25,12 +25,15 @@ const useCourseStore = create((set) => ({
     set({ loading: true, error: null });
     try {
       const { data } = await apiService.get("/admin/courses", { params });
-      set({ adminCourses: data.data ?? [], loading: false });
+      const courses = data.data ?? [];
+      set({ adminCourses: courses, loading: false });
+      return courses;
     } catch (error) {
       set({
         error: error.response?.data?.message || error.message,
         loading: false,
       });
+      throw error;
     }
   },
 

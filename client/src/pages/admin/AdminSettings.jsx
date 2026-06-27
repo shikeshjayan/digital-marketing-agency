@@ -1,44 +1,38 @@
 import { useEffect, useState } from 'react'
-import { adminGetSettings, adminUpdateSettings } from '../../services/mockApi.js'
-
-function FileToDataUrl({ file }) {
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader()
-    reader.onerror = reject
-    reader.onload = () => resolve(reader.result)
-    reader.readAsDataURL(file)
-  })
-}
+import useSettingsStore from '../../store/settingsStore.js'
 
 export default function AdminSettings() {
-  const [settings, setSettings] = useState(null)
+  const { profile, loading, fetchProfile, updateProfile } = useSettingsStore()
   const [form, setForm] = useState({
-    username: '',
-    profile_image: '',
-    current_password: '',
-    new_password: '',
+    name: '',
+    photo: '',
+    currentPassword: '',
+    newPassword: '',
   })
+  const [imageFile, setImageFile] = useState(null)
+  const [imagePreview, setImagePreview] = useState('')
   const [error, setError] = useState('')
   const [toast, setToast] = useState('')
   const [saving, setSaving] = useState(false)
 
   useEffect(() => {
-    adminGetSettings().then((res) => {
-      const data = res.data ?? {}
-      setSettings(data)
-      setForm((f) => ({
-        ...f,
-        username: data.username ?? '',
-        profile_image: data.profile_image ?? '',
-      }))
-    })
-  }, [])
+    fetchProfile().then((data) => {
+      if (data) {
+        setForm((f) => ({
+          ...f,
+          name: data.name ?? '',
+          photo: data.photo ?? '',
+        }))
+        setImagePreview(data.photo ?? '')
+      }
+    }).catch(() => {})
+  }, [fetchProfile])
 
-  async function onPickImage(e) {
+  function onPickImage(e) {
     const file = e.target.files?.[0]
     if (!file) return
-    const dataUrl = await FileToDataUrl({ file })
-    setForm((f) => ({ ...f, profile_image: dataUrl }))
+    setImageFile(file)
+    setImagePreview(URL.createObjectURL(file))
   }
 
   async function onSubmit(e) {
@@ -47,23 +41,23 @@ export default function AdminSettings() {
     setToast('')
     setSaving(true)
     try {
-      const res = await adminUpdateSettings({
-        username: form.username,
-        profile_image: form.profile_image,
-        current_password: form.current_password,
-        new_password: form.new_password,
-      })
-      if (!res.success) {
-        setError(res.error?.message ?? 'Save failed.')
-        return
+      const formData = new FormData()
+      formData.append('name', form.name)
+      formData.append('currentPassword', form.currentPassword)
+      formData.append('newPassword', form.newPassword)
+      if (imageFile) {
+        formData.append('photo', imageFile)
       }
+      await updateProfile(formData)
       setToast('Profile updated successfully.')
+    } catch (err) {
+      setError(err.response?.data?.message ?? err.message ?? 'Save failed.')
     } finally {
       setSaving(false)
     }
   }
 
-  const preview = form.profile_image || settings?.profile_image
+  const preview = imagePreview || profile?.photo
 
   return (
     <div>
@@ -94,8 +88,8 @@ export default function AdminSettings() {
                 <label className="text-sm font-semibold text-gray-800">Username</label>
                 <input
                   className="mt-2 w-full rounded-xl border border-gray-200 px-4 py-2 outline-none focus:ring-2 focus:ring-red-100"
-                  value={form.username}
-                  onChange={(e) => setForm((f) => ({ ...f, username: e.target.value }))}
+                  value={form.name}
+                  onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))}
                 />
               </div>
 
@@ -104,8 +98,8 @@ export default function AdminSettings() {
                 <input
                   type="password"
                   className="mt-2 w-full rounded-xl border border-gray-200 px-4 py-2 outline-none focus:ring-2 focus:ring-red-100"
-                  value={form.current_password}
-                  onChange={(e) => setForm((f) => ({ ...f, current_password: e.target.value }))}
+                  value={form.currentPassword}
+                  onChange={(e) => setForm((f) => ({ ...f, currentPassword: e.target.value }))}
                 />
               </div>
 
@@ -114,8 +108,8 @@ export default function AdminSettings() {
                 <input
                   type="password"
                   className="mt-2 w-full rounded-xl border border-gray-200 px-4 py-2 outline-none focus:ring-2 focus:ring-red-100"
-                  value={form.new_password}
-                  onChange={(e) => setForm((f) => ({ ...f, new_password: e.target.value }))}
+                  value={form.newPassword}
+                  onChange={(e) => setForm((f) => ({ ...f, newPassword: e.target.value }))}
                 />
               </div>
 
@@ -125,7 +119,7 @@ export default function AdminSettings() {
               <div className="pt-2">
                 <button
                   type="submit"
-                  disabled={saving}
+                  disabled={saving || loading}
                   className="w-full rounded-xl bg-red-600 text-white py-3 font-extrabold hover:bg-orange-500 transition disabled:opacity-60"
                 >
                   {saving ? 'Saving...' : 'Save Changes'}
@@ -138,5 +132,3 @@ export default function AdminSettings() {
     </div>
   )
 }
-
-

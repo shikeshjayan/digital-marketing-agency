@@ -1,10 +1,5 @@
 import { useEffect, useMemo, useState } from 'react'
-import {
-  adminCreateTeamMember,
-  adminDeleteTeamMember,
-  adminGetTeam,
-  adminUpdateTeamMember,
-} from '../../services/mockApi.js'
+import useTeamStore from '../../store/teamStore.js'
 import Button from '../../components/ui/Button.jsx'
 
 function FileToDataUrl({ file }) {
@@ -22,9 +17,11 @@ export default function AdminTeam() {
   const [status, setStatus] = useState('')
   const [loading, setLoading] = useState(false)
 
+  const { fetchAdminTeam, createMember, updateMember, deleteMember } = useTeamStore()
+
   const emptyForm = useMemo(
     () => ({
-      member_id: null,
+      _id: null,
       photo: '',
       name: '',
       designation: '',
@@ -41,8 +38,8 @@ export default function AdminTeam() {
   const load = async () => {
     setLoading(true)
     try {
-      const res = await adminGetTeam({ search: search || undefined, status: status || undefined, page: 1, limit: 50 })
-      setItems(res.data ?? [])
+      const res = await fetchAdminTeam({ search: search || undefined, status: status || undefined, page: 1, limit: 50 })
+      setItems(res ?? [])
     } finally {
       setLoading(false)
     }
@@ -77,44 +74,38 @@ export default function AdminTeam() {
       return
     }
 
-    const payload = {
-      photo: form.photo,
-      name: form.name.trim(),
-      designation: form.designation.trim(),
-      display_order: form.display_order,
-      status: form.status,
-    }
+    const payload = new FormData()
+    if (form.photo) payload.append('photo', form.photo)
+    payload.append('name', form.name.trim())
+    payload.append('designation', form.designation.trim())
+    payload.append('display_order', form.display_order)
+    payload.append('status', form.status)
 
-    if (form.member_id) {
-      const res = await adminUpdateTeamMember(form.member_id, payload)
-      if (!res.success) {
-        setError(res.error?.message ?? 'Update failed.')
-        return
+    try {
+      if (form._id) {
+        await updateMember(form._id, payload)
+        setToast('Team member updated successfully.')
+      } else {
+        await createMember(payload)
+        setToast('Team member added successfully.')
       }
-      setToast('Team member updated successfully.')
-    } else {
-      const res = await adminCreateTeamMember(payload)
-      if (!res.success) {
-        setError(res.error?.message ?? 'Create failed.')
-        return
-      }
-      setToast('Team member added successfully.')
+      setForm(emptyForm)
+      await load()
+    } catch (err) {
+      setError(err.message ?? 'Operation failed.')
     }
-
-    setForm(emptyForm)
-    await load()
   }
 
   async function onDelete(id) {
     const ok = window.confirm('Delete this team member?')
     if (!ok) return
-    const res = await adminDeleteTeamMember(id)
-    if (!res.success) {
-      setError(res.error?.message ?? 'Delete failed.')
-      return
+    try {
+      await deleteMember(id)
+      setToast('Team member deleted successfully.')
+      await load()
+    } catch (err) {
+      setError(err.message ?? 'Delete failed.')
     }
-    setToast('Team member deleted successfully.')
-    await load()
   }
 
   return (
@@ -124,7 +115,7 @@ export default function AdminTeam() {
 
       <div className="mt-6 grid grid-cols-1 lg:grid-cols-5 gap-6">
         <div className="lg:col-span-2 bg-white border border-gray-200 rounded-3xl p-5 shadow-sm">
-          <div className="font-extrabold text-gray-900">{form.member_id ? 'Edit Member' : 'Add New Member'}</div>
+          <div className="font-extrabold text-gray-900">{form._id ? 'Edit Member' : 'Add New Member'}</div>
 
           <form onSubmit={onSubmit} className="mt-4 space-y-4">
             <div className="flex items-center gap-4">
@@ -182,7 +173,7 @@ export default function AdminTeam() {
             {toast && <div className="text-sm text-green-600">{toast}</div>}
 
             <button type="submit" className="w-full rounded-xl bg-red-600 text-white py-3 font-extrabold hover:bg-orange-500 transition">
-              {form.member_id ? 'Update Member' : 'Create Member'}
+              {form._id ? 'Update Member' : 'Create Member'}
             </button>
           </form>
         </div>
@@ -225,8 +216,8 @@ export default function AdminTeam() {
               </thead>
               <tbody>
                 {items.map((m) => (
-                  <tr key={m.member_id} className="border-t border-gray-100 align-top">
-                    <td className="py-3 pr-3 text-gray-700">{m.member_id}</td>
+                  <tr key={m._id} className="border-t border-gray-100 align-top">
+                    <td className="py-3 pr-3 text-gray-700">{m._id}</td>
                     <td className="py-3 pr-3">
                       <div className="flex items-center gap-3">
                         <div className="w-10 h-10 rounded-xl bg-gray-100 border border-gray-200 overflow-hidden flex items-center justify-center">
@@ -258,7 +249,7 @@ export default function AdminTeam() {
                           className="px-3 py-2"
                           onClick={() =>
                             setForm({
-                              member_id: m.member_id,
+                              _id: m._id,
                               photo: m.photo ?? '',
                               name: m.name,
                               designation: m.designation,
@@ -273,7 +264,7 @@ export default function AdminTeam() {
                           type="button"
                           variant="danger"
                           className="px-3 py-2"
-                          onClick={() => onDelete(m.member_id)}
+                          onClick={() => onDelete(m._id)}
                         >
                           Delete
                         </Button>
@@ -296,5 +287,3 @@ export default function AdminTeam() {
     </div>
   )
 }
-
-

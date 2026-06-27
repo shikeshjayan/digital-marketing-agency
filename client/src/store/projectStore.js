@@ -26,7 +26,9 @@ const useProjectStore = create((set) => ({
     set({ loading: true, error: null });
     try {
       const { data } = await apiService.get("/admin/projects", { params });
-      set({ adminProjects: data.data ?? [], loading: false });
+      const projects = data.data ?? [];
+      set({ adminProjects: projects, loading: false });
+      return projects;
     } catch (error) {
       set({
         error: error.response?.data?.message || error.message,

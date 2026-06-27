@@ -39,12 +39,15 @@ const useReviewStore = create((set) => ({
     set({ loading: true, error: null });
     try {
       const { data } = await apiService.get("/admin/reviews", { params });
-      set({ adminReviews: data.data ?? [], loading: false });
+      const reviews = data.data ?? [];
+      set({ adminReviews: reviews, loading: false });
+      return { reviews, counters: data.counters ?? null };
     } catch (error) {
       set({
         error: error.response?.data?.message || error.message,
         loading: false,
       });
+      throw error;
     }
   },
 

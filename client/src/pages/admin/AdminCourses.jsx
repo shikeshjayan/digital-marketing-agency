@@ -1,10 +1,5 @@
-import { useEffect, useMemo, useState } from 'react'
-import {
-  adminCreateCourse,
-  adminDeleteCourse,
-  adminGetCourses,
-  adminUpdateCourse,
-} from '../../services/mockApi.js'
+import { useCallback, useEffect, useMemo, useState } from 'react'
+import useCourseStore from '../../store/courseStore'
 import Button from '../../components/ui/Button.jsx'
 
 export default function AdminCourses() {
@@ -12,6 +7,13 @@ export default function AdminCourses() {
   const [search, setSearch] = useState('')
   const [status, setStatus] = useState('')
   const [loading, setLoading] = useState(false)
+  const [error, setError] = useState('')
+  const [toast, setToast] = useState('')
+
+  const fetchAdminCourses = useCourseStore((s) => s.fetchAdminCourses)
+  const createCourse = useCourseStore((s) => s.createCourse)
+  const updateCourse = useCourseStore((s) => s.updateCourse)
+  const deleteCourse = useCourseStore((s) => s.deleteCourse)
 
   const emptyForm = useMemo(
     () => ({
@@ -24,35 +26,28 @@ export default function AdminCourses() {
   )
 
   const [form, setForm] = useState(emptyForm)
-  const [error, setError] = useState('')
-  const [toast, setToast] = useState('')
 
-  const load = async () => {
+  const load = useCallback(async () => {
     setLoading(true)
+    setError('')
     try {
-      const res = await adminGetCourses({
+      const data = await fetchAdminCourses({
         search: search || undefined,
         status: status || undefined,
         page: 1,
         limit: 50,
       })
-      setItems(res.data ?? [])
+      setItems(data)
+    } catch (err) {
+      setError(err.response?.data?.message || err.message || 'Failed to load')
     } finally {
       setLoading(false)
     }
-  }
+  }, [search, status, fetchAdminCourses])
 
   useEffect(() => {
-    const t = setTimeout(() => load(), 0)
-    return () => clearTimeout(t)
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
-
-  useEffect(() => {
-    const t = setTimeout(() => load(), 250)
-    return () => clearTimeout(t)
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [search, status])
+    load()
+  }, [load])
 
   async function onSubmit(e) {
     e.preventDefault()
@@ -70,36 +65,31 @@ export default function AdminCourses() {
       status: form.status,
     }
 
-    if (form.course_id) {
-      const res = await adminUpdateCourse(form.course_id, payload)
-      if (!res.success) {
-        setError(res.error?.message ?? 'Update failed.')
-        return
+    try {
+      if (form.course_id) {
+        await updateCourse(form.course_id, payload)
+        setToast('Course updated successfully.')
+      } else {
+        await createCourse(payload)
+        setToast('Course created successfully.')
       }
-      setToast('Course updated successfully.')
-    } else {
-      const res = await adminCreateCourse(payload)
-      if (!res.success) {
-        setError(res.error?.message ?? 'Create failed.')
-        return
-      }
-      setToast('Course created successfully.')
+      setForm(emptyForm)
+      await load()
+    } catch (err) {
+      setError(err.response?.data?.message || err.message || 'Operation failed')
     }
-
-    setForm(emptyForm)
-    await load()
   }
 
   async function onDelete(id) {
     const ok = window.confirm('Delete this course?')
     if (!ok) return
-    const res = await adminDeleteCourse(id)
-    if (!res.success) {
-      setError(res.error?.message ?? 'Delete failed.')
-      return
+    try {
+      await deleteCourse(id)
+      setToast('Course deleted successfully.')
+      await load()
+    } catch (err) {
+      setError(err.response?.data?.message || err.message || 'Delete failed')
     }
-    setToast('Course deleted successfully.')
-    await load()
   }
 
   return (
@@ -144,7 +134,7 @@ export default function AdminCourses() {
             {error && <div className="text-sm text-red-600">{error}</div>}
             {toast && <div className="text-sm text-green-600">{toast}</div>}
 
-            <button type="submit" className="w-full rounded-xl bg-red-600 text-white py-3 font-extrabold hover:bg-orange-500 transition">
+            <button type="submit" className="w-full rounded-xl bg-red-600 text-white py-3 font-extrabold hover:bg-orange-500 transition cursor-pointer">
               {form.course_id ? 'Update Course' : 'Create Course'}
             </button>
           </form>
@@ -187,8 +177,8 @@ export default function AdminCourses() {
               </thead>
               <tbody>
                 {items.map((c) => (
-                  <tr key={c.course_id} className="border-t border-gray-100 align-top">
-                    <td className="py-3 pr-3 text-gray-700">{c.course_id}</td>
+                  <tr key={c._id} className="border-t border-gray-100 align-top">
+                    <td className="py-3 pr-3 text-gray-700">{c._id}</td>
                     <td className="py-3 pr-3">
                       <div className="font-bold text-gray-900">{c.course_name}</div>
                       <div className="text-gray-500">{c.description}</div>
@@ -212,7 +202,7 @@ export default function AdminCourses() {
                           className="px-3 py-2"
                           onClick={() =>
                             setForm({
-                              course_id: c.course_id,
+                              course_id: c._id,
                               course_name: c.course_name,
                               description: c.description,
                               status: c.status,
@@ -225,7 +215,7 @@ export default function AdminCourses() {
                           type="button"
                           variant="danger"
                           className="px-3 py-2"
-                          onClick={() => onDelete(c.course_id)}
+                          onClick={() => onDelete(c._id)}
                         >
                           Delete
                         </Button>
@@ -248,5 +238,3 @@ export default function AdminCourses() {
     </div>
   )
 }
-
-

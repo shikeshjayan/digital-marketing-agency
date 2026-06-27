@@ -1,9 +1,5 @@
 import { useEffect, useState } from 'react'
-import {
-  adminDeleteEnquiry,
-  adminGetContactEnquiries,
-  adminUpdateEnquiryStatus,
-} from '../../services/mockApi.js'
+import useContactStore from '../../store/contactStore.js'
 import Button from '../../components/ui/Button.jsx'
 
 function statusChip(status) {
@@ -25,18 +21,20 @@ export default function AdminMessages() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
 
+  const { fetchAdminEnquiries, updateEnquiryStatus, deleteEnquiry } = useContactStore()
+
   const load = async () => {
     setLoading(true)
     setError('')
     try {
-      const res = await adminGetContactEnquiries({
+      const res = await fetchAdminEnquiries({
         search: search || undefined,
         status: status || undefined,
         date: date || undefined,
         page: 1,
         limit: 50,
       })
-      setItems(res.data ?? [])
+      setItems(res.enquiries ?? [])
       setCounters(res.counters ?? null)
     } catch (e) {
       setError(e?.message ?? 'Failed to load.')
@@ -58,23 +56,23 @@ export default function AdminMessages() {
   }, [search, status, date])
 
   async function transition(id, nextStatus) {
-    const res = await adminUpdateEnquiryStatus(id, { status: nextStatus })
-    if (!res.success) {
-      alert(res.error?.message ?? 'Update failed.')
-      return
+    try {
+      await updateEnquiryStatus(id, nextStatus)
+      await load()
+    } catch (e) {
+      alert(e?.message ?? 'Update failed.')
     }
-    await load()
   }
 
   async function onDelete(id) {
     const ok = window.confirm('Delete this enquiry?')
     if (!ok) return
-    const res = await adminDeleteEnquiry(id)
-    if (!res.success) {
-      alert(res.error?.message ?? 'Delete failed.')
-      return
+    try {
+      await deleteEnquiry(id)
+      await load()
+    } catch (e) {
+      alert(e?.message ?? 'Delete failed.')
     }
-    await load()
   }
 
   return (

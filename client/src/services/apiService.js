@@ -7,12 +7,12 @@ const apiService = axios.create({
   withCredentials: true,
 });
 
-// On 401, redirect to login page
+// On 401, redirect to login page (skip for login/register requests)
 apiService.interceptors.response.use(
   (res) => res,
   (err) => {
-    if (err.response?.status === 401) {
-      window.location.href = "/login";
+    if (err.response?.status === 401 && !err.config?.url?.includes('/admin/login') && !err.config?.url?.includes('/admin/register')) {
+      window.location.href = "/admin/login";
     }
     return Promise.reject(err);
   },
