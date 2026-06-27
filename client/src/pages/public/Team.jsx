@@ -3,31 +3,44 @@ import HeroSplit from '../../components/public/HeroSplit.jsx'
 import useTeamStore from '../../store/teamStore.js'
 
 function TeamCard({ member }) {
+  const getInitials = (name) => {
+    return name
+      .split(' ')
+      .map((part) => part[0])
+      .join('')
+      .toUpperCase()
+      .slice(0, 2);
+  };
+
+  const hasPhoto = member.photo && member.photo.trim() !== '';
+
   return (
-    <div className="group rounded-3xl border border-gray-200 bg-white hover:bg-gray-50 p-6 transition duration-300 shadow-sm hover:shadow-md cursor-pointer">
-      <div className="flex flex-col gap-4">
-        {/* Image Container matching card proportions */}
-        <div className="w-full aspect-[4/3] rounded-2xl bg-gray-100 border border-gray-200 overflow-hidden flex items-center justify-center">
-          <img 
-            src={member.photo || 'https://placehold.co/600x400?text=Team+Member'} 
-            alt={member.name} 
+    <div className="flex flex-col bg-white border border-gray-100 rounded-xl shadow-sm h-full overflow-hidden">
+      <div className="h-40 overflow-hidden flex items-center justify-center bg-gray-100">
+        {hasPhoto ? (
+          <img
+            src={member.photo}
+            alt={member.name}
             loading="lazy"
-            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+            decoding="async"
+            className="w-full h-full object-cover"
             onError={(e) => {
-              e.target.src = 'https://placehold.co/600x400?text=Team+Member'
+              e.target.style.display = 'none';
             }}
           />
-        </div>
-        
-        {/* Profile Details matching uniform text styling */}
-        <div className="text-center mt-1">
-          <div className="text-base font-extrabold text-gray-900 tracking-tight">
-            {member.name}
+        ) : (
+          <div className="w-20 h-20 flex items-center justify-center text-red-600 text-4xl font-bold">
+            {getInitials(member.name)}
           </div>
-          <div className="text-xs font-semibold text-red-700 uppercase tracking-wider mt-1">
-            {member.designation}
-          </div>
-        </div>
+        )}
+      </div>
+      <div className="flex flex-col items-center text-center p-5 flex-1 gap-6">
+        <h3 className="text-lg font-extrabold text-gray-900">
+          {member.name}
+        </h3>
+        <p className="text-sm text-gray-600 leading-relaxed line-clamp-3">
+          {member.designation}
+        </p>
       </div>
     </div>
   )
@@ -50,7 +63,7 @@ export default function Team() {
 
       <section className="py-12 bg-gray-50">
         <div className="max-w-6xl mx-auto px-4">
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 auto-rows-fr">
             {sorted.map((m) => (
               <TeamCard key={m._id || m.member_id} member={m} />
             ))}
