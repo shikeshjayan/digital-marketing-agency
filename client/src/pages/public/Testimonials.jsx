@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import HeroSplit from '../../components/public/HeroSplit.jsx'
-import { publicGetApprovedReviews, publicSubmitReview } from '../../services/mockApi.js'
+import useReviewStore from '../../store/reviewStore.js'
 
 function StarPicker({ value, onChange }) {
   return (
@@ -12,7 +12,8 @@ function StarPicker({ value, onChange }) {
           <button
             key={v}
             type="button"
-            className={`text-2xl leading-none ${active ? 'text-yellow-500' : 'text-gray-300'} hover:text-yellow-400`}
+            className="text-2xl leading-none text-gray-300 hover:text-yellow-400 transition cursor-pointer"
+            style={{ color: active ? '#f59e0b' : '#d1d5db' }}
             onClick={() => onChange(v)}
             aria-label={`Set rating to ${v}`}
           >
@@ -25,42 +26,65 @@ function StarPicker({ value, onChange }) {
 }
 
 export default function Testimonials() {
-  const [reviews, setReviews] = useState([])
+  const store = useReviewStore()
+  
+  const reviews = store.reviews ?? []
+  const storeError = store.error ?? null
+  const storeSuccess = store.success ?? false
+  const submitReview = store.submitReview
+  
+  // Dynamic fetch detector based on your reviewStore configurations
+  const fetchMethod = store.fetchApprovedReviews || store.fetchReviews || (() => {})
+
+  // Separate form states from global fetching states
+  const [isSubmitting, setIsSubmitting] = useState(false)
   const [form, setForm] = useState({
     name: '',
     location: '',
     rating: 5,
     review_text: '',
   })
-  const [error, setError] = useState('')
-  const [success, setSuccess] = useState('')
+  const [localError, setLocalError] = useState('')
 
+  // Clean state when entering or reloading this page view
   useEffect(() => {
-    publicGetApprovedReviews().then((res) => setReviews(res.data ?? []))
-  }, [])
+    if (store.reset) {
+      store.reset()
+    } else {
+      useReviewStore.setState({ loading: false, error: null, success: false })
+    }
+    fetchMethod()
+  }, [fetchMethod])
 
   async function onSubmit(e) {
     e.preventDefault()
-    setError('')
-    setSuccess('')
+    setLocalError('')
+    setIsSubmitting(true) // Triggers local button state only on form submission click
+    if (store.reset) store.reset()
 
     if (!form.name.trim() || !form.location.trim() || !form.review_text.trim()) {
-      setError('Please fill the form completely.')
+      setLocalError('Please fill the form completely.')
+      setIsSubmitting(false)
       return
     }
-    const res = await publicSubmitReview(form)
-    if (!res.success) {
-      setError(res.error?.message ?? 'Failed to submit.')
-      return
+
+    if (submitReview) {
+      await submitReview({
+        name: form.name.trim(),
+        location: form.location.trim(),
+        rating: form.rating,
+        review_text: form.review_text.trim(),
+      })
     }
-    setSuccess('Thanks! Your review was submitted and is awaiting moderation.')
-    setForm({ name: '', location: '', rating: 5, review_text: '' })
-    // Approved list stays the same until admin approves; we still refresh to keep UI fresh.
-    const latest = await publicGetApprovedReviews()
-    setReviews(latest.data ?? [])
+    setIsSubmitting(false) // Turns off loading text safely right after submission finishes
   }
 
-  const approvedCount = reviews.length
+  // Clear form fields cleanly upon verified store submission success
+  useEffect(() => {
+    if (storeSuccess) {
+      setForm({ name: '', location: '', rating: 5, review_text: '' })
+    }
+  }, [storeSuccess])
 
   return (
     <div>
@@ -80,16 +104,16 @@ export default function Testimonials() {
 
               <div className="mt-6 space-y-2 text-sm text-gray-200">
                 <div className="flex items-center gap-3">
-                  <span className="w-8 h-8 rounded-xl bg-white/10 flex items-center justify-center">☎</span>
-                  <a className="hover:text-white" href="tel:+91 8891212323">
+                  <span className="w-10 h-8 rounded-xl bg-white/10 flex items-center justify-center text-xs text-gray-300 font-semibold">Ph</span>
+                  <span className="text-gray-200">
                     +91 8891212323
-                  </a>
+                  </span>
                 </div>
                 <div className="flex items-center gap-3">
-                  <span className="w-8 h-8 rounded-xl bg-white/10 flex items-center justify-center">✉</span>
-                  <a className="hover:text-white" href="mailto:info@s.com">
+                  <span className="w-10 h-8 rounded-xl bg-white/10 flex items-center justify-center text-xs text-gray-300 font-semibold">Mail</span>
+                  <span className="text-gray-200">
                     info@s.com
-                  </a>
+                  </span>
                 </div>
               </div>
             </div>
@@ -100,7 +124,6 @@ export default function Testimonials() {
                   <div className="text-sm font-semibold text-red-700">Share Your Experience!</div>
                   <div className="mt-1 text-2xl font-extrabold text-gray-900">Send Review</div>
                 </div>
-                <div className="text-xs text-gray-500">Approved: {approvedCount}</div>
               </div>
 
               <form onSubmit={onSubmit} className="mt-6 space-y-4">
@@ -111,6 +134,7 @@ export default function Testimonials() {
                     onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))}
                     className="mt-2 w-full rounded-xl border border-gray-200 px-4 py-2 outline-none focus:ring-2 focus:ring-red-100"
                     placeholder="Full Name"
+                    disabled={isSubmitting}
                   />
                 </div>
 
@@ -121,6 +145,7 @@ export default function Testimonials() {
                     onChange={(e) => setForm((f) => ({ ...f, location: e.target.value }))}
                     className="mt-2 w-full rounded-xl border border-gray-200 px-4 py-2 outline-none focus:ring-2 focus:ring-red-100"
                     placeholder="City, Country"
+                    disabled={isSubmitting}
                   />
                 </div>
 
@@ -139,52 +164,67 @@ export default function Testimonials() {
                     rows={4}
                     className="mt-2 w-full rounded-xl border border-gray-200 px-4 py-2 outline-none focus:ring-2 focus:ring-red-100 resize-none"
                     placeholder="Write your review..."
+                    disabled={isSubmitting}
                   />
                 </div>
 
-                {error && <div className="text-sm text-red-600">{error}</div>}
-                {success && <div className="text-sm text-green-600">{success}</div>}
+                {(localError || storeError) && <div className="text-sm text-red-600">{localError || storeError}</div>}
+                {storeSuccess && <div className="text-sm text-green-600">Thanks! Your review has been submitted successfully for approval.</div>}
 
                 <button
                   type="submit"
-                  className="w-full rounded-xl bg-red-600 text-white py-3 font-extrabold hover:bg-orange-500 transition"
+                  disabled={isSubmitting}
+                  className="w-full rounded-xl bg-red-600 text-white py-3 font-extrabold hover:bg-red-500 transition cursor-pointer disabled:opacity-50"
                 >
-                  Send Reviews
+                  {isSubmitting ? 'Submitting...' : 'Submit'}
                 </button>
               </form>
             </div>
           </div>
 
-          <div className="mt-10">
+          <div className="mt-14">
             <div className="text-center">
-              <div className="text-sm font-semibold text-red-700">Approved Reviews</div>
-              <div className="mt-2 text-2xl font-extrabold text-gray-900">What learners say</div>
+              <div className="text-2xl font-extrabold text-gray-900">Reviews</div>
             </div>
 
             <div className="mt-7 grid grid-cols-1 md:grid-cols-2 gap-6">
               {reviews.length ? (
-                reviews.slice(0, 4).map((r) => (
-                  <div key={r.review_id} className="bg-white border border-gray-200 rounded-3xl p-6 shadow-sm">
-                    <div className="flex items-center gap-3">
-                      <div className="w-12 h-12 rounded-full bg-gray-100 border border-gray-200 flex items-center justify-center">
-                        👤
-                      </div>
+                reviews.slice(0, 4).map((r) => {
+                  const initial = r.name ? r.name.trim().charAt(0).toUpperCase() : 'U';
+                  const safeRating = Math.min(5, Math.max(1, Math.round(r.rating || 5)));
+                  
+                  return (
+                    <div key={r._id || r.review_id} className="group rounded-3xl border border-gray-200 bg-white hover:bg-gray-50 p-6 transition duration-300 shadow-sm hover:shadow-md cursor-pointer flex flex-col justify-between">
                       <div>
-                        <div className="font-extrabold text-gray-900">{r.name}</div>
-                        <div className="text-sm text-gray-500">{r.location}</div>
+                        <div className="flex items-center gap-3">
+                          <div className="w-12 h-12 rounded-full bg-red-50 border border-red-100 text-red-700 font-extrabold flex items-center justify-center text-sm font-mono">
+                            {initial}
+                          </div>
+                          <div>
+                            <div className="font-extrabold text-gray-900 tracking-tight">{r.name}</div>
+                            <div className="text-xs font-semibold text-gray-400 mt-0.5">{r.location}</div>
+                          </div>
+                        </div>
+
+                        <p className="mt-4 text-gray-600 text-sm leading-relaxed italic">
+                          "{r.review_text}"
+                        </p>
+                      </div>
+
+                      <div className="mt-4 pt-4 border-t border-gray-100 flex items-center gap-2">
+                        <div className="flex items-center text-yellow-500 text-sm">
+                          {'★'.repeat(safeRating)}
+                          {'☆'.repeat(5 - safeRating)}
+                        </div>
+                        <span className="text-xs font-bold text-gray-400">({r.rating || 5}.0 / 5)</span>
                       </div>
                     </div>
-                    <div className="mt-4">
-                      <div className="flex items-center gap-2 text-yellow-500">
-                        <span className="font-extrabold">{r.rating}.0</span>
-                        <span aria-hidden="true">{'★'.repeat(Math.round(r.rating))}</span>
-                      </div>
-                    </div>
-                    <p className="mt-4 text-gray-700 leading-relaxed">"{r.review_text}"</p>
-                  </div>
-                ))
+                  );
+                })
               ) : (
-                <div className="text-center text-gray-600">No approved reviews yet.</div>
+                <div className="col-span-1 md:col-span-2 text-center text-gray-500 py-6 font-medium">
+                  No reviews yet.
+                </div>
               )}
             </div>
           </div>
@@ -193,5 +233,3 @@ export default function Testimonials() {
     </div>
   )
 }
-
-
