@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { setAdminToken } from '../../auth/adminAuth.js'
+import { setAdminProfile } from '../../auth/adminAuth.js'
 import useAuthStore from '../../store/authStore.js'
 
 export default function AdminLogin() {
@@ -22,8 +22,13 @@ export default function AdminLogin() {
     }
 
     try {
-      await login({ email, password })
-      setAdminToken('true')
+      const userData = await login({ email, password })
+      setAdminProfile({
+        name: userData?.name || email.split('@')[0],
+        email: userData?.email || email,
+        photo: userData?.photo || "",
+        role: userData?.role || 'Administrator',
+      })
       navigate('/admin', { replace: true })
     } catch (err) {
       setError(err.response?.data?.message || err.message || 'Login failed')

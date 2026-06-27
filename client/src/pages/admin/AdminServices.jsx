@@ -186,7 +186,7 @@ export default function AdminServices() {
         </div>
       </div>
 
-      <div className="mt-6 grid grid-cols-1 lg:grid-cols-5 gap-6">
+      <div className="mt-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
         <div ref={formRef} className="lg:col-span-2 bg-white border border-gray-200 rounded p-4 shadow-sm self-start">
           <div className="font-extrabold text-gray-900">
             {form.service_id ? "Edit Service" : "Add New Service"}
@@ -353,7 +353,7 @@ export default function AdminServices() {
                       <div className="flex gap-2 flex-wrap">
                         <button
                           type="button"
-                          className="px-3 py-1.5 text-xs sm:px-4 sm:py-2 sm:text-sm text-gray-600 hover:text-gray-800 rounded transition cursor-pointer"
+                           className="px-3 py-2 text-xs sm:px-4 sm:py-2 sm:text-sm min-h-[44px] text-gray-600 hover:text-gray-800 rounded transition cursor-pointer"
                           onClick={() => {
                             setForm({
                               service_id: s._id,
@@ -369,7 +369,7 @@ export default function AdminServices() {
                         </button>
                         <button
                           type="button"
-                          className="px-3 py-1.5 text-xs sm:px-4 sm:py-2 sm:text-sm text-red-600 hover:text-red-500 rounded transition cursor-pointer"
+                           className="px-3 py-2 text-xs sm:px-4 sm:py-2 sm:text-sm min-h-[44px] text-red-600 hover:text-red-500 rounded transition cursor-pointer"
                           onClick={() => onDelete(s._id)}>
                           Delete
                         </button>

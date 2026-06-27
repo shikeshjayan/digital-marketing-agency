@@ -63,6 +63,7 @@ export default function AdminMessages() {
     try {
       await updateEnquiryStatus(id, nextStatus);
       setToast("Status updated successfully.");
+      window.dispatchEvent(new Event('refresh-badges'));
       await load();
     } catch (e) {
       setError(e?.message ?? "Update failed.");
@@ -79,6 +80,7 @@ export default function AdminMessages() {
       await deleteEnquiry(deleteTarget);
       setToast("Enquiry deleted successfully.");
       setDeleteTarget(null);
+      window.dispatchEvent(new Event('refresh-badges'));
       await load();
     } catch (e) {
       setError(e?.message ?? "Delete failed.");
@@ -100,7 +102,7 @@ export default function AdminMessages() {
       </div>
 
       <div className="mt-6 bg-white border border-gray-200 rounded p-5 shadow-sm">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-3">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3">
           <div className="relative">
             <svg
               className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400"
@@ -273,7 +275,7 @@ export default function AdminMessages() {
                       {(e.status === "New" || e.status === "Pending") && (
                         <button
                           type="button"
-                          className="px-3 py-1.5 text-xs sm:px-4 sm:py-2 sm:text-sm text-gray-600 hover:text-gray-800 rounded transition cursor-pointer"
+                          className="px-3 py-2 text-xs sm:px-4 sm:py-2 sm:text-sm min-h-[44px] text-gray-600 hover:text-gray-800 rounded transition cursor-pointer"
                           onClick={() =>
                             transition(e.enquiry_id, "Replied")
                           }>
@@ -283,7 +285,7 @@ export default function AdminMessages() {
                       {e.status !== "Spam" && (
                         <button
                           type="button"
-                          className="px-3 py-1.5 text-xs sm:px-4 sm:py-2 sm:text-sm text-yellow-600 hover:text-yellow-500 rounded transition cursor-pointer"
+                          className="px-3 py-2 text-xs sm:px-4 sm:py-2 sm:text-sm min-h-[44px] text-yellow-600 hover:text-yellow-500 rounded transition cursor-pointer"
                           onClick={() =>
                             transition(e.enquiry_id, "Spam")
                           }>
@@ -292,7 +294,7 @@ export default function AdminMessages() {
                       )}
                       <button
                         type="button"
-                        className="px-3 py-1.5 text-xs sm:px-4 sm:py-2 sm:text-sm text-red-600 hover:text-red-500 rounded transition cursor-pointer"
+                        className="px-3 py-2 text-xs sm:px-4 sm:py-2 sm:text-sm min-h-[44px] text-red-600 hover:text-red-500 rounded transition cursor-pointer"
                         onClick={() => onDelete(e.enquiry_id)}>
                         Delete
                       </button>

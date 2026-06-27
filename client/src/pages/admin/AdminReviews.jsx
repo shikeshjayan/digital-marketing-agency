@@ -101,6 +101,7 @@ export default function AdminReviews() {
       await approveReview(id);
       setDeleteTarget(null);
       setToast("Review approved and published.");
+      window.dispatchEvent(new Event('refresh-badges'));
       await load();
     } catch (err) {
       setError(err.response?.data?.message || err.message || "Approve failed");
@@ -115,6 +116,7 @@ export default function AdminReviews() {
       await rejectReview(id);
       setDeleteTarget(null);
       setToast("Review rejected.");
+      window.dispatchEvent(new Event('refresh-badges'));
       await load();
     } catch (err) {
       setError(err.response?.data?.message || err.message || "Reject failed");
@@ -150,7 +152,7 @@ export default function AdminReviews() {
               <button
                 key={t.key}
                 type="button"
-                className={`px-4 py-2 rounded-full text-sm font-semibold border transition cursor-pointer ${
+                className={`px-4 py-2.5 min-h-[44px] rounded-full text-sm font-semibold border transition cursor-pointer ${
                   tab === t.key
                     ? "bg-red-600 text-white border-red-600"
                     : "bg-white text-gray-700 border-gray-200 hover:text-red-700 hover:bg-red-50"
@@ -292,7 +294,7 @@ export default function AdminReviews() {
                       {r.status !== "Approved" && (
                         <button
                           type="button"
-                          className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-green-700 bg-green-50 border border-green-200 rounded hover:bg-green-100 transition cursor-pointer disabled:opacity-50"
+                          className="inline-flex items-center gap-1.5 px-3 py-2 min-h-[44px] text-xs font-semibold text-green-700 bg-green-50 border border-green-200 rounded hover:bg-green-100 transition cursor-pointer disabled:opacity-50"
                           onClick={() =>
                             setDeleteTarget({
                               type: "approve",
@@ -339,7 +341,7 @@ export default function AdminReviews() {
                       {r.status !== "Rejected" && (
                         <button
                           type="button"
-                          className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-red-700 bg-red-50 border border-red-200 rounded hover:bg-red-100 transition cursor-pointer disabled:opacity-50"
+                          className="inline-flex items-center gap-1.5 px-3 py-2 min-h-[44px] text-xs font-semibold text-red-700 bg-red-50 border border-red-200 rounded hover:bg-red-100 transition cursor-pointer disabled:opacity-50"
                           onClick={() =>
                             setDeleteTarget({
                               type: "reject",

@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import useSettingsStore from "../../store/settingsStore.js";
+import { setAdminProfile } from "../../auth/adminAuth.js";
 
 export default function AdminSettings() {
   const { profile, loading, fetchProfile, updateProfile } = useSettingsStore();
@@ -79,6 +80,12 @@ export default function AdminSettings() {
           currentPassword: "",
           newPassword: "",
         }));
+        setAdminProfile({
+          name: updatedProfile.name ?? form.name,
+          email: updatedProfile.email,
+          photo: updatedProfile.photo ?? "",
+          role: updatedProfile.role || "Administrator",
+        });
       }
       setToast("Profile updated successfully.");
     } catch (err) {
@@ -114,7 +121,7 @@ export default function AdminSettings() {
       <div className="mt-6 bg-white border border-gray-200 rounded p-5 shadow-sm">
         <form
           onSubmit={onSubmit}
-          className="grid grid-cols-1 lg:grid-cols-5 gap-6">
+          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
           <div className="lg:col-span-2">
             <div className="font-extrabold text-gray-900">Profile Image</div>
             <div className="mt-4">

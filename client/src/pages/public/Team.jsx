@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import HeroSplit from '../../components/public/HeroSplit.jsx'
-import { publicGetTeam } from '../../services/mockApi.js'
+import apiService from '../../services/apiService.js'
 
 function TeamCard({ member }) {
   return (
@@ -23,7 +23,7 @@ export default function Team() {
   const [team, setTeam] = useState([])
 
   useEffect(() => {
-    publicGetTeam().then((res) => setTeam(res.data ?? []))
+    apiService.get('/team').then((res) => setTeam(res.data.data ?? []))
   }, [])
 
   const sorted = useMemo(() => {
