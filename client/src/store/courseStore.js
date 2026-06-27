@@ -4,6 +4,7 @@ import apiService from "../services/apiService";
 const useCourseStore = create((set) => ({
   courses: [],
   adminCourses: [],
+  categories: [],
   selectedCourse: null,
   loading: false,
   error: null,
@@ -18,6 +19,16 @@ const useCourseStore = create((set) => ({
         error: error.response?.data?.message || error.message,
         loading: false,
       });
+    }
+  },
+
+  fetchCategories: async () => {
+    try {
+      const { data } = await apiService.get("/admin/courses/categories");
+      set({ categories: data.data ?? [] });
+      return data.data ?? [];
+    } catch (error) {
+      return [];
     }
   },
 

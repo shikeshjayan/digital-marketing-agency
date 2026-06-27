@@ -4,6 +4,7 @@ import apiService from "../services/apiService";
 const useProjectStore = create((set) => ({
   projects: [],
   adminProjects: [],
+  categories: [],
   selectedProject: null,
   loading: false,
   error: null,
@@ -19,6 +20,16 @@ const useProjectStore = create((set) => ({
         error: error.response?.data?.message || error.message,
         loading: false,
       });
+    }
+  },
+
+  fetchCategories: async () => {
+    try {
+      const { data } = await apiService.get("/admin/projects/categories");
+      set({ categories: data.data ?? [] });
+      return data.data ?? [];
+    } catch (error) {
+      return [];
     }
   },
 
