@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import useServiceStore from "../../store/serviceStore.js";
-import Button from "../../components/ui/Button.jsx";
+import ConfirmModal from "../../components/ui/ConfirmModal.jsx";
 import Select from "../../components/ui/Select.jsx";
 
 function FileToDataUrl({ file }) {
@@ -285,18 +285,17 @@ export default function AdminServices() {
 
             <div className="flex gap-2">
               {form.service_id && (
-                <Button
+                <button
                   type="button"
-                  variant="outline"
-                  className="flex-1"
+                  className="flex-1 rounded border border-gray-200 py-2.5 text-sm font-semibold text-gray-700 hover:bg-gray-50 transition cursor-pointer"
                   onClick={() => setForm(emptyForm)}>
                   Cancel
-                </Button>
+                </button>
               )}
               <button
                 type="submit"
                 disabled={submitting}
-                className="flex-1 rounded bg-red-600 text-white py-2.5 font-extrabold hover:bg-orange-500 transition disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer">
+                className="flex-1 rounded bg-red-600 text-white py-2.5 font-extrabold hover:bg-red-500 transition disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer">
                 {submitting ? "Saving..." : form.service_id ? "Update Service" : "Create Service"}
               </button>
             </div>
@@ -394,33 +393,12 @@ export default function AdminServices() {
         </div>
       </div>
 
-      {deleteTarget && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-          <div className="absolute inset-0 bg-black/50" onClick={() => setDeleteTarget(null)} />
-          <div className="relative bg-white rounded-2xl shadow-xl w-full max-w-sm p-6">
-            <div className="flex flex-col items-center text-center">
-              <div className="w-12 h-12 rounded-full bg-red-100 flex items-center justify-center mb-4">
-                <svg className="w-6 h-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z" />
-                </svg>
-              </div>
-              <p className="text-gray-700 text-sm">Are you sure you want to delete this service? This action cannot be undone.</p>
-              <div className="flex gap-3 mt-6 w-full">
-                <button
-                  onClick={() => setDeleteTarget(null)}
-                  className="flex-1 rounded-xl border border-gray-200 py-2.5 text-sm font-semibold text-gray-700 hover:bg-gray-50 transition cursor-pointer">
-                  Cancel
-                </button>
-                <button
-                  onClick={onConfirmDelete}
-                  className="flex-1 rounded-xl bg-red-600 py-2.5 text-sm font-semibold text-white hover:bg-orange-500 transition cursor-pointer">
-                  Confirm
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
+      <ConfirmModal
+        open={!!deleteTarget}
+        onCancel={() => setDeleteTarget(null)}
+        onConfirm={onConfirmDelete}
+        message="Are you sure you want to delete this service? This action cannot be undone."
+      />
     </div>
   );
 }
