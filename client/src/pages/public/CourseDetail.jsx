@@ -1,7 +1,5 @@
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
-import HeroSplit from "../../components/public/HeroSplit";
-import Button from "../../components/ui/Button";
 import useCourseStore from "../../store/courseStore";
 import { slugify } from "../../utils/slugify";
 
@@ -62,64 +60,41 @@ export default function CourseDetail() {
 
   return (
     <div>
-      <HeroSplit
-        title="Courses"
-        titleHighlight="Our"
-        subtitle={program.course_name}
-      />
-
-      <section className="py-12 bg-gray-50">
-        <div className="max-w-6xl mx-auto px-4">
-          <div className="bg-white border border-gray-200 rounded-3xl p-6 md:p-10">
-            <h2 className="text-3xl md:text-4xl font-extrabold text-gray-900">
-              {program.course_name}
-            </h2>
-
-            <div className="mt-6 h-64 rounded-2xl overflow-hidden border border-gray-200">
-              <img
-                src="https://placehold.co/1200x600?text=Course+Image"
-                alt={program.course_name}
-                className="w-full h-full object-cover"
-              />
-            </div>
-
-            <div className="mt-8">
-              <h3 className="text-lg font-extrabold text-gray-900">
-                Description
-              </h3>
-
-              <p className="mt-3 text-gray-700 leading-relaxed text-justify">
-                {program.description}
-              </p>
-            </div>
-
-            {program.category && (
-              <div className="mt-8">
-                <h3 className="text-lg font-extrabold text-gray-900">
-                  Category
-                </h3>
-
-                <p className="mt-3 text-gray-700">
-                  {program.category}
-                </p>
-              </div>
-            )}
-
-            <div className="mt-8">
-              <Button
-                as="a"
-                href="/contact"
-                className="inline-flex items-center rounded-full bg-red-600 text-white px-6 py-3 text-sm font-semibold hover:bg-red-500 transition"
-              >
-                Enquire Now
-              </Button>
-            </div>
+      <section className="py-16 md:py-24 bg-white">
+        <div className="max-w-4xl mx-auto px-4 text-center">
+          <h1 className="text-4xl md:text-5xl lg:text-6xl font-extrabold text-gray-900 leading-tight">
+            {program.course_name}
+          </h1>
+          <div className="mt-10 flex justify-center">
+            <img
+              src={program.image}
+              alt={program.course_name}
+              loading="lazy"
+              decoding="async"
+              className="w-full max-w-2xl h-64 md:h-80 object-cover rounded-2xl shadow-md bg-gray-100"
+            />
           </div>
-
-          <div className="mt-8">
+          <div className="mt-10 max-w-3xl mx-auto text-gray-700 leading-relaxed space-y-4">
+            {program.description
+              .split(".")
+              .map((p) => p.trim())
+              .filter(Boolean)
+              .map((para, i) => (
+                <p key={i} className="text-justify text-base md:text-lg leading-8">
+                  {para}.
+                </p>
+              ))}
+          </div>
+          <div className="mt-12 flex justify-center gap-4">
+            <Link
+              to="/contact"
+              className="inline-flex items-center rounded-full bg-red-600 text-white px-6 py-3 text-sm font-semibold hover:bg-red-500 transition shadow-md"
+            >
+              Enquire Now
+            </Link>
             <Link
               to="/courses"
-              className="inline-flex items-center rounded-full bg-red-600 text-white px-5 py-2.5 text-sm font-semibold hover:bg-red-500 transition"
+              className="inline-flex items-center rounded-full bg-red-600 text-white px-6 py-3 text-sm font-semibold hover:bg-red-500 transition shadow-md"
             >
               Back to Courses
             </Link>
