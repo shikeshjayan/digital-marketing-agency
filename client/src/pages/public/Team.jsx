@@ -17,14 +17,14 @@ function TeamCard({ member }) {
 
   return (
     <div className="flex flex-col bg-white border border-gray-100 rounded-xl shadow-sm h-full overflow-hidden">
-      <div className="h-40 overflow-hidden flex items-center justify-center bg-gray-100">
+      <div className="aspect-square overflow-hidden flex items-center justify-center bg-gray-100">
         {hasPhoto ? (
           <img
             src={imageUrl(member.photo)}
             alt={member.name}
             loading="lazy"
             decoding="async"
-            className="w-full h-full object-cover"
+            className="w-full h-full object-cover object-top"
             onError={(e) => {
               e.target.style.display = 'none';
             }}
