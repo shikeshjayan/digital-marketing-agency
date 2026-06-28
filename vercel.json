@@ -19,15 +19,11 @@
       "dest": "/api/index.js"
     },
     {
-      "src": "/uploads/(.*)",
-      "dest": "/server/uploads/$1"
-    },
-    {
       "handle": "filesystem"
     },
     {
       "src": "/(.*)",
-      "dest": "/index.html"
+      "dest": "/client/dist/index.html"
     }
   ]
 }
