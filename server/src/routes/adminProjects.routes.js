@@ -4,6 +4,7 @@ import {
   createProject,
   updateProject,
   deleteProject,
+  deleteAllProjects,
   getAllAdminProjects,
   getProjectCategories,
 } from "../controllers/project.controller.js";
@@ -16,5 +17,6 @@ router.get("/categories", protect, getProjectCategories);
 router.post("/create", protect, createProject);
 router.put("/:id", protect, updateProject);
 router.delete("/:id", protect, deleteProject);
+router.delete("/", protect, deleteAllProjects);
 
 export default router;

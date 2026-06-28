@@ -93,6 +93,15 @@ export const deleteMember = asyncHandler(async (req, res) => {
   });
 });
 
+// Delete all team members (admin only)
+export const deleteAllMembers = asyncHandler(async (req, res) => {
+  const result = await Team.deleteMany({});
+  res.status(200).json({
+    success: true,
+    message: `${result.deletedCount} team member(s) deleted successfully.`,
+  });
+});
+
 // Get only active team members sorted by display_order (public)
 export const getPublicTeam = asyncHandler(async (req, res) => {
   const members = await Team.find({ status: "Active" }).sort({ display_order: 1 });

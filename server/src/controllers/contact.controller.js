@@ -137,3 +137,12 @@ export const deleteEnquiry = asyncHandler(async (req, res) => {
     message: "Enquiry record successfully purged from active logs.",
   });
 });
+
+// Delete all enquiries (admin only)
+export const deleteAllEnquiries = asyncHandler(async (req, res) => {
+  const result = await Contact.deleteMany({});
+  res.status(200).json({
+    success: true,
+    message: `${result.deletedCount} enquiry(ies) deleted successfully.`,
+  });
+});

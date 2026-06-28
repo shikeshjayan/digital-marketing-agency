@@ -92,6 +92,15 @@ export const deleteService = asyncHandler(async (req, res) => {
   res.status(200).json({ success: true, message: "Service deleted successfully" });
 });
 
+// Delete all services (admin only)
+export const deleteAllServices = asyncHandler(async (req, res) => {
+  const result = await Services.deleteMany({});
+  res.status(200).json({
+    success: true,
+    message: `${result.deletedCount} service(s) deleted successfully.`,
+  });
+});
+
 // Get all services (including inactive ones) with filters for admin panel
 export const getAllAdminServices = asyncHandler(async (req, res) => {
   const { search, status, page = 1, limit = 10 } = req.query;

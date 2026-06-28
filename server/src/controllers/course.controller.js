@@ -1,6 +1,13 @@
 // Handles everything related to courses (CRUD + public listing)
 import Courses from "../models/courses.model.js";
 import asyncHandler from "../middleware/asyncHandler.js";
+import fs from "fs";
+
+function deleteFile(filePath) {
+  if (filePath && fs.existsSync(filePath)) {
+    fs.unlinkSync(filePath);
+  }
+}
 
 // Create a new course (admin only)
 export const createCourse = asyncHandler(async (req, res) => {
@@ -21,9 +28,12 @@ export const createCourse = asyncHandler(async (req, res) => {
       .json({ success: false, message: "Course name already exists" });
   }
 
+  const image = req.file ? `/uploads/${req.file.filename}` : "";
+
   const course = await Courses.create({
     course_name,
     description,
+    image,
     category,
     status,
   });
@@ -68,29 +78,45 @@ export const getAllAdminCourses = asyncHandler(async (req, res) => {
 
 // Update an existing course (admin only)
 export const updateCourse = asyncHandler(async (req, res) => {
-  const { course_name, description, category, status } = req.body;
+  const { course_name, description, category, status, removeImage } = req.body;
 
   // Make sure at least one field is being updated
-  if (!course_name && !description && !category && !status) {
+  if (!course_name && !description && !category && !status && !removeImage) {
     return res
       .status(400)
       .json({ success: false, message: "Invalid input data" });
   }
 
-  const course = await Courses.findByIdAndUpdate(
-    req.params.course_id,
-    { course_name, description, category, status },
-    { new: true, runValidators: true },
-  );
+  const course = await Courses.findById(req.params.course_id);
   if (!course) {
     return res
       .status(404)
       .json({ success: false, message: "Course record not found" });
   }
+
+  const update = {};
+  if (course_name) update.course_name = course_name;
+  if (description) update.description = description;
+  if (category) update.category = category;
+  if (status) update.status = status;
+
+  if (req.file) {
+    deleteFile(course.image?.startsWith("/uploads") ? course.image.slice(1) : null);
+    update.image = `/uploads/${req.file.filename}`;
+  } else if (removeImage === "true") {
+    deleteFile(course.image?.startsWith("/uploads") ? course.image.slice(1) : null);
+    update.image = "";
+  }
+
+  const updated = await Courses.findByIdAndUpdate(req.params.course_id, update, {
+    new: true,
+    runValidators: true,
+  });
+
   res.status(200).json({
     success: true,
     message: "Course updated successfully",
-    data: course,
+    data: updated,
   });
 });
 
@@ -108,6 +134,15 @@ export const deleteCourse = asyncHandler(async (req, res) => {
       success: true,
       message: "Course has been permanently deleted from the database.",
     });
+});
+
+// Delete all courses (admin only)
+export const deleteAllCourses = asyncHandler(async (req, res) => {
+  const result = await Courses.deleteMany({});
+  res.status(200).json({
+    success: true,
+    message: `${result.deletedCount} course(s) deleted successfully.`,
+  });
 });
 
 // Get unique categories from all courses (admin)
@@ -133,6 +168,37 @@ export const getPublicCourses = asyncHandler(async (req, res) => {
 // Get a single course by its ID (public route)
 export const getCourseById = asyncHandler(async (req, res) => {
   const course = await Courses.findById(req.params.course_id);
+  if (!course) {
+    return res
+      .status(404)
+      .json({ success: false, message: "Course not found" });
+  }
+  res.status(200).json({
+    success: true,
+    data: course,
+  });
+});
+
+// Get a single course by its slug (public route)
+export const getCourseBySlug = asyncHandler(async (req, res) => {
+  const { slug } = req.params;
+
+  // Try exact slug match first
+  let course = await Courses.findOne({ slug });
+
+  // Fallback: match by slugified course_name for courses missing slug field
+  if (!course) {
+    const allCourses = await Courses.find({});
+    course = allCourses.find(
+      (c) =>
+        c.course_name
+          .toLowerCase()
+          .trim()
+          .replace(/[^a-z0-9]+/g, "-")
+          .replace(/(^-|-$)/g, "") === slug
+    );
+  }
+
   if (!course) {
     return res
       .status(404)

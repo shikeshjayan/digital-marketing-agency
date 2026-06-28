@@ -120,6 +120,15 @@ export const deleteProject = asyncHandler(async (req, res) => {
   res.status(200).json({ success: true, message: "Project deleted successfully" });
 });
 
+// Delete all projects (admin only)
+export const deleteAllProjects = asyncHandler(async (req, res) => {
+  const result = await Projects.deleteMany({});
+  res.status(200).json({
+    success: true,
+    message: `${result.deletedCount} project(s) deleted successfully.`,
+  });
+});
+
 // Get unique categories from all projects (admin)
 export const getProjectCategories = asyncHandler(async (req, res) => {
   const categories = await Projects.distinct("category");
