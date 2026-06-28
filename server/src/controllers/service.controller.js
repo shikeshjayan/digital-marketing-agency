@@ -4,7 +4,8 @@ import asyncHandler from "../middleware/asyncHandler.js";
 
 // Create a new service (admin only)
 export const createService = asyncHandler(async (req, res) => {
-  const { service_name, short_description, description, image, status } = req.body;
+  const { service_name, short_description, description, status } = req.body;
+  const image = req.file ? `/uploads/${req.file.filename}` : req.body.image;
 
   // Validate required fields
   if (!service_name || !short_description || !description || !image) {
@@ -62,15 +63,22 @@ export const getServiceById = asyncHandler(async (req, res) => {
 
 // Update an existing service (admin only)
 export const updateService = asyncHandler(async (req, res) => {
-  const { service_name, short_description, description, image, status } = req.body;
+  const { service_name, short_description, description, status } = req.body;
 
-  if (!service_name && !short_description && !description && !image && !status) {
+  if (!service_name && !short_description && !description && !status) {
     return res.status(400).json({ success: false, message: "No fields to update" });
+  }
+
+  const update = { service_name, short_description, description, status };
+  if (req.file) {
+    update.image = `/uploads/${req.file.filename}`;
+  } else if (req.body.image) {
+    update.image = req.body.image;
   }
 
   const service = await Services.findByIdAndUpdate(
     req.params.id,
-    { service_name, short_description, description, image, status },
+    update,
     { new: true, runValidators: true },
   );
   if (!service) {

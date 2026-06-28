@@ -8,13 +8,13 @@ import {
   deleteAllMembers,
 } from "../controllers/team.controller.js";
 import { protect } from "../middleware/auth.js";
-import upload from "../config/upload.js";
+import upload, { processImage } from "../config/upload.js";
 
 const router = express.Router();
 
 router.get("/", protect, getAllTeamMembers);
-router.post("/create", protect, upload.single("photo"), createMember);
-router.put("/:team_id", protect, upload.single("photo"), updateMember);
+router.post("/create", protect, upload.single("photo"), processImage, createMember);
+router.put("/:team_id", protect, upload.single("photo"), processImage, updateMember);
 router.delete("/:team_id", protect, deleteMember);
 router.delete("/", protect, deleteAllMembers);
 
