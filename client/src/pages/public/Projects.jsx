@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import useProjectStore from "../../store/projectStore.js";
 import HeroSplit from "../../components/public/HeroSplit.jsx";
+import imageUrl from "../../utils/imageUrl.js";
 
 const categories = ["All", "Static", "Dynamic", "Landing Pages"];
 
@@ -13,8 +14,10 @@ const ProjectCard = ({ project }) => {
       className="group block bg-white border border-gray-100 rounded-xl shadow-sm overflow-hidden hover:shadow-lg hover:scale-[1.02] hover:border-red-200 transition-all duration-300 cursor-pointer">
       <div className="relative overflow-hidden">
         <img
-          src={project.image || '/placeholder.svg'}
+          src={imageUrl(project.image) || '/placeholder.svg'}
           alt={project.project_name}
+          loading="lazy"
+          decoding="async"
           className="w-full h-48 object-cover bg-gray-200 group-hover:scale-110 transition-transform duration-300"
         />
         <div className="absolute inset-0 bg-black/0 group-hover:bg-black/40 transition-colors duration-300" />

@@ -65,7 +65,12 @@ app.use(cookieParser());
 // Sanitize data to prevent NoSQL injection
 app.use(mongoSanitize);
 // Serve uploaded images from the "uploads" folder when someone visits "/uploads/filename"
-app.use("/uploads", express.static(path.join(process.cwd(), "uploads")));
+// Cache static assets for 30 days to reduce repeated transfers
+app.use("/uploads", express.static(path.join(process.cwd(), "uploads"), {
+  maxAge: "30d",
+  etag: true,
+  lastModified: true,
+}));
 
 // Apply general rate limit to all API routes
 app.use("/api/v1", rateLimitMiddleware(generalLimiter, "Too many requests, try again later"));

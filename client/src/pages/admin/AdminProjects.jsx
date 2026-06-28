@@ -3,15 +3,6 @@ import useProjectStore from "../../store/projectStore.js";
 import ConfirmModal from "../../components/ui/ConfirmModal.jsx";
 import Select from "../../components/ui/Select.jsx";
 
-function FileToDataUrl({ file }) {
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.onerror = reject;
-    reader.onload = () => resolve(reader.result);
-    reader.readAsDataURL(file);
-  });
-}
-
 export default function AdminProjects() {
   const {
     fetchAdminProjects,
@@ -82,15 +73,14 @@ export default function AdminProjects() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [search, category, status]);
 
-  async function onPickImage(e) {
+  function onPickImage(e) {
     const file = e.target.files?.[0];
     if (!file) return;
     if (file.size > 5 * 1024 * 1024) {
       setError("Image must be less than 5MB.");
       return;
     }
-    const dataUrl = await FileToDataUrl({ file });
-    setForm((f) => ({ ...f, image: dataUrl }));
+    setForm((f) => ({ ...f, image: file }));
   }
 
   async function onSubmit(e) {
@@ -116,15 +106,18 @@ export default function AdminProjects() {
       return;
     }
 
-    const payload = {
-      project_name: form.project_name.trim(),
-      category: form.category,
-      short_description: form.short_description.trim(),
-      description: form.description.trim(),
-      live_url: form.live_url.trim(),
-      image: form.image,
-      status: form.status,
-    };
+    const payload = new FormData();
+    if (form.image instanceof File) {
+      payload.append("image", form.image);
+    } else if (form.project_id && !form.image) {
+      payload.append("removeImage", "true");
+    }
+    payload.append("project_name", form.project_name.trim());
+    payload.append("category", form.category);
+    payload.append("short_description", form.short_description.trim());
+    payload.append("description", form.description.trim());
+    payload.append("live_url", form.live_url.trim());
+    payload.append("status", form.status);
 
     try {
       if (form.project_id) {
@@ -263,13 +256,15 @@ export default function AdminProjects() {
                 <label className="text-sm font-semibold text-gray-800">
                   Category
                 </label>
-                <input
-                  className="mt-2 w-full rounded border border-gray-200 px-4 py-2 outline-none focus:ring-2 focus:ring-red-100"
+                <Select
                   value={form.category}
-                  onChange={(e) =>
-                    setForm((f) => ({ ...f, category: e.target.value }))
-                  }
-                  placeholder="e.g. Static, Dynamic"
+                  onChange={(val) => setForm((f) => ({ ...f, category: val }))}
+                  className="mt-2"
+                  options={[
+                    { value: "Static", label: "Static" },
+                    { value: "Dynamic", label: "Dynamic" },
+                    { value: "Landing Pages", label: "Landing Pages" },
+                  ]}
                 />
               </div>
               <div>

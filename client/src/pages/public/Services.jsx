@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import HeroSplit from "../../components/public/HeroSplit";
 import useServiceStore from "../../store/serviceStore";
 import { slugify } from "../../utils/slugify";
+import imageUrl from "../../utils/imageUrl";
 
 const ServiceCard = ({ service }) => (
   <Link
@@ -10,7 +11,7 @@ const ServiceCard = ({ service }) => (
     className="flex flex-col bg-white border border-gray-100 rounded-xl shadow-sm h-full overflow-hidden cursor-pointer">
     <div className="h-40 overflow-hidden">
       <img
-        src={service.image}
+        src={imageUrl(service.image)}
         alt={service.service_name}
         loading="lazy"
         decoding="async"

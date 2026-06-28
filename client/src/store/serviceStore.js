@@ -39,7 +39,9 @@ const useServiceStore = create((set) => ({
   createService: async (formData) => {
     set({ loading: true, error: null });
     try {
-      const { data } = await apiService.post("/admin/services/create", formData);
+      const { data } = await apiService.post("/admin/services/create", formData, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
       set((state) => ({
         adminServices: [...state.adminServices, data.data],
         loading: false,
@@ -57,7 +59,9 @@ const useServiceStore = create((set) => ({
   updateService: async (id, formData) => {
     set({ loading: true, error: null });
     try {
-      const { data } = await apiService.put(`/admin/services/${id}`, formData);
+      const { data } = await apiService.put(`/admin/services/${id}`, formData, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
       set((state) => ({
         adminServices: state.adminServices.map((s) =>
           s._id === id ? data.data : s

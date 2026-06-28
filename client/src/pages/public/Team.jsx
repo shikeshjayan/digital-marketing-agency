@@ -1,6 +1,7 @@
 import { useEffect, useMemo } from 'react'
 import HeroSplit from '../../components/public/HeroSplit.jsx'
 import useTeamStore from '../../store/teamStore.js'
+import imageUrl from '../../utils/imageUrl.js'
 
 function TeamCard({ member }) {
   const getInitials = (name) => {
@@ -19,7 +20,7 @@ function TeamCard({ member }) {
       <div className="h-40 overflow-hidden flex items-center justify-center bg-gray-100">
         {hasPhoto ? (
           <img
-            src={member.photo}
+            src={imageUrl(member.photo)}
             alt={member.name}
             loading="lazy"
             decoding="async"

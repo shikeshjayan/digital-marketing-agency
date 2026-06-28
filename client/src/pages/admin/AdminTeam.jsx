@@ -3,14 +3,11 @@ import useTeamStore from "../../store/teamStore.js";
 import ConfirmModal from "../../components/ui/ConfirmModal.jsx";
 import Select from "../../components/ui/Select.jsx";
 
-function FileToDataUrl({ file }) {
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.onerror = reject;
-    reader.onload = () => resolve(reader.result);
-    reader.readAsDataURL(file);
-  });
-}
+const resolveUrl = (path) => {
+  if (!path || path.startsWith("blob:") || path.startsWith("http")) return path;
+  const base = (import.meta.env.VITE_API_URL || "http://localhost:5000/api/v1").replace(/\/api\/v1\/?$/, "");
+  return base + path;
+};
 
 export default function AdminTeam() {
   function getInitials(name) {
@@ -36,6 +33,7 @@ export default function AdminTeam() {
       photo: "",
       name: "",
       designation: "",
+      description: "",
       display_order: 1,
       status: "Active",
     }),
@@ -77,15 +75,14 @@ export default function AdminTeam() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [search, status]);
 
-  async function onPickImage(e) {
+  function onPickImage(e) {
     const file = e.target.files?.[0];
     if (!file) return;
     if (file.size > 5 * 1024 * 1024) {
       setError("Image must be less than 5MB.");
       return;
     }
-    const dataUrl = await FileToDataUrl({ file });
-    setForm((f) => ({ ...f, photo: dataUrl }));
+    setForm((f) => ({ ...f, photo: file }));
   }
 
   async function onSubmit(e) {
@@ -101,13 +98,14 @@ export default function AdminTeam() {
     }
 
     const payload = new FormData();
-    if (form.photo) {
+    if (form.photo instanceof File) {
       payload.append("photo", form.photo);
-    } else if (form._id) {
+    } else if (form._id && !form.photo) {
       payload.append("removePhoto", "true");
     }
     payload.append("name", form.name.trim());
     payload.append("designation", form.designation.trim());
+    payload.append("description", form.description.trim());
     payload.append("display_order", form.display_order);
     payload.append("status", form.status);
 
@@ -241,34 +239,6 @@ export default function AdminTeam() {
                   onChange={onPickImage}
                 />
               </label>
-              {form.photo && (
-                <div className="mt-2 relative inline-block">
-                  <div className="w-16 h-16 rounded border border-gray-200 overflow-hidden">
-                    <img
-                      src={form.photo}
-                      alt="preview"
-                      className="w-full h-full object-cover"
-                    />
-                  </div>
-                  <button
-                    type="button"
-                    className="absolute -top-1.5 -right-1.5 w-5 h-5 rounded-full bg-red-600 text-white flex items-center justify-center hover:bg-red-500 transition cursor-pointer"
-                    onClick={() => setForm((f) => ({ ...f, photo: "" }))}>
-                    <svg
-                      className="w-3 h-3"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24">
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M6 18L18 6M6 6l12 12"
-                      />
-                    </svg>
-                  </button>
-                </div>
-              )}
             </div>
             <div>
               <label className="text-sm font-semibold text-gray-800">
@@ -294,6 +264,20 @@ export default function AdminTeam() {
                   setForm((f) => ({ ...f, designation: e.target.value }))
                 }
                 placeholder="e.g. Frontend Developer"
+              />
+            </div>
+            <div>
+              <label className="text-sm font-semibold text-gray-800">
+                Description
+              </label>
+              <textarea
+                rows={2}
+                className="mt-2 w-full rounded border border-gray-200 px-4 py-2 outline-none focus:ring-2 focus:ring-red-100 resize-none"
+                value={form.description}
+                onChange={(e) =>
+                  setForm((f) => ({ ...f, description: e.target.value }))
+                }
+                placeholder="Brief bio or details about the member"
               />
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -433,7 +417,7 @@ export default function AdminTeam() {
                         <div className="w-10 h-10 rounded bg-gray-100 border border-gray-200 overflow-hidden flex items-center justify-center shrink-0">
                           {m.photo ? (
                             <img
-                              src={m.photo}
+                              src={resolveUrl(m.photo)}
                               alt=""
                               className="w-full h-full object-cover"
                             />
@@ -477,6 +461,7 @@ export default function AdminTeam() {
                               photo: m.photo ?? "",
                               name: m.name,
                               designation: m.designation,
+                              description: m.description ?? "",
                               display_order: m.display_order ?? 1,
                               status: m.status,
                             });

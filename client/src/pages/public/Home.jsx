@@ -6,6 +6,7 @@ import { serviceDetailPath } from '../../data/serviceLinks.js'
 import AnimatedCounter from '../../components/ui/AnimatedCounter.jsx'
 import useServiceStore from '../../store/serviceStore.js'
 import useReviewStore from '../../store/reviewStore.js'
+import imageUrl from '../../utils/imageUrl.js'
 
 function StarRow({ rating }) {
   const full = Math.floor(rating)
@@ -379,7 +380,7 @@ function TestimonialsCarousel({ reviews }) {
           <div className="w-full max-w-xl border border-gray-200 rounded-3xl px-6 py-8 bg-gray-50 text-center">
             <div className="mx-auto w-16 h-16 rounded-full overflow-hidden bg-gray-200 flex items-center justify-center">
               <div className="text-2xl">
-                <img src={current.profile_image} alt={current.name} />
+                <img src={imageUrl(current.profile_image)} alt={current.name} loading="lazy" decoding="async" />
               </div>
             </div>
             <div className="mt-4 font-bold text-gray-900">{current.name}</div>

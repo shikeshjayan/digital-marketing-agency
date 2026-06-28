@@ -51,7 +51,9 @@ const useProjectStore = create((set) => ({
   createProject: async (formData) => {
     set({ loading: true, error: null });
     try {
-      const { data } = await apiService.post("/admin/projects/create", formData);
+      const { data } = await apiService.post("/admin/projects/create", formData, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
       set((state) => ({
         adminProjects: [...state.adminProjects, data.data],
         loading: false,
@@ -69,7 +71,9 @@ const useProjectStore = create((set) => ({
   updateProject: async (id, formData) => {
     set({ loading: true, error: null });
     try {
-      const { data } = await apiService.put(`/admin/projects/${id}`, formData);
+      const { data } = await apiService.put(`/admin/projects/${id}`, formData, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
       set((state) => ({
         adminProjects: state.adminProjects.map((p) =>
           p._id === id ? data.data : p

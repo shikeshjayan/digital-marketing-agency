@@ -18,7 +18,8 @@ export { validateCategory };
 
 // Create a new project (admin only)
 export const createProject = asyncHandler(async (req, res) => {
-  const { project_name, category, short_description, description, image, live_url, status } = req.body;
+  const { project_name, category, short_description, description, live_url, status } = req.body;
+  const image = req.file ? `/uploads/${req.file.filename}` : req.body.image;
 
   // Validate required fields
   if (!project_name || !category || !short_description || !description || !image) {
@@ -90,15 +91,22 @@ export const getProjectsByCategory = asyncHandler(async (req, res) => {
 
 // Update an existing project (admin only)
 export const updateProject = asyncHandler(async (req, res) => {
-  const { project_name, category, short_description, description, image, live_url, status } = req.body;
+  const { project_name, category, short_description, description, live_url, status } = req.body;
 
-  if (!project_name && !category && !short_description && !description && !image && !live_url && !status) {
+  if (!project_name && !category && !short_description && !description && !live_url && !status) {
     return res.status(400).json({ success: false, message: "No fields to update" });
+  }
+
+  const update = { project_name, category, short_description, description, live_url, status };
+  if (req.file) {
+    update.image = `/uploads/${req.file.filename}`;
+  } else if (req.body.image) {
+    update.image = req.body.image;
   }
 
   const project = await Projects.findByIdAndUpdate(
     req.params.id,
-    { project_name, category, short_description, description, image, live_url, status },
+    update,
     { new: true, runValidators: true },
   );
   if (!project) {
