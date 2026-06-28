@@ -103,6 +103,15 @@ export const rejectReview = asyncHandler(async (req, res) => {
   });
 });
 
+// Delete all reviews (admin only)
+export const deleteAllReviews = asyncHandler(async (req, res) => {
+  const result = await Review.deleteMany({});
+  res.status(200).json({
+    success: true,
+    message: `${result.deletedCount} review(s) deleted successfully.`,
+  });
+});
+
 // Get only approved reviews to show on the public website
 export const getPublicReviews = asyncHandler(async (req, res) => {
   const reviews = await Review.find({ status: "Approved" }).sort({ createdAt: -1 });
