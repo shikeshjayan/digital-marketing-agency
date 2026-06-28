@@ -1,30 +1,33 @@
-import dotenv from "dotenv";
-import { fileURLToPath } from "url";
-import { dirname, join } from "path";
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
-
-dotenv.config({ path: join(__dirname, "..", "server", ".env") });
-
 import mongoose from "mongoose";
 import app from "../server/src/app.js";
 
-let cached = null;
-
-async function connectToDatabase() {
-  if (cached && cached.readyState === 1) {
-    return cached;
-  }
-
-  const conn = await mongoose.connect(process.env.MONGO_URL);
-  cached = conn.connection;
-  return cached;
+let cached = global._mongooseCache;
+if (!cached) {
+  cached = global._mongooseCache = { conn: null, promise: null };
 }
 
-const handler = async (req, res) => {
-  await connectToDatabase();
-  return app(req, res);
-};
+async function connectToDatabase() {
+  if (cached.conn && cached.conn.readyState === 1) {
+    return cached.conn;
+  }
 
-export default handler;
+  if (!cached.promise) {
+    cached.promise = mongoose.connect(process.env.MONGO_URL, {
+      bufferCommands: false,
+    });
+  }
+
+  const conn = await cached.promise;
+  cached.conn = conn.connection;
+  return cached.conn;
+}
+
+export default async function handler(req, res) {
+  try {
+    await connectToDatabase();
+  } catch (err) {
+    console.error("MongoDB connection error:", err.message);
+    return res.status(500).json({ error: "Database connection failed" });
+  }
+  return app(req, res);
+}
