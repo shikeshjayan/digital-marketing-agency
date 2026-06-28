@@ -78,6 +78,8 @@ app.use("/api/v1", rateLimitMiddleware(generalLimiter, "Too many requests, try a
 // Strict rate limit for auth endpoints (login/register)
 app.use("/api/v1/admin/login", rateLimitMiddleware(authLimiter, "Too many attempts, try again later"));
 app.use("/api/v1/admin/register", rateLimitMiddleware(authLimiter, "Too many attempts, try again later"));
+app.use("/api/v1/admin/forgot-password", rateLimitMiddleware(authLimiter, "Too many attempts, try again later"));
+app.use("/api/v1/admin/verify-otp", rateLimitMiddleware(authLimiter, "Too many attempts, try again later"));
 
 // Connect each route group to its URL path
 app.use("/api/v1/services", serviceRoutes);

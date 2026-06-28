@@ -25,11 +25,13 @@ const useAuthStore = create((set) => ({
     try {
       const { data } = await apiService.post("/admin/register", formData);
       set({ user: data.data ?? null, loading: false });
+      return data.data;
     } catch (error) {
       set({
         error: error.response?.data?.message || error.message,
         loading: false,
       });
+      throw error;
     }
   },
 
