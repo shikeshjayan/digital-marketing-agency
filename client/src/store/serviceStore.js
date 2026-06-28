@@ -90,6 +90,20 @@ const useServiceStore = create((set) => ({
       throw error;
     }
   },
+
+  deleteAllServices: async () => {
+    set({ loading: true, error: null });
+    try {
+      await apiService.delete("/admin/services");
+      set({ adminServices: [], loading: false });
+    } catch (error) {
+      set({
+        error: error.response?.data?.message || error.message,
+        loading: false,
+      });
+      throw error;
+    }
+  },
 }));
 
 export default useServiceStore;

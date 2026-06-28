@@ -7,7 +7,7 @@ import { slugify } from "../../utils/slugify";
 const ServiceCard = ({ service }) => (
   <Link
     to={`/services/${slugify(service.service_name)}`}
-    className="flex flex-col bg-white border border-gray-100 rounded-xl shadow-sm h-full overflow-hidden">
+    className="flex flex-col bg-white border border-gray-100 rounded-xl shadow-sm h-full overflow-hidden cursor-pointer">
     <div className="h-40 overflow-hidden">
       <img
         src={service.image}

@@ -1,31 +1,56 @@
-import { useMemo } from 'react'
-
-export default function HeroSplit({ leftColor = 'bg-gray-900', title, titleHighlight = 'Our', subtitle }) {
-  const fullTitle = useMemo(() => ({ title, titleHighlight }), [title, titleHighlight])
-
+export default function HeroSplit({
+  title,
+  titleHighlight = "Our",
+  subtitle,
+  imageSrc,
+  imageAlt = "Hero image",
+  gradientFrom = "from-gray-900",
+  gradientVia = "via-gray-800",
+  gradientTo = "to-black",
+}) {
   return (
-    <section className="bg-white">
-      <div className="w-full">
-        <div className="grid grid-cols-1 md:grid-cols-2">
-          <div className={`${leftColor} relative min-h-[220px] md:min-h-[320px]`}>
-            <div className="absolute inset-0 opacity-20 bg-[radial-gradient(circle_at_center,white,transparent_60%)]" />
-            <div className="absolute inset-0 flex items-center justify-center">
-              <div className="w-72 max-w-[80%] h-56 rounded-3xl bg-white/10 border border-white/20 flex items-center justify-center text-white">
-                <div className="text-5xl">🧑‍💻</div>
-              </div>
+    <section
+      className={`relative overflow-hidden bg-gradient-to-br ${gradientFrom} ${gradientVia} ${gradientTo}`}>
+      {/* Overlay */}
+      <div className="absolute inset-0 bg-black/30" />
+
+      {/* Background Glow */}
+      <div className="absolute -top-32 -left-32 h-80 w-80 rounded-full bg-red-600/20 blur-3xl" />
+      <div className="absolute -bottom-32 -right-32 h-96 w-96 rounded-full bg-red-500/20 blur-3xl" />
+
+      <div className="relative mx-auto max-w-7xl px-6 py-16 md:py-20 lg:py-24">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-center">
+          {/* Image */}
+          <div className="relative">
+            {/* Image */}
+            <div className="relative">
+              <img
+                src={imageSrc || "/the-creative-idea-Nz3ztzCRE9g-unsplash.png"}
+                alt={imageAlt}
+                className="w-full rounded-3xl object-cover transition-transform duration-700 hover:scale-105"
+              />
+
+              <div className="absolute -bottom-8 -right-8 -z-10 h-36 w-36 rounded-full bg-red-600/20 blur-3xl" />
             </div>
+
+            {/* Decorative Glow */}
+            <div className="absolute -bottom-8 -right-8 h-32 w-32 rounded-full bg-red-600/30 blur-3xl -z-10" />
           </div>
-          <div className="flex items-center justify-center p-8 md:p-12 bg-white">
-            <div className="text-center md:text-left max-w-xl">
-              <div className="text-3xl md:text-5xl font-extrabold text-gray-900">
-                <span className="text-red-700">{fullTitle.titleHighlight}</span> {fullTitle.title}
-              </div>
-              {subtitle && <p className="mt-4 text-gray-600 leading-relaxed">{subtitle}</p>}
-            </div>
+
+          {/* Text */}
+          <div className="text-center lg:text-left">
+            <h1 className="text-4xl font-black leading-tight tracking-tight text-white md:text-5xl lg:text-6xl">
+              <span className="text-red-500">{titleHighlight}</span> {title}
+            </h1>
+
+            {subtitle && (
+              <p className="mt-6 max-w-xl text-lg leading-8 text-gray-300 mx-auto lg:mx-0">
+                {subtitle}
+              </p>
+            )}
           </div>
         </div>
       </div>
     </section>
-  )
+  );
 }
-

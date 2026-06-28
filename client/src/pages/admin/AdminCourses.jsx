@@ -2,6 +2,16 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import useCourseStore from "../../store/courseStore.js";
 import ConfirmModal from "../../components/ui/ConfirmModal.jsx";
 import Select from "../../components/ui/Select.jsx";
+import imageUrl from "../../utils/imageUrl.js";
+
+function fileToDataUrl(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onerror = reject;
+    reader.onload = () => resolve(reader.result);
+    reader.readAsDataURL(file);
+  });
+}
 
 export default function AdminCourses() {
   const {
@@ -10,6 +20,7 @@ export default function AdminCourses() {
     createCourse,
     updateCourse,
     deleteCourse,
+    deleteAllCourses,
   } = useCourseStore();
 
   const [items, setItems] = useState([]);
@@ -23,8 +34,10 @@ export default function AdminCourses() {
     () => ({
       course_id: null,
       course_name: "",
-      category: "Marketing",
+      category: "",
       description: "",
+      image: "",
+      imageFile: null,
       status: "Active",
     }),
     [],
@@ -36,6 +49,7 @@ export default function AdminCourses() {
   const [submitting, setSubmitting] = useState(false);
   const formRef = useRef(null);
   const [deleteTarget, setDeleteTarget] = useState(null);
+  const [deleteAllTarget, setDeleteAllTarget] = useState(false);
 
   const load = async () => {
     setLoading(true);
@@ -68,6 +82,17 @@ export default function AdminCourses() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [search, category, status]);
 
+  async function onPickImage(e) {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    if (file.size > 5 * 1024 * 1024) {
+      setError("Image must be less than 5MB.");
+      return;
+    }
+    const dataUrl = await fileToDataUrl(file);
+    setForm((f) => ({ ...f, image: dataUrl, imageFile: file }));
+  }
+
   async function onSubmit(e) {
     e.preventDefault();
     setError("");
@@ -80,12 +105,17 @@ export default function AdminCourses() {
       return;
     }
 
-    const payload = {
-      course_name: form.course_name.trim(),
-      category: form.category,
-      description: form.description.trim(),
-      status: form.status,
-    };
+    const payload = new FormData();
+    payload.append("course_name", form.course_name.trim());
+    payload.append("category", form.category);
+    payload.append("description", form.description.trim());
+    payload.append("status", form.status);
+
+    if (form.imageFile) {
+      payload.append("image", form.imageFile);
+    } else if (form.course_id && !form.image) {
+      payload.append("removeImage", "true");
+    }
 
     try {
       if (form.course_id) {
@@ -123,6 +153,20 @@ export default function AdminCourses() {
         err?.response?.data?.message || err?.message || "Delete failed.",
       );
       setDeleteTarget(null);
+    }
+  }
+
+  async function onConfirmDeleteAll() {
+    try {
+      await deleteAllCourses();
+      setToast("All courses deleted successfully.");
+      setDeleteAllTarget(false);
+      await load();
+    } catch (err) {
+      setError(
+        err?.response?.data?.message || err?.message || "Delete all failed.",
+      );
+      setDeleteAllTarget(false);
     }
   }
 
@@ -183,7 +227,7 @@ export default function AdminCourses() {
         </div>
       </div>
 
-      <div className="mt-6 grid grid-cols-1 lg:grid-cols-5 gap-6">
+      <div className="mt-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
         <div
           ref={formRef}
           className="lg:col-span-2 bg-white border border-gray-200 rounded p-4 shadow-sm self-start">
@@ -231,6 +275,35 @@ export default function AdminCourses() {
                 }
                 placeholder="Detailed description of the course"
               />
+            </div>
+            <div>
+              <label className="text-sm font-semibold text-gray-800">
+                Course Image
+              </label>
+              <label className="mt-2 flex flex-col items-center justify-center w-full h-16 border-2 border-dashed border-gray-300 rounded cursor-pointer hover:border-red-400 hover:bg-red-50 transition">
+                <svg
+                  className="w-5 h-5 text-gray-400"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
+                  />
+                </svg>
+                <span className="text-sm text-gray-500 mt-1">
+                  {form.image ? "Change Image" : "Choose Image"}
+                </span>
+                <input
+                  type="file"
+                  accept="image/*"
+                  className="hidden"
+                  onChange={onPickImage}
+                />
+              </label>
             </div>
             <div>
               <label className="text-sm font-semibold text-gray-800">
@@ -308,8 +381,18 @@ export default function AdminCourses() {
         <div className="lg:col-span-3 bg-white border border-gray-200 rounded p-5 shadow-sm">
           <div className="flex items-center justify-between">
             <div className="font-extrabold text-gray-900">Courses</div>
-            <div className="text-sm text-gray-500">
-              {loading ? "Loading..." : `${items.length} items`}
+            <div className="flex items-center gap-3">
+              {items.length > 0 && (
+                <button
+                  type="button"
+                  className="text-sm font-semibold text-red-600 hover:text-red-500 transition cursor-pointer"
+                  onClick={() => setDeleteAllTarget(true)}>
+                  Delete All
+                </button>
+              )}
+              <div className="text-sm text-gray-500">
+                {loading ? "Loading..." : `${items.length} items`}
+              </div>
             </div>
           </div>
 
@@ -318,6 +401,7 @@ export default function AdminCourses() {
               <thead>
                 <tr className="text-left text-gray-600">
                   <th className="py-2 pr-3 hidden sm:table-cell">ID</th>
+                  <th className="py-2 pr-3 hidden sm:table-cell">Image</th>
                   <th className="py-2 pr-3">Course</th>
                   <th className="py-2 pr-3">Category</th>
                   <th className="py-2 pr-3">Status</th>
@@ -335,6 +419,23 @@ export default function AdminCourses() {
                         title={c._id}>
                         {c._id}
                       </span>
+                    </td>
+                    <td className="py-3 pr-3 hidden sm:table-cell">
+                      {c.image ? (
+                        <div className="w-12 h-12 rounded border border-gray-200 overflow-hidden">
+                          <img
+                            src={imageUrl(c.image)}
+                            alt={c.course_name}
+                            className="w-full h-full object-cover"
+                          />
+                        </div>
+                      ) : (
+                        <div className="w-12 h-12 rounded border border-gray-200 bg-gray-50 flex items-center justify-center text-gray-400">
+                          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                          </svg>
+                        </div>
+                      )}
                     </td>
                     <td className="py-3 pr-3">
                       <div className="font-bold text-gray-900 truncate max-w-[200px]">
@@ -363,13 +464,15 @@ export default function AdminCourses() {
                       <div className="flex gap-2 flex-wrap">
                         <button
                           type="button"
-                          className="px-3 py-1.5 text-xs sm:px-4 sm:py-2 sm:text-sm text-gray-600 hover:text-gray-800 rounded transition cursor-pointer"
+                           className="px-3 py-2 text-xs sm:px-4 sm:py-2 sm:text-sm min-h-[44px] text-gray-600 hover:text-gray-800 rounded transition cursor-pointer"
                           onClick={() => {
                             setForm({
                               course_id: c._id,
                               course_name: c.course_name,
                               category: c.category ?? "Marketing",
                               description: c.description,
+                              image: c.image ?? "",
+                              imageFile: null,
                               status: c.status,
                             });
                             formRef.current?.scrollIntoView({
@@ -381,7 +484,7 @@ export default function AdminCourses() {
                         </button>
                         <button
                           type="button"
-                          className="px-3 py-1.5 text-xs sm:px-4 sm:py-2 sm:text-sm text-red-600 hover:text-red-500 rounded transition cursor-pointer"
+                           className="px-3 py-2 text-xs sm:px-4 sm:py-2 sm:text-sm min-h-[44px] text-red-600 hover:text-red-500 rounded transition cursor-pointer"
                           onClick={() => onDelete(c._id)}>
                           Delete
                         </button>
@@ -391,7 +494,7 @@ export default function AdminCourses() {
                 ))}
                 {!items.length && !loading && (
                   <tr>
-                    <td colSpan={5} className="py-12 text-center">
+                    <td colSpan={6} className="py-12 text-center">
                       <div className="flex flex-col items-center text-gray-400">
                         <svg
                           className="w-12 h-12 mb-3"
@@ -424,6 +527,12 @@ export default function AdminCourses() {
         onCancel={() => setDeleteTarget(null)}
         onConfirm={onConfirmDelete}
         message="Are you sure you want to delete this course? This action cannot be undone."
+      />
+      <ConfirmModal
+        open={deleteAllTarget}
+        onCancel={() => setDeleteAllTarget(false)}
+        onConfirm={onConfirmDeleteAll}
+        message="Are you sure you want to delete ALL courses? This action cannot be undone."
       />
     </div>
   );

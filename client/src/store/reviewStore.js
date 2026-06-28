@@ -91,6 +91,20 @@ const useReviewStore = create((set) => ({
     }
   },
 
+  deleteAllReviews: async () => {
+    set({ loading: true, error: null });
+    try {
+      await apiService.delete("/admin/reviews");
+      set({ adminReviews: [], loading: false });
+    } catch (error) {
+      set({
+        error: error.response?.data?.message || error.message,
+        loading: false,
+      });
+      throw error;
+    }
+  },
+
   reset: () => set({ error: null, success: false }),
 }));
 

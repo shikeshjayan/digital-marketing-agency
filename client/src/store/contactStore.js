@@ -73,6 +73,20 @@ const useContactStore = create((set) => ({
     }
   },
 
+  deleteAllEnquiries: async () => {
+    set({ loading: true, error: null });
+    try {
+      await apiService.delete("/admin/contact/enquiries");
+      set({ adminEnquiries: [], loading: false });
+    } catch (error) {
+      set({
+        error: error.response?.data?.message || error.message,
+        loading: false,
+      });
+      throw error;
+    }
+  },
+
   reset: () => set({ error: null, success: false }),
 }));
 

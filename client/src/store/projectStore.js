@@ -102,6 +102,20 @@ const useProjectStore = create((set) => ({
       throw error;
     }
   },
+
+  deleteAllProjects: async () => {
+    set({ loading: true, error: null });
+    try {
+      await apiService.delete("/admin/projects");
+      set({ adminProjects: [], loading: false });
+    } catch (error) {
+      set({
+        error: error.response?.data?.message || error.message,
+        loading: false,
+      });
+      throw error;
+    }
+  },
 }));
 
 export default useProjectStore;

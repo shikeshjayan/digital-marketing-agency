@@ -19,6 +19,7 @@ export default function AdminProjects() {
     createProject,
     updateProject,
     deleteProject,
+    deleteAllProjects,
   } = useProjectStore();
 
   const [items, setItems] = useState([]);
@@ -48,6 +49,7 @@ export default function AdminProjects() {
   const [submitting, setSubmitting] = useState(false);
   const formRef = useRef(null);
   const [deleteTarget, setDeleteTarget] = useState(null);
+  const [deleteAllTarget, setDeleteAllTarget] = useState(false);
 
   const load = async () => {
     setLoading(true);
@@ -163,6 +165,20 @@ export default function AdminProjects() {
     }
   }
 
+  async function onConfirmDeleteAll() {
+    try {
+      await deleteAllProjects();
+      setToast("All projects deleted successfully.");
+      setDeleteAllTarget(false);
+      await load();
+    } catch (err) {
+      setError(
+        err?.response?.data?.message || err?.message || "Delete all failed.",
+      );
+      setDeleteAllTarget(false);
+    }
+  }
+
   return (
     <div>
       <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-3">
@@ -220,7 +236,7 @@ export default function AdminProjects() {
         </div>
       </div>
 
-      <div className="mt-6 grid grid-cols-1 lg:grid-cols-5 gap-6">
+      <div className="mt-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
         <div
           ref={formRef}
           className="lg:col-span-2 bg-white border border-gray-200 rounded p-4 shadow-sm self-start">
@@ -401,8 +417,18 @@ export default function AdminProjects() {
         <div className="lg:col-span-3 bg-white border border-gray-200 rounded p-5 shadow-sm">
           <div className="flex items-center justify-between">
             <div className="font-extrabold text-gray-900">Projects</div>
-            <div className="text-sm text-gray-500">
-              {loading ? "Loading..." : `${items.length} items`}
+            <div className="flex items-center gap-3">
+              {items.length > 0 && (
+                <button
+                  type="button"
+                  className="text-sm font-semibold text-red-600 hover:text-red-500 transition cursor-pointer"
+                  onClick={() => setDeleteAllTarget(true)}>
+                  Delete All
+                </button>
+              )}
+              <div className="text-sm text-gray-500">
+                {loading ? "Loading..." : `${items.length} items`}
+              </div>
             </div>
           </div>
 
@@ -456,7 +482,7 @@ export default function AdminProjects() {
                       <div className="flex gap-2 flex-wrap">
                         <button
                           type="button"
-                          className="px-3 py-1.5 text-xs sm:px-4 sm:py-2 sm:text-sm text-gray-600 hover:text-gray-800 rounded transition cursor-pointer"
+                           className="px-3 py-2 text-xs sm:px-4 sm:py-2 sm:text-sm min-h-[44px] text-gray-600 hover:text-gray-800 rounded transition cursor-pointer"
                           onClick={() => {
                             setForm({
                               project_id: p._id,
@@ -477,7 +503,7 @@ export default function AdminProjects() {
                         </button>
                         <button
                           type="button"
-                          className="px-3 py-1.5 text-xs sm:px-4 sm:py-2 sm:text-sm text-red-600 hover:text-red-500 rounded transition cursor-pointer"
+                           className="px-3 py-2 text-xs sm:px-4 sm:py-2 sm:text-sm min-h-[44px] text-red-600 hover:text-red-500 rounded transition cursor-pointer"
                           onClick={() => onDelete(p._id)}>
                           Delete
                         </button>
@@ -520,6 +546,12 @@ export default function AdminProjects() {
         onCancel={() => setDeleteTarget(null)}
         onConfirm={onConfirmDelete}
         message="Are you sure you want to delete this project? This action cannot be undone."
+      />
+      <ConfirmModal
+        open={deleteAllTarget}
+        onCancel={() => setDeleteAllTarget(false)}
+        onConfirm={onConfirmDeleteAll}
+        message="Are you sure you want to delete ALL projects? This action cannot be undone."
       />
     </div>
   );

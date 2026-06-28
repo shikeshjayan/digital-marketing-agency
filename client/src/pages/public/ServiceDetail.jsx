@@ -24,7 +24,7 @@ export default function ServiceDetail() {
         <p className="text-red-500">{error}</p>
         <Link
           to="/services"
-          className="mt-4 inline-flex items-center rounded-full bg-red-600 text-white px-5 py-2.5 text-sm font-semibold hover:bg-red-500 transition">
+          className="mt-4 inline-flex items-center rounded-full bg-red-600 text-white px-5 py-2.5 text-sm font-semibold hover:bg-red-500 transition cursor-pointer">
           Back to Services
         </Link>
       </div>
@@ -37,7 +37,7 @@ export default function ServiceDetail() {
         <p className="mt-3 text-gray-500">No service found for this URL.</p>
         <Link
           to="/services"
-          className="mt-6 inline-flex items-center rounded-full bg-red-600 text-white px-5 py-2.5 text-sm font-semibold hover:bg-red-500 transition">
+          className="mt-6 inline-flex items-center rounded-full bg-red-600 text-white px-5 py-2.5 text-sm font-semibold hover:bg-red-500 transition cursor-pointer">
           Back to Services
         </Link>
       </div>
@@ -73,7 +73,7 @@ export default function ServiceDetail() {
           <div className="mt-12">
             <Link
               to="/services"
-              className="inline-flex items-center rounded-full bg-red-600 text-white px-6 py-3 text-sm font-semibold hover:bg-red-500 transition shadow-md">
+              className="inline-flex items-center rounded-full bg-red-600 text-white px-6 py-3 text-sm font-semibold hover:bg-red-500 transition shadow-md cursor-pointer">
               Back to Services
             </Link>
           </div>

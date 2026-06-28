@@ -16,6 +16,11 @@ const teamSchema = new mongoose.Schema(
       required: [true, "Designation is required"],
       trim: true,
     },
+    description: {
+      type: String,
+      trim: true,
+      default: "",
+    },
     display_order: {
       type: Number,
       default: 0,

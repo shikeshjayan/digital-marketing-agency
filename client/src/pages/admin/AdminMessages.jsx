@@ -14,7 +14,7 @@ function statusChip(status) {
 }
 
 export default function AdminMessages() {
-  const { fetchAdminEnquiries, updateEnquiryStatus, deleteEnquiry } =
+  const { fetchAdminEnquiries, updateEnquiryStatus, deleteEnquiry, deleteAllEnquiries } =
     useContactStore();
 
   const [items, setItems] = useState([]);
@@ -26,6 +26,7 @@ export default function AdminMessages() {
   const [error, setError] = useState("");
   const [toast, setToast] = useState("");
   const [deleteTarget, setDeleteTarget] = useState(null);
+  const [deleteAllTarget, setDeleteAllTarget] = useState(false);
 
   const load = async () => {
     setLoading(true);
@@ -63,6 +64,7 @@ export default function AdminMessages() {
     try {
       await updateEnquiryStatus(id, nextStatus);
       setToast("Status updated successfully.");
+      window.dispatchEvent(new Event('refresh-badges'));
       await load();
     } catch (e) {
       setError(e?.message ?? "Update failed.");
@@ -79,10 +81,24 @@ export default function AdminMessages() {
       await deleteEnquiry(deleteTarget);
       setToast("Enquiry deleted successfully.");
       setDeleteTarget(null);
+      window.dispatchEvent(new Event('refresh-badges'));
       await load();
     } catch (e) {
       setError(e?.message ?? "Delete failed.");
       setDeleteTarget(null);
+    }
+  }
+
+  async function onConfirmDeleteAll() {
+    try {
+      await deleteAllEnquiries();
+      setToast("All enquiries deleted successfully.");
+      setDeleteAllTarget(false);
+      window.dispatchEvent(new Event('refresh-badges'));
+      await load();
+    } catch (e) {
+      setError(e?.message ?? "Delete all failed.");
+      setDeleteAllTarget(false);
     }
   }
 
@@ -100,7 +116,7 @@ export default function AdminMessages() {
       </div>
 
       <div className="mt-6 bg-white border border-gray-200 rounded p-5 shadow-sm">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-3">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3">
           <div className="relative">
             <svg
               className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400"
@@ -219,8 +235,18 @@ export default function AdminMessages() {
       <div className="mt-4 bg-white border border-gray-200 rounded p-5 shadow-sm">
         <div className="flex items-center justify-between">
           <div className="font-extrabold text-gray-900">Enquiries</div>
-          <div className="text-sm text-gray-500">
-            {loading ? "Loading..." : `${items.length} items`}
+          <div className="flex items-center gap-3">
+            {items.length > 0 && (
+              <button
+                type="button"
+                className="text-sm font-semibold text-red-600 hover:text-red-500 transition cursor-pointer"
+                onClick={() => setDeleteAllTarget(true)}>
+                Delete All
+              </button>
+            )}
+            <div className="text-sm text-gray-500">
+              {loading ? "Loading..." : `${items.length} items`}
+            </div>
           </div>
         </div>
 
@@ -273,7 +299,7 @@ export default function AdminMessages() {
                       {(e.status === "New" || e.status === "Pending") && (
                         <button
                           type="button"
-                          className="px-3 py-1.5 text-xs sm:px-4 sm:py-2 sm:text-sm text-gray-600 hover:text-gray-800 rounded transition cursor-pointer"
+                          className="px-3 py-2 text-xs sm:px-4 sm:py-2 sm:text-sm min-h-[44px] text-gray-600 hover:text-gray-800 rounded transition cursor-pointer"
                           onClick={() =>
                             transition(e.enquiry_id, "Replied")
                           }>
@@ -283,7 +309,7 @@ export default function AdminMessages() {
                       {e.status !== "Spam" && (
                         <button
                           type="button"
-                          className="px-3 py-1.5 text-xs sm:px-4 sm:py-2 sm:text-sm text-yellow-600 hover:text-yellow-500 rounded transition cursor-pointer"
+                          className="px-3 py-2 text-xs sm:px-4 sm:py-2 sm:text-sm min-h-[44px] text-yellow-600 hover:text-yellow-500 rounded transition cursor-pointer"
                           onClick={() =>
                             transition(e.enquiry_id, "Spam")
                           }>
@@ -292,7 +318,7 @@ export default function AdminMessages() {
                       )}
                       <button
                         type="button"
-                        className="px-3 py-1.5 text-xs sm:px-4 sm:py-2 sm:text-sm text-red-600 hover:text-red-500 rounded transition cursor-pointer"
+                        className="px-3 py-2 text-xs sm:px-4 sm:py-2 sm:text-sm min-h-[44px] text-red-600 hover:text-red-500 rounded transition cursor-pointer"
                         onClick={() => onDelete(e.enquiry_id)}>
                         Delete
                       </button>
@@ -335,6 +361,12 @@ export default function AdminMessages() {
         onCancel={() => setDeleteTarget(null)}
         onConfirm={onConfirmDelete}
         message="Are you sure you want to delete this enquiry? This action cannot be undone."
+      />
+      <ConfirmModal
+        open={deleteAllTarget}
+        onCancel={() => setDeleteAllTarget(false)}
+        onConfirm={onConfirmDeleteAll}
+        message="Are you sure you want to delete ALL enquiries? This action cannot be undone."
       />
     </div>
   );

@@ -56,11 +56,13 @@ export default function AdminReviews() {
   const [actionLoading, setActionLoading] = useState(null);
   const [deleteTarget, setDeleteTarget] = useState(null);
   const [deleteType, setDeleteType] = useState(null);
+  const [deleteAllTarget, setDeleteAllTarget] = useState(false);
   const searchRef = useRef(null);
 
   const fetchAdminReviews = useReviewStore((s) => s.fetchAdminReviews);
   const approveReview = useReviewStore((s) => s.approveReview);
   const rejectReview = useReviewStore((s) => s.rejectReview);
+  const deleteAllReviews = useReviewStore((s) => s.deleteAllReviews);
 
   const load = async () => {
     setLoading(true);
@@ -101,6 +103,7 @@ export default function AdminReviews() {
       await approveReview(id);
       setDeleteTarget(null);
       setToast("Review approved and published.");
+      window.dispatchEvent(new Event('refresh-badges'));
       await load();
     } catch (err) {
       setError(err.response?.data?.message || err.message || "Approve failed");
@@ -115,11 +118,25 @@ export default function AdminReviews() {
       await rejectReview(id);
       setDeleteTarget(null);
       setToast("Review rejected.");
+      window.dispatchEvent(new Event('refresh-badges'));
       await load();
     } catch (err) {
       setError(err.response?.data?.message || err.message || "Reject failed");
     } finally {
       setActionLoading(null);
+    }
+  }
+
+  async function onConfirmDeleteAll() {
+    try {
+      await deleteAllReviews();
+      setToast("All reviews deleted successfully.");
+      setDeleteAllTarget(false);
+      window.dispatchEvent(new Event('refresh-badges'));
+      await load();
+    } catch (err) {
+      setError(err.response?.data?.message || err.message || "Delete all failed");
+      setDeleteAllTarget(false);
     }
   }
 
@@ -150,7 +167,7 @@ export default function AdminReviews() {
               <button
                 key={t.key}
                 type="button"
-                className={`px-4 py-2 rounded-full text-sm font-semibold border transition cursor-pointer ${
+                className={`px-4 py-2.5 min-h-[44px] rounded-full text-sm font-semibold border transition cursor-pointer ${
                   tab === t.key
                     ? "bg-red-600 text-white border-red-600"
                     : "bg-white text-gray-700 border-gray-200 hover:text-red-700 hover:bg-red-50"
@@ -233,8 +250,18 @@ export default function AdminReviews() {
       <div className="mt-4 bg-white border border-gray-200 rounded p-5 shadow-sm">
         <div className="flex items-center justify-between">
           <div className="font-extrabold text-gray-900">Reviews</div>
-          <div className="text-sm text-gray-500">
-            {loading ? "Loading..." : `${items.length} items`}
+          <div className="flex items-center gap-3">
+            {items.length > 0 && (
+              <button
+                type="button"
+                className="text-sm font-semibold text-red-600 hover:text-red-500 transition cursor-pointer"
+                onClick={() => setDeleteAllTarget(true)}>
+                Delete All
+              </button>
+            )}
+            <div className="text-sm text-gray-500">
+              {loading ? "Loading..." : `${items.length} items`}
+            </div>
           </div>
         </div>
 
@@ -292,7 +319,7 @@ export default function AdminReviews() {
                       {r.status !== "Approved" && (
                         <button
                           type="button"
-                          className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-green-700 bg-green-50 border border-green-200 rounded hover:bg-green-100 transition cursor-pointer disabled:opacity-50"
+                          className="inline-flex items-center gap-1.5 px-3 py-2 min-h-[44px] text-xs font-semibold text-green-700 bg-green-50 border border-green-200 rounded hover:bg-green-100 transition cursor-pointer disabled:opacity-50"
                           onClick={() =>
                             setDeleteTarget({
                               type: "approve",
@@ -339,7 +366,7 @@ export default function AdminReviews() {
                       {r.status !== "Rejected" && (
                         <button
                           type="button"
-                          className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-red-700 bg-red-50 border border-red-200 rounded hover:bg-red-100 transition cursor-pointer disabled:opacity-50"
+                          className="inline-flex items-center gap-1.5 px-3 py-2 min-h-[44px] text-xs font-semibold text-red-700 bg-red-50 border border-red-200 rounded hover:bg-red-100 transition cursor-pointer disabled:opacity-50"
                           onClick={() =>
                             setDeleteTarget({
                               type: "reject",
@@ -430,6 +457,12 @@ export default function AdminReviews() {
             ? "This review will be published on the public site. Continue?"
             : "This review will be rejected and hidden. Continue?"
         }
+      />
+      <ConfirmModal
+        open={deleteAllTarget}
+        onCancel={() => setDeleteAllTarget(false)}
+        onConfirm={onConfirmDeleteAll}
+        message="Are you sure you want to delete ALL reviews? This action cannot be undone."
       />
     </div>
   );

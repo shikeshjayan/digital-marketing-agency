@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import HeroSplit from '../../components/public/HeroSplit.jsx'
-import { publicGetApprovedReviews, publicSubmitReview } from '../../services/mockApi.js'
+import apiService from '../../services/apiService.js'
 
 function StarPicker({ value, onChange }) {
   return (
@@ -12,7 +12,7 @@ function StarPicker({ value, onChange }) {
           <button
             key={v}
             type="button"
-            className={`text-2xl leading-none ${active ? 'text-yellow-500' : 'text-gray-300'} hover:text-yellow-400`}
+            className={`text-2xl leading-none cursor-pointer ${active ? 'text-yellow-500' : 'text-gray-300'} hover:text-yellow-400`}
             onClick={() => onChange(v)}
             aria-label={`Set rating to ${v}`}
           >
@@ -36,7 +36,7 @@ export default function Testimonials() {
   const [success, setSuccess] = useState('')
 
   useEffect(() => {
-    publicGetApprovedReviews().then((res) => setReviews(res.data ?? []))
+    apiService.get('/reviews').then((res) => setReviews(res.data.data ?? []))
   }, [])
 
   async function onSubmit(e) {
@@ -48,16 +48,19 @@ export default function Testimonials() {
       setError('Please fill the form completely.')
       return
     }
-    const res = await publicSubmitReview(form)
-    if (!res.success) {
-      setError(res.error?.message ?? 'Failed to submit.')
-      return
+    try {
+      const res = await apiService.post('/reviews/submit', form)
+      if (!res.data.success) {
+        setError(res.data.error?.message ?? 'Failed to submit.')
+        return
+      }
+      setSuccess('Thanks! Your review was submitted and is awaiting moderation.')
+      setForm({ name: '', location: '', rating: 5, review_text: '' })
+      const latest = await apiService.get('/reviews')
+      setReviews(latest.data.data ?? [])
+    } catch (err) {
+      setError(err.response?.data?.message ?? 'Failed to submit.')
     }
-    setSuccess('Thanks! Your review was submitted and is awaiting moderation.')
-    setForm({ name: '', location: '', rating: 5, review_text: '' })
-    // Approved list stays the same until admin approves; we still refresh to keep UI fresh.
-    const latest = await publicGetApprovedReviews()
-    setReviews(latest.data ?? [])
   }
 
   const approvedCount = reviews.length
@@ -81,13 +84,13 @@ export default function Testimonials() {
               <div className="mt-6 space-y-2 text-sm text-gray-200">
                 <div className="flex items-center gap-3">
                   <span className="w-8 h-8 rounded-xl bg-white/10 flex items-center justify-center">☎</span>
-                  <a className="hover:text-white" href="tel:+91 8891212323">
+                  <a className="hover:text-white cursor-pointer" href="tel:+91 8891212323">
                     +91 8891212323
                   </a>
                 </div>
                 <div className="flex items-center gap-3">
                   <span className="w-8 h-8 rounded-xl bg-white/10 flex items-center justify-center">✉</span>
-                  <a className="hover:text-white" href="mailto:info@s.com">
+                  <a className="hover:text-white cursor-pointer" href="mailto:info@s.com">
                     info@s.com
                   </a>
                 </div>
@@ -147,7 +150,7 @@ export default function Testimonials() {
 
                 <button
                   type="submit"
-                  className="w-full rounded-xl bg-red-600 text-white py-3 font-extrabold hover:bg-orange-500 transition"
+                  className="w-full rounded-xl bg-red-600 text-white py-3 font-extrabold hover:bg-red-500 transition cursor-pointer"
                 >
                   Send Reviews
                 </button>
@@ -163,8 +166,8 @@ export default function Testimonials() {
 
             <div className="mt-7 grid grid-cols-1 md:grid-cols-2 gap-6">
               {reviews.length ? (
-                reviews.slice(0, 4).map((r) => (
-                  <div key={r.review_id} className="bg-white border border-gray-200 rounded-3xl p-6 shadow-sm">
+                reviews.slice(0, 4).map((r, i) => (
+                  <div key={i} className="bg-white border border-gray-200 rounded-3xl p-6 shadow-sm">
                     <div className="flex items-center gap-3">
                       <div className="w-12 h-12 rounded-full bg-gray-100 border border-gray-200 flex items-center justify-center">
                         👤

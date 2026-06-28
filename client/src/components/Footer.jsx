@@ -7,15 +7,15 @@ export default function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           <div>
             <div className="flex items-center gap-3">
-              <div className="w-9 h-9 rounded-xl bg-red-600" aria-hidden="true" />
-              <div className="font-bold text-lg">Digital Marketing</div>
+              <img src="/crown-96.png" alt="CrawlCrown Logo" className="w-9 h-9 rounded-xl object-contain" />
+              <div className="font-bold text-lg">CrawlCrown</div>
             </div>
             <p className="mt-3 text-sm text-gray-300">
               Full-service digital marketing agency with design, development, and performance growth.
             </p>
             <div className="mt-4 flex gap-3 text-sm text-gray-300">
               {['Facebook', 'Instagram', 'LinkedIn', 'YouTube'].map((x) => (
-                <a key={x} href="#" className="hover:text-white" onClick={(e) => e.preventDefault()}>
+                <a key={x} href="#" className="hover:text-white cursor-pointer" onClick={(e) => e.preventDefault()}>
                   {x}
                 </a>
               ))}
@@ -27,13 +27,13 @@ export default function Footer() {
               <div className="text-sm font-semibold mb-3">Services</div>
               <ul className="space-y-2 text-sm text-gray-300">
                 <li>
-                  <Link to="/services">Brand &amp; PR</Link>
+                  <Link to="/services" className="cursor-pointer">Brand &amp; PR</Link>
                 </li>
                 <li>
-                  <Link to="/services">Creative Production</Link>
+                  <Link to="/services" className="cursor-pointer">Creative Production</Link>
                 </li>
                 <li>
-                  <Link to="/services">Digital Marketing</Link>
+                  <Link to="/services" className="cursor-pointer">Digital Marketing</Link>
                 </li>
               </ul>
             </div>
@@ -41,13 +41,13 @@ export default function Footer() {
               <div className="text-sm font-semibold mb-3">Company</div>
               <ul className="space-y-2 text-sm text-gray-300">
                 <li>
-                  <Link to="/about">About</Link>
+                  <Link to="/about" className="cursor-pointer">About</Link>
                 </li>
                 <li>
-                  <Link to="/projects">Projects</Link>
+                  <Link to="/projects" className="cursor-pointer">Projects</Link>
                 </li>
                 <li>
-                  <Link to="/contact">Contact</Link>
+                  <Link to="/contact" className="cursor-pointer">Contact</Link>
                 </li>
               </ul>
             </div>
@@ -64,7 +64,7 @@ export default function Footer() {
         </div>
 
         <div className="border-t border-gray-700 mt-10 pt-6 text-center text-sm text-gray-400">
-          © {new Date().getFullYear()} <span className="text-red-400">Digital Marketing</span>. All rights reserved.
+          © {new Date().getFullYear()} <span className="text-red-400">CrawlCrown</span>. All rights reserved.
         </div>
       </div>
     </footer>
