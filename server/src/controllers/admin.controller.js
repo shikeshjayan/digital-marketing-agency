@@ -86,22 +86,22 @@ export const logoutAdmin = async (req, res) => {
 
 // Update admin's name, email, photo, and/or password
 export const updateAdminProfile = asyncHandler(async (req, res) => {
-  const { name, email, currentPassword, newPassword } = req.body;
-  // If a file was uploaded, use its path; otherwise use the URL from the body
-  const photo = req.file ? `/uploads/${req.file.filename}` : req.body.photo;
+  const { name, email, currentPassword, newPassword, removePhoto } = req.body;
 
-  // Fetch the admin from DB including the password field
   const admin = await Admin.findById(req.admin._id).select("+password");
   if (!admin) {
     return res.status(404).json({ success: false, message: "Admin not found" });
   }
 
-  // Update fields only if they were provided
   if (name) admin.name = name;
   if (email) admin.email = email;
-  if (photo) admin.photo = photo;
 
-  // If user wants to change password, verify current password first
+  if (req.file) {
+    admin.photo = `/uploads/${req.file.filename}`;
+  } else if (removePhoto === "true") {
+    admin.photo = "";
+  }
+
   if (currentPassword && newPassword) {
     const isMatch = await admin.matchPassword(currentPassword);
     if (!isMatch) {
@@ -119,7 +119,6 @@ export const updateAdminProfile = asyncHandler(async (req, res) => {
       });
   }
 
-  // Save changes (the password will be hashed automatically by the model's pre-save hook)
   const updatedAdmin = await admin.save();
 
   res.status(200).json({

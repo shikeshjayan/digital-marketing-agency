@@ -120,6 +120,15 @@ export const deleteProject = asyncHandler(async (req, res) => {
   res.status(200).json({ success: true, message: "Project deleted successfully" });
 });
 
+// Get unique categories from all projects (admin)
+export const getProjectCategories = asyncHandler(async (req, res) => {
+  const categories = await Projects.distinct("category");
+  res.status(200).json({
+    success: true,
+    data: categories.filter(Boolean).sort(),
+  });
+});
+
 // Get all projects (including inactive ones) with filters for admin panel
 export const getAllAdminProjects = asyncHandler(async (req, res) => {
   const { search, category, status, page = 1, limit = 10 } = req.query;

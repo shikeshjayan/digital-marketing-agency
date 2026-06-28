@@ -37,11 +37,14 @@ export const createCourse = asyncHandler(async (req, res) => {
 
 // Get all courses with search, status filter, and pagination (admin only)
 export const getAllAdminCourses = asyncHandler(async (req, res) => {
-  const { search, status, page = 1, limit = 10 } = req.query;
+  const { search, category, status, page = 1, limit = 10 } = req.query;
 
   const filter = {};
   if (search) {
     filter.course_name = { $regex: search, $options: "i" };
+  }
+  if (category) {
+    filter.category = category;
   }
   if (status) {
     filter.status = status;
@@ -105,6 +108,15 @@ export const deleteCourse = asyncHandler(async (req, res) => {
       success: true,
       message: "Course has been permanently deleted from the database.",
     });
+});
+
+// Get unique categories from all courses (admin)
+export const getCourseCategories = asyncHandler(async (req, res) => {
+  const categories = await Courses.distinct("category");
+  res.status(200).json({
+    success: true,
+    data: categories.filter(Boolean).sort(),
+  });
 });
 
 // Get only active courses for public visitors

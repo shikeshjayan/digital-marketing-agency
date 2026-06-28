@@ -16,6 +16,7 @@ const useAuthStore = create((set) => ({
         error: error.response?.data?.message || error.message,
         loading: false,
       });
+      throw error;
     }
   },
 

@@ -4,7 +4,7 @@ import asyncHandler from "../middleware/asyncHandler.js";
 
 // Submit a new contact enquiry (public)
 export const submitEnquiry = asyncHandler(async (req, res) => {
-  const { name, email, service, message } = req.body;
+  const { name, email, phone, service, message } = req.body;
 
   // Make sure required fields are present
   if (!name || !email || !message) {
@@ -18,7 +18,7 @@ export const submitEnquiry = asyncHandler(async (req, res) => {
   }
 
   // Save the enquiry to the database
-  await Contact.create({ name, email, service, message });
+  await Contact.create({ name, email, phone, service, message });
 
   res.status(201).json({
     success: true,
@@ -68,6 +68,7 @@ export const getAdminEnquiries = asyncHandler(async (req, res) => {
     enquiry_id: e._id,
     name: e.name,
     email: e.email,
+    phone: e.phone,
     service: e.service,
     message: e.message,
     status: e.status,

@@ -25,7 +25,9 @@ const useServiceStore = create((set) => ({
     set({ loading: true, error: null });
     try {
       const { data } = await apiService.get("/admin/services", { params });
-      set({ adminServices: data.data ?? [], loading: false });
+      const services = data.data ?? [];
+      set({ adminServices: services, loading: false });
+      return services;
     } catch (error) {
       set({
         error: error.response?.data?.message || error.message,

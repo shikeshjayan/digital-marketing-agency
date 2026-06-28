@@ -1,134 +1,271 @@
-import { useEffect, useState } from 'react'
-import { adminGetSettings, adminUpdateSettings } from '../../services/mockApi.js'
-
-function FileToDataUrl({ file }) {
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader()
-    reader.onerror = reject
-    reader.onload = () => resolve(reader.result)
-    reader.readAsDataURL(file)
-  })
-}
+import { useEffect, useState } from "react";
+import useSettingsStore from "../../store/settingsStore.js";
 
 export default function AdminSettings() {
-  const [settings, setSettings] = useState(null)
+  const { profile, loading, fetchProfile, updateProfile } = useSettingsStore();
   const [form, setForm] = useState({
-    username: '',
-    profile_image: '',
-    current_password: '',
-    new_password: '',
-  })
-  const [error, setError] = useState('')
-  const [toast, setToast] = useState('')
-  const [saving, setSaving] = useState(false)
+    name: "",
+    photo: "",
+    currentPassword: "",
+    newPassword: "",
+  });
+  const [imageFile, setImageFile] = useState(null);
+  const [imagePreview, setImagePreview] = useState("");
+  const [photoRemoved, setPhotoRemoved] = useState(false);
+  const [error, setError] = useState("");
+  const [toast, setToast] = useState("");
+  const [saving, setSaving] = useState(false);
 
   useEffect(() => {
-    adminGetSettings().then((res) => {
-      const data = res.data ?? {}
-      setSettings(data)
-      setForm((f) => ({
-        ...f,
-        username: data.username ?? '',
-        profile_image: data.profile_image ?? '',
-      }))
-    })
-  }, [])
+    fetchProfile()
+      .then((data) => {
+        if (data) {
+          setForm((f) => ({
+            ...f,
+            name: data.name ?? "",
+            photo: data.photo ?? "",
+          }));
+          setImagePreview("");
+          setPhotoRemoved(false);
+        }
+      })
+      .catch(() => {});
+  }, [fetchProfile]);
 
-  async function onPickImage(e) {
-    const file = e.target.files?.[0]
-    if (!file) return
-    const dataUrl = await FileToDataUrl({ file })
-    setForm((f) => ({ ...f, profile_image: dataUrl }))
+  function onPickImage(e) {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    if (file.size > 5 * 1024 * 1024) {
+      setError("Image must be less than 5MB.");
+      return;
+    }
+    setImageFile(file);
+    setImagePreview(URL.createObjectURL(file));
+    setPhotoRemoved(false);
+  }
+
+  function onRemoveImage() {
+    setImageFile(null);
+    setImagePreview("");
+    setPhotoRemoved(true);
+    setForm((f) => ({ ...f, photo: "" }));
   }
 
   async function onSubmit(e) {
-    e.preventDefault()
-    setError('')
-    setToast('')
-    setSaving(true)
+    e.preventDefault();
+    setError("");
+    setToast("");
+    setSaving(true);
     try {
-      const res = await adminUpdateSettings({
-        username: form.username,
-        profile_image: form.profile_image,
-        current_password: form.current_password,
-        new_password: form.new_password,
-      })
-      if (!res.success) {
-        setError(res.error?.message ?? 'Save failed.')
-        return
+      const formData = new FormData();
+      formData.append("name", form.name);
+      formData.append("currentPassword", form.currentPassword);
+      formData.append("newPassword", form.newPassword);
+      if (imageFile) {
+        formData.append("photo", imageFile);
+      } else if (photoRemoved) {
+        formData.append("removePhoto", "true");
       }
-      setToast('Profile updated successfully.')
+      const res = await updateProfile(formData);
+      const updatedProfile = res?.data;
+      setImageFile(null);
+      setImagePreview("");
+      setPhotoRemoved(false);
+      if (updatedProfile) {
+        setForm((f) => ({
+          ...f,
+          name: updatedProfile.name ?? f.name,
+          photo: updatedProfile.photo ?? "",
+          currentPassword: "",
+          newPassword: "",
+        }));
+      }
+      setToast("Profile updated successfully.");
+    } catch (err) {
+      setError(
+        err.response?.data?.message ?? err.message ?? "Save failed.",
+      );
     } finally {
-      setSaving(false)
+      setSaving(false);
     }
   }
 
-  const preview = form.profile_image || settings?.profile_image
+  const resolveUrl = (path) => {
+    if (!path || path.startsWith("blob:") || path.startsWith("http")) return path;
+    const base = (import.meta.env.VITE_API_URL || "http://localhost:5000/api/v1").replace(/\/api\/v1\/?$/, "");
+    return base + path;
+  };
+
+  const preview = photoRemoved ? "" : imagePreview || resolveUrl(form.photo) || resolveUrl(profile?.photo);
 
   return (
     <div>
-      <h2 className="text-xl font-extrabold text-gray-900">Admin Settings</h2>
-      <p className="mt-1 text-sm text-gray-600">Update your profile and password.</p>
+      <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-3">
+        <div>
+          <h2 className="text-xl font-extrabold text-gray-900">
+            Admin Settings
+          </h2>
+          <p className="mt-1 text-sm text-gray-600">
+            Update your profile and password.
+          </p>
+        </div>
+      </div>
 
-      <div className="mt-6 bg-white border border-gray-200 rounded-3xl p-5 shadow-sm">
-        <form onSubmit={onSubmit} className="grid grid-cols-1 lg:grid-cols-5 gap-6">
+      <div className="mt-6 bg-white border border-gray-200 rounded p-5 shadow-sm">
+        <form
+          onSubmit={onSubmit}
+          className="grid grid-cols-1 lg:grid-cols-5 gap-6">
           <div className="lg:col-span-2">
-            <div className="flex items-center gap-4">
-              <div className="w-20 h-20 rounded-3xl border border-gray-200 bg-gray-100 overflow-hidden flex items-center justify-center">
-                {preview ? (
-                  <img src={preview} alt="preview" className="w-full h-full object-cover" />
-                ) : (
-                  '👤'
-                )}
-              </div>
-              <div className="flex-1">
-                <label className="text-sm font-semibold text-gray-800">Profile Image</label>
-                <input type="file" accept="image/*" className="mt-2 w-full" onChange={onPickImage} />
-              </div>
+            <div className="font-extrabold text-gray-900">Profile Image</div>
+            <div className="mt-4">
+              <label className="text-sm font-semibold text-gray-800">
+                Photo
+              </label>
+              <label className="mt-2 flex flex-col items-center justify-center w-full h-16 border-2 border-dashed border-gray-300 rounded cursor-pointer hover:border-red-400 hover:bg-red-50 transition">
+                <svg
+                  className="w-5 h-5 text-gray-400"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24">
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={1.5}
+                    d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
+                  />
+                </svg>
+                <span className="text-sm text-gray-500 mt-1">
+                  {preview ? "Change Photo" : "Choose Photo"}
+                </span>
+                <input
+                  type="file"
+                  accept="image/*"
+                  className="hidden"
+                  onChange={onPickImage}
+                />
+              </label>
+              {preview && (
+                <div className="mt-2 relative inline-block">
+                  <div className="w-16 h-16 rounded border border-gray-200 overflow-hidden">
+                    <img
+                      src={preview}
+                      alt="preview"
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+                  <button
+                    type="button"
+                    className="absolute -top-1.5 -right-1.5 w-5 h-5 rounded-full bg-red-600 text-white flex items-center justify-center hover:bg-red-500 transition cursor-pointer"
+                    onClick={onRemoveImage}>
+                    <svg
+                      className="w-3 h-3"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24">
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M6 18L18 6M6 6l12 12"
+                      />
+                    </svg>
+                  </button>
+                </div>
+              )}
             </div>
           </div>
 
           <div className="lg:col-span-3">
-            <div className="space-y-4">
+            <div className="font-extrabold text-gray-900">
+              Profile Details
+            </div>
+            <div className="mt-4 space-y-3">
               <div>
-                <label className="text-sm font-semibold text-gray-800">Username</label>
+                <label className="text-sm font-semibold text-gray-800">
+                  Username
+                </label>
                 <input
-                  className="mt-2 w-full rounded-xl border border-gray-200 px-4 py-2 outline-none focus:ring-2 focus:ring-red-100"
-                  value={form.username}
-                  onChange={(e) => setForm((f) => ({ ...f, username: e.target.value }))}
+                  className="mt-2 w-full rounded border border-gray-200 px-4 py-2 outline-none focus:ring-2 focus:ring-red-100"
+                  value={form.name}
+                  onChange={(e) =>
+                    setForm((f) => ({ ...f, name: e.target.value }))
+                  }
+                  placeholder="e.g. admin"
                 />
               </div>
-
               <div>
-                <label className="text-sm font-semibold text-gray-800">Current Password</label>
+                <label className="text-sm font-semibold text-gray-800">
+                  Current Password
+                </label>
                 <input
                   type="password"
-                  className="mt-2 w-full rounded-xl border border-gray-200 px-4 py-2 outline-none focus:ring-2 focus:ring-red-100"
-                  value={form.current_password}
-                  onChange={(e) => setForm((f) => ({ ...f, current_password: e.target.value }))}
+                  className="mt-2 w-full rounded border border-gray-200 px-4 py-2 outline-none focus:ring-2 focus:ring-red-100"
+                  value={form.currentPassword}
+                  onChange={(e) =>
+                    setForm((f) => ({
+                      ...f,
+                      currentPassword: e.target.value,
+                    }))
+                  }
+                  placeholder="Enter current password"
                 />
               </div>
-
               <div>
-                <label className="text-sm font-semibold text-gray-800">New Password</label>
+                <label className="text-sm font-semibold text-gray-800">
+                  New Password
+                </label>
                 <input
                   type="password"
-                  className="mt-2 w-full rounded-xl border border-gray-200 px-4 py-2 outline-none focus:ring-2 focus:ring-red-100"
-                  value={form.new_password}
-                  onChange={(e) => setForm((f) => ({ ...f, new_password: e.target.value }))}
+                  className="mt-2 w-full rounded border border-gray-200 px-4 py-2 outline-none focus:ring-2 focus:ring-red-100"
+                  value={form.newPassword}
+                  onChange={(e) =>
+                    setForm((f) => ({ ...f, newPassword: e.target.value }))
+                  }
+                  placeholder="Enter new password"
                 />
               </div>
 
-              {error && <div className="text-sm text-red-600">{error}</div>}
-              {toast && <div className="text-sm text-green-600">{toast}</div>}
+              {error && (
+                <div className="flex items-center gap-2 text-sm text-red-600 bg-red-50 rounded px-4 py-2">
+                  <svg
+                    className="w-4 h-4 shrink-0"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24">
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                    />
+                  </svg>
+                  {error}
+                </div>
+              )}
+              {toast && (
+                <div className="flex items-center gap-2 text-sm text-green-600 bg-green-50 rounded px-4 py-2">
+                  <svg
+                    className="w-4 h-4 shrink-0"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24">
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+                    />
+                  </svg>
+                  {toast}
+                </div>
+              )}
 
               <div className="pt-2">
                 <button
                   type="submit"
-                  disabled={saving}
-                  className="w-full rounded-xl bg-red-600 text-white py-3 font-extrabold hover:bg-orange-500 transition disabled:opacity-60"
-                >
-                  {saving ? 'Saving...' : 'Save Changes'}
+                  disabled={saving || loading}
+                  className="w-full rounded bg-red-600 text-white py-2.5 font-extrabold hover:bg-red-500 transition disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer">
+                  {saving ? "Saving..." : "Save Changes"}
                 </button>
               </div>
             </div>
@@ -136,7 +273,5 @@ export default function AdminSettings() {
         </form>
       </div>
     </div>
-  )
+  );
 }
-
-

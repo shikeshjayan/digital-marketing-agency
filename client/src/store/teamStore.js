@@ -25,7 +25,9 @@ const useTeamStore = create((set) => ({
     set({ loading: true, error: null });
     try {
       const { data } = await apiService.get("/admin/team", { params });
-      set({ adminTeam: data.data ?? [], loading: false });
+      const team = data.data ?? [];
+      set({ adminTeam: team, loading: false });
+      return team;
     } catch (error) {
       set({
         error: error.response?.data?.message || error.message,

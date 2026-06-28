@@ -1,27 +1,33 @@
 import { useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { setAdminToken } from '../../auth/adminAuth.js'
+import useAuthStore from '../../store/authStore.js'
 
 export default function AdminLogin() {
   const navigate = useNavigate()
-  const [username, setUsername] = useState('admin_sensations')
-  const [password, setPassword] = useState('admin123')
+  const { login, loading, error: authError } = useAuthStore()
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
   const [error, setError] = useState(null)
 
-  const isValid = useMemo(() => username.trim().length > 0 && password.trim().length > 0, [username, password])
+  const isValid = useMemo(() => email.trim().length > 0 && password.trim().length > 0, [email, password])
 
-  function onSubmit(e) {
+  async function onSubmit(e) {
     e.preventDefault()
     setError(null)
 
     if (!isValid) {
-      setError('Please enter username and password.')
+      setError('Please enter email and password.')
       return
     }
 
-    // Frontend-only demo auth: accept any non-empty credentials.
-    setAdminToken('demo-admin-token')
-    navigate('/admin', { replace: true })
+    try {
+      await login({ email, password })
+      setAdminToken('true')
+      navigate('/admin', { replace: true })
+    } catch (err) {
+      setError(err.response?.data?.message || err.message || 'Login failed')
+    }
   }
 
   return (
@@ -31,16 +37,17 @@ export default function AdminLogin() {
           A
         </div>
         <h2 className="mt-4 text-xl font-bold text-gray-900">Admin Login</h2>
-        <p className="mt-2 text-sm text-gray-600">Use demo credentials or any non-empty values.</p>
+        <p className="mt-2 text-sm text-gray-600">Enter your admin credentials to sign in.</p>
       </div>
 
       <form onSubmit={onSubmit} className="mt-8 bg-white border border-gray-200 rounded-2xl p-5 shadow-sm">
-        <label className="block text-sm font-medium text-gray-800">Username</label>
+        <label className="block text-sm font-medium text-gray-800">Email</label>
         <input
+          type="email"
           className="mt-2 w-full rounded-xl border border-gray-200 px-3 py-2 outline-none focus:ring-2 focus:ring-red-200"
-          value={username}
-          onChange={(e) => setUsername(e.target.value)}
-          autoComplete="username"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          autoComplete="email"
         />
 
         <label className="block text-sm font-medium text-gray-800 mt-4">Password</label>
@@ -52,13 +59,14 @@ export default function AdminLogin() {
           autoComplete="current-password"
         />
 
-        {error && <div className="mt-4 text-sm text-red-600">{error}</div>}
+        {(error || authError) && <div className="mt-4 text-sm text-red-600">{error || authError}</div>}
 
         <button
           type="submit"
-          className="mt-6 w-full rounded-xl bg-red-600 text-white py-2.5 font-semibold hover:bg-orange-500 transition"
+          disabled={loading}
+          className="mt-6 w-full rounded-xl bg-red-600 text-white py-2.5 font-semibold hover:bg-orange-500 transition disabled:opacity-50"
         >
-          Sign In
+          {loading ? 'Signing In...' : 'Sign In'}
         </button>
       </form>
     </div>

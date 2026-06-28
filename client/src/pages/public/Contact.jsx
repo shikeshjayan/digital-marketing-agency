@@ -1,19 +1,13 @@
 import { useEffect, useState } from 'react'
-import { publicGetServices, publicSubmitContactEnquiry } from '../../services/mockApi.js'
 import HeroSplit from '../../components/public/HeroSplit.jsx'
+import useServiceStore from '../../store/serviceStore.js'
+import useContactStore from '../../store/contactStore.js'
 
-function ContactCard({ title, value, href, icon }) {
+function ContactCard({ title, value, icon }) {
   return (
-    <a
-      href={href}
-      onClick={(e) => {
-        // Allow phone/mail to work; for demo links without protocol, prevent navigation.
-        if (href === '#') e.preventDefault()
-      }}
-      className="group rounded-3xl border border-pink-200 border-dashed hover:bg-gray-50 transition p-6 bg-white"
-    >
+    <div className="group rounded-3xl border border-pink-200 border-dashed hover:bg-gray-50 transition p-6 bg-white">
       <div className="flex items-center gap-3">
-        <div className="w-10 h-10 rounded-2xl bg-red-50 border border-red-100 flex items-center justify-center text-red-700">
+        <div className="w-10 h-10 rounded-2xl bg-red-50 border border-red-100 flex items-center justify-center text-red-700 text-xs font-semibold">
           {icon}
         </div>
         <div>
@@ -21,72 +15,99 @@ function ContactCard({ title, value, href, icon }) {
           <div className="text-sm text-gray-600">{value}</div>
         </div>
       </div>
-    </a>
+    </div>
   )
 }
 
 export default function Contact() {
-  const [services, setServices] = useState([])
+  const { services, fetchServices } = useServiceStore()
+  const { submitContact, error: storeError, success: storeSuccess, loading, reset } = useContactStore()
 
   const [form, setForm] = useState({
     name: '',
+    countryCode: '+91',
     phone: '',
     email: '',
     service: '',
     message: '',
   })
-  const [error, setError] = useState('')
-  const [success, setSuccess] = useState('')
+  
+  const [localError, setLocalError] = useState('')
+
+  // Custom dropdown states
+  const [codeDropdownOpen, setCodeDropdownOpen] = useState(false)
+  const [serviceDropdownOpen, setServiceDropdownOpen] = useState(false)
+
+  const countryCodes = [
+    { code: '+91', label: '+91 (IN)' },
+    { code: '+1', label: '+1 (US)' },
+    { code: '+44', label: '+44 (UK)' },
+    { code: '+971', label: '+971 (AE)' },
+    { code: '+61', label: '+61 (AU)' },
+  ]
 
   useEffect(() => {
-    publicGetServices({ page: 1, limit: 50 }).then((res) => setServices(res.data ?? []))
+    fetchServices()
+    return () => reset() // Reset submission messages when leaving the page
+  }, [fetchServices, reset])
+
+  // Close dropdowns on outside click
+  useEffect(() => {
+    function handleOutsideClick() {
+      setCodeDropdownOpen(false)
+      setServiceDropdownOpen(false)
+    }
+    window.addEventListener('click', handleOutsideClick)
+    return () => window.removeEventListener('click', handleOutsideClick)
   }, [])
 
   async function onSubmit(e) {
     e.preventDefault()
-    setError('')
-    setSuccess('')
+    setLocalError('')
+    reset()
 
     const nameOk = /^[a-zA-Z\s]+$/.test(form.name.trim())
     const phoneOk = /^\d{6,}$/.test(form.phone.trim())
     const emailOk = /^\S+@\S+\.\S+$/.test(form.email.trim())
 
     if (!form.name.trim() || !nameOk) {
-      setError('Please enter a valid Full Name (alphabets only).')
+      setLocalError('Please enter a valid Full Name (alphabets only).')
       return
     }
     if (!form.phone.trim() || !phoneOk) {
-      setError('Please enter a valid Phone Number.')
+      setLocalError('Please enter a valid Phone Number.')
       return
     }
     if (!form.email.trim() || !emailOk) {
-      setError('Please enter a valid Email Address.')
+      setLocalError('Please enter a valid Email Address.')
       return
     }
     if (!form.service) {
-      setError('Please select a service.')
+      setLocalError('Please select a service.')
       return
     }
     if (!form.message.trim()) {
-      setError('Please write a message.')
+      setLocalError('Please write a message.')
       return
     }
 
-    const res = await publicSubmitContactEnquiry({
+    const fullPhone = `${form.countryCode} ${form.phone.trim()}`
+
+    await submitContact({
       name: form.name.trim(),
       email: form.email.trim(),
       service: form.service,
       message: form.message.trim(),
-      phone: form.phone.trim(),
+      phone: fullPhone,
     })
-
-    if (!res.success) {
-      setError(res.error?.message ?? 'Submission failed.')
-      return
-    }
-    setSuccess('Thanks! Your enquiry has been submitted successfully.')
-    setForm({ name: '', phone: '', email: '', service: '', message: '' })
   }
+
+  // Clear form inputs upon successful store submission
+  useEffect(() => {
+    if (storeSuccess) {
+      setForm({ name: '', countryCode: '+91', phone: '', email: '', service: '', message: '' })
+    }
+  }, [storeSuccess])
 
   return (
     <div>
@@ -95,9 +116,9 @@ export default function Contact() {
       <section className="py-12 bg-gray-50">
         <div className="max-w-6xl mx-auto px-4">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <ContactCard title="Phone" value="+91 8891212323" href="tel:+918891212323" icon="☎" />
-            <ContactCard title="Mail" value="info@s.com" href="mailto:info@s.com" icon="✉" />
-            <ContactCard title="Address" value="Kochi, India" href="#" icon="📍" />
+            <ContactCard title="Phone" value="+91 8891212323" icon="Ph" />
+            <ContactCard title="Mail" value="info@s.com" icon="Mail" />
+            <ContactCard title="Address" value="Kochi, India" icon="Loc" />
           </div>
 
           <div className="mt-10 grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
@@ -112,23 +133,23 @@ export default function Contact() {
                 </p>
                 <div className="mt-6 space-y-2 text-sm text-gray-200">
                   <div className="flex items-center gap-3">
-                    <span className="w-8 h-8 rounded-xl bg-white/10 flex items-center justify-center">☎</span>
-                    <a className="hover:text-white" href="tel:+918891212323">
+                    <span className="w-10 h-8 rounded-xl bg-white/10 flex items-center justify-center text-xs text-gray-300">Ph</span>
+                    <span className="text-gray-200">
                       +91 8891212323
-                    </a>
+                    </span>
                   </div>
                   <div className="flex items-center gap-3">
-                    <span className="w-8 h-8 rounded-xl bg-white/10 flex items-center justify-center">✉</span>
-                    <a className="hover:text-white" href="mailto:info@s.com">
+                    <span className="w-10 h-8 rounded-xl bg-white/10 flex items-center justify-center text-xs text-gray-300">Mail</span>
+                    <span className="text-gray-200">
                       info@s.com
-                    </a>
+                    </span>
                   </div>
                 </div>
               </div>
             </div>
 
             <div className="bg-white border border-red-100 rounded-3xl p-6">
-              <div className="text-sm font-semibold text-red-700">Lead Generation Form</div>
+              <div className="text-sm font-semibold text-red-700">Get in Touch</div>
               <div className="mt-2 text-2xl font-extrabold text-gray-900">Submit</div>
 
               <form className="mt-6 space-y-4" onSubmit={onSubmit}>
@@ -139,18 +160,60 @@ export default function Contact() {
                     onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))}
                     className="mt-2 w-full rounded-xl border border-gray-200 px-4 py-2 outline-none focus:ring-2 focus:ring-red-100"
                     placeholder="Your name"
+                    disabled={loading}
                   />
                 </div>
 
                 <div>
                   <label className="text-sm font-semibold text-gray-800">Phone No.</label>
-                  <input
-                    value={form.phone}
-                    onChange={(e) => setForm((f) => ({ ...f, phone: e.target.value }))}
-                    className="mt-2 w-full rounded-xl border border-gray-200 px-4 py-2 outline-none focus:ring-2 focus:ring-red-100"
-                    placeholder="Numeric phone"
-                    inputMode="numeric"
-                  />
+                  <div className="mt-2 grid grid-cols-3 gap-3 relative">
+                    {/* Custom Country Code Dropdown */}
+                    <div className="relative" onClick={(e) => e.stopPropagation()}>
+                      <button
+                        type="button"
+                        disabled={loading}
+                        onClick={() => {
+                          setCodeDropdownOpen(!codeDropdownOpen)
+                          setServiceDropdownOpen(false)
+                        }}
+                        className="w-full text-left rounded-xl border border-gray-200 px-4 py-2 outline-none focus:ring-2 focus:ring-red-100 bg-white text-sm flex justify-between items-center h-full cursor-pointer disabled:opacity-50"
+                      >
+                        <span>{form.countryCode}</span>
+                        <span className="text-xs text-gray-400">▼</span>
+                      </button>
+                      
+                      {codeDropdownOpen && (
+                        <div className="absolute left-0 right-0 mt-1 bg-white border border-gray-200 rounded-xl shadow-lg z-20 p-1 space-y-1">
+                          {countryCodes.map((item) => (
+                            <button
+                              key={item.code}
+                              type="button"
+                              onClick={() => {
+                                setForm((f) => ({ ...f, countryCode: item.code }))
+                                setCodeDropdownOpen(false)
+                              }}
+                              className={`w-full text-left px-3 py-2 rounded-lg text-xs transition cursor-pointer ${
+                                form.countryCode === item.code
+                                  ? 'bg-red-50 text-red-700 font-semibold'
+                                  : 'text-gray-700 hover:bg-gray-50'
+                              }`}
+                            >
+                              {item.label}
+                            </button>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+
+                    <input
+                      value={form.phone}
+                      onChange={(e) => setForm((f) => ({ ...f, phone: e.target.value }))}
+                      className="col-span-2 w-full rounded-xl border border-gray-200 px-4 py-2 outline-none focus:ring-2 focus:ring-red-100"
+                      placeholder="Enter your phone number"
+                      inputMode="numeric"
+                      disabled={loading}
+                    />
+                  </div>
                 </div>
 
                 <div>
@@ -161,23 +224,60 @@ export default function Contact() {
                     className="mt-2 w-full rounded-xl border border-gray-200 px-4 py-2 outline-none focus:ring-2 focus:ring-red-100"
                     placeholder="name@example.com"
                     inputMode="email"
+                    disabled={loading}
                   />
                 </div>
 
-                <div>
+                {/* Custom Services Dropdown */}
+                <div className="relative" onClick={(e) => e.stopPropagation()}>
                   <label className="text-sm font-semibold text-gray-800">Our Services</label>
-                  <select
-                    value={form.service}
-                    onChange={(e) => setForm((f) => ({ ...f, service: e.target.value }))}
-                    className="mt-2 w-full rounded-xl border border-gray-200 px-4 py-2 outline-none focus:ring-2 focus:ring-red-100"
+                  <button
+                    type="button"
+                    disabled={loading}
+                    onClick={() => {
+                      setServiceDropdownOpen(!serviceDropdownOpen)
+                      setCodeDropdownOpen(false)
+                    }}
+                    className="mt-2 w-full text-left rounded-xl border border-gray-200 px-4 py-2 outline-none focus:ring-2 focus:ring-red-100 bg-white text-sm flex justify-between items-center h-full cursor-pointer disabled:opacity-50"
                   >
-                    <option value="">Select a service</option>
-                    {services.map((s) => (
-                      <option key={s.service_id} value={s.service_name}>
-                        {s.service_name}
-                      </option>
-                    ))}
-                  </select>
+                    <span className={form.service ? 'text-gray-900' : 'text-gray-400'}>
+                      {form.service || 'Select a service'}
+                    </span>
+                    <span className="text-xs text-gray-400">▼</span>
+                  </button>
+
+                  {serviceDropdownOpen && (
+                    <div className="absolute left-0 right-0 mt-1 bg-white border border-gray-200 rounded-xl shadow-lg z-20 p-2 space-y-1">
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setForm((f) => ({ ...f, service: '' }))
+                          setServiceDropdownOpen(false)
+                        }}
+                        className="w-full text-left px-3 py-2 rounded-lg text-sm text-gray-400 hover:bg-gray-50 transition cursor-pointer"
+                      >
+                        Select a service
+                      </button>
+                      <div className="border-t border-gray-100 my-1" />
+                      {services.map((s) => (
+                        <button
+                          key={s._id || s.service_id}
+                          type="button"
+                          onClick={() => {
+                            setForm((f) => ({ ...f, service: s.service_name }))
+                            setServiceDropdownOpen(false)
+                          }}
+                          className={`w-full text-left px-3 py-2 rounded-lg text-sm transition cursor-pointer ${
+                            form.service === s.service_name
+                              ? 'bg-red-50 text-red-700 font-semibold'
+                              : 'text-gray-700 hover:bg-gray-50'
+                          }`}
+                        >
+                          {s.service_name}
+                        </button>
+                      ))}
+                    </div>
+                  )}
                 </div>
 
                 <div>
@@ -188,14 +288,19 @@ export default function Contact() {
                     rows={4}
                     className="mt-2 w-full rounded-xl border border-gray-200 px-4 py-2 outline-none focus:ring-2 focus:ring-red-100 resize-none"
                     placeholder="How can we help?"
+                    disabled={loading}
                   />
                 </div>
 
-                {error && <div className="text-sm text-red-600">{error}</div>}
-                {success && <div className="text-sm text-green-600">{success}</div>}
+                {(localError || storeError) && <div className="text-sm text-red-600">{localError || storeError}</div>}
+                {storeSuccess && <div className="text-sm text-green-600">Thanks! Your enquiry has been submitted successfully.</div>}
 
-                <button type="submit" className="w-full rounded-xl bg-red-600 text-white py-3 font-extrabold hover:bg-orange-500 transition">
-                  Submit
+                <button 
+                  type="submit" 
+                  disabled={loading}
+                  className="w-full rounded-xl bg-red-600 text-white py-3 font-extrabold hover:bg-red-500 transition cursor-pointer disabled:opacity-50"
+                >
+                  {loading ? 'Submitting...' : 'Submit'}
                 </button>
               </form>
             </div>
@@ -209,7 +314,7 @@ export default function Contact() {
                   href="https://www.google.com/maps?q=Kochi"
                   target="_blank"
                   rel="noreferrer"
-                  className="text-sm font-semibold text-red-700 hover:text-orange-600"
+                  className="text-sm font-semibold text-red-700 hover:text-orange-600 cursor-pointer"
                 >
                   Open in Maps
                 </a>
@@ -229,5 +334,3 @@ export default function Contact() {
     </div>
   )
 }
-
-

@@ -53,16 +53,22 @@ export const getAllTeamMembers = asyncHandler(async (req, res) => {
 
 // Update a team member's info (admin only, supports photo upload)
 export const updateMember = asyncHandler(async (req, res) => {
-  const { name, designation, display_order, status } = req.body;
-  const photo = req.file ? `/uploads/${req.file.filename}` : req.body.photo;
+  const { name, designation, display_order, status, removePhoto } = req.body;
 
-  if (!name && !designation && !display_order && !status && !photo) {
+  if (!name && !designation && !display_order && !status) {
     return res.status(400).json({ success: false, message: "Invalid data type fields" });
+  }
+
+  const update = { name, designation, display_order, status };
+  if (req.file) {
+    update.photo = `/uploads/${req.file.filename}`;
+  } else if (removePhoto === "true") {
+    update.photo = "";
   }
 
   const member = await Team.findByIdAndUpdate(
     req.params.team_id,
-    { photo, name, designation, display_order, status },
+    update,
     { new: true, runValidators: true },
   );
   if (!member) {

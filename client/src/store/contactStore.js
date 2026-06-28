@@ -24,12 +24,15 @@ const useContactStore = create((set) => ({
     set({ loading: true, error: null });
     try {
       const { data } = await apiService.get("/admin/contact/enquiries", { params });
-      set({ adminEnquiries: data.data ?? [], loading: false });
+      const enquiries = data.data ?? [];
+      set({ adminEnquiries: enquiries, loading: false });
+      return { enquiries, counters: data.counters ?? null };
     } catch (error) {
       set({
         error: error.response?.data?.message || error.message,
         loading: false,
       });
+      throw error;
     }
   },
 
@@ -39,7 +42,7 @@ const useContactStore = create((set) => ({
       const { data } = await apiService.patch(`/admin/contact/enquiries/status/${id}`, { status });
       set((state) => ({
         adminEnquiries: state.adminEnquiries.map((e) =>
-          e._id === id ? { ...e, status: data.data.status } : e
+          e.enquiry_id === id ? { ...e, status: data.data.status } : e
         ),
         loading: false,
       }));
@@ -58,7 +61,7 @@ const useContactStore = create((set) => ({
     try {
       await apiService.delete(`/admin/contact/enquiries/remove/${id}`);
       set((state) => ({
-        adminEnquiries: state.adminEnquiries.filter((e) => e._id !== id),
+        adminEnquiries: state.adminEnquiries.filter((e) => e.enquiry_id !== id),
         loading: false,
       }));
     } catch (error) {
