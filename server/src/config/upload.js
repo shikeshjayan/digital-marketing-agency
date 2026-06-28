@@ -4,7 +4,7 @@ import sharp from "sharp";
 import path from "path";
 import fs from "fs";
 
-const uploadDir = "uploads/";
+const uploadDir = process.env.VERCEL ? "/tmp/uploads" : "uploads/";
 if (!fs.existsSync(uploadDir)) {
   fs.mkdirSync(uploadDir, { recursive: true });
 }
