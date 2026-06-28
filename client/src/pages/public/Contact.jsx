@@ -111,7 +111,7 @@ export default function Contact() {
 
   return (
     <div>
-      <HeroSplit title="Contact Us" titleHighlight=" " subtitle="Get in touch and let’s plan your next growth step." leftColor="bg-gray-900" />
+      <HeroSplit title="Contact Us" titleHighlight=" " subtitle="Get in touch and let's plan your next growth step." leftColor="bg-gray-900" />
 
       <section className="py-12 bg-gray-50">
         <div className="max-w-6xl mx-auto px-4">
@@ -129,7 +129,7 @@ export default function Contact() {
                   Wanna <span className="text-red-500">Hear</span> From You
                 </div>
                 <p className="mt-4 text-gray-300 leading-relaxed">
-                  Tell us what you need and we’ll respond with a clear plan and timeline.
+                  Tell us what you need and we'll respond with a clear plan and timeline.
                 </p>
                 <div className="mt-6 space-y-2 text-sm text-gray-200">
                   <div className="flex items-center gap-3">
@@ -314,7 +314,7 @@ export default function Contact() {
                   href="https://www.google.com/maps?q=Kochi"
                   target="_blank"
                   rel="noreferrer"
-                  className="text-sm font-semibold text-red-700 hover:text-orange-600 cursor-pointer"
+                  className="text-sm font-semibold text-red-700 hover:text-red-600 cursor-pointer"
                 >
                   Open in Maps
                 </a>

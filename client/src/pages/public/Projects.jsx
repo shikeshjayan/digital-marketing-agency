@@ -10,7 +10,7 @@ const ProjectCard = ({ project }) => {
       href={project.live_url}
       target="_blank"
       rel="noreferrer"
-      className="group block bg-white border border-gray-100 rounded-xl shadow-sm overflow-hidden hover:shadow-lg hover:scale-[1.02] hover:border-red-200 transition-all duration-300">
+      className="group block bg-white border border-gray-100 rounded-xl shadow-sm overflow-hidden hover:shadow-lg hover:scale-[1.02] hover:border-red-200 transition-all duration-300 cursor-pointer">
       <div className="relative overflow-hidden">
         <img
           src={project.image || '/placeholder.svg'}
@@ -50,7 +50,7 @@ const Projects = () => {
                 key={c}
                 type="button"
                 onClick={() => setActive(c)}
-                className={`px-4 py-2 rounded-full text-sm font-semibold border transition ${
+                className={`px-4 py-2 rounded-full text-sm font-semibold border transition cursor-pointer ${
                   active === c
                     ? "bg-red-600 text-white border-red-600"
                     : "bg-white text-gray-700 border-gray-200 hover:border-red-200 hover:text-red-700"

@@ -14,7 +14,7 @@ function statusChip(status) {
 }
 
 export default function AdminMessages() {
-  const { fetchAdminEnquiries, updateEnquiryStatus, deleteEnquiry } =
+  const { fetchAdminEnquiries, updateEnquiryStatus, deleteEnquiry, deleteAllEnquiries } =
     useContactStore();
 
   const [items, setItems] = useState([]);
@@ -26,6 +26,7 @@ export default function AdminMessages() {
   const [error, setError] = useState("");
   const [toast, setToast] = useState("");
   const [deleteTarget, setDeleteTarget] = useState(null);
+  const [deleteAllTarget, setDeleteAllTarget] = useState(false);
 
   const load = async () => {
     setLoading(true);
@@ -85,6 +86,19 @@ export default function AdminMessages() {
     } catch (e) {
       setError(e?.message ?? "Delete failed.");
       setDeleteTarget(null);
+    }
+  }
+
+  async function onConfirmDeleteAll() {
+    try {
+      await deleteAllEnquiries();
+      setToast("All enquiries deleted successfully.");
+      setDeleteAllTarget(false);
+      window.dispatchEvent(new Event('refresh-badges'));
+      await load();
+    } catch (e) {
+      setError(e?.message ?? "Delete all failed.");
+      setDeleteAllTarget(false);
     }
   }
 
@@ -221,8 +235,18 @@ export default function AdminMessages() {
       <div className="mt-4 bg-white border border-gray-200 rounded p-5 shadow-sm">
         <div className="flex items-center justify-between">
           <div className="font-extrabold text-gray-900">Enquiries</div>
-          <div className="text-sm text-gray-500">
-            {loading ? "Loading..." : `${items.length} items`}
+          <div className="flex items-center gap-3">
+            {items.length > 0 && (
+              <button
+                type="button"
+                className="text-sm font-semibold text-red-600 hover:text-red-500 transition cursor-pointer"
+                onClick={() => setDeleteAllTarget(true)}>
+                Delete All
+              </button>
+            )}
+            <div className="text-sm text-gray-500">
+              {loading ? "Loading..." : `${items.length} items`}
+            </div>
           </div>
         </div>
 
@@ -337,6 +361,12 @@ export default function AdminMessages() {
         onCancel={() => setDeleteTarget(null)}
         onConfirm={onConfirmDelete}
         message="Are you sure you want to delete this enquiry? This action cannot be undone."
+      />
+      <ConfirmModal
+        open={deleteAllTarget}
+        onCancel={() => setDeleteAllTarget(false)}
+        onConfirm={onConfirmDeleteAll}
+        message="Are you sure you want to delete ALL enquiries? This action cannot be undone."
       />
     </div>
   );

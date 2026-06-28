@@ -147,7 +147,7 @@ export default function NotificationDropdown() {
     <div className="relative" ref={dropdownRef}>
       <button
         type="button"
-        className="relative p-2.5 min-w-[44px] min-h-[44px] flex items-center justify-center rounded-lg hover:bg-gray-100 transition-colors duration-150"
+        className="relative p-2.5 min-w-[44px] min-h-[44px] flex items-center justify-center rounded-lg hover:bg-gray-100 transition-colors duration-150 cursor-pointer"
         onClick={handleToggle}
         aria-label="Notifications"
         aria-expanded={isOpen}
@@ -161,7 +161,7 @@ export default function NotificationDropdown() {
       </button>
 
       {isOpen && (
-        <div className="absolute right-0 mt-2 w-[calc(100vw-1.5rem)] max-w-sm sm:w-80 sm:max-w-none bg-white border border-gray-200 rounded-xl shadow-lg z-50 overflow-hidden">
+        <div className="fixed sm:absolute left-4 right-4 sm:left-auto sm:right-0 sm:translate-x-0 mt-2 sm:w-80 bg-white border border-gray-200 rounded-xl shadow-lg z-50 overflow-hidden top-16 sm:top-auto sm:mt-2">
           <div className="flex items-center justify-between px-3 sm:px-4 py-3 border-b border-gray-100">
             <span className="font-semibold text-gray-900 text-sm sm:text-base">Notifications</span>
             <span className="text-xs text-gray-500">{notifications.length} total</span>
@@ -182,7 +182,7 @@ export default function NotificationDropdown() {
                   <button
                     key={`${n.type}-${n.id}-${i}`}
                     type="button"
-                    className={`w-full flex items-start gap-2.5 sm:gap-3 px-3 sm:px-4 py-3 hover:bg-gray-50 transition-colors duration-150 text-left border-b border-gray-50 last:border-0 ${isUnread ? 'bg-red-50/30' : ''}`}
+                    className={`w-full flex items-start gap-2.5 sm:gap-3 px-3 sm:px-4 py-3 hover:bg-gray-50 transition-colors duration-150 text-left border-b border-gray-50 last:border-0 cursor-pointer ${isUnread ? 'bg-red-50/30' : ''}`}
                     onClick={() => handleItemClick(n)}
                   >
                     <div className={`mt-0.5 w-7 h-7 sm:w-8 sm:h-8 rounded-full flex items-center justify-center flex-shrink-0 ${
@@ -211,7 +211,7 @@ export default function NotificationDropdown() {
             <div className="border-t border-gray-100 px-3 sm:px-4 py-2">
               <button
                 type="button"
-                className="w-full text-center text-sm text-red-600 hover:text-red-700 font-medium py-2.5 min-h-[44px]"
+                className="w-full text-center text-sm text-red-600 hover:text-red-700 font-medium py-2.5 min-h-[44px] cursor-pointer"
                 onClick={() => {
                   setIsOpen(false)
                   setLastViewed()

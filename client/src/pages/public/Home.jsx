@@ -73,7 +73,7 @@ function HeroCarousel() {
                     <div className="relative">
                       <div className="w-full max-w-sm mx-auto md:mx-0 aspect-4/3 flex items-center justify-center">
                         <div className="text-white/90 text-center">
-                         <img src="../../../public/undraw_mobile-marketing_7x7m.svg" alt="" />
+                         <img src="/undraw_mobile-marketing_7x7m.svg" alt="" />
                         </div>
                       </div>
                     </div>
@@ -93,7 +93,7 @@ function HeroCarousel() {
           <div className="absolute inset-y-0 left-0 right-0 flex items-center justify-between px-3 md:px-6 pointer-events-none">
             <button
               type="button"
-              className="pointer-events-auto w-10 h-10 rounded-full bg-white/15 border border-white/20 hover:bg-white/25 text-white flex items-center justify-center"
+              className="pointer-events-auto w-10 h-10 rounded-full bg-white/15 border border-white/20 hover:bg-white/25 text-white flex items-center justify-center cursor-pointer"
               onClick={() => go((index - 1 + slides.length) % slides.length)}
               aria-label="Previous slide"
             >
@@ -101,7 +101,7 @@ function HeroCarousel() {
             </button>
             <button
               type="button"
-              className="pointer-events-auto w-10 h-10 rounded-full bg-white/15 border border-white/20 hover:bg-white/25 text-white flex items-center justify-center"
+              className="pointer-events-auto w-10 h-10 rounded-full bg-white/15 border border-white/20 hover:bg-white/25 text-white flex items-center justify-center cursor-pointer"
               onClick={() => go((index + 1) % slides.length)}
               aria-label="Next slide"
             >
@@ -114,7 +114,7 @@ function HeroCarousel() {
               <button
                 key={i}
                 type="button"
-                className={`w-2.5 h-2.5 rounded-full transition ${
+                className={`w-2.5 h-2.5 rounded-full transition cursor-pointer ${
                   i === index ? 'bg-white' : 'bg-white/40 hover:bg-white/70'
                 }`}
                 onClick={() => go(i)}
@@ -222,7 +222,7 @@ function ServicesCarousel({ services }) {
                     <div className="mt-6 flex items-center justify-center md:justify-start gap-3">
                       <button
                         type="button"
-                        className="md:hidden w-10 h-10 rounded-full bg-gray-100 border border-gray-200 hover:bg-gray-200 flex items-center justify-center"
+                        className="md:hidden w-10 h-10 rounded-full bg-gray-100 border border-gray-200 hover:bg-gray-200 flex items-center justify-center cursor-pointer"
                         onClick={() =>
                           go((index - 1 + services.length) % services.length)
                         }
@@ -231,12 +231,12 @@ function ServicesCarousel({ services }) {
                       </button>
                       <Link
                         to={serviceDetailPath(current.service_name)}
-                        className="inline-flex items-center rounded-full bg-red-600 text-white px-5 py-2.5 text-sm font-semibold hover:bg-red-500 transition">
+                        className="inline-flex items-center rounded-full bg-red-600 text-white px-5 py-2.5 text-sm font-semibold hover:bg-red-500 transition cursor-pointer">
                         Read More
                       </Link>
                       <button
                         type="button"
-                        className="md:hidden w-10 h-10 rounded-full bg-gray-100 border border-gray-200 hover:bg-gray-200 flex items-center justify-center"
+                        className="md:hidden w-10 h-10 rounded-full bg-gray-100 border border-gray-200 hover:bg-gray-200 flex items-center justify-center cursor-pointer"
                         onClick={() => go((index + 1) % services.length)}
                         aria-label="Next service">
                         <FontAwesomeIcon icon={faAngleRight} className="text-sm" />
@@ -250,7 +250,7 @@ function ServicesCarousel({ services }) {
             <div className="hidden md:block absolute left-0 -translate-x-1/2 top-1/2 -translate-y-1/2 z-10">
               <button
                 type="button"
-                className="w-12 h-12 rounded-full bg-white border border-gray-200 shadow-sm hover:bg-gray-50 flex items-center justify-center"
+                className="w-12 h-12 rounded-full bg-white border border-gray-200 shadow-sm hover:bg-gray-50 flex items-center justify-center cursor-pointer"
                 onClick={() =>
                   go((index - 1 + services.length) % services.length)
                 }
@@ -261,7 +261,7 @@ function ServicesCarousel({ services }) {
             <div className="hidden md:block absolute right-0 translate-x-1/2 top-1/2 -translate-y-1/2 z-10">
               <button
                 type="button"
-                className="w-12 h-12 rounded-full bg-white border border-gray-200 shadow-sm hover:bg-gray-50 flex items-center justify-center"
+                className="w-12 h-12 rounded-full bg-white border border-gray-200 shadow-sm hover:bg-gray-50 flex items-center justify-center cursor-pointer"
                 onClick={() => go((index + 1) % services.length)}
                 aria-label="Next service">
                 <FontAwesomeIcon icon={faAngleRight} />
@@ -274,7 +274,7 @@ function ServicesCarousel({ services }) {
               <button
                 key={s._id}
                 type="button"
-                className={`w-2.5 h-2.5 rounded-full transition ${
+                className={`w-2.5 h-2.5 rounded-full transition cursor-pointer ${
                   i === index ? "bg-red-700" : "bg-red-200 hover:bg-red-400"
                 }`}
                 onClick={() => go(i)}
@@ -341,7 +341,7 @@ function LogoMarquee() {
               <a
                 key={`${l}-${i}`}
                 href="#"
-                className="whitespace-nowrap text-gray-700 font-semibold hover:text-red-700 transition px-5"
+                className="whitespace-nowrap text-gray-700 font-semibold hover:text-red-700 transition px-5 cursor-pointer"
                 onClick={(e) => e.preventDefault()}
               >
                 {l}
@@ -396,7 +396,7 @@ function TestimonialsCarousel({ reviews }) {
             <button
               key={i}
               type="button"
-              className={`w-2.5 h-2.5 rounded-full transition ${
+              className={`w-2.5 h-2.5 rounded-full transition cursor-pointer ${
                 i === index ? 'bg-red-700' : 'bg-red-200 hover:bg-red-400'
               }`}
               onClick={() => setIndex(i)}
@@ -425,7 +425,7 @@ function StatsSection() {
                 We combine design, engineering, and marketing strategy to deliver websites and campaigns that perform.
               </p>
               <div className="mt-6">
-                <Link to="/about" className="inline-flex rounded-full bg-red-600 text-white px-5 py-2.5 text-sm font-semibold hover:bg-red-500 transition">
+                <Link to="/about" className="inline-flex rounded-full bg-red-600 text-white px-5 py-2.5 text-sm font-semibold hover:bg-red-500 transition cursor-pointer">
                   Read More
                 </Link>
               </div>
@@ -488,7 +488,7 @@ export default function Home() {
           <div className="mt-8">
             <button
               type="button"
-              className="inline-flex items-center rounded-full bg-red-600 px-6 py-3 text-sm font-semibold hover:bg-red-500 transition"
+              className="inline-flex items-center rounded-full bg-red-600 px-6 py-3 text-sm font-semibold hover:bg-red-500 transition cursor-pointer"
               onClick={() => navigate('/team')}
             >
               Read More

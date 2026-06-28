@@ -22,7 +22,7 @@ export default function AdminTeam() {
       .slice(0, 2);
   }
 
-  const { fetchAdminTeam, createMember, updateMember, deleteMember } =
+  const { fetchAdminTeam, createMember, updateMember, deleteMember, deleteAllMembers } =
     useTeamStore();
 
   const [items, setItems] = useState([]);
@@ -48,6 +48,7 @@ export default function AdminTeam() {
   const [submitting, setSubmitting] = useState(false);
   const formRef = useRef(null);
   const [deleteTarget, setDeleteTarget] = useState(null);
+  const [deleteAllTarget, setDeleteAllTarget] = useState(false);
 
   const load = async () => {
     setLoading(true);
@@ -141,6 +142,18 @@ export default function AdminTeam() {
     } catch (err) {
       setError(err?.message || "Delete failed.");
       setDeleteTarget(null);
+    }
+  }
+
+  async function onConfirmDeleteAll() {
+    try {
+      await deleteAllMembers();
+      setToast("All team members deleted successfully.");
+      setDeleteAllTarget(false);
+      await load();
+    } catch (err) {
+      setError(err?.message || "Delete all failed.");
+      setDeleteAllTarget(false);
     }
   }
 
@@ -377,8 +390,18 @@ export default function AdminTeam() {
         <div className="lg:col-span-3 bg-white border border-gray-200 rounded p-5 shadow-sm">
           <div className="flex items-center justify-between">
             <div className="font-extrabold text-gray-900">Team Members</div>
-            <div className="text-sm text-gray-500">
-              {loading ? "Loading..." : `${items.length} items`}
+            <div className="flex items-center gap-3">
+              {items.length > 0 && (
+                <button
+                  type="button"
+                  className="text-sm font-semibold text-red-600 hover:text-red-500 transition cursor-pointer"
+                  onClick={() => setDeleteAllTarget(true)}>
+                  Delete All
+                </button>
+              )}
+              <div className="text-sm text-gray-500">
+                {loading ? "Loading..." : `${items.length} items`}
+              </div>
             </div>
           </div>
 
@@ -509,6 +532,12 @@ export default function AdminTeam() {
         onCancel={() => setDeleteTarget(null)}
         onConfirm={onConfirmDelete}
         message="Are you sure you want to delete this team member? This action cannot be undone."
+      />
+      <ConfirmModal
+        open={deleteAllTarget}
+        onCancel={() => setDeleteAllTarget(false)}
+        onConfirm={onConfirmDeleteAll}
+        message="Are you sure you want to delete ALL team members? This action cannot be undone."
       />
     </div>
   );

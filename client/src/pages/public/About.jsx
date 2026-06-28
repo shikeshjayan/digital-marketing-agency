@@ -23,7 +23,7 @@ export default function About() {
   return (
     <div>
       <HeroSplit
-        title="About Us"
+        title="Us"
         titleHighlight="About"
         subtitle="Welcome to a team that blends creative design, reliable development, and performance marketing."
         leftColor="bg-gray-900"

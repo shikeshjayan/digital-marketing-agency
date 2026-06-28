@@ -142,7 +142,7 @@ const NavItem = memo(function NavItem({ item, collapsed, onClick, badges }) {
       to={item.to}
       end={item.end}
       className={({ isActive }) =>
-        `group relative flex items-center ${collapsed ? 'justify-center px-2' : 'gap-3 px-3'} py-2.5 rounded-xl text-sm font-medium transition-all duration-150 ${
+        `group relative flex items-center ${collapsed ? 'justify-center px-2' : 'gap-3 px-3'} py-2.5 rounded-xl text-sm font-medium transition-all duration-150 cursor-pointer ${
           isActive
             ? 'bg-red-50 text-red-700'
             : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
@@ -250,6 +250,18 @@ export default function AdminSidebar() {
     }
   }, [mobileOpen, logoutOpen, handleKeyDown])
 
+  useEffect(() => {
+    function handleToggle() {
+      setMobileOpen((v) => !v)
+    }
+    window.addEventListener('toggle-admin-sidebar', handleToggle)
+    return () => window.removeEventListener('toggle-admin-sidebar', handleToggle)
+  }, [])
+
+  useEffect(() => {
+    window.dispatchEvent(new CustomEvent('admin-sidebar-state', { detail: { open: mobileOpen } }))
+  }, [mobileOpen])
+
   const doLogout = useCallback(async () => {
     setIsLoggingOut(true)
     try {
@@ -294,7 +306,7 @@ export default function AdminSidebar() {
         {/* Collapse Toggle */}
         <button
           type="button"
-          className="hidden md:flex w-full items-center justify-center gap-2 px-3 py-2 rounded-xl text-gray-400 hover:text-gray-600 hover:bg-gray-50 transition-colors duration-150"
+          className="hidden md:flex w-full items-center justify-center gap-2 px-3 py-2 rounded-xl text-gray-400 hover:text-gray-600 hover:bg-gray-50 transition-colors duration-150 cursor-pointer"
           onClick={() => setCollapsed((v) => !v)}
           aria-label={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
         >
@@ -305,7 +317,7 @@ export default function AdminSidebar() {
         {/* Logout */}
         <button
           type="button"
-          className={`w-full flex items-center ${collapsed ? 'justify-center px-2' : 'gap-3 px-3'} py-2.5 rounded-xl text-sm font-medium text-gray-600 hover:bg-red-50 hover:text-red-600 transition-all duration-150 mt-1`}
+          className={`w-full flex items-center ${collapsed ? 'justify-center px-2' : 'gap-3 px-3'} py-2.5 rounded-xl text-sm font-medium text-gray-600 hover:bg-red-50 hover:text-red-600 transition-all duration-150 mt-1 cursor-pointer`}
           onClick={() => setLogoutOpen(true)}
           disabled={isLoggingOut}
         >
@@ -320,22 +332,6 @@ export default function AdminSidebar() {
     <>
       {/* Desktop */}
       <div className="hidden md:block h-full">{sidebar}</div>
-
-      {/* Mobile Hamburger */}
-      {/* Mobile Toggle Button */}
-      <div className="md:hidden">
-        <button
-          type="button"
-          className="fixed top-4 left-3 z-50 w-11 h-11 flex flex-col items-center justify-center transition-all duration-200 hover:bg-gray-50"
-          onClick={() => mobileOpen ? setMobileOpen(false) : setMobileOpen(true)}
-          aria-label={mobileOpen ? 'Close menu' : 'Open menu'}
-          aria-expanded={mobileOpen}
-        >
-          <span className={`block h-0.5 bg-gray-600 rounded-full transition-all duration-200 ${mobileOpen ? 'w-5 rotate-45 translate-y-0' : 'w-5 -translate-y-1.5'}`} />
-          <span className={`block h-0.5 bg-gray-600 rounded-full transition-all duration-200 ${mobileOpen ? 'w-5 opacity-0' : 'w-5 opacity-100'}`} />
-          <span className={`block h-0.5 bg-gray-600 rounded-full transition-all duration-200 ${mobileOpen ? 'w-5 -rotate-45 translate-y-0' : 'w-3.5 translate-y-1.5'}`} />
-        </button>
-      </div>
 
       {/* Mobile Sidebar Overlay */}
       {mobileOpen && (
@@ -369,7 +365,7 @@ export default function AdminSidebar() {
             <div className="flex gap-3 mt-6">
               <button
                 type="button"
-                className="flex-1 px-4 py-2.5 rounded-xl border border-gray-200 hover:bg-gray-50 text-sm font-medium transition-colors duration-150"
+                className="flex-1 px-4 py-2.5 rounded-xl border border-gray-200 hover:bg-gray-50 text-sm font-medium transition-colors duration-150 cursor-pointer"
                 onClick={() => setLogoutOpen(false)}
                 disabled={isLoggingOut}
               >
@@ -377,7 +373,7 @@ export default function AdminSidebar() {
               </button>
               <button
                 type="button"
-                className="flex-1 px-4 py-2.5 rounded-xl bg-red-600 text-white hover:bg-red-700 text-sm font-medium transition-colors duration-150 disabled:opacity-50"
+                className="flex-1 px-4 py-2.5 rounded-xl bg-red-600 text-white hover:bg-red-700 text-sm font-medium transition-colors duration-150 disabled:opacity-50 cursor-pointer"
                 onClick={doLogout}
                 disabled={isLoggingOut}
               >

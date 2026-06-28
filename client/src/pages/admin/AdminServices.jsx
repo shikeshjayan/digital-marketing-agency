@@ -13,7 +13,7 @@ function FileToDataUrl({ file }) {
 }
 
 export default function AdminServices() {
-  const { fetchAdminServices, createService, updateService, deleteService } =
+  const { fetchAdminServices, createService, updateService, deleteService, deleteAllServices } =
     useServiceStore();
 
   const [items, setItems] = useState([]);
@@ -39,6 +39,7 @@ export default function AdminServices() {
   const [submitting, setSubmitting] = useState(false);
   const formRef = useRef(null);
   const [deleteTarget, setDeleteTarget] = useState(null);
+  const [deleteAllTarget, setDeleteAllTarget] = useState(false);
 
   const load = async () => {
     setLoading(true);
@@ -144,6 +145,20 @@ export default function AdminServices() {
         err?.response?.data?.message || err?.message || "Delete failed.",
       );
       setDeleteTarget(null);
+    }
+  }
+
+  async function onConfirmDeleteAll() {
+    try {
+      await deleteAllServices();
+      setToast("All services deleted successfully.");
+      setDeleteAllTarget(false);
+      await load();
+    } catch (err) {
+      setError(
+        err?.response?.data?.message || err?.message || "Delete all failed.",
+      );
+      setDeleteAllTarget(false);
     }
   }
 
@@ -308,8 +323,18 @@ export default function AdminServices() {
         <div className="lg:col-span-3 bg-white border border-gray-200 rounded p-5 shadow-sm">
           <div className="flex items-center justify-between">
             <div className="font-extrabold text-gray-900">Services</div>
-            <div className="text-sm text-gray-500">
-              {loading ? "Loading..." : `${items.length} items`}
+            <div className="flex items-center gap-3">
+              {items.length > 0 && (
+                <button
+                  type="button"
+                  className="text-sm font-semibold text-red-600 hover:text-red-500 transition cursor-pointer"
+                  onClick={() => setDeleteAllTarget(true)}>
+                  Delete All
+                </button>
+              )}
+              <div className="text-sm text-gray-500">
+                {loading ? "Loading..." : `${items.length} items`}
+              </div>
             </div>
           </div>
 
@@ -401,6 +426,12 @@ export default function AdminServices() {
         onCancel={() => setDeleteTarget(null)}
         onConfirm={onConfirmDelete}
         message="Are you sure you want to delete this service? This action cannot be undone."
+      />
+      <ConfirmModal
+        open={deleteAllTarget}
+        onCancel={() => setDeleteAllTarget(false)}
+        onConfirm={onConfirmDeleteAll}
+        message="Are you sure you want to delete ALL services? This action cannot be undone."
       />
     </div>
   );

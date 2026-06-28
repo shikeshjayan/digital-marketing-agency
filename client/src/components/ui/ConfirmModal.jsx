@@ -34,7 +34,7 @@ export default function ConfirmModal({
             </button>
             <button
               onClick={onConfirm}
-              className="flex-1 rounded-xl bg-red-600 py-2.5 text-sm font-semibold text-white hover:bg-orange-500 transition cursor-pointer">
+              className="flex-1 rounded-xl bg-red-600 py-2.5 text-sm font-semibold text-white hover:bg-red-500 transition cursor-pointer">
               Confirm
             </button>
           </div>

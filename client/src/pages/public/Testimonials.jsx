@@ -12,7 +12,7 @@ function StarPicker({ value, onChange }) {
           <button
             key={v}
             type="button"
-            className={`text-2xl leading-none ${active ? 'text-yellow-500' : 'text-gray-300'} hover:text-yellow-400`}
+            className={`text-2xl leading-none cursor-pointer ${active ? 'text-yellow-500' : 'text-gray-300'} hover:text-yellow-400`}
             onClick={() => onChange(v)}
             aria-label={`Set rating to ${v}`}
           >
@@ -84,13 +84,13 @@ export default function Testimonials() {
               <div className="mt-6 space-y-2 text-sm text-gray-200">
                 <div className="flex items-center gap-3">
                   <span className="w-8 h-8 rounded-xl bg-white/10 flex items-center justify-center">☎</span>
-                  <a className="hover:text-white" href="tel:+91 8891212323">
+                  <a className="hover:text-white cursor-pointer" href="tel:+91 8891212323">
                     +91 8891212323
                   </a>
                 </div>
                 <div className="flex items-center gap-3">
                   <span className="w-8 h-8 rounded-xl bg-white/10 flex items-center justify-center">✉</span>
-                  <a className="hover:text-white" href="mailto:info@s.com">
+                  <a className="hover:text-white cursor-pointer" href="mailto:info@s.com">
                     info@s.com
                   </a>
                 </div>
@@ -150,7 +150,7 @@ export default function Testimonials() {
 
                 <button
                   type="submit"
-                  className="w-full rounded-xl bg-red-600 text-white py-3 font-extrabold hover:bg-orange-500 transition"
+                  className="w-full rounded-xl bg-red-600 text-white py-3 font-extrabold hover:bg-red-500 transition cursor-pointer"
                 >
                   Send Reviews
                 </button>

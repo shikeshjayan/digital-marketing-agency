@@ -94,6 +94,20 @@ const useTeamStore = create((set) => ({
       throw error;
     }
   },
+
+  deleteAllMembers: async () => {
+    set({ loading: true, error: null });
+    try {
+      await apiService.delete("/admin/team");
+      set({ adminTeam: [], loading: false });
+    } catch (error) {
+      set({
+        error: error.response?.data?.message || error.message,
+        loading: false,
+      });
+      throw error;
+    }
+  },
 }));
 
 export default useTeamStore;
