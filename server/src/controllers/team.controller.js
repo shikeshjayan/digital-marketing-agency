@@ -4,7 +4,7 @@ import asyncHandler from "../middleware/asyncHandler.js";
 
 // Add a new team member (admin only, supports photo upload)
 export const createMember = asyncHandler(async (req, res) => {
-  const { name, designation, display_order, status } = req.body;
+  const { name, designation, description, display_order, status } = req.body;
   // If a file was uploaded, store its path; otherwise use the one from the request body
   const photo = req.file ? `/uploads/${req.file.filename}` : req.body.photo;
 
@@ -13,7 +13,7 @@ export const createMember = asyncHandler(async (req, res) => {
     return res.status(400).json({ success: false, message: "Missing required fields" });
   }
 
-  const member = await Team.create({ photo, name, designation, display_order, status });
+  const member = await Team.create({ photo, name, designation, description, display_order, status });
 
   res.status(201).json({
     success: true,
@@ -53,13 +53,13 @@ export const getAllTeamMembers = asyncHandler(async (req, res) => {
 
 // Update a team member's info (admin only, supports photo upload)
 export const updateMember = asyncHandler(async (req, res) => {
-  const { name, designation, display_order, status, removePhoto } = req.body;
+  const { name, designation, description, display_order, status, removePhoto } = req.body;
 
-  if (!name && !designation && !display_order && !status) {
+  if (!name && !designation && !description && !display_order && !status) {
     return res.status(400).json({ success: false, message: "Invalid data type fields" });
   }
 
-  const update = { name, designation, display_order, status };
+  const update = { name, designation, description, display_order, status };
   if (req.file) {
     update.photo = `/uploads/${req.file.filename}`;
   } else if (removePhoto === "true") {
