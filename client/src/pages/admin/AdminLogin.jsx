@@ -1,7 +1,8 @@
-import { useMemo, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useEffect, useMemo, useState } from 'react'
+import { Link, useNavigate } from 'react-router-dom'
 import { setAdminProfile } from '../../auth/adminAuth.js'
 import useAuthStore from '../../store/authStore.js'
+import apiService from '../../services/apiService.js'
 
 export default function AdminLogin() {
   const navigate = useNavigate()
@@ -9,6 +10,18 @@ export default function AdminLogin() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState(null)
+  const [adminExists, setAdminExists] = useState(null)
+
+  useEffect(() => {
+    apiService.get('/admin/check')
+      .then((res) => {
+        setAdminExists(res.data?.data?.exists ?? true)
+      })
+      .catch((err) => {
+        console.error('Failed to check admin:', err)
+        setAdminExists(true)
+      })
+  }, [])
 
   const isValid = useMemo(() => email.trim().length > 0 && password.trim().length > 0, [email, password])
 
@@ -52,6 +65,7 @@ export default function AdminLogin() {
           className="mt-2 w-full rounded-xl border border-gray-200 px-3 py-2 outline-none focus:ring-2 focus:ring-red-200"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
+          placeholder="Enter your email"
           autoComplete="email"
         />
 
@@ -61,8 +75,15 @@ export default function AdminLogin() {
           className="mt-2 w-full rounded-xl border border-gray-200 px-3 py-2 outline-none focus:ring-2 focus:ring-red-200"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
+          placeholder="Enter your password"
           autoComplete="current-password"
         />
+
+        <div className="mt-2 text-right">
+          <Link to="/admin/forgot-password" className="text-sm text-red-600 hover:underline">
+            Forgot Password?
+          </Link>
+        </div>
 
         {(error || authError) && <div className="mt-4 text-sm text-red-600">{error || authError}</div>}
 
@@ -74,7 +95,14 @@ export default function AdminLogin() {
           {loading ? 'Signing In...' : 'Sign In'}
         </button>
       </form>
+
+      {!adminExists && (
+        <div className="mt-4 text-center">
+          <Link to="/admin/register" className="text-sm text-gray-600 hover:text-red-600 hover:underline">
+            Don't have an account? Register
+          </Link>
+        </div>
+      )}
     </div>
   )
 }
-

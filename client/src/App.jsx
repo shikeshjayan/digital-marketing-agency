@@ -15,6 +15,8 @@ import Testimonials from './pages/public/Testimonials.jsx'
 import Contact from './pages/public/Contact.jsx'
 
 import AdminLogin from './pages/admin/AdminLogin.jsx'
+import AdminRegister from './pages/admin/AdminRegister.jsx'
+import ForgotPassword from './pages/admin/ForgotPassword.jsx'
 import AdminDashboard from './pages/admin/AdminDashboard.jsx'
 import AdminServices from './pages/admin/AdminServices.jsx'
 import AdminProjects from './pages/admin/AdminProjects.jsx'
@@ -45,6 +47,8 @@ export default function App() {
 
         {/* Admin */}
         <Route path="admin/login" element={<AdminLogin />} />
+        <Route path="admin/register" element={<AdminRegister />} />
+        <Route path="admin/forgot-password" element={<ForgotPassword />} />
         <Route path="admin" element={<AdminGuard />}>
           <Route element={<AdminLayout />}>
             <Route index element={<AdminDashboard />} />
