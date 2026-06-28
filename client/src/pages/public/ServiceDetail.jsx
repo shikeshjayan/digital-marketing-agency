@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import { slugify } from "../../utils/slugify.js";
 import useServiceStore from "../../store/serviceStore";
+import imageUrl from "../../utils/imageUrl.js";
 
 export default function ServiceDetail() {
   const { slug } = useParams();
@@ -52,7 +53,7 @@ export default function ServiceDetail() {
           </h1>
           <div className="mt-10 flex justify-center">
             <img
-              src={service.image}
+              src={imageUrl(service.image)}
               alt={service.service_name}
               loading="lazy"
               decoding="async"

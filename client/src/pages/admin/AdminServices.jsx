@@ -3,15 +3,6 @@ import useServiceStore from "../../store/serviceStore.js";
 import ConfirmModal from "../../components/ui/ConfirmModal.jsx";
 import Select from "../../components/ui/Select.jsx";
 
-function FileToDataUrl({ file }) {
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.onerror = reject;
-    reader.onload = () => resolve(reader.result);
-    reader.readAsDataURL(file);
-  });
-}
-
 export default function AdminServices() {
   const { fetchAdminServices, createService, updateService, deleteService, deleteAllServices } =
     useServiceStore();
@@ -68,15 +59,14 @@ export default function AdminServices() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [search, status]);
 
-  async function onPickImage(e) {
+  function onPickImage(e) {
     const file = e.target.files?.[0];
     if (!file) return;
     if (file.size > 5 * 1024 * 1024) {
       setError("Image must be less than 5MB.");
       return;
     }
-    const dataUrl = await FileToDataUrl({ file });
-    setForm((f) => ({ ...f, image: dataUrl }));
+    setForm((f) => ({ ...f, image: file }));
   }
 
   async function onSubmit(e) {
@@ -95,19 +85,22 @@ export default function AdminServices() {
       return;
     }
 
-    if (!form.image) {
+    if (!form.image && !form.service_id) {
       setError("Please upload an image.");
       setSubmitting(false);
       return;
     }
 
-    const payload = {
-      service_name: form.service_name.trim(),
-      short_description: form.short_description.trim(),
-      description: form.description.trim(),
-      image: form.image,
-      status: form.status,
-    };
+    const payload = new FormData();
+    if (form.image instanceof File) {
+      payload.append("image", form.image);
+    } else if (form.service_id && !form.image) {
+      payload.append("removeImage", "true");
+    }
+    payload.append("service_name", form.service_name.trim());
+    payload.append("short_description", form.short_description.trim());
+    payload.append("description", form.description.trim());
+    payload.append("status", form.status);
 
     try {
       if (form.service_id) {
