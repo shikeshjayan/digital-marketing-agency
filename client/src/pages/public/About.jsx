@@ -1,12 +1,10 @@
 import { useEffect, useMemo } from 'react'
 import HeroSplit from '../../components/public/HeroSplit.jsx'
 import useTeamStore from '../../store/teamStore.js'
+import imageUrl from '../../utils/imageUrl.js'
 
 function ProfileRow({ name, title, description, placeholderInitials, photoUrl, reverse }) {
-  const backendBaseUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000';
-  
-  // Format the image source path dynamically to handle backend Multer media uploads
-  const imageSrc = photoUrl ? (photoUrl.startsWith('/') ? `${backendBaseUrl}${photoUrl}` : photoUrl) : null;
+  const imageSrc = photoUrl ? imageUrl(photoUrl) : null;
 
   return (
     <div className={`group mt-10 grid grid-cols-1 md:grid-cols-2 gap-10 md:gap-16 items-center ${reverse ? 'md:flex-row-reverse' : ''} bg-white border border-gray-200 rounded-3xl p-6 md:p-8 shadow-sm hover:shadow-md transition duration-300 cursor-pointer select-none`}>
