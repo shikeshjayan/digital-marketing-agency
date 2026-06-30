@@ -2,6 +2,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import useCourseStore from "../../store/courseStore.js";
 import ConfirmModal from "../../components/ui/ConfirmModal.jsx";
 import Select from "../../components/ui/Select.jsx";
+import { TableSkeleton } from "../../components/ui/Skeleton.jsx";
 import imageUrl from "../../utils/imageUrl.js";
 
 function fileToDataUrl(file) {
@@ -409,7 +410,9 @@ export default function AdminCourses() {
                 </tr>
               </thead>
               <tbody>
-                {items.map((c) => (
+                {loading && !items.length ? (
+                  <TableSkeleton rows={5} cols={6} />
+                ) : items.map((c) => (
                   <tr
                     key={c._id}
                     className="border-t border-gray-100 align-top">

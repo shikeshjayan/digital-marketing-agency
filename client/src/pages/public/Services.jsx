@@ -1,6 +1,8 @@
 import { useEffect } from "react";
 import { Link } from "react-router-dom";
 import HeroSplit from "../../components/public/HeroSplit";
+import FadeIn from "../../components/ui/FadeIn.jsx";
+import { ServiceCardSkeleton } from "../../components/ui/Skeleton.jsx";
 import useServiceStore from "../../store/serviceStore";
 import { slugify } from "../../utils/slugify";
 import imageUrl from "../../utils/imageUrl";
@@ -8,7 +10,7 @@ import imageUrl from "../../utils/imageUrl";
 const ServiceCard = ({ service }) => (
   <Link
     to={`/services/${slugify(service.service_name)}`}
-    className="flex flex-col bg-white border border-gray-100 rounded-xl shadow-sm h-full overflow-hidden cursor-pointer">
+    className="flex flex-col bg-white border border-gray-100 rounded-xl shadow-sm h-full overflow-hidden cursor-pointer hover:shadow-md hover:-translate-y-1 transition-all duration-300">
     <div className="h-40 overflow-hidden">
       <img
         src={imageUrl(service.image)}
@@ -34,24 +36,65 @@ const ServiceCard = ({ service }) => (
 );
 
 const Services = () => {
-  const { services, loading, fetchServices } = useServiceStore();
+  const { services, loading, error, fetchServices } = useServiceStore();
 
   useEffect(() => {
     fetchServices();
   }, [fetchServices]);
 
   if (loading)
-    return <div className="text-center py-20 text-gray-500">Loading...</div>;
+    return (
+      <section className="py-12 bg-gray-50">
+        <HeroSplit title="Services" subtitle="We offer a wide range of services to meet your needs." />
+        <div className="max-w-6xl mx-auto px-4 mt-10">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {[...Array(6)].map((_, i) => (
+              <ServiceCardSkeleton key={i} />
+            ))}
+          </div>
+        </div>
+      </section>
+    );
+
+  if (error)
+    return (
+      <section className="py-12 bg-gray-50">
+        <HeroSplit title="Services" subtitle="We offer a wide range of services to meet your needs." />
+        <div className="max-w-6xl mx-auto px-4 mt-10">
+          <div className="text-center py-20">
+            <div className="text-red-500 mb-4">{error}</div>
+            <button
+              type="button"
+              onClick={() => fetchServices()}
+              className="px-4 py-2 text-sm font-semibold text-white bg-red-600 rounded-xl hover:bg-red-700 transition cursor-pointer">
+              Retry
+            </button>
+          </div>
+        </div>
+      </section>
+    );
 
   return (
     <section className="py-12 bg-gray-50">
       <HeroSplit title="Services" subtitle="We offer a wide range of services to meet your needs." />
       <div className="max-w-6xl mx-auto px-4 mt-10">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {services.map((s) => (
-            <ServiceCard key={s._id} service={s} />
-          ))}
-        </div>
+        {services.length === 0 ? (
+          <div className="text-center py-20">
+            <svg className="w-16 h-16 mx-auto text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
+            </svg>
+            <div className="mt-4 text-lg font-semibold text-gray-600">No services available</div>
+            <div className="mt-2 text-sm text-gray-400">Check back later for our services.</div>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {services.map((s, i) => (
+              <FadeIn key={s._id} delay={i * 100}>
+                <ServiceCard service={s} />
+              </FadeIn>
+            ))}
+          </div>
+        )}
       </div>
     </section>
   );

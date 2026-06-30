@@ -1,5 +1,6 @@
 import { useEffect } from 'react'
 import { Link } from 'react-router-dom'
+import FadeIn from '../components/ui/FadeIn.jsx'
 import useServiceStore from '../store/serviceStore.js'
 import { slugify } from '../utils/slugify.js'
 
@@ -18,6 +19,7 @@ export default function Footer() {
 
   return (
     <footer className="bg-gray-900 text-white mt-10">
+      <FadeIn>
       <div className="max-w-7xl mx-auto px-4 py-10">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           
@@ -93,6 +95,7 @@ export default function Footer() {
           © {new Date().getFullYear()} <span className="text-red-400">CrawlCrown</span>. All rights reserved.
         </div>
       </div>
+      </FadeIn>
     </footer>
   )
 }

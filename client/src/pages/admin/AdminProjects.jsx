@@ -2,6 +2,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import useProjectStore from "../../store/projectStore.js";
 import ConfirmModal from "../../components/ui/ConfirmModal.jsx";
 import Select from "../../components/ui/Select.jsx";
+import { TableSkeleton } from "../../components/ui/Skeleton.jsx";
 
 export default function AdminProjects() {
   const {
@@ -439,7 +440,9 @@ export default function AdminProjects() {
                 </tr>
               </thead>
               <tbody>
-                {items.map((p) => (
+                {loading && !items.length ? (
+                  <TableSkeleton rows={5} cols={5} />
+                ) : items.map((p) => (
                   <tr
                     key={p._id}
                     className="border-t border-gray-100 align-top">

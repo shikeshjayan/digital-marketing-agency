@@ -2,8 +2,9 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faAngleLeft, faAngleRight, faStar } from '@fortawesome/free-solid-svg-icons'
-import { serviceDetailPath } from '../../data/serviceLinks.js'
+import { slugify } from '../../utils/slugify.js'
 import AnimatedCounter from '../../components/ui/AnimatedCounter.jsx'
+import FadeIn from '../../components/ui/FadeIn.jsx'
 import useServiceStore from '../../store/serviceStore.js'
 import useReviewStore from '../../store/reviewStore.js'
 import imageUrl from '../../utils/imageUrl.js'
@@ -231,7 +232,7 @@ function ServicesCarousel({ services }) {
                         <FontAwesomeIcon icon={faAngleLeft} className="text-sm" />
                       </button>
                       <Link
-                        to={serviceDetailPath(current.service_name)}
+                        to={`/services/${slugify(current.service_name)}`}
                         className="inline-flex items-center rounded-full bg-red-600 text-white px-5 py-2.5 text-sm font-semibold hover:bg-red-500 transition cursor-pointer">
                         Read More
                       </Link>
@@ -303,21 +304,24 @@ function TechnologyStack() {
   return (
     <section className="bg-red-600 py-12">
       <div className="max-w-6xl mx-auto px-4">
-        <div className="text-center text-white">
-          <div className="font-cursive text-4xl">Our</div>
-          <h2 className="mt-2 text-4xl font-extrabold">Technology Stack</h2>
-        </div>
+        <FadeIn>
+          <div className="text-center text-white">
+            <div className="font-cursive text-4xl">Our</div>
+            <h2 className="mt-2 text-4xl font-extrabold">Technology Stack</h2>
+          </div>
+        </FadeIn>
 
         <div className="mt-10 flex flex-wrap justify-center gap-6">
-          {techItems.map((it) => (
-            <div
-              key={it.name}
-              className="w-28 h-28 flex flex-col items-center justify-center text-white bg-white/10 border border-white/20 rounded-lg hover:bg-white/20 hover:scale-110 transition-all duration-300 cursor-default"
-              style={{ clipPath: 'polygon(25% 5%, 75% 5%, 100% 50%, 75% 95%, 25% 95%, 0% 50%)' }}
-            >
-              <div className="text-lg font-extrabold">{it.code}</div>
-              <div className="mt-1 text-xs text-white/90 text-center max-w-[80px]">{it.name}</div>
-            </div>
+          {techItems.map((it, i) => (
+            <FadeIn key={it.name} delay={i * 80}>
+              <div
+                className="w-28 h-28 flex flex-col items-center justify-center text-white bg-white/10 border border-white/20 rounded-lg hover:bg-white/20 hover:scale-110 transition-all duration-300 cursor-default"
+                style={{ clipPath: 'polygon(25% 5%, 75% 5%, 100% 50%, 75% 95%, 25% 95%, 0% 50%)' }}
+              >
+                <div className="text-lg font-extrabold">{it.code}</div>
+                <div className="mt-1 text-xs text-white/90 text-center max-w-[80px]">{it.name}</div>
+              </div>
+            </FadeIn>
           ))}
         </div>
       </div>
@@ -355,7 +359,7 @@ function LogoMarquee() {
   )
 }
 
-function TestimonialsCarousel({ reviews }) {
+function TestimonialsCarousel({ reviews, loading }) {
   const [index, setIndex] = useState(0)
 
   useEffect(() => {
@@ -364,23 +368,62 @@ function TestimonialsCarousel({ reviews }) {
     return () => clearInterval(t)
   }, [reviews.length])
 
+  if (loading) {
+    return (
+      <section className="py-12 bg-white">
+        <div className="max-w-5xl mx-auto px-4">
+          <div className="text-center">
+            <div className="h-8 w-48 bg-gray-200 rounded mx-auto animate-pulse" />
+          </div>
+          <div className="mt-8 flex justify-center">
+            <div className="w-full max-w-xl border border-gray-200 rounded-3xl px-6 py-8 bg-gray-50 text-center">
+              <div className="mx-auto w-16 h-16 rounded-full bg-gray-200 animate-pulse" />
+              <div className="mt-4 h-4 w-24 bg-gray-200 rounded mx-auto animate-pulse" />
+              <div className="mt-2 h-3 w-16 bg-gray-100 rounded mx-auto animate-pulse" />
+              <div className="mt-4 space-y-2">
+                <div className="h-3 w-full bg-gray-100 rounded animate-pulse" />
+                <div className="h-3 w-3/4 bg-gray-100 rounded mx-auto animate-pulse" />
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    )
+  }
+
   if (!reviews.length) return null
   const current = reviews[index]
 
   return (
     <section className="py-12 bg-white">
       <div className="max-w-5xl mx-auto px-4">
-        <div className="text-center">
-          <h2 className="text-3xl font-extrabold text-gray-900">
-            <span className="font-cursive text-red-700 pr-2">Feedback</span> That Speaks
-          </h2>
-        </div>
+        <FadeIn>
+          <div className="text-center">
+            <h2 className="text-3xl font-extrabold text-gray-900">
+              <span className="font-cursive text-red-700 pr-2">Feedback</span> That Speaks
+            </h2>
+          </div>
+        </FadeIn>
 
         <div className="mt-8 flex justify-center">
           <div className="w-full max-w-xl border border-gray-200 rounded-3xl px-6 py-8 bg-gray-50 text-center">
             <div className="mx-auto w-16 h-16 rounded-full overflow-hidden bg-gray-200 flex items-center justify-center">
-              <div className="text-2xl">
-                <img src={imageUrl(current.user_avatar)} alt={current.name} loading="lazy" decoding="async" onError={(e) => { e.target.src = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'%3E%3Crect fill='%23e5e7eb' width='100' height='100'/%3E%3Ctext x='50' y='55' text-anchor='middle' fill='%239ca3af' font-size='40' font-family='sans-serif'%3E?%3C/text%3E%3C/svg%3E"; }} />
+              {current.user_avatar ? (
+                <img
+                  src={imageUrl(current.user_avatar)}
+                  alt={current.name}
+                  loading="lazy"
+                  decoding="async"
+                  className="w-full h-full object-cover"
+                  onError={(e) => {
+                    e.target.style.display = 'none';
+                    e.target.nextSibling.style.display = 'flex';
+                  }}
+                />
+              ) : null}
+              <div
+                className={`w-full h-full items-center justify-center text-lg font-bold text-gray-600 ${current.user_avatar ? 'hidden' : 'flex'}`}>
+                {current.name?.split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 2) || '?'}
               </div>
             </div>
             <div className="mt-4 font-bold text-gray-900">{current.name}</div>
@@ -415,43 +458,51 @@ function StatsSection() {
     <section className="bg-gray-50 py-12">
       <div className="max-w-6xl mx-auto px-4">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 items-center">
-          <div className="flex flex-col items-center lg:items-start">
-            <div className="w-full max-w-md">
-              <div className="inline-flex items-center gap-3 px-4 py-2 rounded-full bg-white border border-gray-200">
-                <div className="w-2.5 h-2.5 rounded-full bg-red-600" />
-                <span className="text-sm font-semibold text-gray-800">Innovation meets execution</span>
-              </div>
-              <h3 className="mt-4 text-3xl font-extrabold text-gray-900">Why teams trust us</h3>
-              <p className="mt-3 text-gray-600 leading-relaxed">
-                We combine design, engineering, and marketing strategy to deliver websites and campaigns that perform.
-              </p>
-              <div className="mt-6">
-                <Link to="/about" className="inline-flex rounded-full bg-red-600 text-white px-5 py-2.5 text-sm font-semibold hover:bg-red-500 transition cursor-pointer">
-                  Read More
-                </Link>
+          <FadeIn direction="left">
+            <div className="flex flex-col items-center lg:items-start">
+              <div className="w-full max-w-md">
+                <div className="inline-flex items-center gap-3 px-4 py-2 rounded-full bg-white border border-gray-200">
+                  <div className="w-2.5 h-2.5 rounded-full bg-red-600" />
+                  <span className="text-sm font-semibold text-gray-800">Innovation meets execution</span>
+                </div>
+                <h3 className="mt-4 text-3xl font-extrabold text-gray-900">Why teams trust us</h3>
+                <p className="mt-3 text-gray-600 leading-relaxed">
+                  We combine design, engineering, and marketing strategy to deliver websites and campaigns that perform.
+                </p>
+                <div className="mt-6">
+                  <Link to="/about" className="inline-flex rounded-full bg-red-600 text-white px-5 py-2.5 text-sm font-semibold hover:bg-red-500 transition cursor-pointer">
+                    Read More
+                  </Link>
+                </div>
               </div>
             </div>
-          </div>
+          </FadeIn>
 
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
-            <div className="bg-white border border-gray-200 rounded-3xl p-6 text-center shadow-sm">
-              <div className="text-4xl font-extrabold text-gray-900">
-                <AnimatedCounter target={8} suffix="+" />
+            <FadeIn delay={100}>
+              <div className="bg-white border border-gray-200 rounded-3xl p-6 text-center shadow-sm">
+                <div className="text-4xl font-extrabold text-gray-900">
+                  <AnimatedCounter target={8} suffix="+" />
+                </div>
+                <div className="mt-2 text-sm font-semibold text-gray-600">Years of Experience</div>
               </div>
-              <div className="mt-2 text-sm font-semibold text-gray-600">Years of Experience</div>
-            </div>
-            <div className="bg-white border border-gray-200 rounded-3xl p-6 text-center shadow-sm">
-              <div className="text-4xl font-extrabold text-gray-900">
-                <AnimatedCounter target={500} suffix="+" />
+            </FadeIn>
+            <FadeIn delay={200}>
+              <div className="bg-white border border-gray-200 rounded-3xl p-6 text-center shadow-sm">
+                <div className="text-4xl font-extrabold text-gray-900">
+                  <AnimatedCounter target={500} suffix="+" />
+                </div>
+                <div className="mt-2 text-sm font-semibold text-gray-600">Projects Completed</div>
               </div>
-              <div className="mt-2 text-sm font-semibold text-gray-600">Projects Completed</div>
-            </div>
-            <div className="bg-white border border-gray-200 rounded-3xl p-6 text-center shadow-sm">
-              <div className="text-4xl font-extrabold text-gray-900">
-                <AnimatedCounter target={500} suffix="+" />
+            </FadeIn>
+            <FadeIn delay={300}>
+              <div className="bg-white border border-gray-200 rounded-3xl p-6 text-center shadow-sm">
+                <div className="text-4xl font-extrabold text-gray-900">
+                  <AnimatedCounter target={500} suffix="+" />
+                </div>
+                <div className="mt-2 text-sm font-semibold text-gray-600">Satisfied Clients</div>
               </div>
-              <div className="mt-2 text-sm font-semibold text-gray-600">Satisfied Clients</div>
-            </div>
+            </FadeIn>
           </div>
         </div>
       </div>
@@ -461,7 +512,7 @@ function StatsSection() {
 
 export default function Home() {
   const { services, fetchServices } = useServiceStore()
-  const { reviews, fetchReviews } = useReviewStore()
+  const { reviews, loading: reviewsLoading, fetchReviews } = useReviewStore()
   const navigate = useNavigate()
 
   useEffect(() => {
@@ -479,26 +530,28 @@ export default function Home() {
 
       {/* Team teaser */}
       <section className="bg-black py-16 text-white">
-        <div className="max-w-6xl mx-auto px-4 text-center">
-          <div className="text-4xl md:text-5xl font-extrabold">
-            <span className="font-cursive text-red-500 pr-2">Meet</span> Our Team
+        <FadeIn>
+          <div className="max-w-6xl mx-auto px-4 text-center">
+            <div className="text-4xl md:text-5xl font-extrabold">
+              <span className="font-cursive text-red-500 pr-2">Meet</span> Our Team
+            </div>
+            <p className="mt-4 text-gray-300 max-w-2xl mx-auto leading-relaxed">
+              A creative and technical team focused on delivering premium digital experiences.
+            </p>
+            <div className="mt-8">
+              <button
+                type="button"
+                className="inline-flex items-center rounded-full bg-red-600 px-6 py-3 text-sm font-semibold hover:bg-red-500 transition cursor-pointer"
+                onClick={() => navigate('/team')}
+              >
+                Read More
+              </button>
+            </div>
           </div>
-          <p className="mt-4 text-gray-300 max-w-2xl mx-auto leading-relaxed">
-            A creative and technical team focused on delivering premium digital experiences.
-          </p>
-          <div className="mt-8">
-            <button
-              type="button"
-              className="inline-flex items-center rounded-full bg-red-600 px-6 py-3 text-sm font-semibold hover:bg-red-500 transition cursor-pointer"
-              onClick={() => navigate('/team')}
-            >
-              Read More
-            </button>
-          </div>
-        </div>
+        </FadeIn>
       </section>
 
-      <TestimonialsCarousel reviews={reviews} />
+      <TestimonialsCarousel reviews={reviews} loading={reviewsLoading} />
     </div>
   )
 }

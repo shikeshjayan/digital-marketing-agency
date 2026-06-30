@@ -1,5 +1,6 @@
 import { useEffect, useMemo } from 'react'
 import HeroSplit from '../../components/public/HeroSplit.jsx'
+import FadeIn from '../../components/ui/FadeIn.jsx'
 import useTeamStore from '../../store/teamStore.js'
 import imageUrl from '../../utils/imageUrl.js'
 
@@ -83,7 +84,8 @@ export default function About() {
         <div className="max-w-6xl mx-auto px-4 space-y-12 md:space-y-16">
           
           {/* Welcome Banner Card */}
-          <div className="bg-white border border-gray-200 rounded-3xl p-7 md:p-10 text-center shadow-sm cursor-pointer select-none">
+          <FadeIn>
+            <div className="bg-white border border-gray-200 rounded-3xl p-7 md:p-10 text-center shadow-sm cursor-pointer select-none">
             <h2 className="text-3xl md:text-4xl font-extrabold text-gray-900 tracking-tight cursor-pointer">
               Hello, <span className="text-red-700">Welcome</span> to Digital Marketing
             </h2>
@@ -95,27 +97,29 @@ export default function About() {
                 By linking functional data capture analytics directly with human-centric interfaces, we transform your digital channels from static online bookmarks into high-velocity engines that attract attention, build lasting consumer confidence, and reliably optimize monetization cycles.
               </p>
             </div>
-          </div>
+            </div>
+          </FadeIn>
 
           {/* Profile Rows Wrapper */}
           {activeExecutives.length > 0 && (
             <div className="space-y-16 md:space-y-24">
               {activeExecutives.map((member, index) => {
-                // Dynamically build clean text initials fallback from database entry name string
                 const initialsFallback = member.name
                   ? member.name.trim().split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2)
                   : '??';
 
                 return (
-                  <ProfileRow
+                  <FadeIn key={member._id} delay={index * 150}>
+                    <ProfileRow
                     key={member._id}
                     name={member.name}
                     title={member.designation}
                     placeholderInitials={initialsFallback}
                     photoUrl={member.photo}
                     description={member.description}
-                    reverse={index % 2 !== 0} // Automatically alternates rows seamlessly
+                    reverse={index % 2 !== 0}
                   />
+                  </FadeIn>
                 )
               })}
             </div>

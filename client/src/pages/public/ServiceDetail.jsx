@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import { slugify } from "../../utils/slugify.js";
+import { DetailSkeleton } from "../../components/ui/Skeleton.jsx";
 import useServiceStore from "../../store/serviceStore";
 import imageUrl from "../../utils/imageUrl.js";
 
@@ -17,24 +18,38 @@ export default function ServiceDetail() {
     (services ?? []).find((s) => slugify(s.service_name) === slug) ?? null;
 
   if (loading)
-    return <div className="text-center py-32 text-gray-400">Loading...</div>;
+    return <DetailSkeleton />;
 
   if (error)
     return (
       <div className="text-center py-32">
         <p className="text-red-500">{error}</p>
-        <Link
-          to="/services"
-          className="mt-4 inline-flex items-center rounded-full bg-red-600 text-white px-5 py-2.5 text-sm font-semibold hover:bg-red-500 transition cursor-pointer">
-          Back to Services
-        </Link>
+        <button
+          type="button"
+          onClick={() => {
+            setError(null);
+            fetchServices();
+          }}
+          className="mt-4 px-4 py-2 text-sm font-semibold text-white bg-red-600 rounded-xl hover:bg-red-700 transition cursor-pointer">
+          Retry
+        </button>
+        <div className="mt-4">
+          <Link
+            to="/services"
+            className="inline-flex items-center rounded-full bg-gray-100 text-gray-700 px-5 py-2.5 text-sm font-semibold hover:bg-gray-200 transition cursor-pointer">
+            Back to Services
+          </Link>
+        </div>
       </div>
     );
 
   if (!service)
     return (
       <div className="text-center py-32">
-        <h2 className="text-2xl font-bold text-gray-900">Service Not Found</h2>
+        <svg className="w-16 h-16 mx-auto text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+        <h2 className="mt-4 text-2xl font-bold text-gray-900">Service Not Found</h2>
         <p className="mt-3 text-gray-500">No service found for this URL.</p>
         <Link
           to="/services"

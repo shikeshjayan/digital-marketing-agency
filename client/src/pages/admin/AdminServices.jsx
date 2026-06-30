@@ -2,6 +2,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import useServiceStore from "../../store/serviceStore.js";
 import ConfirmModal from "../../components/ui/ConfirmModal.jsx";
 import Select from "../../components/ui/Select.jsx";
+import { TableSkeleton } from "../../components/ui/Skeleton.jsx";
 
 export default function AdminServices() {
   const { fetchAdminServices, createService, updateService, deleteService, deleteAllServices } =
@@ -342,7 +343,9 @@ export default function AdminServices() {
                 </tr>
               </thead>
               <tbody>
-                {items.map((s) => (
+                {loading && !items.length ? (
+                  <TableSkeleton rows={5} cols={4} />
+                ) : items.map((s) => (
                   <tr
                     key={s._id}
                     className="border-t border-gray-100 align-top">

@@ -1,4 +1,4 @@
-import { Outlet, Link } from 'react-router-dom'
+import { Outlet, Link, useLocation } from 'react-router-dom'
 import AdminSidebar from '../components/admin/AdminSidebar.jsx'
 import NotificationDropdown from '../components/admin/NotificationDropdown.jsx'
 import { getAdminProfile } from '../auth/adminAuth.js'
@@ -11,6 +11,7 @@ const resolveUrl = (path) => {
 }
 
 export default function AdminLayout() {
+  const location = useLocation()
   const [profile, setProfile] = useState(() => getAdminProfile())
   const [imgFailed, setImgFailed] = useState(false)
   const [sidebarOpen, setSidebarOpen] = useState(false)
@@ -99,7 +100,9 @@ export default function AdminLayout() {
         <AdminSidebar />
         <main className="flex-1 overflow-auto">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 py-6">
-            <Outlet />
+            <div key={location.pathname} className="animate-page-fade">
+              <Outlet />
+            </div>
           </div>
         </main>
       </div>

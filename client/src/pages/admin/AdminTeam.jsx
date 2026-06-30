@@ -2,6 +2,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import useTeamStore from "../../store/teamStore.js";
 import ConfirmModal from "../../components/ui/ConfirmModal.jsx";
 import Select from "../../components/ui/Select.jsx";
+import { TableSkeleton } from "../../components/ui/Skeleton.jsx";
 
 const resolveUrl = (path) => {
   if (!path || path.startsWith("blob:") || path.startsWith("http")) return path;
@@ -401,7 +402,9 @@ export default function AdminTeam() {
                 </tr>
               </thead>
               <tbody>
-                {items.map((m) => (
+                {loading && !items.length ? (
+                  <TableSkeleton rows={5} cols={5} />
+                ) : items.map((m) => (
                   <tr
                     key={m._id}
                     className="border-t border-gray-100 align-top">

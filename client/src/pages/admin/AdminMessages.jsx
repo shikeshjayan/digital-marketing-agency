@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import useContactStore from "../../store/contactStore.js";
 import ConfirmModal from "../../components/ui/ConfirmModal.jsx";
 import Select from "../../components/ui/Select.jsx";
+import { TableSkeleton } from "../../components/ui/Skeleton.jsx";
 
 function statusChip(status) {
   const map = {
@@ -262,8 +263,10 @@ export default function AdminMessages() {
                 <th className="py-2">Actions</th>
               </tr>
             </thead>
-            <tbody>
-              {items.map((e) => (
+              <tbody>
+                {loading && !items.length ? (
+                  <TableSkeleton rows={5} cols={6} />
+                ) : items.map((e) => (
                 <tr
                   key={e.enquiry_id}
                   className="border-t border-gray-100 align-top">

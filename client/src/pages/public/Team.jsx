@@ -1,5 +1,6 @@
 import { useEffect, useMemo } from 'react'
 import HeroSplit from '../../components/public/HeroSplit.jsx'
+import FadeIn from '../../components/ui/FadeIn.jsx'
 import useTeamStore from '../../store/teamStore.js'
 import imageUrl from '../../utils/imageUrl.js'
 
@@ -65,8 +66,10 @@ export default function Team() {
       <section className="py-12 bg-gray-50">
         <div className="max-w-6xl mx-auto px-4">
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 auto-rows-fr">
-            {sorted.map((m) => (
-              <TeamCard key={m._id || m.member_id} member={m} />
+            {sorted.map((m, i) => (
+              <FadeIn key={m._id || m.member_id} delay={i * 100}>
+                <TeamCard member={m} />
+              </FadeIn>
             ))}
           </div>
         </div>
