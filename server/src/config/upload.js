@@ -1,29 +1,30 @@
-// Setup file upload using multer + sharp (handles image upload, resize, and compression)
+// Setup file upload using multer + sharp
+// In production: uploads to Vercel Blob Storage
+// In development: saves locally to server/uploads/
 import multer from "multer";
 import sharp from "sharp";
 import path from "path";
 import fs from "fs";
+import { fileURLToPath } from "url";
 
-const uploadDir = process.env.VERCEL ? "/tmp/uploads" : "uploads/";
-if (!fs.existsSync(uploadDir)) {
-  fs.mkdirSync(uploadDir, { recursive: true });
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+const isProduction = process.env.NODE_ENV === "production";
+
+// Local uploads directory (for development only)
+const uploadsDir = path.join(__dirname, "..", "..", "uploads");
+if (!isProduction && !fs.existsSync(uploadsDir)) {
+  fs.mkdirSync(uploadsDir, { recursive: true });
 }
 
-// Tell multer where to save uploaded files and what name to give them
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, uploadDir);
-  },
-  filename: (req, file, cb) => {
-    const uniqueName = `${Date.now()}-${Math.round(Math.random() * 1e9)}${path.extname(file.originalname)}`;
-    cb(null, uniqueName);
-  },
-});
+// Use memoryStorage so files stay in RAM (compatible with Vercel serverless)
+const storage = multer.memoryStorage();
 
 // Configure multer with storage, file size limit, and allowed image types
 const upload = multer({
   storage,
-  limits: { fileSize: 5 * 1024 * 1024 },
+  limits: { fileSize: 4 * 1024 * 1024 },
   fileFilter: (req, file, cb) => {
     const allowed = /jpeg|jpg|png|gif|webp/;
     const ext = allowed.test(path.extname(file.originalname).toLowerCase());
@@ -33,19 +34,15 @@ const upload = multer({
   },
 });
 
-// Middleware: compress and resize uploaded images using sharp
+// Middleware: compress, resize, and upload image
 export const processImage = async (req, res, next) => {
   if (!req.file) return next();
 
   try {
-    const inputPath = req.file.path;
     const ext = path.extname(req.file.originalname).toLowerCase();
     const isPng = ext === ".png";
 
-    // Replace original with compressed version
-    const tempPath = inputPath + ".tmp";
-
-    let pipeline = sharp(inputPath).resize({
+    let pipeline = sharp(req.file.buffer).resize({
       width: 1200,
       height: 1200,
       fit: "inside",
@@ -58,11 +55,22 @@ export const processImage = async (req, res, next) => {
       pipeline = pipeline.jpeg({ quality: 80, mozjpeg: true });
     }
 
-    await pipeline.toFile(tempPath);
+    const processedBuffer = await pipeline.toBuffer();
+    const filename = `${Date.now()}-${Math.round(Math.random() * 1e9)}${ext}`;
 
-    // Replace original with compressed file
-    fs.unlinkSync(inputPath);
-    fs.renameSync(tempPath, inputPath);
+    if (isProduction) {
+      // Production: upload to Vercel Blob Storage
+      const { uploadToBlob } = await import("./blob.js");
+      const contentType = isPng ? "image/png" : "image/jpeg";
+      const blobUrl = await uploadToBlob(processedBuffer, filename, contentType);
+      req.file.url = blobUrl;
+    } else {
+      // Development: save locally
+      const filePath = path.join(uploadsDir, filename);
+      fs.writeFileSync(filePath, processedBuffer);
+      // Store as relative path — served via /api/v1/uploads/
+      req.file.url = `/api/v1/uploads/${filename}`;
+    }
 
     next();
   } catch (err) {

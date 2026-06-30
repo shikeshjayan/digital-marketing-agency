@@ -5,7 +5,7 @@ import Select from "../../components/ui/Select.jsx";
 
 const resolveUrl = (path) => {
   if (!path || path.startsWith("blob:") || path.startsWith("http")) return path;
-  const base = (import.meta.env.VITE_API_URL || "http://localhost:5000/api/v1").replace(/\/api\/v1\/?$/, "");
+  const base = (import.meta.env.VITE_API_URL || "/api/v1").replace(/\/api\/v1\/?$/, "");
   return base + path;
 };
 

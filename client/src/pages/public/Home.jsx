@@ -380,7 +380,7 @@ function TestimonialsCarousel({ reviews }) {
           <div className="w-full max-w-xl border border-gray-200 rounded-3xl px-6 py-8 bg-gray-50 text-center">
             <div className="mx-auto w-16 h-16 rounded-full overflow-hidden bg-gray-200 flex items-center justify-center">
               <div className="text-2xl">
-                <img src={imageUrl(current.profile_image)} alt={current.name} loading="lazy" decoding="async" />
+                <img src={imageUrl(current.user_avatar)} alt={current.name} loading="lazy" decoding="async" onError={(e) => { e.target.src = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'%3E%3Crect fill='%23e5e7eb' width='100' height='100'/%3E%3Ctext x='50' y='55' text-anchor='middle' fill='%239ca3af' font-size='40' font-family='sans-serif'%3E?%3C/text%3E%3C/svg%3E"; }} />
               </div>
             </div>
             <div className="mt-4 font-bold text-gray-900">{current.name}</div>

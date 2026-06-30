@@ -19,7 +19,7 @@ export { validateCategory };
 // Create a new project (admin only)
 export const createProject = asyncHandler(async (req, res) => {
   const { project_name, category, short_description, description, live_url, status } = req.body;
-  const image = req.file ? `/uploads/${req.file.filename}` : req.body.image;
+  const image = req.file ? req.file.url : req.body.image;
 
   // Validate required fields
   if (!project_name || !category || !short_description || !description || !image) {
@@ -99,7 +99,7 @@ export const updateProject = asyncHandler(async (req, res) => {
 
   const update = { project_name, category, short_description, description, live_url, status };
   if (req.file) {
-    update.image = `/uploads/${req.file.filename}`;
+    update.image = req.file.url;
   } else if (req.body.image) {
     update.image = req.body.image;
   }

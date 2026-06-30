@@ -58,6 +58,7 @@ export default function ServiceDetail() {
               loading="lazy"
               decoding="async"
               className="w-full max-w-2xl h-64 md:h-80 object-cover rounded-2xl shadow-md bg-gray-100"
+              onError={(e) => { e.target.src = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='800' height='320' viewBox='0 0 800 320'%3E%3Crect fill='%23e5e7eb' width='800' height='320'/%3E%3Ctext x='400' y='165' text-anchor='middle' fill='%239ca3af' font-size='20' font-family='sans-serif'%3ENo Image%3C/text%3E%3C/svg%3E"; }}
             />
           </div>
           <div className="mt-10 max-w-3xl mx-auto text-gray-700 leading-relaxed space-y-4">

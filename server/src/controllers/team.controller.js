@@ -6,7 +6,7 @@ import asyncHandler from "../middleware/asyncHandler.js";
 export const createMember = asyncHandler(async (req, res) => {
   const { name, designation, description, display_order, status } = req.body;
   // If a file was uploaded, store its path; otherwise use the one from the request body
-  const photo = req.file ? `/uploads/${req.file.filename}` : req.body.photo;
+  const photo = req.file ? req.file.url : req.body.photo;
 
   // Validate required fields
   if (!name || !designation) {
@@ -61,7 +61,7 @@ export const updateMember = asyncHandler(async (req, res) => {
 
   const update = { name, designation, description, display_order, status };
   if (req.file) {
-    update.photo = `/uploads/${req.file.filename}`;
+    update.photo = req.file.url;
   } else if (removePhoto === "true") {
     update.photo = "";
   }

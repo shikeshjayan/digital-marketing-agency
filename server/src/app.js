@@ -1,9 +1,13 @@
 import express from "express";
 import cors from "cors";
 import cookieParser from "cookie-parser";
-import path from "path";
 import { RateLimiterMemory } from "rate-limiter-flexible";
 import mongoSanitize from "./middleware/mongoSanitize.js";
+import path from "path";
+import { fileURLToPath } from "url";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 import serviceRoutes from "./routes/services.routes.js";
 import adminServicesRoutes from "./routes/adminServices.routes.js";
@@ -51,13 +55,12 @@ app.use(express.json());
 app.use(cookieParser());
 // Sanitize data to prevent NoSQL injection
 app.use(mongoSanitize);
-// Serve uploaded images from the "uploads" folder when someone visits "/uploads/filename"
-// Cache static assets for 30 days to reduce repeated transfers
-app.use("/uploads", express.static(path.join(process.cwd(), "uploads"), {
-  maxAge: "30d",
-  etag: true,
-  lastModified: true,
-}));
+
+// Serve local uploads BEFORE rate limiter so images aren't blocked
+if (process.env.NODE_ENV !== "production") {
+  const uploadsDir = path.join(__dirname, "..", "uploads");
+  app.use("/api/v1/uploads", express.static(uploadsDir));
+}
 
 // Apply general rate limit to all API routes
 app.use("/api/v1", rateLimitMiddleware(generalLimiter, "Too many requests, try again later"));

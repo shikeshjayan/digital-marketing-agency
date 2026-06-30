@@ -2,8 +2,10 @@ import axios from "axios";
 
 // Create an axios instance with cookie support
 // The httpOnly cookie is sent automatically by the browser
+// In dev, use relative URL so Vite proxy forwards /api to localhost:5000
+// In production, use the full VITE_API_URL (e.g. https://your-app.vercel.app/api/v1)
 const apiService = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || "http://localhost:5000/api/v1",
+  baseURL: import.meta.env.VITE_API_URL || "/api/v1",
   withCredentials: true,
 });
 

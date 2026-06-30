@@ -16,6 +16,7 @@ const ServiceCard = ({ service }) => (
         loading="lazy"
         decoding="async"
         className="w-full h-full object-cover bg-gray-200"
+        onError={(e) => { e.target.src = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='200' viewBox='0 0 400 200'%3E%3Crect fill='%23e5e7eb' width='400' height='200'/%3E%3Ctext x='200' y='105' text-anchor='middle' fill='%239ca3af' font-size='16' font-family='sans-serif'%3ENo Image%3C/text%3E%3C/svg%3E"; }}
       />
     </div>
     <div className="flex flex-col items-center text-center p-5 flex-1 gap-6">
@@ -45,7 +46,7 @@ const Services = () => {
   return (
     <section className="py-12 bg-gray-50">
       <HeroSplit title="Services" subtitle="We offer a wide range of services to meet your needs." />
-      <div className="max-w-6xl mx-auto px-4">
+      <div className="max-w-6xl mx-auto px-4 mt-10">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {services.map((s) => (
             <ServiceCard key={s._id} service={s} />

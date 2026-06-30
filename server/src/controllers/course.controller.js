@@ -1,13 +1,6 @@
 // Handles everything related to courses (CRUD + public listing)
 import Courses from "../models/courses.model.js";
 import asyncHandler from "../middleware/asyncHandler.js";
-import fs from "fs";
-
-function deleteFile(filePath) {
-  if (filePath && fs.existsSync(filePath)) {
-    fs.unlinkSync(filePath);
-  }
-}
 
 // Create a new course (admin only)
 export const createCourse = asyncHandler(async (req, res) => {
@@ -28,7 +21,7 @@ export const createCourse = asyncHandler(async (req, res) => {
       .json({ success: false, message: "Course name already exists" });
   }
 
-  const image = req.file ? `/uploads/${req.file.filename}` : "";
+  const image = req.file ? req.file.url : "";
 
   const course = await Courses.create({
     course_name,
@@ -101,10 +94,8 @@ export const updateCourse = asyncHandler(async (req, res) => {
   if (status) update.status = status;
 
   if (req.file) {
-    deleteFile(course.image?.startsWith("/uploads") ? course.image.slice(1) : null);
-    update.image = `/uploads/${req.file.filename}`;
+    update.image = req.file.url;
   } else if (removeImage === "true") {
-    deleteFile(course.image?.startsWith("/uploads") ? course.image.slice(1) : null);
     update.image = "";
   }
 

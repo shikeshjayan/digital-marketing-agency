@@ -5,7 +5,7 @@ import asyncHandler from "../middleware/asyncHandler.js";
 // Create a new service (admin only)
 export const createService = asyncHandler(async (req, res) => {
   const { service_name, short_description, description, status } = req.body;
-  const image = req.file ? `/uploads/${req.file.filename}` : req.body.image;
+  const image = req.file ? req.file.url : req.body.image;
 
   // Validate required fields
   if (!service_name || !short_description || !description || !image) {
@@ -71,7 +71,7 @@ export const updateService = asyncHandler(async (req, res) => {
 
   const update = { service_name, short_description, description, status };
   if (req.file) {
-    update.image = `/uploads/${req.file.filename}`;
+    update.image = req.file.url;
   } else if (req.body.image) {
     update.image = req.body.image;
   }

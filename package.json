@@ -4,9 +4,11 @@
   "private": true,
   "type": "module",
   "scripts": {
+    "dev": "concurrently \"cd server && npm run dev\" \"cd client && npm run dev\"",
     "build": "cd client && npm install --include=dev && npm run build"
   },
   "dependencies": {
+    "@vercel/blob": "^2.5.0",
     "bcryptjs": "^3.0.3",
     "cookie-parser": "^1.4.7",
     "cors": "^2.8.6",
@@ -18,5 +20,8 @@
     "nodemailer": "^9.0.1",
     "rate-limiter-flexible": "^11.2.0",
     "sharp": "^0.35.2"
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.0"
   }
 }

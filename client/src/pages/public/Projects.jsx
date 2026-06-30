@@ -19,6 +19,7 @@ const ProjectCard = ({ project }) => {
           loading="lazy"
           decoding="async"
           className="w-full h-48 object-cover bg-gray-200 group-hover:scale-110 transition-transform duration-300"
+          onError={(e) => { e.target.src = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='200' viewBox='0 0 400 200'%3E%3Crect fill='%23e5e7eb' width='400' height='200'/%3E%3Ctext x='200' y='105' text-anchor='middle' fill='%239ca3af' font-size='16' font-family='sans-serif'%3ENo Image%3C/text%3E%3C/svg%3E"; }}
         />
         <div className="absolute inset-0 bg-black/0 group-hover:bg-black/40 transition-colors duration-300" />
         <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">

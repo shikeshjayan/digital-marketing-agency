@@ -123,7 +123,7 @@ export const updateAdminProfile = asyncHandler(async (req, res) => {
   if (email) admin.email = email;
 
   if (req.file) {
-    admin.photo = `/uploads/${req.file.filename}`;
+    admin.photo = req.file.url;
   } else if (removePhoto === "true") {
     admin.photo = "";
   }
