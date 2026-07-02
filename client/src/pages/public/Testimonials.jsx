@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { Link } from 'react-router-dom'
 import HeroSplit from '../../components/public/HeroSplit.jsx'
 import FadeIn from '../../components/ui/FadeIn.jsx'
 import { TestimonialCardSkeleton } from '../../components/ui/Skeleton.jsx'
@@ -6,7 +7,7 @@ import apiService from '../../services/apiService.js'
 
 function StarPicker({ value, onChange }) {
   return (
-    <div className="flex items-center gap-1">
+    <div className="flex items-center gap-1 text-amber-500">
       {Array.from({ length: 5 }).map((_, i) => {
         const v = i + 1
         const active = v <= value
@@ -14,7 +15,7 @@ function StarPicker({ value, onChange }) {
           <button
             key={v}
             type="button"
-            className={`text-2xl leading-none cursor-pointer ${active ? 'text-yellow-500' : 'text-gray-300'} hover:text-yellow-400`}
+            className={`text-2xl leading-none cursor-pointer transition-colors duration-150 ${active ? 'text-amber-500' : 'text-gray-300'} hover:text-amber-400`}
             onClick={() => onChange(v)}
             aria-label={`Set rating to ${v}`}
           >
@@ -76,35 +77,40 @@ export default function Testimonials() {
     }
   }
 
-  const approvedCount = reviews.length
-
   return (
-    <div>
-      <HeroSplit title="Testimonials" titleHighlight=" " subtitle="Submit feedback and see approved reviews from our learners." leftColor="bg-gray-900" />
+    <div className="bg-background min-h-screen">
+      <HeroSplit title="Testimonials" titleHighlight=" " subtitle="Submit feedback and see approved reviews from our learners." leftColor="bg-dark" />
 
-      <section className="py-12 bg-gray-50">
+      <section className="py-14 bg-surface">
         <div className="max-w-6xl mx-auto px-4">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
+            
+            {/* Sidebar Branding Meta Banner Block */}
             <FadeIn direction="left">
-              <div className="bg-black text-white rounded-3xl p-8">
-                <div className="text-sm font-semibold text-red-400">We value your feedback?</div>
-                <div className="mt-3 text-3xl font-extrabold">
-                  <span className="text-red-500">Review</span> That Inspires
+              <div className="bg-dark text-white rounded-lg p-8 relative overflow-hidden">
+                <div className="absolute inset-0 pointer-events-none">
+                  <div className="absolute -top-10 -left-10 w-32 h-32 bg-white/5 rounded-lg rotate-12" />
                 </div>
-                <p className="mt-4 text-gray-300 leading-relaxed">
+                <div className="text-sm font-bold tracking-widest uppercase inline-block text-primary rounded">
+                  WE VALUE YOUR FEEDBACK
+                </div>
+                <div className="mt-3 text-3xl font-extrabold leading-tight">
+                  <span className="font-cursive text-primary pr-2 text-4xl">Review</span> That Inspires
+                </div>
+                <p className="mt-4 text-white/90 text-sm leading-relaxed max-w-prose">
                   Tell us about your experience. Your review helps future learners make confident decisions.
                 </p>
 
-                <div className="mt-6 space-y-2 text-sm text-gray-200">
+                <div className="mt-8 space-y-3 text-sm text-white/90 border-t border-white/10 pt-6">
                   <div className="flex items-center gap-3">
-                    <span className="w-8 h-8 rounded-xl bg-white/10 flex items-center justify-center">☎</span>
-                    <a className="hover:text-white cursor-pointer" href="tel:+91 8891212323">
+                    <span className="w-9 h-9 rounded-lg bg-white/10 flex items-center justify-center font-sans">Ph</span>
+                    <a className="hover:text-primary transition font-semibold" href="tel:+91 8891212323">
                       +91 8891212323
                     </a>
                   </div>
                   <div className="flex items-center gap-3">
-                    <span className="w-8 h-8 rounded-xl bg-white/10 flex items-center justify-center">✉</span>
-                    <a className="hover:text-white cursor-pointer" href="mailto:info@s.com">
+                    <span className="w-9 h-9 rounded-lg bg-white/10 flex items-center justify-center font-sans">Mail</span>
+                    <a className="hover:text-primary transition font-semibold" href="mailto:info@s.com">
                       info@s.com
                     </a>
                   </div>
@@ -112,61 +118,61 @@ export default function Testimonials() {
               </div>
             </FadeIn>
 
+            {/* Review Submission Content Interactive Form Frame Block */}
             <FadeIn direction="right">
-              <div className="bg-white border border-red-100 rounded-3xl p-6">
-                <div className="flex items-start justify-between gap-4">
+              <div className="bg-background border border-border rounded-lg p-6">
+                <div className="flex items-start justify-between gap-4 border-b border-border pb-4">
                   <div>
-                    <div className="text-sm font-semibold text-red-700">Share Your Experience!</div>
-                    <div className="mt-1 text-2xl font-extrabold text-gray-900">Send Review</div>
+                    <div className="text-xs font-bold tracking-wider uppercase text-primary">SHARE YOUR EXPERIENCE!</div>
+                    <div className="mt-1 text-2xl font-extrabold text-heading">Send Review</div>
                   </div>
-                  <div className="text-xs text-gray-500">Approved: {approvedCount}</div>
                 </div>
 
                 <form onSubmit={onSubmit} className="mt-6 space-y-4">
                   <div>
-                    <label className="text-sm font-semibold text-gray-800">Your Name</label>
+                    <label className="text-sm font-semibold text-heading">Your Name</label>
                     <input
                       value={form.name}
                       onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))}
-                      className="mt-2 w-full rounded-xl border border-gray-200 px-4 py-2 outline-none focus:ring-2 focus:ring-red-100"
+                      className="mt-2 w-full rounded-lg border border-border px-4 py-2 text-sm text-text outline-none focus:ring-2 focus:ring-primary-light bg-background"
                       placeholder="Full Name"
                     />
                   </div>
 
                   <div>
-                    <label className="text-sm font-semibold text-gray-800">Location</label>
+                    <label className="text-sm font-semibold text-heading">Location</label>
                     <input
                       value={form.location}
                       onChange={(e) => setForm((f) => ({ ...f, location: e.target.value }))}
-                      className="mt-2 w-full rounded-xl border border-gray-200 px-4 py-2 outline-none focus:ring-2 focus:ring-red-100"
+                      className="mt-2 w-full rounded-lg border border-border px-4 py-2 text-sm text-text outline-none focus:ring-2 focus:ring-primary-light bg-background"
                       placeholder="City, Country"
                     />
                   </div>
 
                   <div>
-                    <label className="text-sm font-semibold text-gray-800">Rating</label>
+                    <label className="text-sm font-semibold text-heading">Rating</label>
                     <div className="mt-2">
                       <StarPicker value={form.rating} onChange={(v) => setForm((f) => ({ ...f, rating: v }))} />
                     </div>
                   </div>
 
                   <div>
-                    <label className="text-sm font-semibold text-gray-800">Share your opinions about us</label>
+                    <label className="text-sm font-semibold text-heading">Share your opinions about us</label>
                     <textarea
                       value={form.review_text}
                       onChange={(e) => setForm((f) => ({ ...f, review_text: e.target.value }))}
                       rows={4}
-                      className="mt-2 w-full rounded-xl border border-gray-200 px-4 py-2 outline-none focus:ring-2 focus:ring-red-100 resize-none"
+                      className="mt-2 w-full rounded-lg border border-border px-4 py-2 text-sm text-text outline-none focus:ring-2 focus:ring-primary-light bg-background resize-none"
                       placeholder="Write your review..."
                     />
                   </div>
 
-                  {formError && <div className="text-sm text-red-600">{formError}</div>}
-                  {success && <div className="text-sm text-green-600">{success}</div>}
+                  {formError && <div className="text-sm font-semibold text-primary">{formError}</div>}
+                  {success && <div className="text-sm font-semibold text-success">{success}</div>}
 
                   <button
                     type="submit"
-                    className="w-full rounded-xl bg-red-600 text-white py-3 font-extrabold hover:bg-red-500 transition cursor-pointer"
+                    className="w-full rounded-lg bg-primary text-white py-3 font-extrabold hover:bg-primary-hover transition cursor-pointer"
                   >
                     Send Reviews
                   </button>
@@ -175,23 +181,24 @@ export default function Testimonials() {
             </FadeIn>
           </div>
 
-          <div className="mt-10">
+          {/* Render Feed Display Grid Panels */}
+          <div className="mt-14 pt-6 border-t border-border">
             <FadeIn>
               <div className="text-center">
-                <div className="text-sm font-semibold text-red-700">Approved Reviews</div>
-                <div className="mt-2 text-2xl font-extrabold text-gray-900">What learners say</div>
+                <div className="font-cursive text-4xl text-primary">Approved Reviews</div>
+                <div className="mt-2 text-3xl font-extrabold text-heading">What learners say</div>
               </div>
             </FadeIn>
 
-            <div className="mt-7 grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="mt-10 grid grid-cols-1 md:grid-cols-2 gap-6">
               {loading ? (
                 <>
                   <TestimonialCardSkeleton />
                   <TestimonialCardSkeleton />
                 </>
               ) : error ? (
-                <div className="col-span-full text-center">
-                  <div className="text-red-500 mb-4">{error}</div>
+                <div className="col-span-full text-center py-10">
+                  <div className="text-primary font-medium mb-4">{error}</div>
                   <button
                     type="button"
                     onClick={() => {
@@ -201,37 +208,44 @@ export default function Testimonials() {
                         .then((res) => { setReviews(res.data.data ?? []); setLoading(false) })
                         .catch((err) => { setError(err.response?.data?.message ?? 'Failed to load.'); setLoading(false) })
                     }}
-                    className="px-4 py-2 text-sm font-semibold text-white bg-red-600 rounded-xl hover:bg-red-700 transition cursor-pointer">
+                    className="px-5 py-2.5 text-sm font-semibold text-white bg-primary rounded-lg hover:bg-primary-hover transition cursor-pointer">
                     Retry
                   </button>
                 </div>
               ) : reviews.length ? (
                 reviews.slice(0, 4).map((r, i) => (
                   <FadeIn key={i} delay={i * 100}>
-                    <div className="bg-white border border-gray-200 rounded-3xl p-6 shadow-sm">
-                    <div className="flex items-center gap-3">
-                      <div className="w-12 h-12 rounded-full bg-gray-100 border border-gray-200 flex items-center justify-center shrink-0">
-                        <span className="text-sm font-bold text-gray-600">
-                          {r.name?.split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 2) || '?'}
-                        </span>
+                    <div className="bg-background border border-border rounded-lg p-6 flex flex-col w-full min-w-0">
+                      <div className="flex items-center gap-3 w-full min-w-0">
+                        <div className="w-12 h-12 rounded-full bg-surface border border-border flex items-center justify-center shrink-0">
+                          <span className="text-sm font-bold text-muted select-none">
+                            {r.name?.split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 2) || '?'}
+                          </span>
+                        </div>
+                        <div className="min-w-0 flex-1">
+                          <div className="font-bold text-heading truncate">{r.name}</div>
+                          <div className="text-xs text-muted truncate">{r.location}</div>
+                        </div>
                       </div>
-                      <div>
-                        <div className="font-extrabold text-gray-900">{r.name}</div>
-                        <div className="text-sm text-gray-500">{r.location}</div>
+                      
+                      <div className="mt-4 flex items-center gap-1.5 text-amber-500">
+                        {Array.from({ length: 5 }).map((_, starIndex) => (
+                          <span key={starIndex} aria-hidden="true" className="text-lg leading-none select-none">
+                            {starIndex < Math.round(r.rating) ? '★' : '☆'}
+                          </span>
+                        ))}
                       </div>
+                      
+                      <p className="mt-4 text-text text-sm leading-relaxed break-words w-full italic">
+                        "{r.review_text}"
+                      </p>
                     </div>
-                    <div className="mt-4">
-                      <div className="flex items-center gap-2 text-yellow-500">
-                        <span className="font-extrabold">{r.rating}.0</span>
-                        <span aria-hidden="true">{'★'.repeat(Math.round(r.rating))}</span>
-                      </div>
-                    </div>
-                    <p className="mt-4 text-gray-700 leading-relaxed">"{r.review_text}"</p>
-                  </div>
                   </FadeIn>
                 ))
               ) : (
-                <div className="col-span-full text-center text-gray-600">No approved reviews yet.</div>
+                <div className="col-span-full text-center text-muted py-10 font-medium">
+                  No approved reviews yet.
+                </div>
               )}
             </div>
           </div>
