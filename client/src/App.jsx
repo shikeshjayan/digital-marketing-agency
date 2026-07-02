@@ -13,6 +13,9 @@ import CourseDetail from './pages/public/CourseDetail.jsx'
 import Team from './pages/public/Team.jsx'
 import Testimonials from './pages/public/Testimonials.jsx'
 import Contact from './pages/public/Contact.jsx'
+// Import the new legal pages
+import TermsConditions from './components/public/TermsConditions.jsx'
+import PrivacyPolicy from './components/public/PrivacyPolicy.jsx'
 
 import AdminLogin from './pages/admin/AdminLogin.jsx'
 import AdminRegister from './pages/admin/AdminRegister.jsx'
@@ -43,6 +46,9 @@ export default function App() {
           <Route path="team" element={<Team />} />
           <Route path="testimonials" element={<Testimonials />} />
           <Route path="contact" element={<Contact />} />
+          {/* Registered Legal Link Routes */}
+          <Route path="terms" element={<TermsConditions />} />
+          <Route path="privacy" element={<PrivacyPolicy />} />
         </Route>
 
         {/* Admin */}
