@@ -1,61 +1,155 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faAngleLeft, faAngleRight, faStar } from '@fortawesome/free-solid-svg-icons'
-import { slugify } from '../../utils/slugify.js'
-import AnimatedCounter from '../../components/ui/AnimatedCounter.jsx'
-import FadeIn from '../../components/ui/FadeIn.jsx'
-import useServiceStore from '../../store/serviceStore.js'
-import useReviewStore from '../../store/reviewStore.js'
-import imageUrl from '../../utils/imageUrl.js'
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+  faAngleLeft,
+  faAngleRight,
+  faStar,
+} from "@fortawesome/free-solid-svg-icons";
+import { slugify } from "../../utils/slugify.js";
+import AnimatedCounter from "../../components/ui/AnimatedCounter.jsx";
+import FadeIn from "../../components/ui/FadeIn.jsx";
+import useServiceStore from "../../store/serviceStore.js";
+import useReviewStore from "../../store/reviewStore.js";
+import imageUrl from "../../utils/imageUrl.js";
 
 function StarRow({ rating }) {
-  const full = Math.floor(rating)
+  const full = Math.floor(rating);
   return (
-    <div className="flex items-center gap-1 text-yellow-500">
+    <div className="flex items-center gap-1 text-amber-500">
       {Array.from({ length: 5 }).map((_, i) => (
-        <FontAwesomeIcon key={i} icon={faStar} className={i < full ? 'text-yellow-500' : 'text-gray-300'} aria-hidden="true" />
+        <FontAwesomeIcon
+          key={i}
+          icon={faStar}
+          className={i < full ? "text-amber-500" : "text-gray-300"}
+          aria-hidden="true"
+        />
       ))}
     </div>
-  )
+  );
 }
 
 function HeroCarousel() {
   const slides = useMemo(
     () => [
       {
-        subheading: 'Your brand, built to convert.',
+        subheading: "Grow your business with digital strategies that work.",
         description:
-          'Web development, marketing, and content designed to help you grow with measurable results.',
+          "From high-converting websites to data-driven marketing campaigns, we help businesses attract more customers and increase revenue.",
       },
       {
-        subheading: 'Digital experiences that feel premium.',
+        subheading: "Your success is our strategy.",
         description:
-          'From landing pages to full sites, we craft responsive UI and performance-first solutions.',
+          "We combine web development, SEO, branding, and digital marketing to build a strong online presence that delivers measurable results.",
+      },
+      {
+        subheading: "Turn clicks into customers.",
+        description:
+          "We create conversion-focused websites and marketing campaigns that help businesses generate more leads, sales, and long-term growth.",
+      },
+      {
+        subheading: "Designed for performance. Built for growth.",
+        description:
+          "Our team delivers modern websites, engaging content, and strategic marketing that help your business stand out online.",
+      },
+      {
+        subheading: "Elevate your brand in the digital world.",
+        description:
+          "We design impactful digital experiences that strengthen your brand and connect you with the right audience.",
+      },
+      {
+        subheading: "Creative thinking meets measurable results.",
+        description:
+          "From strategy and branding to development and marketing, we help businesses grow with confidence.",
+      },
+      {
+        subheading: "Launch faster. Grow smarter.",
+        description:
+          "Whether you're starting from scratch or scaling an established business, we build digital solutions that support your next stage of growth.",
+      },
+      {
+        subheading: "Everything your business needs to succeed online.",
+        description:
+          "Web development, SEO, content marketing, branding, and digital campaigns—all under one roof.",
+      },
+      {
+        subheading: "Helping businesses grow with confidence.",
+        description:
+          "Our digital marketing strategies are tailored to attract qualified leads, improve visibility, and deliver sustainable business growth.",
+      },
+      {
+        subheading: "Results driven by creativity and strategy.",
+        description:
+          "We combine innovative design with data-backed marketing to create digital experiences that convert visitors into customers.",
+      },
+      {
+        subheading: "Build a website that works as hard as you do.",
+        description:
+          "We create fast, responsive, and conversion-focused websites that help your business make a lasting first impression.",
+      },
+      {
+        subheading: "Marketing that drives meaningful growth.",
+        description:
+          "From SEO and social media to paid advertising and content marketing, we help you reach the right audience.",
+      },
+      {
+        subheading: "Smart digital solutions for ambitious businesses.",
+        description:
+          "We help brands grow through exceptional design, innovative development, and strategic digital marketing.",
+      },
+      {
+        subheading: "Where creativity meets technology.",
+        description:
+          "Transform your online presence with websites and marketing campaigns built for performance and long-term success.",
+      },
+      {
+        subheading: "Building brands that people remember.",
+        description:
+          "Our integrated approach to branding, web development, and digital marketing helps businesses create lasting customer relationships.",
+      },
+      {
+        subheading: "Digital experiences designed to deliver.",
+        description:
+          "We create scalable digital solutions that improve engagement, increase conversions, and accelerate business growth.",
+      },
+      {
+        subheading: "Turn your ideas into measurable business growth.",
+        description:
+          "We build high-performing websites, powerful brands, and data-driven marketing campaigns that help businesses attract customers and increase revenue.",
+      },
+      {
+        subheading: "Digital solutions designed to grow with your business.",
+        description:
+          "From strategy and branding to web development, SEO, and performance marketing, we create experiences that deliver real results.",
       },
     ],
     [],
-  )
+  );
 
-  const [index, setIndex] = useState(0)
-  const [animating, setAnimating] = useState(false)
+  const [index, setIndex] = useState(0);
+  const [animating, setAnimating] = useState(false);
+  const [paused, setPaused] = useState(false);
 
   useEffect(() => {
+    if (paused) return;
     const t = setInterval(() => {
-      setIndex((v) => (v + 1) % slides.length)
-    }, 5000)
-    return () => clearInterval(t)
-  }, [slides.length])
+      setIndex((v) => (v + 1) % slides.length);
+    }, 5000);
+    return () => clearInterval(t);
+  }, [slides.length, paused]);
 
   function go(next) {
-    if (animating) return
-    setAnimating(true)
-    setIndex(next)
-    window.setTimeout(() => setAnimating(false), 450)
+    if (animating) return;
+    setAnimating(true);
+    setIndex(next);
+    window.setTimeout(() => setAnimating(false), 450);
   }
 
   return (
-    <section className="bg-red-600 relative overflow-hidden">
+    <section
+      className="bg-primary relative overflow-hidden"
+      onMouseEnter={() => setPaused(true)}
+      onMouseLeave={() => setPaused(false)}>
       <div className="absolute inset-0 pointer-events-none">
         <div className="absolute -top-10 -left-10 w-32 h-32 bg-white/10 rounded-lg rotate-12" />
         <div className="absolute top-24 left-24 w-24 h-24 bg-white/10 rounded-lg rotate-12" />
@@ -64,65 +158,55 @@ function HeroCarousel() {
 
       <div className="max-w-7xl mx-auto px-4 py-12">
         <div className="relative">
-          <div className="overflow-hidden">
-            <div
-              className="flex transition-transform duration-500 ease-out"
-              style={{ transform: `translateX(-${index * 100}%)` }}
-            >
-              {slides.map((s, i) => (
-                <div key={i} className="min-w-full p-8 md:p-12">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
-                    <div className="relative">
-                      <div className="w-full max-w-sm mx-auto md:mx-0 aspect-4/3 flex items-center justify-center">
-                        <div className="text-white/90 text-center">
-                         <img src="/undraw_mobile-marketing_7x7m.svg" alt="" />
-                        </div>
-                      </div>
-                    </div>
-                    <div className="text-white">
-                      <div className="text-sm font-semibold tracking-wide">DIGITAL MARKETING AGENCY</div>
-                      <h2 className="mt-3 text-3xl md:text-4xl font-extrabold leading-tight">
-                        {s.subheading}
-                      </h2>
-                      <p className="mt-4 text-white/90 leading-relaxed max-w-prose">{s.description}</p>
-                    </div>
-                  </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center p-8 md:p-12">
+            <div className="relative">
+              <div className="w-full max-w-sm mx-auto md:mx-0 aspect-4/3 flex items-center justify-center">
+                <div className="text-white/90 text-center">
+                  <img src="/undraw_mobile-marketing_7x7m.svg" alt="" />
                 </div>
-              ))}
+              </div>
+            </div>
+            <div className="text-white min-h-50" key={index}>
+              <div className="animate-page-fade">
+                <div className="text-sm font-bold tracking-widest uppercase inline-block px-3 py-1 rounded">
+                  DIGITAL MARKETING AGENCY
+                </div>
+                <h2 className="mt-3 text-3xl md:text-4xl font-extrabold leading-tight">
+                  {slides[index].subheading}
+                </h2>
+                <p className="mt-4 text-white/90 leading-relaxed max-w-prose">
+                  {slides[index].description}
+                </p>
+              </div>
             </div>
           </div>
 
-          <div className="absolute inset-y-0 left-0 right-0 flex items-center justify-between px-3 md:px-6 pointer-events-none">
+          <div className="flex items-center justify-center gap-4 mt-6">
             <button
               type="button"
-              className="pointer-events-auto w-10 h-10 rounded-full bg-white/15 border border-white/20 hover:bg-white/25 text-white flex items-center justify-center cursor-pointer"
+              className="w-9 h-9 rounded-full bg-white/15 border border-white/20 hover:bg-white/25 text-white flex items-center justify-center cursor-pointer"
               onClick={() => go((index - 1 + slides.length) % slides.length)}
-              aria-label="Previous slide"
-            >
+              aria-label="Previous slide">
               <FontAwesomeIcon icon={faAngleLeft} />
             </button>
-            <button
-              type="button"
-              className="pointer-events-auto w-10 h-10 rounded-full bg-white/15 border border-white/20 hover:bg-white/25 text-white flex items-center justify-center cursor-pointer"
-              onClick={() => go((index + 1) % slides.length)}
-              aria-label="Next slide"
-            >
-              <FontAwesomeIcon icon={faAngleRight} />
-            </button>
-          </div>
-
-          <div className="flex items-center justify-center gap-2 mt-4">
             {slides.map((_, i) => (
               <button
                 key={i}
                 type="button"
                 className={`w-2.5 h-2.5 rounded-full transition cursor-pointer ${
-                  i === index ? 'bg-white' : 'bg-white/40 hover:bg-white/70'
+                  i === index ? "bg-background" : "bg-white/40 hover:bg-white/70"
                 }`}
                 onClick={() => go(i)}
                 aria-label={`Go to slide ${i + 1}`}
               />
             ))}
+            <button
+              type="button"
+              className="w-9 h-9 rounded-full bg-white/15 border border-white/20 hover:bg-white/25 text-white flex items-center justify-center cursor-pointer"
+              onClick={() => go((index + 1) % slides.length)}
+              aria-label="Next slide">
+              <FontAwesomeIcon icon={faAngleRight} />
+            </button>
           </div>
         </div>
       </div>
@@ -131,48 +215,48 @@ function HeroCarousel() {
 }
 
 function ServicesCarousel({ services }) {
-  const [index, setIndex] = useState(0)
-  const [paused, setPaused] = useState(false)
-  const touchRef = useRef(null)
+  const [index, setIndex] = useState(0);
+  const [paused, setPaused] = useState(false);
+  const touchRef = useRef(null);
 
   useEffect(() => {
-    if (services.length === 0 || paused) return
+    if (services.length === 0 || paused) return;
     const t = setInterval(() => {
-      setIndex((v) => (v + 1) % services.length)
-    }, 3500)
-    return () => clearInterval(t)
-  }, [services.length, paused])
+      setIndex((v) => (v + 1) % services.length);
+    }, 3500);
+    return () => clearInterval(t);
+  }, [services.length, paused]);
 
   function go(next) {
-    setIndex(next)
+    setIndex(next);
   }
 
   const handleTouchStart = useCallback((e) => {
-    touchRef.current = e.touches[0].clientX
-  }, [])
+    touchRef.current = e.touches[0].clientX;
+  }, []);
 
   const handleTouchEnd = useCallback(
     (e) => {
-      if (touchRef.current === null) return
-      const diff = touchRef.current - e.changedTouches[0].clientX
-      const threshold = 50
+      if (touchRef.current === null) return;
+      const diff = touchRef.current - e.changedTouches[0].clientX;
+      const threshold = 50;
       if (Math.abs(diff) > threshold) {
         if (diff > 0) {
-          go((index + 1) % services.length)
+          go((index + 1) % services.length);
         } else {
-          go((index - 1 + services.length) % services.length)
+          go((index - 1 + services.length) % services.length);
         }
       }
-      touchRef.current = null
+      touchRef.current = null;
     },
     [index, services.length],
-  )
+  );
 
   if (services.length === 0) {
     return (
-      <section className="py-12 bg-gray-50">
+      <section className="py-12 bg-surface">
         <div className="max-w-6xl mx-auto px-4">
-          <div className="bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden">
+          <div className="bg-background rounded-lg shadow-sm border border-border overflow-hidden">
             <div className="px-6 py-10 md:px-10">
               <div className="animate-pulse space-y-4">
                 <div className="h-4 w-24 bg-gray-200 rounded" />
@@ -190,12 +274,12 @@ function ServicesCarousel({ services }) {
   const current = services[index];
 
   return (
-    <section className="py-12 bg-gray-50">
+    <section className="py-12 bg-surface">
       <div className="max-w-6xl mx-auto px-4">
         <div className="relative">
           <div className="relative">
             <div
-              className="bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden touch-pan-y"
+              className="bg-background rounded-lg shadow-sm border border-border overflow-hidden touch-pan-y"
               onMouseEnter={() => setPaused(true)}
               onMouseLeave={() => setPaused(false)}
               onTouchStart={handleTouchStart}
@@ -203,45 +287,53 @@ function ServicesCarousel({ services }) {
               <div className="px-6 py-10 md:px-10">
                 <div className="flex items-stretch gap-6">
                   <div className="hidden md:flex items-center justify-center">
-                    <div className="w-24 h-24 rounded-3xl flex items-center justify-center">
-                      <div className="text-8xl font-extrabold text-gray-300">
+                    <div className="w-24 h-24 rounded-lg flex items-center justify-center">
+                      <div className="text-8xl font-extrabold text-muted select-none" aria-hidden="true">
                         {index + 1}
                       </div>
                     </div>
                   </div>
 
                   <div className="flex-1 text-center md:text-left">
-                    <div className="text-sm text-gray-500">Featured Service</div>
-                    <h3 className="mt-2 text-2xl font-extrabold text-gray-900">
+                    <div className="text-sm text-muted">
+                      Featured Service
+                    </div>
+                    <h3 className="mt-2 text-2xl font-extrabold text-heading">
                       {current.service_name.split(" ").slice(0, 2).join(" ")}{" "}
-                      <span className="text-red-700">
+                      <span className="text-primary-hover">
                         {current.service_name.split(" ").slice(2).join(" ")}
                       </span>
                     </h3>
-                    <p className="mt-3 text-gray-600 leading-relaxed max-w-xl line-clamp-3 mx-auto md:mx-0">
+                    <p className="mt-3 text-text leading-relaxed max-w-xl line-clamp-3 mx-auto md:mx-0">
                       {current.description}
                     </p>
                     <div className="mt-6 flex items-center justify-center md:justify-start gap-3">
                       <button
                         type="button"
-                        className="md:hidden w-10 h-10 rounded-full bg-gray-100 border border-gray-200 hover:bg-gray-200 flex items-center justify-center cursor-pointer"
+                        className="md:hidden w-10 h-10 rounded-full bg-surface border border-border hover:bg-gray-200 flex items-center justify-center cursor-pointer"
                         onClick={() =>
                           go((index - 1 + services.length) % services.length)
                         }
                         aria-label="Previous service">
-                        <FontAwesomeIcon icon={faAngleLeft} className="text-sm" />
+                        <FontAwesomeIcon
+                          icon={faAngleLeft}
+                          className="text-sm"
+                        />
                       </button>
                       <Link
                         to={`/services/${slugify(current.service_name)}`}
-                        className="inline-flex items-center rounded-full bg-red-600 text-white px-5 py-2.5 text-sm font-semibold hover:bg-red-500 transition cursor-pointer">
+                        className="inline-flex items-center rounded-lg bg-primary text-white px-5 py-2.5 text-sm font-semibold hover:bg-primary-hover transition cursor-pointer">
                         Read More
                       </Link>
                       <button
                         type="button"
-                        className="md:hidden w-10 h-10 rounded-full bg-gray-100 border border-gray-200 hover:bg-gray-200 flex items-center justify-center cursor-pointer"
+                        className="md:hidden w-10 h-10 rounded-full bg-surface border border-border hover:bg-gray-200 flex items-center justify-center cursor-pointer"
                         onClick={() => go((index + 1) % services.length)}
                         aria-label="Next service">
-                        <FontAwesomeIcon icon={faAngleRight} className="text-sm" />
+                        <FontAwesomeIcon
+                          icon={faAngleRight}
+                          className="text-sm"
+                        />
                       </button>
                     </div>
                   </div>
@@ -252,7 +344,7 @@ function ServicesCarousel({ services }) {
             <div className="hidden md:block absolute left-0 -translate-x-1/2 top-1/2 -translate-y-1/2 z-10">
               <button
                 type="button"
-                className="w-12 h-12 rounded-full bg-white border border-gray-200 shadow-sm hover:bg-gray-50 flex items-center justify-center cursor-pointer"
+                className="w-12 h-12 rounded-full bg-background border border-border shadow-sm hover:bg-surface flex items-center justify-center cursor-pointer"
                 onClick={() =>
                   go((index - 1 + services.length) % services.length)
                 }
@@ -263,7 +355,7 @@ function ServicesCarousel({ services }) {
             <div className="hidden md:block absolute right-0 translate-x-1/2 top-1/2 -translate-y-1/2 z-10">
               <button
                 type="button"
-                className="w-12 h-12 rounded-full bg-white border border-gray-200 shadow-sm hover:bg-gray-50 flex items-center justify-center cursor-pointer"
+                className="w-12 h-12 rounded-full bg-background border border-border shadow-sm hover:bg-surface flex items-center justify-center cursor-pointer"
                 onClick={() => go((index + 1) % services.length)}
                 aria-label="Next service">
                 <FontAwesomeIcon icon={faAngleRight} />
@@ -277,7 +369,7 @@ function ServicesCarousel({ services }) {
                 key={s._id}
                 type="button"
                 className={`w-2.5 h-2.5 rounded-full transition cursor-pointer ${
-                  i === index ? "bg-red-700" : "bg-red-200 hover:bg-red-400"
+                  i === index ? "bg-primary" : "bg-primary-light hover:bg-primary-hover"
                 }`}
                 onClick={() => go(i)}
                 aria-label={`Go to service ${i + 1}`}
@@ -287,26 +379,26 @@ function ServicesCarousel({ services }) {
         </div>
       </div>
     </section>
-  )
+  );
 }
 
 const techItems = [
-  { name: 'WordPress', code: 'WP' },
-  { name: 'Angular', code: 'AG' },
-  { name: 'HTML5', code: 'H5' },
-  { name: 'CSS3', code: 'C3' },
-  { name: 'Bootstrap', code: 'BS' },
-  { name: 'jQuery', code: 'JQ' },
-  { name: 'PHP', code: 'PH' },
-]
+  { name: "WordPress", code: "WP" },
+  { name: "Angular", code: "AG" },
+  { name: "HTML5", code: "H5" },
+  { name: "CSS3", code: "C3" },
+  { name: "Bootstrap", code: "BS" },
+  { name: "jQuery", code: "JQ" },
+  { name: "PHP", code: "PH" },
+];
 
 function TechnologyStack() {
   return (
-    <section className="bg-red-600 py-12">
+    <section className="bg-dark py-14">
       <div className="max-w-6xl mx-auto px-4">
         <FadeIn>
           <div className="text-center text-white">
-            <div className="font-cursive text-4xl">Our</div>
+            <div className="font-cursive text-4xl text-primary">Our</div>
             <h2 className="mt-2 text-4xl font-extrabold">Technology Stack</h2>
           </div>
         </FadeIn>
@@ -314,100 +406,122 @@ function TechnologyStack() {
         <div className="mt-10 flex flex-wrap justify-center gap-6">
           {techItems.map((it, i) => (
             <FadeIn key={it.name} delay={i * 80}>
-              <div
-                className="w-28 h-28 flex flex-col items-center justify-center text-white bg-white/10 border border-white/20 rounded-lg hover:bg-white/20 hover:scale-110 transition-all duration-300 cursor-default"
-                style={{ clipPath: 'polygon(25% 5%, 75% 5%, 100% 50%, 75% 95%, 25% 95%, 0% 50%)' }}
-              >
-                <div className="text-lg font-extrabold">{it.code}</div>
-                <div className="mt-1 text-xs text-white/90 text-center max-w-[80px]">{it.name}</div>
+              <div className="w-28 h-28 flex flex-col items-center justify-center text-white  rounded-lg hover:text-primary hover:scale-110 transition-all duration-300 cursor-default shadow-lg">
+                <div className="text-2xl font-extrabold">{it.code}</div>
+                <div className="mt-1 text-xs text-white/90 text-center max-w-20 truncate" title={it.name}>
+                  {it.name}
+                </div>
               </div>
             </FadeIn>
           ))}
         </div>
       </div>
     </section>
-  )
+  );
 }
 
 function LogoMarquee() {
-  const logos = ['HR Consultancy', 'Selfy LinguaTrainer', 'Rising Moon', 'StepUp', 'Tymos']
-  const loop = [...logos, ...logos, ...logos, ...logos]
-  return (
-    <section className="bg-gray-50 py-10">
-      <div className="max-w-6xl mx-auto px-4">
-        <div className="text-center border border-gray-200 rounded-3xl py-6 px-6 bg-white">
-          <div className="font-bold text-gray-900">Trusted by teams who value quality</div>
-          <div className="mt-2 text-sm text-gray-600">We deliver measurable results with transparent workflows.</div>
-        </div>
+  const logos = [
+    "HR Consultancy",
+    "Selfy LinguaTrainer",
+    "Rising Moon",
+    "StepUp",
+    "Tymos",
+    "BrightPath",
+    "NovaTech",
+    "Zenith Solutions",
+    "CloudBridge",
+    "PixelCraft",
+    "SwiftWave",
+    "BlueVista",
+    "IronPeak",
+    "GreenLeaf",
+    "SkyPulse",
+  ];
 
-        <div className="mt-8 overflow-hidden rounded-2xl border border-gray-200 bg-white py-6">
-          <div className="logo-marquee">
-            {loop.map((l, i) => (
-              <a
-                key={`${l}-${i}`}
-                href="#"
-                className="whitespace-nowrap text-gray-700 font-semibold hover:text-red-700 transition px-5 cursor-pointer"
-                onClick={(e) => e.preventDefault()}
-              >
-                {l}
-              </a>
-            ))}
-          </div>
+  return (
+    <section className="bg-surface py-10">
+      <div className="text-center py-6 px-6">
+        <h2 className="font-bold text-heading text-3xl">
+          Trusted by teams who value quality
+        </h2>
+        <p className="mt-2 text-sm text-text">
+          We deliver measurable results with transparent workflows.
+        </p>
+      </div>
+
+      <div className="overflow-hidden py-6">
+        <div className="logo-marquee">
+          {[...logos, ...logos].map((logo, index) => (
+            <span
+              key={index}
+              className="inline-flex items-center px-8 whitespace-font tracking-wider font-extrabold text-muted hover:text-primary transition-colors duration-300 text-sm md:text-xl uppercase cursor-default select-none">
+              {logo}
+            </span>
+          ))}
         </div>
       </div>
     </section>
-  )
+  );
 }
 
 function TestimonialsCarousel({ reviews, loading }) {
-  const [index, setIndex] = useState(0)
+  const [index, setIndex] = useState(0);
+  const [paused, setPaused] = useState(false);
 
   useEffect(() => {
-    if (reviews.length === 0) return
-    const t = setInterval(() => setIndex((v) => (v + 1) % reviews.length), 3000)
-    return () => clearInterval(t)
-  }, [reviews.length])
+    if (reviews.length === 0 || paused) return;
+    const t = setInterval(
+      () => setIndex((v) => (v + 1) % reviews.length),
+      3000,
+    );
+    return () => clearInterval(t);
+  }, [reviews.length, paused]);
 
   if (loading) {
     return (
-      <section className="py-12 bg-white">
+      <section className="py-12 bg-background">
         <div className="max-w-5xl mx-auto px-4">
           <div className="text-center">
             <div className="h-8 w-48 bg-gray-200 rounded mx-auto animate-pulse" />
           </div>
           <div className="mt-8 flex justify-center">
-            <div className="w-full max-w-xl border border-gray-200 rounded-3xl px-6 py-8 bg-gray-50 text-center">
-              <div className="mx-auto w-16 h-16 rounded-full bg-gray-200 animate-pulse" />
+            <div className="w-full max-w-xl border border-border rounded-lg px-6 py-8 bg-surface text-center">
+              <div className="mx-auto w-16 h-16 rounded-full bg-gray-200 animate-pulse ring-2 ring-gray-300 ring-offset-2" />
               <div className="mt-4 h-4 w-24 bg-gray-200 rounded mx-auto animate-pulse" />
-              <div className="mt-2 h-3 w-16 bg-gray-100 rounded mx-auto animate-pulse" />
+              <div className="mt-2 h-3 w-16 bg-surface rounded mx-auto animate-pulse" />
               <div className="mt-4 space-y-2">
-                <div className="h-3 w-full bg-gray-100 rounded animate-pulse" />
-                <div className="h-3 w-3/4 bg-gray-100 rounded mx-auto animate-pulse" />
+                <div className="h-3 w-full bg-surface rounded animate-pulse" />
+                <div className="h-3 w-3/4 bg-surface rounded mx-auto animate-pulse" />
               </div>
             </div>
           </div>
         </div>
       </section>
-    )
+    );
   }
 
-  if (!reviews.length) return null
-  const current = reviews[index]
+  if (!reviews.length) return null;
+  const current = reviews[index];
 
   return (
-    <section className="py-12 bg-white">
+    <section
+      className="py-12 bg-background"
+      onMouseEnter={() => setPaused(true)}
+      onMouseLeave={() => setPaused(false)}>
       <div className="max-w-5xl mx-auto px-4">
         <FadeIn>
           <div className="text-center">
-            <h2 className="text-3xl font-extrabold text-gray-900">
-              <span className="font-cursive text-red-700 pr-2">Feedback</span> That Speaks
+            <h2 className="text-3xl font-extrabold text-heading">
+              <span className="font-cursive text-primary-hover pr-2">Feedback</span>{" "}
+              That Speaks
             </h2>
           </div>
         </FadeIn>
 
         <div className="mt-8 flex justify-center">
-          <div className="w-full max-w-xl border border-gray-200 rounded-3xl px-6 py-8 bg-gray-50 text-center">
-            <div className="mx-auto w-16 h-16 rounded-full overflow-hidden bg-gray-200 flex items-center justify-center">
+          <div className="w-full max-w-6xl border border-border rounded-lg px-6 py-8 bg-surface text-center">
+            <div className="mx-auto w-16 h-16 rounded-full overflow-hidden ring-2 ring-primary ring-offset-2 flex items-center justify-center shadow-md">
               {current.user_avatar ? (
                 <img
                   src={imageUrl(current.user_avatar)}
@@ -416,19 +530,26 @@ function TestimonialsCarousel({ reviews, loading }) {
                   decoding="async"
                   className="w-full h-full object-cover"
                   onError={(e) => {
-                    e.target.style.display = 'none';
-                    e.target.nextSibling.style.display = 'flex';
+                    e.target.style.display = "none";
+                    e.target.nextSibling.style.display = "flex";
                   }}
                 />
               ) : null}
               <div
-                className={`w-full h-full items-center justify-center text-lg font-bold text-gray-600 ${current.user_avatar ? 'hidden' : 'flex'}`}>
-                {current.name?.split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 2) || '?'}
+                className={`w-full h-full items-center justify-center text-lg font-bold text-primary-hover ${current.user_avatar ? "hidden" : "flex"}`}>
+                {current.name
+                  ?.split(" ")
+                  .map((w) => w[0])
+                  .join("")
+                  .toUpperCase()
+                  .slice(0, 2) || "?"}
               </div>
             </div>
-            <div className="mt-4 font-bold text-gray-900">{current.name}</div>
-            <div className="text-sm text-gray-500">{current.location}</div>
-            <p className="mt-4 text-gray-700 leading-relaxed">"{current.review_text}"</p>
+            <div className="mt-4 font-bold text-heading">{current.name}</div>
+            <div className="text-sm text-muted">{current.location}</div>
+            <p className="mt-4 text-gray-700 leading-relaxed">
+              "{current.review_text}"
+            </p>
             <div className="mt-4">
               <StarRow rating={current.rating} />
             </div>
@@ -441,7 +562,7 @@ function TestimonialsCarousel({ reviews, loading }) {
               key={i}
               type="button"
               className={`w-2.5 h-2.5 rounded-full transition cursor-pointer ${
-                i === index ? 'bg-red-700' : 'bg-red-200 hover:bg-red-400'
+                i === index ? "bg-primary" : "bg-primary-light hover:bg-primary-hover"
               }`}
               onClick={() => setIndex(i)}
               aria-label={`Go to testimonial ${i + 1}`}
@@ -450,27 +571,34 @@ function TestimonialsCarousel({ reviews, loading }) {
         </div>
       </div>
     </section>
-  )
+  );
 }
 
 function StatsSection() {
   return (
-    <section className="bg-gray-50 py-12">
+    <section className="bg-surface py-12">
       <div className="max-w-6xl mx-auto px-4">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 items-center">
           <FadeIn direction="left">
             <div className="flex flex-col items-center lg:items-start">
               <div className="w-full max-w-md">
-                <div className="inline-flex items-center gap-3 px-4 py-2 rounded-full bg-white border border-gray-200">
-                  <div className="w-2.5 h-2.5 rounded-full bg-red-600" />
-                  <span className="text-sm font-semibold text-gray-800">Innovation meets execution</span>
+                <div className="inline-flex items-center gap-3 px-4 py-2 rounded-full bg-background border border-border">
+                  <div className="w-2.5 h-2.5 rounded-full bg-primary animate-pulse" />
+                  <span className="text-sm font-semibold text-heading">
+                    Innovation meets execution
+                  </span>
                 </div>
-                <h3 className="mt-4 text-3xl font-extrabold text-gray-900">Why teams trust us</h3>
-                <p className="mt-3 text-gray-600 leading-relaxed">
-                  We combine design, engineering, and marketing strategy to deliver websites and campaigns that perform.
+                <h3 className="mt-4 text-3xl font-extrabold text-heading">
+                  Why teams trust us
+                </h3>
+                <p className="mt-3 text-text leading-relaxed">
+                  We combine design, engineering, and marketing strategy to
+                  deliver websites and campaigns that perform.
                 </p>
-                <div className="mt-6">
-                  <Link to="/about" className="inline-flex rounded-full bg-red-600 text-white px-5 py-2.5 text-sm font-semibold hover:bg-red-500 transition cursor-pointer">
+                <div className="mt-8">
+                  <Link
+                    to="/about"
+                    className="inline-flex rounded-lg bg-primary text-white px-5 py-2.5 text-sm font-semibold hover:bg-primary-hover transition cursor-pointer">
                     Read More
                   </Link>
                 </div>
@@ -480,45 +608,51 @@ function StatsSection() {
 
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
             <FadeIn delay={100}>
-              <div className="bg-white border border-gray-200 rounded-3xl p-6 text-center shadow-sm">
-                <div className="text-4xl font-extrabold text-gray-900">
+              <div className="bg-background border border-border rounded-lg p-6 text-center shadow-sm flex flex-col items-center justify-center min-h-[120px]">
+                <div className="text-4xl font-extrabold text-heading">
                   <AnimatedCounter target={8} suffix="+" />
                 </div>
-                <div className="mt-2 text-sm font-semibold text-gray-600">Years of Experience</div>
+                <div className="mt-2 text-sm font-semibold text-text">
+                  Years of Experience
+                </div>
               </div>
             </FadeIn>
             <FadeIn delay={200}>
-              <div className="bg-white border border-gray-200 rounded-3xl p-6 text-center shadow-sm">
-                <div className="text-4xl font-extrabold text-gray-900">
+              <div className="bg-background border border-border rounded-lg p-6 text-center shadow-sm flex flex-col items-center justify-center min-h-[120px]">
+                <div className="text-4xl font-extrabold text-heading">
                   <AnimatedCounter target={500} suffix="+" />
                 </div>
-                <div className="mt-2 text-sm font-semibold text-gray-600">Projects Completed</div>
+                <div className="mt-2 text-sm font-semibold text-text">
+                  Projects Completed
+                </div>
               </div>
             </FadeIn>
             <FadeIn delay={300}>
-              <div className="bg-white border border-gray-200 rounded-3xl p-6 text-center shadow-sm">
-                <div className="text-4xl font-extrabold text-gray-900">
+              <div className="bg-background border border-border rounded-lg p-6 text-center shadow-sm flex flex-col items-center justify-center min-h-[120px]">
+                <div className="text-4xl font-extrabold text-heading">
                   <AnimatedCounter target={500} suffix="+" />
                 </div>
-                <div className="mt-2 text-sm font-semibold text-gray-600">Satisfied Clients</div>
+                <div className="mt-2 text-sm font-semibold text-text">
+                  Satisfied Clients
+                </div>
               </div>
             </FadeIn>
           </div>
         </div>
       </div>
     </section>
-  )
+  );
 }
 
 export default function Home() {
-  const { services, fetchServices } = useServiceStore()
-  const { reviews, loading: reviewsLoading, fetchReviews } = useReviewStore()
-  const navigate = useNavigate()
+  const { services, fetchServices } = useServiceStore();
+  const { reviews, loading: reviewsLoading, fetchReviews } = useReviewStore();
+  const navigate = useNavigate();
 
   useEffect(() => {
-    fetchServices()
-    fetchReviews()
-  }, [fetchServices, fetchReviews])
+    fetchServices();
+    fetchReviews();
+  }, [fetchServices, fetchReviews]);
 
   return (
     <div>
@@ -529,21 +663,22 @@ export default function Home() {
       <LogoMarquee />
 
       {/* Team teaser */}
-      <section className="bg-black py-16 text-white">
+      <section className="bg-dark py-16 text-white">
         <FadeIn>
           <div className="max-w-6xl mx-auto px-4 text-center">
             <div className="text-4xl md:text-5xl font-extrabold">
-              <span className="font-cursive text-red-500 pr-2">Meet</span> Our Team
+              <span className="font-cursive text-primary pr-2">Meet</span> Our
+              Team
             </div>
             <p className="mt-4 text-gray-300 max-w-2xl mx-auto leading-relaxed">
-              A creative and technical team focused on delivering premium digital experiences.
+              A creative and technical team focused on delivering premium
+              digital experiences.
             </p>
             <div className="mt-8">
               <button
                 type="button"
-                className="inline-flex items-center rounded-full bg-red-600 px-6 py-3 text-sm font-semibold hover:bg-red-500 transition cursor-pointer"
-                onClick={() => navigate('/team')}
-              >
+                className="inline-flex items-center rounded-lg bg-primary px-6 py-3 text-sm font-semibold hover:bg-primary-hover transition cursor-pointer"
+                onClick={() => navigate("/team")}>
                 Read More
               </button>
             </div>
@@ -553,6 +688,5 @@ export default function Home() {
 
       <TestimonialsCarousel reviews={reviews} loading={reviewsLoading} />
     </div>
-  )
+  );
 }
-
