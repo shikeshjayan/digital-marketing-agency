@@ -10,7 +10,7 @@ import imageUrl from "../../utils/imageUrl";
 const ServiceCard = ({ service }) => (
   <Link
     to={`/services/${slugify(service.service_name)}`}
-    className="flex flex-col bg-white border border-gray-100 rounded-xl shadow-sm h-full overflow-hidden cursor-pointer hover:shadow-md hover:-translate-y-1 transition-all duration-300">
+    className="flex flex-col bg-white border border-gray-100 rounded-lg shadow-sm h-full overflow-hidden cursor-pointer hover:shadow-md hover:-translate-y-1 transition-all duration-300">
     <div className="h-40 overflow-hidden">
       <img
         src={imageUrl(service.image)}
@@ -28,7 +28,7 @@ const ServiceCard = ({ service }) => (
       <p className="text-sm text-gray-600 leading-relaxed line-clamp-3">
         {service.short_description}
       </p>
-      <span className="inline-flex items-center rounded-xl bg-red-600 text-white px-5 py-2.5 text-sm font-semibold hover:bg-red-500 transition">
+      <span className="inline-flex items-center rounded-lg bg-primary text-white px-5 py-2.5 text-sm font-semibold hover:bg-primary-hover transition">
         Read More
       </span>
     </div>
@@ -66,7 +66,7 @@ const Services = () => {
             <button
               type="button"
               onClick={() => fetchServices()}
-              className="px-4 py-2 text-sm font-semibold text-white bg-red-600 rounded-xl hover:bg-red-700 transition cursor-pointer">
+              className="px-4 py-2 text-sm font-semibold text-white bg-primary rounded-lg hover:bg-primary-hover transition cursor-pointer">
               Retry
             </button>
           </div>

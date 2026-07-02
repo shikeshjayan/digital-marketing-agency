@@ -3,6 +3,17 @@ import useServiceStore from "../../store/serviceStore.js";
 import ConfirmModal from "../../components/ui/ConfirmModal.jsx";
 import Select from "../../components/ui/Select.jsx";
 import { TableSkeleton } from "../../components/ui/Skeleton.jsx";
+import imageUrl from "../../utils/imageUrl.js";
+
+const inputCls = "w-full rounded border border-gray-200 bg-gray-50 px-4 py-2 text-sm text-gray-800 outline-none transition focus:border-red-400 focus:bg-white focus:ring-2 focus:ring-red-100 placeholder:text-gray-400";
+
+function TrashIcon() {
+  return (
+    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+    </svg>
+  );
+}
 
 export default function AdminServices() {
   const { fetchAdminServices, createService, updateService, deleteService, deleteAllServices } =
@@ -21,6 +32,9 @@ export default function AdminServices() {
       description: "",
       status: "Active",
       image: "",
+      offerings: [],
+      target_audience: [],
+      clients: [],
     }),
     [],
   );
@@ -32,6 +46,48 @@ export default function AdminServices() {
   const formRef = useRef(null);
   const [deleteTarget, setDeleteTarget] = useState(null);
   const [deleteAllTarget, setDeleteAllTarget] = useState(false);
+
+  const [tagInputs, setTagInputs] = useState({ offerings: "", target_audience: "" });
+
+  function onAddTag(field, value) {
+    const trimmed = value.trim();
+    if (!trimmed) return;
+    if (form[field].includes(trimmed)) return;
+    setForm((f) => ({ ...f, [field]: [...f[field], trimmed] }));
+    setTagInputs((t) => ({ ...t, [field]: "" }));
+  }
+
+  function onRemoveTag(field, index) {
+    setForm((f) => ({ ...f, [field]: f[field].filter((_, i) => i !== index) }));
+  }
+
+  function onAddClient() {
+    setForm((f) => ({
+      ...f,
+      clients: [...f.clients, { name: "", position: "", company: "", quote: "", avatar: "", _avatarFile: null }],
+    }));
+  }
+
+  function onPickClientAvatar(index, file) {
+    if (!file) return;
+    setForm((f) => ({
+      ...f,
+      clients: f.clients.map((c, i) =>
+        i === index ? { ...c, _avatarFile: file, avatar: URL.createObjectURL(file) } : c
+      ),
+    }));
+  }
+
+  function onRemoveClient(index) {
+    setForm((f) => ({ ...f, clients: f.clients.filter((_, i) => i !== index) }));
+  }
+
+  function onUpdateClient(index, key, value) {
+    setForm((f) => ({
+      ...f,
+      clients: f.clients.map((c, i) => (i === index ? { ...c, [key]: value } : c)),
+    }));
+  }
 
   const load = async () => {
     setLoading(true);
@@ -102,6 +158,19 @@ export default function AdminServices() {
     payload.append("short_description", form.short_description.trim());
     payload.append("description", form.description.trim());
     payload.append("status", form.status);
+    payload.append("offerings", JSON.stringify(form.offerings));
+    payload.append("target_audience", JSON.stringify(form.target_audience));
+
+    // Append client avatar files as separate fields, strip _avatarFile from JSON
+    const clientsForJson = form.clients.map((c, i) => {
+      if (c._avatarFile instanceof File) {
+        payload.append(`clientAvatar_${i}`, c._avatarFile);
+      }
+      const { _avatarFile, avatar, ...rest } = c;
+      // keep existing avatar URL if no new file picked
+      return { ...rest, avatar: c._avatarFile ? "" : (avatar ?? "") };
+    });
+    payload.append("clients", JSON.stringify(clientsForJson));
 
     try {
       if (form.service_id) {
@@ -113,6 +182,7 @@ export default function AdminServices() {
       }
 
       setForm(emptyForm);
+      setTagInputs({ offerings: "", target_audience: "" });
       await load();
     } catch (err) {
       setError(
@@ -176,7 +246,7 @@ export default function AdminServices() {
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
             </svg>
             <input
-              className="w-full rounded border border-gray-200 pl-10 pr-4 py-2 outline-none focus:ring-2 focus:ring-red-100"
+              className={`${inputCls} pl-10`}
               placeholder="Search by service name..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
@@ -207,7 +277,7 @@ export default function AdminServices() {
                 Service Name
               </label>
               <input
-                className="mt-2 w-full rounded border border-gray-200 px-4 py-2 outline-none focus:ring-2 focus:ring-red-100"
+                className={`mt-2 ${inputCls}`}
                 value={form.service_name}
                 onChange={(e) =>
                   setForm((f) => ({ ...f, service_name: e.target.value }))
@@ -220,7 +290,7 @@ export default function AdminServices() {
                 Short Description
               </label>
               <input
-                className="mt-2 w-full rounded border border-gray-200 px-4 py-2 outline-none focus:ring-2 focus:ring-red-100"
+                className={`mt-2 ${inputCls}`}
                 value={form.short_description}
                 onChange={(e) =>
                   setForm((f) => ({ ...f, short_description: e.target.value }))
@@ -234,7 +304,7 @@ export default function AdminServices() {
               </label>
               <textarea
                 rows={2}
-                className="mt-2 w-full rounded border border-gray-200 px-4 py-2 outline-none focus:ring-2 focus:ring-red-100 resize-none"
+                className={`mt-2 ${inputCls} resize-none`}
                 value={form.description}
                 onChange={(e) =>
                   setForm((f) => ({ ...f, description: e.target.value }))
@@ -276,6 +346,94 @@ export default function AdminServices() {
                   />
                 </label>
               </div>
+            </div>
+
+            <div>
+              <label className="text-sm font-semibold text-gray-800">Service Offerings</label>
+              <div className="mt-2 flex flex-wrap gap-2">
+                {form.offerings.map((tag, i) => (
+                  <span key={i} className="inline-flex items-center gap-1 bg-red-50 text-red-700 text-xs font-semibold px-3 py-1 rounded-full border border-red-100">
+                    {tag}
+                    <button type="button" onClick={() => onRemoveTag("offerings", i)} className="ml-1 text-red-400 hover:text-red-600 cursor-pointer">&times;</button>
+                  </span>
+                ))}
+              </div>
+              <input
+                className={`mt-2 ${inputCls}`}
+                value={tagInputs.offerings}
+                onChange={(e) => setTagInputs((t) => ({ ...t, offerings: e.target.value }))}
+                onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); onAddTag("offerings", tagInputs.offerings); } }}
+                placeholder="Type and press Enter to add"
+              />
+            </div>
+
+            <div>
+              <label className="text-sm font-semibold text-gray-800">Target Audience</label>
+              <div className="mt-2 flex flex-wrap gap-2">
+                {form.target_audience.map((tag, i) => (
+                  <span key={i} className="inline-flex items-center gap-1 bg-blue-50 text-blue-700 text-xs font-semibold px-3 py-1 rounded-full border border-blue-100">
+                    {tag}
+                    <button type="button" onClick={() => onRemoveTag("target_audience", i)} className="ml-1 text-blue-400 hover:text-blue-600 cursor-pointer">&times;</button>
+                  </span>
+                ))}
+              </div>
+              <input
+                className={`mt-2 ${inputCls}`}
+                value={tagInputs.target_audience}
+                onChange={(e) => setTagInputs((t) => ({ ...t, target_audience: e.target.value }))}
+                onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); onAddTag("target_audience", tagInputs.target_audience); } }}
+                placeholder="Type and press Enter to add"
+              />
+            </div>
+
+            <div>
+              <label className="text-sm font-semibold text-gray-800">Client Testimonials</label>
+              {form.clients.map((client, i) => (
+                <div key={i} className="mt-3 border border-gray-200 rounded overflow-hidden">
+                  <div className="flex items-center justify-between px-3 py-2 bg-gray-100 border-b border-gray-200">
+                    <span className="text-xs font-semibold text-gray-500">Client {i + 1}</span>
+                    <button
+                      type="button"
+                      onClick={() => onRemoveClient(i)}
+                      className="text-red-400 hover:text-red-600 cursor-pointer"
+                      title="Remove client">
+                      <TrashIcon />
+                    </button>
+                  </div>
+                  <div className="p-3 space-y-2">
+                    <input className={inputCls} placeholder="Name" value={client.name} onChange={(e) => onUpdateClient(i, "name", e.target.value)} />
+                    <input className={inputCls} placeholder="Position" value={client.position} onChange={(e) => onUpdateClient(i, "position", e.target.value)} />
+                    <input className={inputCls} placeholder="Company" value={client.company} onChange={(e) => onUpdateClient(i, "company", e.target.value)} />
+                    <textarea rows={2} className={`${inputCls} resize-none`} placeholder="Quote" value={client.quote} onChange={(e) => onUpdateClient(i, "quote", e.target.value)} />
+                    <div>
+                      <label className="text-xs font-semibold text-gray-700">Avatar</label>
+                      <label className="mt-1.5 flex items-center gap-3 w-full border-2 border-dashed border-gray-300 rounded px-3 py-2 cursor-pointer hover:border-red-400 hover:bg-red-50 transition group">
+                        {(client._avatarFile || client.avatar) ? (
+                          <img
+                            src={client._avatarFile ? client.avatar : imageUrl(client.avatar)}
+                            alt="avatar"
+                            className="w-10 h-10 rounded-full object-cover border border-gray-200 shrink-0"
+                          />
+                        ) : (
+                          <div className="w-10 h-10 rounded-full bg-gray-100 border border-dashed border-gray-300 flex items-center justify-center shrink-0">
+                            <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                            </svg>
+                          </div>
+                        )}
+                        <div className="flex flex-col">
+                          <span className="text-sm font-medium text-gray-600 group-hover:text-red-600 transition">
+                            {(client._avatarFile || client.avatar) ? "Change Avatar" : "Upload Avatar"}
+                          </span>
+                          <span className="text-xs text-gray-400">JPG, PNG, WEBP · max 4MB</span>
+                        </div>
+                        <input type="file" accept="image/*" className="hidden" onChange={(e) => onPickClientAvatar(i, e.target.files?.[0])} />
+                      </label>
+                    </div>
+                  </div>
+                </div>
+              ))}
+              <button type="button" onClick={onAddClient} className="mt-2 text-sm font-semibold text-red-600 hover:text-red-500 cursor-pointer">+ Add Client</button>
             </div>
 
             {error && (
@@ -383,6 +541,9 @@ export default function AdminServices() {
                               description: s.description,
                               status: s.status,
                               image: s.image ?? "",
+                              offerings: s.offerings ?? [],
+                              target_audience: s.target_audience ?? [],
+                              clients: s.clients ?? [],
                             });
                             formRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
                           }}>
