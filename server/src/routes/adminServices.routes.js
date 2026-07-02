@@ -6,9 +6,18 @@ import upload, { processImage } from "../config/upload.js";
 
 const router = express.Router();
 
+const uploadFields = upload.fields([
+  { name: "image", maxCount: 1 },
+  { name: "clientAvatar_0", maxCount: 1 },
+  { name: "clientAvatar_1", maxCount: 1 },
+  { name: "clientAvatar_2", maxCount: 1 },
+  { name: "clientAvatar_3", maxCount: 1 },
+  { name: "clientAvatar_4", maxCount: 1 },
+]);
+
 router.get("/", protect, getAllAdminServices);
-router.post("/create", protect, upload.single("image"), processImage, createService);
-router.put("/:id", protect, upload.single("image"), processImage, updateService);
+router.post("/create", protect, uploadFields, processImage, createService);
+router.put("/:id", protect, uploadFields, processImage, updateService);
 router.delete("/:id", protect, deleteService);
 router.delete("/", protect, deleteAllServices);
 

@@ -46,10 +46,10 @@ export default function Navbar() {
   return (
     <header className="sticky top-0 z-50 bg-background/90 backdrop-blur border-b border-border">
       <div className="max-w-7xl mx-auto px-4">
-        <div className="flex items-center justify-between h-16">
+        <div className="flex items-center justify-between h-20">
           <Link to="/" className="flex items-center gap-3 cursor-pointer">
             <img
-              src="/crown-96.png"
+              src="/crown-99.png"
               alt="CrawlCrown Logo"
               className="w-9 h-9 rounded-lg object-contain"
             />
