@@ -21,6 +21,23 @@ const servicesSchema = new mongoose.Schema(
       type: String,
       required: [true, "Image is required"],
     },
+    offerings: {
+      type: [String],
+      default: [],
+    },
+    target_audience: {
+      type: [String],
+      default: [],
+    },
+    clients: [
+      {
+        name: { type: String, trim: true },
+        position: { type: String, trim: true },
+        company: { type: String, trim: true },
+        quote: { type: String, trim: true },
+        avatar: { type: String, trim: true },
+      },
+    ],
     status: {
       type: String,
       enum: ["Active", "Inactive"],

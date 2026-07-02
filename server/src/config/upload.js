@@ -35,41 +35,54 @@ const upload = multer({
 });
 
 // Middleware: compress, resize, and upload image
+async function processBuffer(buffer, originalname) {
+  const ext = path.extname(originalname).toLowerCase();
+  const isPng = ext === ".png";
+
+  let pipeline = sharp(buffer).resize({
+    width: 1200,
+    height: 1200,
+    fit: "inside",
+    withoutEnlargement: true,
+  });
+
+  if (isPng) {
+    pipeline = pipeline.png({ quality: 80, compressionLevel: 8 });
+  } else {
+    pipeline = pipeline.jpeg({ quality: 80, mozjpeg: true });
+  }
+
+  const processedBuffer = await pipeline.toBuffer();
+  const filename = `${Date.now()}-${Math.round(Math.random() * 1e9)}${ext}`;
+
+  if (isProduction) {
+    const { uploadToBlob } = await import("./blob.js");
+    const contentType = isPng ? "image/png" : "image/jpeg";
+    return await uploadToBlob(processedBuffer, filename, contentType);
+  } else {
+    const filePath = path.join(uploadsDir, filename);
+    fs.writeFileSync(filePath, processedBuffer);
+    return `/api/v1/uploads/${filename}`;
+  }
+}
+
 export const processImage = async (req, res, next) => {
-  if (!req.file) return next();
-
   try {
-    const ext = path.extname(req.file.originalname).toLowerCase();
-    const isPng = ext === ".png";
+    if (req.files) {
+      // Process main image
+      if (req.files.image?.[0]) {
+        const f = req.files.image[0];
+        f.url = await processBuffer(f.buffer, f.originalname);
+      }
 
-    let pipeline = sharp(req.file.buffer).resize({
-      width: 1200,
-      height: 1200,
-      fit: "inside",
-      withoutEnlargement: true,
-    });
-
-    if (isPng) {
-      pipeline = pipeline.png({ quality: 80, compressionLevel: 8 });
-    } else {
-      pipeline = pipeline.jpeg({ quality: 80, mozjpeg: true });
-    }
-
-    const processedBuffer = await pipeline.toBuffer();
-    const filename = `${Date.now()}-${Math.round(Math.random() * 1e9)}${ext}`;
-
-    if (isProduction) {
-      // Production: upload to Vercel Blob Storage
-      const { uploadToBlob } = await import("./blob.js");
-      const contentType = isPng ? "image/png" : "image/jpeg";
-      const blobUrl = await uploadToBlob(processedBuffer, filename, contentType);
-      req.file.url = blobUrl;
-    } else {
-      // Development: save locally
-      const filePath = path.join(uploadsDir, filename);
-      fs.writeFileSync(filePath, processedBuffer);
-      // Store as relative path — served via /api/v1/uploads/
-      req.file.url = `/api/v1/uploads/${filename}`;
+      // Process client avatar files (clientAvatar_0, clientAvatar_1, ...)
+      req.clientAvatarUrls = {};
+      for (const [fieldname, fileArr] of Object.entries(req.files)) {
+        if (fieldname.startsWith("clientAvatar_")) {
+          const index = fieldname.split("_")[1];
+          req.clientAvatarUrls[index] = await processBuffer(fileArr[0].buffer, fileArr[0].originalname);
+        }
+      }
     }
 
     next();

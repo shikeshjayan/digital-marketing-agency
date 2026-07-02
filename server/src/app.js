@@ -50,7 +50,8 @@ const rateLimitMiddleware = (limiter, message) => async (req, res, next) => {
 // Allow requests from the React frontend
 app.use(cors({ origin: process.env.CLIENT_URL, credentials: true }));
 // Convert incoming JSON data so we can read it easily
-app.use(express.json());
+app.use(express.json({ limit: "5mb" }));
+app.use(express.urlencoded({ extended: true, limit: "5mb" }));
 // Read cookies from the browser
 app.use(cookieParser());
 // Sanitize data to prevent NoSQL injection

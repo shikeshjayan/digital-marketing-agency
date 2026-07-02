@@ -2,10 +2,26 @@
 import Services from "../models/services.model.js";
 import asyncHandler from "../middleware/asyncHandler.js";
 
+const parseJsonField = (value, fallback = []) => {
+  if (!value) return fallback;
+  try {
+    const parsed = typeof value === "string" ? JSON.parse(value) : value;
+    return Array.isArray(parsed) ? parsed : fallback;
+  } catch {
+    return fallback;
+  }
+};
+
 // Create a new service (admin only)
 export const createService = asyncHandler(async (req, res) => {
   const { service_name, short_description, description, status } = req.body;
-  const image = req.file ? req.file.url : req.body.image;
+  const image = req.files?.image?.[0]?.url ?? req.body.image;
+  const offerings = parseJsonField(req.body.offerings);
+  const target_audience = parseJsonField(req.body.target_audience);
+  const clients = parseJsonField(req.body.clients).map((c, i) => ({
+    ...c,
+    avatar: req.clientAvatarUrls?.[String(i)] ?? c.avatar ?? "",
+  }));
 
   // Validate required fields
   if (!service_name || !short_description || !description || !image) {
@@ -18,7 +34,16 @@ export const createService = asyncHandler(async (req, res) => {
     return res.status(409).json({ success: false, message: "Service already exists" });
   }
 
-  const service = await Services.create({ service_name, short_description, description, image, status });
+  const service = await Services.create({
+    service_name,
+    short_description,
+    description,
+    image,
+    offerings,
+    target_audience,
+    clients,
+    status,
+  });
 
   res.status(201).json({
     success: true,
@@ -64,14 +89,20 @@ export const getServiceById = asyncHandler(async (req, res) => {
 // Update an existing service (admin only)
 export const updateService = asyncHandler(async (req, res) => {
   const { service_name, short_description, description, status } = req.body;
+  const offerings = parseJsonField(req.body.offerings);
+  const target_audience = parseJsonField(req.body.target_audience);
+  const clients = parseJsonField(req.body.clients).map((c, i) => ({
+    ...c,
+    avatar: req.clientAvatarUrls?.[String(i)] ?? c.avatar ?? "",
+  }));
 
-  if (!service_name && !short_description && !description && !status) {
+  if (!service_name && !short_description && !description && !status && !offerings.length && !target_audience.length && !clients.length) {
     return res.status(400).json({ success: false, message: "No fields to update" });
   }
 
-  const update = { service_name, short_description, description, status };
-  if (req.file) {
-    update.image = req.file.url;
+  const update = { service_name, short_description, description, status, offerings, target_audience, clients };
+  if (req.files?.image?.[0]?.url) {
+    update.image = req.files.image[0].url;
   } else if (req.body.image) {
     update.image = req.body.image;
   }
