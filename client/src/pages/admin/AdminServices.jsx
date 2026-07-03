@@ -36,8 +36,12 @@ export default function AdminServices() {
       description: "",
       status: "Active",
       image: "",
+      category: "",
       offerings: [],
+      benefits: [],
       target_audience: [],
+      faq: [],
+      case_study: { title: "", description: "", stats: [] },
       clients: [],
     }),
     [],
@@ -50,7 +54,7 @@ export default function AdminServices() {
   const [deleteTarget, setDeleteTarget] = useState(null);
   const [deleteAllTarget, setDeleteAllTarget] = useState(false);
 
-  const [tagInputs, setTagInputs] = useState({ offerings: "", target_audience: "" });
+  const [tagInputs, setTagInputs] = useState({ offerings: "", target_audience: "", benefits: "" });
 
   function onAddTag(field, value) {
     const trimmed = value.trim();
@@ -89,6 +93,54 @@ export default function AdminServices() {
     setForm((f) => ({
       ...f,
       clients: f.clients.map((c, i) => (i === index ? { ...c, [key]: value } : c)),
+    }));
+  }
+
+  function onAddFaq() {
+    setForm((f) => ({
+      ...f,
+      faq: [...f.faq, { q: "", a: "" }],
+    }));
+  }
+
+  function onRemoveFaq(index) {
+    setForm((f) => ({ ...f, faq: f.faq.filter((_, i) => i !== index) }));
+  }
+
+  function onUpdateFaq(index, key, value) {
+    setForm((f) => ({
+      ...f,
+      faq: f.faq.map((item, i) => (i === index ? { ...item, [key]: value } : item)),
+    }));
+  }
+
+  function onAddCaseStudyStat() {
+    setForm((f) => ({
+      ...f,
+      case_study: {
+        ...f.case_study,
+        stats: [...f.case_study.stats, { value: "", suffix: "", label: "" }],
+      },
+    }));
+  }
+
+  function onRemoveCaseStudyStat(index) {
+    setForm((f) => ({
+      ...f,
+      case_study: {
+        ...f.case_study,
+        stats: f.case_study.stats.filter((_, i) => i !== index),
+      },
+    }));
+  }
+
+  function onUpdateCaseStudyStat(index, key, value) {
+    setForm((f) => ({
+      ...f,
+      case_study: {
+        ...f.case_study,
+        stats: f.case_study.stats.map((s, i) => (i === index ? { ...s, [key]: value } : s)),
+      },
     }));
   }
 
@@ -180,8 +232,12 @@ export default function AdminServices() {
     payload.append("short_description", form.short_description.trim());
     payload.append("description", form.description.trim());
     payload.append("status", form.status);
+    payload.append("category", form.category.trim());
     payload.append("offerings", JSON.stringify(form.offerings));
+    payload.append("benefits", JSON.stringify(form.benefits));
     payload.append("target_audience", JSON.stringify(form.target_audience));
+    payload.append("faq", JSON.stringify(form.faq));
+    payload.append("case_study", JSON.stringify(form.case_study));
 
     // Append client avatar files as separate fields, strip _avatarFile from JSON
     const clientsForJson = form.clients.map((c, i) => {
@@ -204,7 +260,7 @@ export default function AdminServices() {
       }
 
       setForm(emptyForm);
-      setTagInputs({ offerings: "", target_audience: "" });
+      setTagInputs({ offerings: "", target_audience: "", benefits: "" });
       await load();
     } catch (err) {
       const msg = err?.response?.data?.message || err?.message || "Operation failed.";
@@ -409,6 +465,91 @@ export default function AdminServices() {
             </div>
 
             <div>
+              <label className="text-sm font-semibold text-gray-800">Category</label>
+              <input
+                className={`mt-2 ${inputCls}`}
+                value={form.category}
+                onChange={(e) => setForm((f) => ({ ...f, category: e.target.value }))}
+                placeholder="e.g. Digital Marketing, Web Development"
+              />
+            </div>
+
+            <div>
+              <label className="text-sm font-semibold text-gray-800">Benefits</label>
+              <div className="mt-2 flex flex-wrap gap-2">
+                {form.benefits.map((tag, i) => (
+                  <span key={i} className="inline-flex items-center gap-1 bg-green-50 text-green-700 text-xs font-semibold px-3 py-1 rounded-full border border-green-100">
+                    {tag}
+                    <button type="button" onClick={() => onRemoveTag("benefits", i)} className="ml-1 text-green-400 hover:text-green-600 cursor-pointer">&times;</button>
+                  </span>
+                ))}
+              </div>
+              <input
+                className={`mt-2 ${inputCls}`}
+                value={tagInputs.benefits}
+                onChange={(e) => setTagInputs((t) => ({ ...t, benefits: e.target.value }))}
+                onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); onAddTag("benefits", tagInputs.benefits); } }}
+                placeholder="e.g. Increased ROI, Faster Results"
+              />
+            </div>
+
+            <div>
+              <div className="flex items-center justify-between">
+                <label className="text-sm font-semibold text-gray-800">FAQ</label>
+                <button type="button" onClick={onAddFaq} className="text-sm font-semibold text-red-600 hover:text-red-500 cursor-pointer">+ Add</button>
+              </div>
+              {form.faq.map((item, i) => (
+                <div key={i} className="mt-3 relative border border-gray-200 rounded-lg p-4 space-y-3 bg-gray-50/50">
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-semibold text-gray-500 uppercase tracking-wide">FAQ {i + 1}</span>
+                    <button
+                      type="button"
+                      onClick={() => onRemoveFaq(i)}
+                      className="text-gray-400 hover:text-red-500 transition cursor-pointer"
+                      title="Remove FAQ">
+                      <TrashIcon />
+                    </button>
+                  </div>
+                  <input className={inputCls} placeholder="Question" value={item.q} onChange={(e) => onUpdateFaq(i, "q", e.target.value)} />
+                  <textarea rows={2} className={`${inputCls} resize-none`} placeholder="Answer" value={item.a} onChange={(e) => onUpdateFaq(i, "a", e.target.value)} />
+                </div>
+              ))}
+            </div>
+
+            <div>
+              <div className="flex items-center justify-between">
+                <label className="text-sm font-semibold text-gray-800">Case Study</label>
+              </div>
+              <input
+                className={`mt-2 ${inputCls}`}
+                value={form.case_study.title}
+                onChange={(e) => setForm((f) => ({ ...f, case_study: { ...f.case_study, title: e.target.value } }))}
+                placeholder="Case study title"
+              />
+              <textarea
+                rows={2}
+                className={`mt-2 ${inputCls} resize-none`}
+                value={form.case_study.description}
+                onChange={(e) => setForm((f) => ({ ...f, case_study: { ...f.case_study, description: e.target.value } }))}
+                placeholder="Case study description"
+              />
+              <div className="mt-2">
+                <div className="flex items-center justify-between">
+                  <span className="text-xs font-semibold text-gray-600">Stats</span>
+                  <button type="button" onClick={onAddCaseStudyStat} className="text-xs font-semibold text-red-600 hover:text-red-500 cursor-pointer">+ Add Stat</button>
+                </div>
+                {form.case_study.stats.map((stat, i) => (
+                  <div key={i} className="mt-2 flex gap-2 items-center">
+                    <input className={inputCls} placeholder="Value" value={stat.value} onChange={(e) => onUpdateCaseStudyStat(i, "value", e.target.value)} />
+                    <input className={`${inputCls} w-20`} placeholder="Suffix" value={stat.suffix} onChange={(e) => onUpdateCaseStudyStat(i, "suffix", e.target.value)} />
+                    <input className={inputCls} placeholder="Label" value={stat.label} onChange={(e) => onUpdateCaseStudyStat(i, "label", e.target.value)} />
+                    <button type="button" onClick={() => onRemoveCaseStudyStat(i)} className="text-gray-400 hover:text-red-500 cursor-pointer shrink-0"><TrashIcon /></button>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div>
               <div className="flex items-center justify-between">
                 <label className="text-sm font-semibold text-gray-800">Client Testimonials</label>
                 <button type="button" onClick={onAddClient} className="text-sm font-semibold text-red-600 hover:text-red-500 cursor-pointer">+ Add</button>
@@ -557,8 +698,12 @@ export default function AdminServices() {
                               description: s.description,
                               status: s.status,
                               image: s.image ?? "",
+                              category: s.category ?? "",
                               offerings: s.offerings ?? [],
+                              benefits: s.benefits ?? [],
                               target_audience: s.target_audience ?? [],
+                              faq: s.faq ?? [],
+                              case_study: s.case_study ?? { title: "", description: "", stats: [] },
                               clients: s.clients ?? [],
                             });
                             formRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });

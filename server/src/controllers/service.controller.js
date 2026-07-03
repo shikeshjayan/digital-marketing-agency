@@ -12,12 +12,24 @@ const parseJsonField = (value, fallback = []) => {
   }
 };
 
+const parseJsonObject = (value, fallback = {}) => {
+  if (!value) return fallback;
+  try {
+    return typeof value === "string" ? JSON.parse(value) : value;
+  } catch {
+    return fallback;
+  }
+};
+
 // Create a new service (admin only)
 export const createService = asyncHandler(async (req, res) => {
-  const { service_name, short_description, description, status } = req.body;
+  const { service_name, short_description, description, status, category } = req.body;
   const image = req.files?.image?.[0]?.url ?? req.body.image;
   const offerings = parseJsonField(req.body.offerings);
+  const benefits = parseJsonField(req.body.benefits);
   const target_audience = parseJsonField(req.body.target_audience);
+  const faq = parseJsonField(req.body.faq);
+  const case_study = parseJsonObject(req.body.case_study);
   const clients = parseJsonField(req.body.clients).map((c, i) => ({
     ...c,
     avatar: req.clientAvatarUrls?.[String(i)] ?? c.avatar ?? "",
@@ -39,8 +51,12 @@ export const createService = asyncHandler(async (req, res) => {
     short_description,
     description,
     image,
+    category,
     offerings,
+    benefits,
     target_audience,
+    faq,
+    case_study,
     clients,
     status,
   });
@@ -88,19 +104,22 @@ export const getServiceById = asyncHandler(async (req, res) => {
 
 // Update an existing service (admin only)
 export const updateService = asyncHandler(async (req, res) => {
-  const { service_name, short_description, description, status } = req.body;
+  const { service_name, short_description, description, status, category } = req.body;
   const offerings = parseJsonField(req.body.offerings);
+  const benefits = parseJsonField(req.body.benefits);
   const target_audience = parseJsonField(req.body.target_audience);
+  const faq = parseJsonField(req.body.faq);
+  const case_study = parseJsonObject(req.body.case_study);
   const clients = parseJsonField(req.body.clients).map((c, i) => ({
     ...c,
     avatar: req.clientAvatarUrls?.[String(i)] ?? c.avatar ?? "",
   }));
 
-  if (!service_name && !short_description && !description && !status && !offerings.length && !target_audience.length && !clients.length) {
+  if (!service_name && !short_description && !description && !status && !category && !offerings.length && !benefits.length && !target_audience.length && !faq.length && !clients.length) {
     return res.status(400).json({ success: false, message: "No fields to update" });
   }
 
-  const update = { service_name, short_description, description, status, offerings, target_audience, clients };
+  const update = { service_name, short_description, description, status, category, offerings, benefits, target_audience, faq, case_study, clients };
   if (req.files?.image?.[0]?.url) {
     update.image = req.files.image[0].url;
   } else if (req.body.image) {
@@ -137,6 +156,44 @@ export const deleteAllServices = asyncHandler(async (req, res) => {
   res.status(200).json({
     success: true,
     message: `${result.deletedCount} service(s) deleted successfully.`,
+  });
+});
+
+// Get related services by category (public)
+export const getRelatedServices = asyncHandler(async (req, res) => {
+  const { id } = req.params;
+  const { limit = 3 } = req.query;
+
+  const currentService = await Services.findById(id);
+  if (!currentService) {
+    return res.status(404).json({ success: false, message: "Service not found" });
+  }
+
+  const filter = {
+    status: "Active",
+    _id: { $ne: id },
+  };
+
+  if (currentService.category) {
+    filter.category = currentService.category;
+  }
+
+  let related = await Services.find(filter).limit(Number(limit));
+
+  // If not enough same-category services, fill with random active services
+  if (related.length < Number(limit)) {
+    const existingIds = [id, ...related.map((s) => s._id.toString())];
+    const moreServices = await Services.find({
+      status: "Active",
+      _id: { $nin: existingIds },
+    }).limit(Number(limit) - related.length);
+    related = [...related, ...moreServices];
+  }
+
+  res.status(200).json({
+    success: true,
+    count: related.length,
+    data: related,
   });
 });
 

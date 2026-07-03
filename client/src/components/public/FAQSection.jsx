@@ -1,0 +1,53 @@
+import { useState } from "react";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faMinus, faPlus } from "@fortawesome/free-solid-svg-icons";
+import SectionHeading from "../ui/SectionHeading.jsx";
+
+export default function FAQSection({
+  items = [],
+  eyebrow = "Questions",
+  title = "Frequently Asked Questionss",
+  subtitle = "Find answers to common questions about our services and process.",
+}) {
+  const [activeIndex, setActiveIndex] = useState(null);
+
+  const toggle = (i) => {
+    setActiveIndex(activeIndex === i ? null : i);
+  };
+
+  if (!items.length) return null;
+
+  return (
+    <section className="py-12 md:py-16 bg-surface">
+      <div className="max-w-3xl mx-auto px-4">
+        <SectionHeading eyebrow={eyebrow} title={title} subtitle={subtitle} />
+
+        <div className="mt-10 space-y-3">
+          {items.map((item, i) => (
+            <div
+              key={i}
+              className="bg-background border border-border rounded-lg overflow-hidden">
+              <button
+                type="button"
+                className="w-full flex items-center justify-between px-6 py-4 text-left cursor-pointer hover:bg-surface transition"
+                onClick={() => toggle(i)}>
+                <span className="font-semibold text-heading text-sm md:text-base pr-4">
+                  {item.q}
+                </span>
+                <FontAwesomeIcon
+                  icon={activeIndex === i ? faMinus : faPlus}
+                  className="text-primary shrink-0"
+                />
+              </button>
+              {activeIndex === i && (
+                <div className="px-6 pb-4">
+                  <p className="text-sm text-text leading-relaxed">{item.a}</p>
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
