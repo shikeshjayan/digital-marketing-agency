@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react";
+import { toast } from "sonner";
 import useTeamStore from "../../store/teamStore.js";
 import ConfirmModal from "../../components/ui/ConfirmModal.jsx";
 import Select from "../../components/ui/Select.jsx";
@@ -46,7 +47,6 @@ export default function AdminTeam() {
 
   const [form, setForm] = useState(emptyForm);
   const [error, setError] = useState("");
-  const [toast, setToast] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const formRef = useRef(null);
   const [deleteTarget, setDeleteTarget] = useState(null);
@@ -97,7 +97,6 @@ export default function AdminTeam() {
   async function onSubmit(e) {
     e.preventDefault();
     setError("");
-    setToast("");
     setSubmitting(true);
 
     if (!form.name.trim() || !form.designation.trim()) {
@@ -121,15 +120,17 @@ export default function AdminTeam() {
     try {
       if (form._id) {
         await updateMember(form._id, payload);
-        setToast("Team member updated successfully.");
+        toast.success("Team member updated successfully.");
       } else {
         await createMember(payload);
-        setToast("Team member added successfully.");
+        toast.success("Team member added successfully.");
       }
       setForm(emptyForm);
       await load();
     } catch (err) {
-      setError(err?.message || "Operation failed.");
+      const msg = err?.message || "Operation failed.";
+      setError(msg);
+      toast.error(msg);
     } finally {
       setSubmitting(false);
     }
@@ -143,11 +144,13 @@ export default function AdminTeam() {
     if (!deleteTarget) return;
     try {
       await deleteMember(deleteTarget);
-      setToast("Team member deleted successfully.");
+      toast.success("Team member deleted successfully.");
       setDeleteTarget(null);
       await load();
     } catch (err) {
-      setError(err?.message || "Delete failed.");
+      const msg = err?.message || "Delete failed.";
+      setError(msg);
+      toast.error(msg);
       setDeleteTarget(null);
     }
   }
@@ -155,11 +158,13 @@ export default function AdminTeam() {
   async function onConfirmDeleteAll() {
     try {
       await deleteAllMembers();
-      setToast("All team members deleted successfully.");
+      toast.success("All team members deleted successfully.");
       setDeleteAllTarget(false);
       await load();
     } catch (err) {
-      setError(err?.message || "Delete all failed.");
+      const msg = err?.message || "Delete all failed.";
+      setError(msg);
+      toast.error(msg);
       setDeleteAllTarget(false);
     }
   }
@@ -337,23 +342,6 @@ export default function AdminTeam() {
                   />
                 </svg>
                 {error}
-              </div>
-            )}
-            {toast && (
-              <div className="flex items-center gap-2 text-sm text-green-600 bg-green-50 rounded px-4 py-2">
-                <svg
-                  className="w-4 h-4 shrink-0"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24">
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
-                  />
-                </svg>
-                {toast}
               </div>
             )}
 

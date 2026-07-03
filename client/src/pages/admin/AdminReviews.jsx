@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import { toast } from "sonner";
 import useReviewStore from "../../store/reviewStore.js";
 import ConfirmModal from "../../components/ui/ConfirmModal.jsx";
 import Pagination from "../../components/ui/Pagination.jsx";
@@ -55,7 +56,6 @@ export default function AdminReviews() {
   const [page, setPage] = useState(1);
   const [pagination, setPagination] = useState({ total: 0, page: 1, pages: 1 });
   const [error, setError] = useState("");
-  const [toast, setToast] = useState("");
   const [actionLoading, setActionLoading] = useState(null);
   const [deleteTarget, setDeleteTarget] = useState(null);
   const [deleteType, setDeleteType] = useState(null);
@@ -81,9 +81,9 @@ export default function AdminReviews() {
       setCounters(result.counters);
       setPagination(result.pagination ?? { total: 0, page: 1, pages: 1 });
     } catch (err) {
-      setError(
-        err.response?.data?.message || err.message || "Failed to load reviews",
-      );
+      const msg = err.response?.data?.message || err.message || "Failed to load reviews";
+      setError(msg);
+      toast.error(msg);
     } finally {
       setLoading(false);
     }
@@ -110,11 +110,13 @@ export default function AdminReviews() {
     try {
       await approveReview(id);
       setDeleteTarget(null);
-      setToast("Review approved and published.");
+      toast.success("Review approved and published.");
       window.dispatchEvent(new Event('refresh-badges'));
       await load();
     } catch (err) {
-      setError(err.response?.data?.message || err.message || "Approve failed");
+      const msg = err.response?.data?.message || err.message || "Approve failed";
+      setError(msg);
+      toast.error(msg);
     } finally {
       setActionLoading(null);
     }
@@ -125,11 +127,13 @@ export default function AdminReviews() {
     try {
       await rejectReview(id);
       setDeleteTarget(null);
-      setToast("Review rejected.");
+      toast.success("Review rejected.");
       window.dispatchEvent(new Event('refresh-badges'));
       await load();
     } catch (err) {
-      setError(err.response?.data?.message || err.message || "Reject failed");
+      const msg = err.response?.data?.message || err.message || "Reject failed";
+      setError(msg);
+      toast.error(msg);
     } finally {
       setActionLoading(null);
     }
@@ -138,12 +142,14 @@ export default function AdminReviews() {
   async function onConfirmDeleteAll() {
     try {
       await deleteAllReviews();
-      setToast("All reviews deleted successfully.");
+      toast.success("All reviews deleted successfully.");
       setDeleteAllTarget(false);
       window.dispatchEvent(new Event('refresh-badges'));
       await load();
     } catch (err) {
-      setError(err.response?.data?.message || err.message || "Delete all failed");
+      const msg = err.response?.data?.message || err.message || "Delete all failed";
+      setError(msg);
+      toast.error(msg);
       setDeleteAllTarget(false);
     }
   }
@@ -235,23 +241,6 @@ export default function AdminReviews() {
             />
           </svg>
           {error}
-        </div>
-      )}
-      {toast && (
-        <div className="mt-4 flex items-center gap-2 text-sm text-green-600 bg-green-50 rounded px-4 py-2">
-          <svg
-            className="w-4 h-4 shrink-0"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24">
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
-            />
-          </svg>
-          {toast}
         </div>
       )}
 

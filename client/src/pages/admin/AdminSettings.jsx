@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { toast } from "sonner";
 import useSettingsStore from "../../store/settingsStore.js";
 import { setAdminProfile } from "../../auth/adminAuth.js";
 
@@ -13,7 +14,6 @@ export default function AdminSettings() {
   const [imageFile, setImageFile] = useState(null);
   const [photoRemoved, setPhotoRemoved] = useState(false);
   const [error, setError] = useState("");
-  const [toast, setToast] = useState("");
   const [saving, setSaving] = useState(false);
 
   useEffect(() => {
@@ -45,7 +45,6 @@ export default function AdminSettings() {
   async function onSubmit(e) {
     e.preventDefault();
     setError("");
-    setToast("");
     setSaving(true);
     try {
       const formData = new FormData();
@@ -76,11 +75,11 @@ export default function AdminSettings() {
           role: updatedProfile.role || "Administrator",
         });
       }
-      setToast("Profile updated successfully.");
+      toast.success("Profile updated successfully.");
     } catch (err) {
-      setError(
-        err.response?.data?.message ?? err.message ?? "Save failed.",
-      );
+      const msg = err.response?.data?.message ?? err.message ?? "Save failed.";
+      setError(msg);
+      toast.error(msg);
     } finally {
       setSaving(false);
     }
@@ -198,23 +197,6 @@ export default function AdminSettings() {
                     />
                   </svg>
                   {error}
-                </div>
-              )}
-              {toast && (
-                <div className="flex items-center gap-2 text-sm text-green-600 bg-green-50 rounded px-4 py-2">
-                  <svg
-                    className="w-4 h-4 shrink-0"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24">
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
-                    />
-                  </svg>
-                  {toast}
                 </div>
               )}
 

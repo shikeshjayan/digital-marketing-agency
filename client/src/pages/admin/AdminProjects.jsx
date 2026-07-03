@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react";
+import { toast } from "sonner";
 import useProjectStore from "../../store/projectStore.js";
 import ConfirmModal from "../../components/ui/ConfirmModal.jsx";
 import Select from "../../components/ui/Select.jsx";
@@ -40,7 +41,6 @@ export default function AdminProjects() {
 
   const [form, setForm] = useState(emptyForm);
   const [error, setError] = useState("");
-  const [toast, setToast] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const formRef = useRef(null);
   const [deleteTarget, setDeleteTarget] = useState(null);
@@ -95,7 +95,6 @@ export default function AdminProjects() {
   async function onSubmit(e) {
     e.preventDefault();
     setError("");
-    setToast("");
     setSubmitting(true);
 
     if (
@@ -131,18 +130,18 @@ export default function AdminProjects() {
     try {
       if (form.project_id) {
         await updateProject(form.project_id, payload);
-        setToast("Project updated successfully.");
+        toast.success("Project updated successfully.");
       } else {
         await createProject(payload);
-        setToast("Project created successfully.");
+        toast.success("Project created successfully.");
       }
 
       setForm(emptyForm);
       await load();
     } catch (err) {
-      setError(
-        err?.response?.data?.message || err?.message || "Operation failed.",
-      );
+      const msg = err?.response?.data?.message || err?.message || "Operation failed.";
+      setError(msg);
+      toast.error(msg);
     } finally {
       setSubmitting(false);
     }
@@ -156,13 +155,13 @@ export default function AdminProjects() {
     if (!deleteTarget) return;
     try {
       await deleteProject(deleteTarget);
-      setToast("Project deleted successfully.");
+      toast.success("Project deleted successfully.");
       setDeleteTarget(null);
       await load();
     } catch (err) {
-      setError(
-        err?.response?.data?.message || err?.message || "Delete failed.",
-      );
+      const msg = err?.response?.data?.message || err?.message || "Delete failed.";
+      setError(msg);
+      toast.error(msg);
       setDeleteTarget(null);
     }
   }
@@ -170,13 +169,13 @@ export default function AdminProjects() {
   async function onConfirmDeleteAll() {
     try {
       await deleteAllProjects();
-      setToast("All projects deleted successfully.");
+      toast.success("All projects deleted successfully.");
       setDeleteAllTarget(false);
       await load();
     } catch (err) {
-      setError(
-        err?.response?.data?.message || err?.message || "Delete all failed.",
-      );
+      const msg = err?.response?.data?.message || err?.message || "Delete all failed.";
+      setError(msg);
+      toast.error(msg);
       setDeleteAllTarget(false);
     }
   }
@@ -375,23 +374,6 @@ export default function AdminProjects() {
                   />
                 </svg>
                 {error}
-              </div>
-            )}
-            {toast && (
-              <div className="flex items-center gap-2 text-sm text-green-600 bg-green-50 rounded px-4 py-2">
-                <svg
-                  className="w-4 h-4 shrink-0"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24">
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
-                  />
-                </svg>
-                {toast}
               </div>
             )}
 

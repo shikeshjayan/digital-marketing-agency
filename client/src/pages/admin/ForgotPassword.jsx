@@ -1,5 +1,6 @@
 import { useMemo, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { toast } from "sonner";
 import apiService from "../../services/apiService.js";
 
 export default function ForgotPassword() {
@@ -39,8 +40,11 @@ export default function ForgotPassword() {
       setOtpToken(res.data?.data?.otpToken || "");
       setStep(2);
       setSuccess("OTP sent to your email. Check your inbox.");
+      toast.success("OTP sent to your email. Check your inbox.");
     } catch (err) {
-      setError(err.response?.data?.message || err.message || "Failed to send OTP");
+      const msg = err.response?.data?.message || err.message || "Failed to send OTP";
+      setError(msg);
+      toast.error(msg);
     } finally {
       setLoading(false);
     }
@@ -69,9 +73,12 @@ export default function ForgotPassword() {
         newPassword,
       });
       setSuccess("Password reset successful! Redirecting to login...");
+      toast.success("Password reset successful! Redirecting to login...");
       setTimeout(() => navigate("/admin/login", { replace: true }), 1500);
     } catch (err) {
-      setError(err.response?.data?.message || err.message || "Reset failed");
+      const msg = err.response?.data?.message || err.message || "Reset failed";
+      setError(msg);
+      toast.error(msg);
     } finally {
       setLoading(false);
     }

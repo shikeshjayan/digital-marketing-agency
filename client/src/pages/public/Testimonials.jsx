@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
+import { toast } from 'sonner'
 import HeroSplit from '../../components/public/HeroSplit.jsx'
 import FadeIn from '../../components/ui/FadeIn.jsx'
 import { TestimonialCardSkeleton } from '../../components/ui/Skeleton.jsx'
@@ -69,11 +70,14 @@ export default function Testimonials() {
         return
       }
       setSuccess('Thanks! Your review was submitted and is awaiting moderation.')
+      toast.success('Thanks! Your review was submitted and is awaiting moderation.')
       setForm({ name: '', location: '', rating: 5, review_text: '' })
       const latest = await apiService.get('/reviews')
       setReviews(latest.data.data ?? [])
     } catch (err) {
-      setFormError(err.response?.data?.message ?? 'Failed to submit.')
+      const msg = err.response?.data?.message ?? 'Failed to submit.'
+      setFormError(msg)
+      toast.error(msg)
     }
   }
 

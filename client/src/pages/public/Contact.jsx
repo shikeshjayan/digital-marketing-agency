@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { toast } from "sonner";
 import HeroSplit from "../../components/public/HeroSplit.jsx";
 import FadeIn from "../../components/ui/FadeIn.jsx";
 import useServiceStore from "../../store/serviceStore.js";
@@ -126,6 +127,7 @@ export default function Contact() {
   // Clear form inputs upon successful store submission
   useEffect(() => {
     if (storeSuccess) {
+      toast.success("Thanks! Your enquiry has been submitted successfully.");
       setForm({
         name: "",
         countryCode: "+91",
@@ -137,6 +139,12 @@ export default function Contact() {
       setConsent(false);
     }
   }, [storeSuccess]);
+
+  useEffect(() => {
+    if (storeError) {
+      toast.error(storeError);
+    }
+  }, [storeError]);
 
   return (
     <div>

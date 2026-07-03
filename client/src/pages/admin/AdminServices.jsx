@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react";
+import { toast } from "sonner";
 import useServiceStore from "../../store/serviceStore.js";
 import ConfirmModal from "../../components/ui/ConfirmModal.jsx";
 import Select from "../../components/ui/Select.jsx";
@@ -44,7 +45,6 @@ export default function AdminServices() {
 
   const [form, setForm] = useState(emptyForm);
   const [error, setError] = useState("");
-  const [toast, setToast] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const formRef = useRef(null);
   const [deleteTarget, setDeleteTarget] = useState(null);
@@ -137,7 +137,6 @@ export default function AdminServices() {
   async function onSubmit(e) {
     e.preventDefault();
     setError("");
-    setToast("");
     setSubmitting(true);
 
     if (
@@ -198,19 +197,19 @@ export default function AdminServices() {
     try {
       if (form.service_id) {
         await updateService(form.service_id, payload);
-        setToast("Service updated successfully.");
+        toast.success("Service updated successfully.");
       } else {
         await createService(payload);
-        setToast("Service created successfully.");
+        toast.success("Service created successfully.");
       }
 
       setForm(emptyForm);
       setTagInputs({ offerings: "", target_audience: "" });
       await load();
     } catch (err) {
-      setError(
-        err?.response?.data?.message || err?.message || "Operation failed.",
-      );
+      const msg = err?.response?.data?.message || err?.message || "Operation failed.";
+      setError(msg);
+      toast.error(msg);
     } finally {
       setSubmitting(false);
     }
@@ -224,13 +223,13 @@ export default function AdminServices() {
     if (!deleteTarget) return;
     try {
       await deleteService(deleteTarget);
-      setToast("Service deleted successfully.");
+      toast.success("Service deleted successfully.");
       setDeleteTarget(null);
       await load();
     } catch (err) {
-      setError(
-        err?.response?.data?.message || err?.message || "Delete failed.",
-      );
+      const msg = err?.response?.data?.message || err?.message || "Delete failed.";
+      setError(msg);
+      toast.error(msg);
       setDeleteTarget(null);
     }
   }
@@ -238,13 +237,13 @@ export default function AdminServices() {
   async function onConfirmDeleteAll() {
     try {
       await deleteAllServices();
-      setToast("All services deleted successfully.");
+      toast.success("All services deleted successfully.");
       setDeleteAllTarget(false);
       await load();
     } catch (err) {
-      setError(
-        err?.response?.data?.message || err?.message || "Delete all failed.",
-      );
+      const msg = err?.response?.data?.message || err?.message || "Delete all failed.";
+      setError(msg);
+      toast.error(msg);
       setDeleteAllTarget(false);
     }
   }
@@ -467,14 +466,6 @@ export default function AdminServices() {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
                 {error}
-              </div>
-            )}
-            {toast && (
-              <div className="flex items-center gap-2 text-sm text-green-600 bg-green-50 rounded px-4 py-2">
-                <svg className="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
-                {toast}
               </div>
             )}
 

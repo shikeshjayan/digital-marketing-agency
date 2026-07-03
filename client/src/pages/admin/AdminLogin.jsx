@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
+import { toast } from 'sonner'
 import { setAdminProfile } from '../../auth/adminAuth.js'
 import useAuthStore from '../../store/authStore.js'
 import apiService from '../../services/apiService.js'
@@ -42,9 +43,12 @@ export default function AdminLogin() {
         photo: userData?.photo || "",
         role: userData?.role || 'Administrator',
       })
+      toast.success("Login successful!")
       navigate('/admin', { replace: true })
     } catch (err) {
-      setError(err.response?.data?.message || err.message || 'Login failed')
+      const msg = err.response?.data?.message || err.message || 'Login failed'
+      setError(msg)
+      toast.error(msg)
     }
   }
 
