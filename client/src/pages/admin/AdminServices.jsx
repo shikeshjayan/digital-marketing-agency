@@ -156,6 +156,21 @@ export default function AdminServices() {
       return;
     }
 
+    if (form.clients.length === 0) {
+      setError("Please add at least one client testimonial.");
+      setSubmitting(false);
+      return;
+    }
+
+    for (let i = 0; i < form.clients.length; i++) {
+      const c = form.clients[i];
+      if (!c.name.trim() || !c.position.trim() || !c.company.trim() || !c.quote.trim()) {
+        setError(`Please fill all fields for Client ${i + 1}.`);
+        setSubmitting(false);
+        return;
+      }
+    }
+
     const payload = new FormData();
     if (form.image instanceof File) {
       payload.append("image", form.image);
@@ -371,7 +386,7 @@ export default function AdminServices() {
                 value={tagInputs.offerings}
                 onChange={(e) => setTagInputs((t) => ({ ...t, offerings: e.target.value }))}
                 onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); onAddTag("offerings", tagInputs.offerings); } }}
-                placeholder="Type and press Enter to add"
+                placeholder="e.g. SEO, Content Marketing, PPC"
               />
             </div>
 
@@ -390,58 +405,60 @@ export default function AdminServices() {
                 value={tagInputs.target_audience}
                 onChange={(e) => setTagInputs((t) => ({ ...t, target_audience: e.target.value }))}
                 onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); onAddTag("target_audience", tagInputs.target_audience); } }}
-                placeholder="Type and press Enter to add"
+                placeholder="e.g. Small Businesses, E-commerce, Startups"
               />
             </div>
 
             <div>
-              <label className="text-sm font-semibold text-gray-800">Client Testimonials</label>
+              <div className="flex items-center justify-between">
+                <label className="text-sm font-semibold text-gray-800">Client Testimonials</label>
+                <button type="button" onClick={onAddClient} className="text-sm font-semibold text-red-600 hover:text-red-500 cursor-pointer">+ Add</button>
+              </div>
               {form.clients.map((client, i) => (
-                <div key={i} className="mt-3 border border-gray-200 rounded overflow-hidden">
-                  <div className="flex items-center justify-between px-3 py-2 bg-gray-100 border-b border-gray-200">
-                    <span className="text-xs font-semibold text-gray-500">Client {i + 1}</span>
+                <div key={i} className="mt-3 relative border border-gray-200 rounded-lg p-4 space-y-3 bg-gray-50/50">
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-semibold text-gray-500 uppercase tracking-wide">Client {i + 1}</span>
                     <button
                       type="button"
                       onClick={() => onRemoveClient(i)}
-                      className="text-red-400 hover:text-red-600 cursor-pointer"
+                      className="text-gray-400 hover:text-red-500 transition cursor-pointer"
                       title="Remove client">
                       <TrashIcon />
                     </button>
                   </div>
-                  <div className="p-3 space-y-2">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <input className={inputCls} placeholder="Name" value={client.name} onChange={(e) => onUpdateClient(i, "name", e.target.value)} />
                     <input className={inputCls} placeholder="Position" value={client.position} onChange={(e) => onUpdateClient(i, "position", e.target.value)} />
-                    <input className={inputCls} placeholder="Company" value={client.company} onChange={(e) => onUpdateClient(i, "company", e.target.value)} />
-                    <textarea rows={2} className={`${inputCls} resize-none`} placeholder="Quote" value={client.quote} onChange={(e) => onUpdateClient(i, "quote", e.target.value)} />
-                    <div>
-                      <label className="text-xs font-semibold text-gray-700">Avatar</label>
-                      <label className="mt-1.5 flex items-center gap-3 w-full border-2 border-dashed border-gray-300 rounded px-3 py-2 cursor-pointer hover:border-red-400 hover:bg-red-50 transition group">
-                        {(client._avatarFile || client.avatar) ? (
-                          <img
-                            src={client._avatarFile ? client.avatar : imageUrl(client.avatar)}
-                            alt="avatar"
-                            className="w-10 h-10 rounded-full object-cover border border-gray-200 shrink-0"
-                          />
-                        ) : (
-                          <div className="w-10 h-10 rounded-full bg-gray-100 border border-dashed border-gray-300 flex items-center justify-center shrink-0">
-                            <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                            </svg>
-                          </div>
-                        )}
-                        <div className="flex flex-col">
-                          <span className="text-sm font-medium text-gray-600 group-hover:text-red-600 transition">
-                            {(client._avatarFile || client.avatar) ? "Change Avatar" : "Upload Avatar"}
-                          </span>
-                          <span className="text-xs text-gray-400">JPG, PNG, WEBP · max 4MB</span>
+                  </div>
+                  <input className={inputCls} placeholder="Company" value={client.company} onChange={(e) => onUpdateClient(i, "company", e.target.value)} />
+                  <textarea rows={2} className={`${inputCls} resize-none`} placeholder="Quote" value={client.quote} onChange={(e) => onUpdateClient(i, "quote", e.target.value)} />
+                  <div>
+                    <label className="text-xs font-semibold text-gray-600">Avatar</label>
+                    <label className="mt-1.5 flex items-center gap-3 w-full border-2 border-dashed border-gray-300 rounded-lg px-3 py-2.5 cursor-pointer hover:border-red-400 hover:bg-red-50 transition group">
+                      {(client._avatarFile || client.avatar) ? (
+                        <img
+                          src={client._avatarFile ? client.avatar : imageUrl(client.avatar)}
+                          alt="avatar"
+                          className="w-9 h-9 rounded-full object-cover border border-gray-200 shrink-0"
+                        />
+                      ) : (
+                        <div className="w-9 h-9 rounded-full bg-gray-100 border border-dashed border-gray-300 flex items-center justify-center shrink-0">
+                          <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                          </svg>
                         </div>
-                        <input type="file" accept="image/*" className="hidden" onChange={(e) => onPickClientAvatar(i, e.target.files?.[0])} />
-                      </label>
-                    </div>
+                      )}
+                      <div className="flex flex-col">
+                        <span className="text-sm font-medium text-gray-600 group-hover:text-red-600 transition">
+                          {(client._avatarFile || client.avatar) ? "Change Avatar" : "Upload Avatar"}
+                        </span>
+                        <span className="text-xs text-gray-400">JPG, PNG, WEBP · max 4MB</span>
+                      </div>
+                      <input type="file" accept="image/*" className="hidden" onChange={(e) => onPickClientAvatar(i, e.target.files?.[0])} />
+                    </label>
                   </div>
                 </div>
               ))}
-              <button type="button" onClick={onAddClient} className="mt-2 text-sm font-semibold text-red-600 hover:text-red-500 cursor-pointer">+ Add Client</button>
             </div>
 
             {error && (

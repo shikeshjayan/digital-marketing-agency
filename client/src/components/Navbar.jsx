@@ -91,7 +91,7 @@ export default function Navbar() {
                               </NavLink>
                             ))
                           ) : (
-                            <div className="px-3 py-2 text-xs text-muted italic">No active services</div>
+                            <div className="px-3 py-2 text-xs text-gray-400 italic">No active services</div>
                           )}
                         </div>
                       </div>
