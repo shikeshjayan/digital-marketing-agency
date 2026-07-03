@@ -1,8 +1,9 @@
 import { useEffect, useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { toast } from 'sonner'
 import HeroSplit from '../../components/public/HeroSplit.jsx'
 import FadeIn from '../../components/ui/FadeIn.jsx'
+import AnimatedCounter from '../../components/ui/AnimatedCounter.jsx'
 import { TestimonialCardSkeleton } from '../../components/ui/Skeleton.jsx'
 import apiService from '../../services/apiService.js'
 
@@ -26,6 +27,248 @@ function StarPicker({ value, onChange }) {
       })}
     </div>
   )
+}
+
+/* ─── Section: Trust Statistics ────────────────────────────── */
+function TrustStatistics() {
+  const stats = [
+    { target: 8, suffix: "+", label: "Years of Experience" },
+    { target: 500, suffix: "+", label: "Projects Completed" },
+    { target: 500, suffix: "+", label: "Satisfied Clients" },
+  ];
+
+  return (
+    <section className="bg-surface py-12">
+      <div className="max-w-6xl mx-auto px-4">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 items-center">
+          <FadeIn direction="left">
+            <div className="flex flex-col items-center lg:items-start">
+              <div className="w-full max-w-md">
+                <div className="inline-flex items-center gap-3 px-4 py-2 rounded-full bg-background border border-border">
+                  <div className="w-2.5 h-2.5 rounded-full bg-primary animate-pulse" />
+                  <span className="text-sm font-semibold text-heading">
+                    Innovation meets execution
+                  </span>
+                </div>
+                <h3 className="mt-4 text-3xl font-extrabold text-heading">
+                  Why teams trust us
+                </h3>
+                <p className="mt-3 text-text leading-relaxed">
+                  We combine design, engineering, and marketing strategy to
+                  deliver websites and campaigns that perform.
+                </p>
+                <div className="mt-8">
+                  <Link
+                    to="/about"
+                    className="inline-flex rounded-lg bg-primary text-white px-5 py-2.5 text-sm font-semibold hover:bg-primary-hover transition cursor-pointer">
+                    Read More
+                  </Link>
+                </div>
+              </div>
+            </div>
+          </FadeIn>
+
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
+            {stats.map((s, i) => (
+              <FadeIn key={s.label} delay={(i + 1) * 100}>
+                <div className="bg-background border border-border rounded-lg p-6 text-center shadow-sm flex flex-col items-center justify-center min-h-[120px]">
+                  <div className="text-4xl font-extrabold text-heading">
+                    <AnimatedCounter target={s.target} suffix={s.suffix} />
+                  </div>
+                  <div className="mt-2 text-sm font-semibold text-text">
+                    {s.label}
+                  </div>
+                </div>
+              </FadeIn>
+            ))}
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ─── Section: Success Stories (Carousel) ─────────────────── */
+function SuccessStories({ reviews, loading }) {
+  const [index, setIndex] = useState(0);
+  const [paused, setPaused] = useState(false);
+
+  useEffect(() => {
+    if (reviews.length === 0 || paused) return;
+    const t = setInterval(
+      () => setIndex((v) => (v + 1) % reviews.length),
+      3000,
+    );
+    return () => clearInterval(t);
+  }, [reviews.length, paused]);
+
+  if (loading) {
+    return (
+      <section className="py-12 bg-background">
+        <div className="max-w-5xl mx-auto px-4">
+          <div className="text-center">
+            <div className="h-8 w-48 bg-gray-200 rounded mx-auto animate-pulse" />
+          </div>
+          <div className="mt-8 flex justify-center">
+            <div className="w-full max-w-xl border border-border rounded-lg px-6 py-8 bg-surface text-center">
+              <div className="mx-auto w-16 h-16 rounded-full bg-gray-200 animate-pulse ring-2 ring-gray-300 ring-offset-2" />
+              <div className="mt-4 h-4 w-24 bg-gray-200 rounded mx-auto animate-pulse" />
+              <div className="mt-2 h-3 w-16 bg-surface rounded mx-auto animate-pulse" />
+              <div className="mt-4 space-y-2">
+                <div className="h-3 w-full bg-surface rounded animate-pulse" />
+                <div className="h-3 w-3/4 bg-surface rounded mx-auto animate-pulse" />
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    );
+  }
+
+  if (!reviews.length) return null;
+  const current = reviews[index];
+
+  return (
+    <section
+      className="py-12 bg-background"
+      onMouseEnter={() => setPaused(true)}
+      onMouseLeave={() => setPaused(false)}>
+      <div className="max-w-5xl mx-auto px-4">
+        <FadeIn>
+          <div className="text-center">
+            <div className="font-cursive text-4xl text-primary">Success</div>
+            <h2 className="mt-2 text-3xl font-extrabold text-heading">
+              Stories That Inspire
+            </h2>
+          </div>
+        </FadeIn>
+
+        <div className="mt-8 flex justify-center">
+          <div className="w-full max-w-6xl border border-border rounded-lg px-6 py-8 bg-surface text-center">
+            <div className="mx-auto w-16 h-16 rounded-full overflow-hidden ring-2 ring-primary ring-offset-2 flex items-center justify-center shadow-md">
+              <div className="w-full h-full items-center justify-center text-lg font-bold text-primary-hover flex">
+                {current.name
+                  ?.split(" ")
+                  .map((w) => w[0])
+                  .join("")
+                  .toUpperCase()
+                  .slice(0, 2) || "?"}
+              </div>
+            </div>
+            <div className="mt-4 font-bold text-heading">{current.name}</div>
+            <div className="text-sm text-muted">{current.location}</div>
+            <p className="mt-4 text-gray-700 leading-relaxed">
+              "{current.review_text}"
+            </p>
+            <div className="mt-4 flex items-center justify-center gap-1 text-amber-500">
+              {Array.from({ length: 5 }).map((_, starIndex) => (
+                <span key={starIndex} aria-hidden="true" className="text-lg leading-none select-none">
+                  {starIndex < Math.round(current.rating) ? '★' : '☆'}
+                </span>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        <div className="flex items-center justify-center gap-2 mt-5">
+          {reviews.map((_, i) => (
+            <button
+              key={i}
+              type="button"
+              className={`w-2.5 h-2.5 rounded-full transition cursor-pointer ${
+                i === index ? "bg-primary" : "bg-primary-light hover:bg-primary-hover"
+              }`}
+              onClick={() => setIndex(i)}
+              aria-label={`Go to story ${i + 1}`}
+            />
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ─── Section: Client Logos ───────────────────────────────── */
+function ClientLogos() {
+  const logos = [
+    "HR Consultancy",
+    "Selfy LinguaTrainer",
+    "Rising Moon",
+    "StepUp",
+    "Tymos",
+    "BrightPath",
+    "NovaTech",
+    "Zenith Solutions",
+    "CloudBridge",
+    "PixelCraft",
+    "SwiftWave",
+    "BlueVista",
+    "IronPeak",
+    "GreenLeaf",
+    "SkyPulse",
+  ];
+
+  return (
+    <section className="bg-surface py-10">
+      <div className="text-center py-6 px-6">
+        <FadeIn>
+          <h2 className="font-bold text-heading text-3xl">
+            Trusted by teams who value quality
+          </h2>
+          <p className="mt-2 text-sm text-text">
+            We deliver measurable results with transparent workflows.
+          </p>
+        </FadeIn>
+      </div>
+
+      <div className="overflow-hidden py-6">
+        <div className="logo-marquee">
+          {[...logos, ...logos].map((logo, index) => (
+            <span
+              key={index}
+              className="inline-flex items-center px-8 whitespace-font tracking-wider font-extrabold text-muted hover:text-primary transition-colors duration-300 text-sm md:text-xl uppercase cursor-default select-none">
+              {logo}
+            </span>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ─── Section: Final CTA ──────────────────────────────────── */
+function FinalCTA() {
+  const navigate = useNavigate();
+
+  return (
+    <section className="bg-dark py-16">
+      <FadeIn>
+        <div className="max-w-4xl mx-auto px-4 text-center text-white">
+          <h2 className="text-3xl md:text-4xl font-extrabold">
+            Ready to Grow Your Business?
+          </h2>
+          <p className="mt-4 text-gray-300 max-w-2xl mx-auto leading-relaxed">
+            Let's discuss how our digital marketing expertise can help you
+            achieve your goals. Get in touch with us today for a free
+            consultation.
+          </p>
+          <div className="mt-8 flex flex-wrap items-center justify-center gap-4">
+            <button
+              type="button"
+              className="inline-flex items-center rounded-lg bg-primary text-white px-6 py-3 text-sm font-semibold hover:bg-primary-hover transition cursor-pointer"
+              onClick={() => navigate("/contact")}>
+              Contact Us
+            </button>
+            <Link
+              to="/services"
+              className="inline-flex items-center rounded-lg border border-white text-white px-6 py-3 text-sm font-semibold hover:bg-white/10 transition">
+              View Services
+            </Link>
+          </div>
+        </div>
+      </FadeIn>
+    </section>
+  );
 }
 
 export default function Testimonials() {
@@ -255,6 +498,14 @@ export default function Testimonials() {
           </div>
         </div>
       </section>
+
+      <SuccessStories reviews={reviews} loading={loading} />
+
+      <TrustStatistics />
+
+      <ClientLogos />
+
+      <FinalCTA />
     </div>
   )
 }

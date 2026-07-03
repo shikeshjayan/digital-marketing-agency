@@ -39,6 +39,8 @@ export default function AdminTeam() {
       name: "",
       designation: "",
       description: "",
+      linkedin: "",
+      email: "",
       display_order: 1,
       status: "Active",
     }),
@@ -114,6 +116,8 @@ export default function AdminTeam() {
     payload.append("name", form.name.trim());
     payload.append("designation", form.designation.trim());
     payload.append("description", form.description.trim());
+    payload.append("linkedin", form.linkedin.trim());
+    payload.append("email", form.email.trim());
     payload.append("display_order", form.display_order);
     payload.append("status", form.status);
 
@@ -297,6 +301,35 @@ export default function AdminTeam() {
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div>
                 <label className="text-sm font-semibold text-gray-800">
+                  LinkedIn URL
+                </label>
+                <input
+                  className="mt-2 w-full rounded border border-gray-200 px-4 py-2 outline-none focus:ring-2 focus:ring-red-100"
+                  value={form.linkedin}
+                  onChange={(e) =>
+                    setForm((f) => ({ ...f, linkedin: e.target.value }))
+                  }
+                  placeholder="https://linkedin.com/in/..."
+                />
+              </div>
+              <div>
+                <label className="text-sm font-semibold text-gray-800">
+                  Email
+                </label>
+                <input
+                  type="email"
+                  className="mt-2 w-full rounded border border-gray-200 px-4 py-2 outline-none focus:ring-2 focus:ring-red-100"
+                  value={form.email}
+                  onChange={(e) =>
+                    setForm((f) => ({ ...f, email: e.target.value }))
+                  }
+                  placeholder="member@example.com"
+                />
+              </div>
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div>
+                <label className="text-sm font-semibold text-gray-800">
                   Display Order
                 </label>
                 <input
@@ -461,6 +494,8 @@ export default function AdminTeam() {
                               name: m.name,
                               designation: m.designation,
                               description: m.description ?? "",
+                              linkedin: m.linkedin ?? "",
+                              email: m.email ?? "",
                               display_order: m.display_order ?? 1,
                               status: m.status,
                             });
