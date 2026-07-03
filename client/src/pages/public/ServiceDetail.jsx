@@ -94,8 +94,8 @@ export default function ServiceDetail() {
         </div>
 
         <div className="relative max-w-6xl mx-auto px-4">
-          {/* Breadcrumb Section */}
-          <nav className="flex items-center gap-2 text-sm text-white/70 mb-8">
+          {/* Breadcrumb Section - Fixed to stay left-aligned (justify-start) on mobile */}
+          <nav className="flex items-center gap-2 text-sm text-white/70 mb-8 justify-start">
             <Link to="/" className="hover:text-primary transition">
               Home
             </Link>
@@ -111,9 +111,12 @@ export default function ServiceDetail() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
             {/* Left Content layout column */}
-            <div>
-              <div className="text-sm font-bold tracking-widest uppercase inline-block px-3 py-1 rounded bg-white/10">
-                FEATURED SERVICE
+            <div className="text-center md:text-left">
+              {/* Fixed: Wrapped inside a flex layout container to stay left-aligned on mobile views */}
+              <div className="w-full flex justify-start mb-3">
+                <div className="text-sm font-bold tracking-widest uppercase inline-block px-3 py-1 rounded bg-white/10">
+                  FEATURED SERVICE
+                </div>
               </div>
 
               <h1 className="mt-3 text-3xl md:text-4xl font-extrabold leading-tight">
@@ -123,28 +126,22 @@ export default function ServiceDetail() {
                 </span>
               </h1>
 
-              <div className="mt-4 text-white/90 leading-relaxed space-y-3 max-w-prose">
-                {service.description
-                  ?.split(".")
-                  .map((p) => p.trim())
-                  .filter(Boolean)
-                  .map((para, i) => (
-                    <p key={i} className="text-sm md:text-base">
-                      {para}.
-                    </p>
-                  ))}
+              <div className="mt-4 text-white/90 leading-relaxed max-w-prose mx-auto md:mx-0">
+                <p className="text-sm md:text-base text-justify md:text-left">
+                  {service.description}
+                </p>
               </div>
 
-              <div className="mt-6 flex flex-wrap gap-3">
+              {/* Action Buttons Frame Context */}
+              <div className="mt-6 flex flex-wrap gap-3 justify-center md:justify-start">
                 <Link
                   to="/contact"
-                  className="inline-flex items-center rounded-lg bg-primary text-white px-5 py-2.5 text-sm font-semibold hover:bg-primary-hover transition cursor-pointer">
+                  className="inline-flex items-center justify-center rounded-lg bg-primary text-white px-5 py-2.5 text-sm font-semibold hover:bg-primary-hover transition cursor-pointer min-w-[150px]">
                   Get in Touch
                 </Link>
-                {/* Added 'group' to handle the inner element translation states smoothly on hover links */}
                 <Link
                   to="/services"
-                  className="group inline-flex items-center rounded-lg bg-white/15 border border-white/20 text-white px-5 py-2.5 text-sm font-semibold transition cursor-pointer">
+                  className="group inline-flex items-center justify-center rounded-lg bg-white/15 border border-white/20 text-white px-5 py-2.5 text-sm font-semibold transition cursor-pointer min-w-[150px]">
                   <FontAwesomeIcon icon={faAngleLeft} className="mr-2 transform group-hover:-translate-x-1 transition-transform duration-200" />
                   Back to Services
                 </Link>
