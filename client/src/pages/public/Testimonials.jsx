@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { toast } from 'sonner'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faPhone, faEnvelope, faMapMarkerAlt } from '@fortawesome/free-solid-svg-icons'
 import HeroSplit from '../../components/public/HeroSplit.jsx'
 import FadeIn from '../../components/ui/FadeIn.jsx'
 import AnimatedCounter from '../../components/ui/AnimatedCounter.jsx'
@@ -338,27 +340,40 @@ export default function Testimonials() {
                 <div className="absolute inset-0 pointer-events-none">
                   <div className="absolute -top-10 -left-10 w-32 h-32 bg-white/5 rounded-lg rotate-12" />
                 </div>
-                <div className="text-sm font-bold tracking-widest uppercase inline-block text-primary rounded">
-                  WE VALUE YOUR FEEDBACK
+                <div className="text-sm font-semibold text-primary rounded uppercase tracking-wider">
+                  How Can I Help You?
                 </div>
                 <div className="mt-3 text-3xl font-extrabold leading-tight">
-                  <span className="font-cursive text-primary pr-2 text-4xl">Review</span> That Inspires
+                  Wanna <span className="text-primary pr-1">Hear</span> From You
                 </div>
-                <p className="mt-4 text-white/90 text-sm leading-relaxed max-w-prose">
+                <p className="mt-4 text-white/80 text-sm leading-relaxed max-w-prose">
                   Tell us about your experience. Your review helps future learners make confident decisions.
                 </p>
 
-                <div className="mt-8 space-y-3 text-sm text-white/90 border-t border-white/10 pt-6">
+                {/* Synced directly with requested FontAwesome icons and metadata definitions */}
+                <div className="mt-6 space-y-2 text-sm text-gray-200 border-t border-white/10 pt-6">
                   <div className="flex items-center gap-3">
-                    <span className="w-9 h-9 rounded-lg bg-white/10 flex items-center justify-center font-sans">Ph</span>
-                    <a className="hover:text-primary transition font-semibold" href="tel:+91 8891212323">
+                    <span className="w-10 h-8 rounded-lg bg-dark/10 flex items-center justify-center text-xs text-gray-300">
+                      <FontAwesomeIcon icon={faPhone} />
+                    </span>
+                    <a href="tel:+91 8891212323" className="text-gray-200 hover:text-primary transition-colors">
                       +91 8891212323
                     </a>
                   </div>
                   <div className="flex items-center gap-3">
-                    <span className="w-9 h-9 rounded-lg bg-white/10 flex items-center justify-center font-sans">Mail</span>
-                    <a className="hover:text-primary transition font-semibold" href="mailto:info@s.com">
-                      info@s.com
+                    <span className="w-10 h-8 rounded-lg bg-dark/10 flex items-center justify-center text-xs text-gray-300">
+                      <FontAwesomeIcon icon={faEnvelope} />
+                    </span>
+                    <a href="mailto:crowlcrown@gmail.com" className="text-gray-200 hover:text-primary transition-colors">
+                      crowlcrown@gmail.com
+                    </a>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <span className="w-10 h-8 rounded-lg bg-dark/10 flex items-center justify-center text-xs text-gray-300">
+                      <FontAwesomeIcon icon={faMapMarkerAlt} />
+                    </span>
+                    <a href="http://map.google.com" target="_blank" rel="noopener noreferrer" className="text-gray-200 hover:text-primary transition-colors">
+                      Ernakulam, Kochi, Kerala, India
                     </a>
                   </div>
                 </div>
