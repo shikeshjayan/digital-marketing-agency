@@ -1,4 +1,5 @@
 import { Outlet, Link, useLocation } from 'react-router-dom'
+import { Toaster } from 'sonner'
 import AdminSidebar from '../components/admin/AdminSidebar.jsx'
 import NotificationDropdown from '../components/admin/NotificationDropdown.jsx'
 import { getAdminProfile } from '../auth/adminAuth.js'
@@ -35,6 +36,7 @@ export default function AdminLayout() {
 
   return (
     <div className="min-h-screen bg-gray-50">
+      <Toaster position="top-right" richColors closeButton />
       <header className="sticky top-0 z-20 bg-white border-b border-gray-200">
         <div className="relative flex items-center px-4 sm:px-6 h-16">
           {/* Left: hamburger (mobile) */}

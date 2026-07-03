@@ -1,5 +1,6 @@
 import { useMemo, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { toast } from "sonner";
 import apiService from "../../services/apiService.js";
 
 export default function ForgotPassword() {
@@ -39,8 +40,11 @@ export default function ForgotPassword() {
       setOtpToken(res.data?.data?.otpToken || "");
       setStep(2);
       setSuccess("OTP sent to your email. Check your inbox.");
+      toast.success("OTP sent to your email. Check your inbox.");
     } catch (err) {
-      setError(err.response?.data?.message || err.message || "Failed to send OTP");
+      const msg = err.response?.data?.message || err.message || "Failed to send OTP";
+      setError(msg);
+      toast.error(msg);
     } finally {
       setLoading(false);
     }
@@ -69,9 +73,12 @@ export default function ForgotPassword() {
         newPassword,
       });
       setSuccess("Password reset successful! Redirecting to login...");
+      toast.success("Password reset successful! Redirecting to login...");
       setTimeout(() => navigate("/admin/login", { replace: true }), 1500);
     } catch (err) {
-      setError(err.response?.data?.message || err.message || "Reset failed");
+      const msg = err.response?.data?.message || err.message || "Reset failed";
+      setError(msg);
+      toast.error(msg);
     } finally {
       setLoading(false);
     }
@@ -80,7 +87,7 @@ export default function ForgotPassword() {
   return (
     <div className="py-10 max-w-md mx-auto">
       <div className="text-center">
-        <div className="w-14 h-14 rounded-2xl bg-red-600 mx-auto text-white flex items-center justify-center font-bold">
+        <div className="w-14 h-14 rounded bg-primary mx-auto text-white flex items-center justify-center font-bold">
           A
         </div>
         <h2 className="mt-4 text-xl font-bold text-gray-900">
@@ -96,13 +103,13 @@ export default function ForgotPassword() {
       {step === 1 ? (
         <form
           onSubmit={onSendOTP}
-          className="mt-8 bg-white border border-gray-200 rounded-2xl p-5 shadow-sm">
+          className="mt-8 bg-white border border-gray-200 rounded p-5 shadow-xs">
           <label className="block text-sm font-medium text-gray-800">
             Email Address
           </label>
           <input
             type="email"
-            className="mt-2 w-full rounded-xl border border-gray-200 px-3 py-2 outline-none focus:ring-2 focus:ring-red-200"
+            className="mt-2 w-full rounded border border-gray-200 px-3 py-2 outline-none focus:ring-2 focus:ring-red-200"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             placeholder="admin@example.com"
@@ -115,20 +122,20 @@ export default function ForgotPassword() {
           <button
             type="submit"
             disabled={loading}
-            className="mt-6 w-full rounded-xl bg-red-600 text-white py-2.5 font-semibold hover:bg-red-500 transition disabled:opacity-50 cursor-pointer">
+            className="mt-6 w-full rounded bg-primary text-white py-2.5 font-semibold hover:bg-primary-hover transition disabled:opacity-50 cursor-pointer">
             {loading ? "Sending..." : "Send OTP"}
           </button>
         </form>
       ) : (
         <form
           onSubmit={onResetPassword}
-          className="mt-8 bg-white border border-gray-200 rounded-2xl p-5 shadow-sm">
+          className="mt-8 bg-white border border-gray-200 rounded p-5 shadow-xs">
           <label className="block text-sm font-medium text-gray-800">
             OTP Code
           </label>
           <input
             type="text"
-            className="mt-2 w-full rounded-xl border border-gray-200 px-3 py-2 outline-none focus:ring-2 focus:ring-red-200 text-center tracking-widest font-mono text-lg"
+            className="mt-2 w-full rounded border border-gray-200 px-3 py-2 outline-none focus:ring-2 focus:ring-red-200 text-center tracking-widest font-mono text-lg"
             placeholder="000000"
             value={otp}
             onChange={(e) => setOtp(e.target.value.replace(/\D/g, "").slice(0, 6))}
@@ -140,7 +147,7 @@ export default function ForgotPassword() {
           </label>
           <input
             type="password"
-            className="mt-2 w-full rounded-xl border border-gray-200 px-3 py-2 outline-none focus:ring-2 focus:ring-red-200"
+            className="mt-2 w-full rounded border border-gray-200 px-3 py-2 outline-none focus:ring-2 focus:ring-red-200"
             placeholder="At least 6 characters"
             value={newPassword}
             onChange={(e) => setNewPassword(e.target.value)}
@@ -152,7 +159,7 @@ export default function ForgotPassword() {
           </label>
           <input
             type="password"
-            className="mt-2 w-full rounded-xl border border-gray-200 px-3 py-2 outline-none focus:ring-2 focus:ring-red-200"
+            className="mt-2 w-full rounded border border-gray-200 px-3 py-2 outline-none focus:ring-2 focus:ring-red-200"
             placeholder="Repeat new password"
             value={confirmPassword}
             onChange={(e) => setConfirmPassword(e.target.value)}
@@ -165,14 +172,14 @@ export default function ForgotPassword() {
           <button
             type="submit"
             disabled={loading}
-            className="mt-6 w-full rounded-xl bg-red-600 text-white py-2.5 font-semibold hover:bg-red-500 transition disabled:opacity-50 cursor-pointer">
+            className="mt-6 w-full rounded bg-primary text-white py-2.5 font-semibold hover:bg-primary-hover transition disabled:opacity-50 cursor-pointer">
             {loading ? "Resetting..." : "Reset Password"}
           </button>
 
           <button
             type="button"
             onClick={() => { setStep(1); setError(null); setSuccess(""); setOtp(""); setNewPassword(""); setConfirmPassword(""); }}
-            className="mt-3 w-full rounded-xl bg-gray-100 text-gray-700 py-2.5 font-semibold hover:bg-gray-200 transition cursor-pointer">
+            className="mt-3 w-full rounded bg-gray-100 text-gray-700 py-2.5 font-semibold hover:bg-gray-200 transition cursor-pointer">
             Back to Email
           </button>
         </form>

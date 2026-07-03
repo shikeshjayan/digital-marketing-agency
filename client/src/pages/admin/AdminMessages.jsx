@@ -1,7 +1,9 @@
 import { useEffect, useState } from "react";
+import { toast } from "sonner";
 import useContactStore from "../../store/contactStore.js";
 import ConfirmModal from "../../components/ui/ConfirmModal.jsx";
 import Select from "../../components/ui/Select.jsx";
+import Pagination from "../../components/ui/Pagination.jsx";
 import { TableSkeleton } from "../../components/ui/Skeleton.jsx";
 
 function statusChip(status) {
@@ -24,8 +26,9 @@ export default function AdminMessages() {
   const [status, setStatus] = useState("");
   const [date, setDate] = useState("");
   const [loading, setLoading] = useState(false);
+  const [page, setPage] = useState(1);
+  const [pagination, setPagination] = useState({ total: 0, page: 1, pages: 1 });
   const [error, setError] = useState("");
-  const [toast, setToast] = useState("");
   const [deleteTarget, setDeleteTarget] = useState(null);
   const [deleteAllTarget, setDeleteAllTarget] = useState(false);
 
@@ -37,11 +40,12 @@ export default function AdminMessages() {
         search: search || undefined,
         status: status || undefined,
         date: date || undefined,
-        page: 1,
-        limit: 50,
+        page,
+        limit: 10,
       });
       setItems(res.enquiries ?? []);
       setCounters(res.counters ?? null);
+      setPagination(res.pagination ?? { total: 0, page: 1, pages: 1 });
     } catch (e) {
       setError(e?.message ?? "Failed to load.");
     } finally {
@@ -56,19 +60,25 @@ export default function AdminMessages() {
   }, []);
 
   useEffect(() => {
+    setPage(1);
+  }, [search, status, date]);
+
+  useEffect(() => {
     const t = setTimeout(() => load(), 250);
     return () => clearTimeout(t);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [search, status, date]);
+  }, [page, search, status, date]);
 
   async function transition(id, nextStatus) {
     try {
       await updateEnquiryStatus(id, nextStatus);
-      setToast("Status updated successfully.");
+      toast.success("Status updated successfully.");
       window.dispatchEvent(new Event('refresh-badges'));
       await load();
     } catch (e) {
-      setError(e?.message ?? "Update failed.");
+      const msg = e?.message ?? "Update failed.";
+      setError(msg);
+      toast.error(msg);
     }
   }
 
@@ -80,12 +90,14 @@ export default function AdminMessages() {
     if (!deleteTarget) return;
     try {
       await deleteEnquiry(deleteTarget);
-      setToast("Enquiry deleted successfully.");
+      toast.success("Enquiry deleted successfully.");
       setDeleteTarget(null);
       window.dispatchEvent(new Event('refresh-badges'));
       await load();
     } catch (e) {
-      setError(e?.message ?? "Delete failed.");
+      const msg = e?.message ?? "Delete failed.";
+      setError(msg);
+      toast.error(msg);
       setDeleteTarget(null);
     }
   }
@@ -93,12 +105,14 @@ export default function AdminMessages() {
   async function onConfirmDeleteAll() {
     try {
       await deleteAllEnquiries();
-      setToast("All enquiries deleted successfully.");
+      toast.success("All enquiries deleted successfully.");
       setDeleteAllTarget(false);
       window.dispatchEvent(new Event('refresh-badges'));
       await load();
     } catch (e) {
-      setError(e?.message ?? "Delete all failed.");
+      const msg = e?.message ?? "Delete all failed.";
+      setError(msg);
+      toast.error(msg);
       setDeleteAllTarget(false);
     }
   }
@@ -116,7 +130,7 @@ export default function AdminMessages() {
         </div>
       </div>
 
-      <div className="mt-6 bg-white border border-gray-200 rounded p-5 shadow-sm">
+      <div className="mt-6 bg-white border border-gray-200 rounded p-5 shadow-xs">
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3">
           <div className="relative">
             <svg
@@ -215,25 +229,8 @@ export default function AdminMessages() {
           {error}
         </div>
       )}
-      {toast && (
-        <div className="mt-4 flex items-center gap-2 text-sm text-green-600 bg-green-50 rounded px-4 py-2">
-          <svg
-            className="w-4 h-4 shrink-0"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24">
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
-            />
-          </svg>
-          {toast}
-        </div>
-      )}
 
-      <div className="mt-4 bg-white border border-gray-200 rounded p-5 shadow-sm">
+      <div className="mt-4 bg-white border border-gray-200 rounded p-5 shadow-xs">
         <div className="flex items-center justify-between">
           <div className="font-extrabold text-gray-900">Enquiries</div>
           <div className="flex items-center gap-3">
@@ -246,7 +243,7 @@ export default function AdminMessages() {
               </button>
             )}
             <div className="text-sm text-gray-500">
-              {loading ? "Loading..." : `${items.length} items`}
+              {loading ? "Loading..." : `${pagination.total} items`}
             </div>
           </div>
         </div>
@@ -357,6 +354,7 @@ export default function AdminMessages() {
             </tbody>
           </table>
         </div>
+        <Pagination page={pagination.page} pages={pagination.pages} onPageChange={setPage} />
       </div>
 
       <ConfirmModal

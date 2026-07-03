@@ -1,24 +1,131 @@
 import { useEffect, useMemo } from 'react'
+import { Link, useNavigate } from 'react-router-dom'
 import HeroSplit from '../../components/public/HeroSplit.jsx'
 import FadeIn from '../../components/ui/FadeIn.jsx'
+import SectionHeading from '../../components/ui/SectionHeading.jsx'
 import useTeamStore from '../../store/teamStore.js'
 import imageUrl from '../../utils/imageUrl.js'
 
-// Port Resolver helper ensuring images render cleanly during local development workflows
 const resolveImagePath = (path) => {
   if (!path) return "";
   if (path.startsWith("http") || path.startsWith("data:")) return path;
-  
   const isDev = import.meta.env.DEV;
   const hasApiUrlEnv = !!import.meta.env.VITE_API_URL;
-  
   const cleanPath = path.startsWith("/") ? path : `/${path}`;
-  
   if (isDev && !hasApiUrlEnv) {
     return `http://localhost:5000${cleanPath}`;
   }
   return imageUrl(cleanPath);
 };
+
+/* ─── Data ────────────────────────────────────────────────── */
+
+const departments = [
+  {
+    name: "Strategy",
+    icon: (
+      <svg className="w-6 h-6" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+        <path strokeLinecap="round" strokeLinejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+      </svg>
+    ),
+    description: "Data-driven strategies that align with your business goals and market landscape.",
+  },
+  {
+    name: "SEO",
+    icon: (
+      <svg className="w-6 h-6" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+        <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+      </svg>
+    ),
+    description: "Organic search optimization to boost visibility and drive qualified traffic.",
+  },
+  {
+    name: "Paid Ads",
+    icon: (
+      <svg className="w-6 h-6" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+        <path strokeLinecap="round" strokeLinejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
+      </svg>
+    ),
+    description: "Targeted campaigns across Google, Meta, and LinkedIn for maximum ROI.",
+  },
+  {
+    name: "Social Media",
+    icon: (
+      <svg className="w-6 h-6" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+        <path strokeLinecap="round" strokeLinejoin="round" d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z" />
+      </svg>
+    ),
+    description: "Engaging content and community management across all major platforms.",
+  },
+  {
+    name: "Design & Development",
+    icon: (
+      <svg className="w-6 h-6" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+        <path strokeLinecap="round" strokeLinejoin="round" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
+      </svg>
+    ),
+    description: "Beautiful, high-performing websites and digital experiences.",
+  },
+  {
+    name: "Content",
+    icon: (
+      <svg className="w-6 h-6" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+        <path strokeLinecap="round" strokeLinejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+      </svg>
+    ),
+    description: "Compelling copy, blogs, and creative assets that tell your brand story.",
+  },
+  {
+    name: "Client Success",
+    icon: (
+      <svg className="w-6 h-6" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+        <path strokeLinecap="round" strokeLinejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+      </svg>
+    ),
+    description: "Dedicated support ensuring every client achieves their desired outcomes.",
+  },
+];
+
+const stats = [
+  { value: "25+", label: "Team Members" },
+  { value: "50+", label: "Projects Delivered" },
+  { value: "8+", label: "Years Experience" },
+  { value: "98%", label: "Client Retention" },
+];
+
+const cultureValues = [
+  {
+    title: "Collaboration",
+    description: "We believe the best work happens when diverse minds come together to solve complex problems.",
+  },
+  {
+    title: "Innovation",
+    description: "We stay ahead of digital trends, constantly experimenting with new tools and methodologies.",
+  },
+  {
+    title: "Transparency",
+    description: "Open communication with clients and team members builds trust and drives results.",
+  },
+  {
+    title: "Growth Mindset",
+    description: "Every challenge is a learning opportunity. We invest in continuous skill development.",
+  },
+];
+
+const certifications = [
+  "Google Ads Certified",
+  "Google Analytics Certified",
+  "Meta Blueprint Certified",
+  "HubSpot Inbound Certified",
+  "HubSpot Content Marketing",
+  "SEMrush SEO Toolkit",
+  "Hootsuite Social Marketing",
+  "AWS Cloud Practitioner",
+  "Google UX Design",
+  "Meta Front-End Developer",
+];
+
+/* ─── Components ──────────────────────────────────────────── */
 
 function TeamCard({ member }) {
   const getInitials = (name) => {
@@ -31,10 +138,12 @@ function TeamCard({ member }) {
   };
 
   const hasPhoto = member.photo && member.photo.trim() !== '';
+  const hasLinkedin = member.linkedin && member.linkedin.trim() !== '';
+  const hasEmail = member.email && member.email.trim() !== '';
 
   return (
-    <div className="flex flex-col bg-background border border-border rounded-lg h-full overflow-hidden w-full min-w-0">
-      <div className="aspect-square overflow-hidden flex items-center justify-center bg-surface">
+    <div className="flex flex-col bg-background border border-border rounded-lg overflow-hidden w-[300px] max-w-full">
+      <div className="relative w-full aspect-[3/4] overflow-hidden">
         {hasPhoto ? (
           <img
             src={resolveImagePath(member.photo)}
@@ -50,26 +159,212 @@ function TeamCard({ member }) {
             }}
           />
         ) : null}
-        
-        <div 
-          className="w-20 h-20 items-center justify-center text-primary text-4xl font-bold select-none font-sans"
+
+        <div
+          className="absolute inset-0 w-full h-full items-center justify-center bg-surface text-primary text-5xl font-bold select-none font-sans"
           style={{ display: hasPhoto ? 'none' : 'flex' }}
         >
           {getInitials(member.name)}
         </div>
-      </div>
-      
-      <div className="flex flex-col items-center text-center p-5 flex-1 w-full min-w-0">
-        <h3 className="text-lg font-extrabold text-heading w-full break-words">
-          {member.name}
-        </h3>
-        <p className="mt-2 text-sm text-text leading-relaxed line-clamp-3 w-full break-words">
-          {member.designation}
-        </p>
+
+        {(hasLinkedin || hasEmail) && (
+          <div className="absolute top-3 right-3 flex items-center gap-2">
+            {hasLinkedin && (
+              <a
+                href={member.linkedin}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-8 h-8 flex items-center justify-center rounded-full bg-black/50 text-white hover:bg-primary transition-colors backdrop-blur-sm"
+                aria-label={`${member.name} on LinkedIn`}
+              >
+                <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z" />
+                </svg>
+              </a>
+            )}
+            {hasEmail && (
+              <a
+                href={`mailto:${member.email}`}
+                className="w-8 h-8 flex items-center justify-center rounded-full bg-black/50 text-white hover:bg-primary transition-colors backdrop-blur-sm"
+                aria-label={`Email ${member.name}`}
+              >
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                </svg>
+              </a>
+            )}
+          </div>
+        )}
+
+        <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent px-5 pb-5 pt-16">
+          <h3 className="text-lg font-extrabold text-white leading-tight">
+            {member.name}
+          </h3>
+          <p className="mt-1 text-sm text-white/80 line-clamp-2">
+            {member.designation}
+          </p>
+        </div>
       </div>
     </div>
   )
 }
+
+/* ─── Section: Departments ────────────────────────────────── */
+
+function Departments() {
+  return (
+    <section className="py-12 md:py-16 bg-background">
+      <FadeIn>
+        <div className="max-w-6xl mx-auto px-4">
+          <SectionHeading
+            eyebrow="What We Do"
+            title="Our Departments"
+            subtitle="Specialized teams working together to deliver end-to-end digital marketing solutions."
+          />
+          <div className="mt-10 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            {departments.map((dept, i) => (
+              <FadeIn key={dept.name} delay={i * 80}>
+                <div className="bg-surface border border-border rounded-lg p-6 h-full hover:shadow-sm transition group">
+                  <div className="w-12 h-12 rounded-lg bg-primary-light flex items-center justify-center group-hover:bg-primary group-hover:text-white transition text-primary">
+                    {dept.icon}
+                  </div>
+                  <h3 className="mt-4 text-lg font-extrabold text-heading">{dept.name}</h3>
+                  <p className="mt-2 text-sm text-text leading-relaxed">{dept.description}</p>
+                </div>
+              </FadeIn>
+            ))}
+          </div>
+        </div>
+      </FadeIn>
+    </section>
+  );
+}
+
+/* ─── Section: Team Statistics ────────────────────────────── */
+
+function TeamStatistics() {
+  return (
+    <section className="py-12 md:py-16 bg-surface">
+      <FadeIn>
+        <div className="max-w-6xl mx-auto px-4">
+          <SectionHeading
+            eyebrow="By the Numbers"
+            title="Team Statistics"
+            subtitle="Our collective expertise speaks through the results we deliver."
+          />
+          <div className="mt-10 grid grid-cols-2 md:grid-cols-4 gap-6">
+            {stats.map((stat, i) => (
+              <FadeIn key={stat.label} delay={i * 100}>
+                <div className="bg-background border border-border rounded-lg p-6 text-center hover:shadow-sm transition">
+                  <div className="text-3xl md:text-4xl font-extrabold text-primary">{stat.value}</div>
+                  <div className="mt-2 text-sm text-text">{stat.label}</div>
+                </div>
+              </FadeIn>
+            ))}
+          </div>
+        </div>
+      </FadeIn>
+    </section>
+  );
+}
+
+/* ─── Section: Our Culture ────────────────────────────────── */
+
+function OurCulture() {
+  return (
+    <section className="py-12 md:py-16 bg-background">
+      <FadeIn>
+        <div className="max-w-6xl mx-auto px-4">
+          <SectionHeading
+            eyebrow="Who We Are"
+            title="Our Culture"
+            subtitle="The values that define how we work, collaborate, and grow together."
+          />
+          <div className="mt-10 grid grid-cols-1 sm:grid-cols-2 gap-6">
+            {cultureValues.map((item, i) => (
+              <FadeIn key={item.title} delay={i * 100}>
+                <div className="bg-surface border border-border rounded-lg p-6 h-full hover:shadow-sm transition group">
+                  <div className="flex items-center gap-3">
+                    <div className="w-2.5 h-2.5 rounded-full bg-primary shrink-0" />
+                    <h3 className="text-lg font-extrabold text-heading">{item.title}</h3>
+                  </div>
+                  <p className="mt-3 text-sm text-text leading-relaxed pl-5">{item.description}</p>
+                </div>
+              </FadeIn>
+            ))}
+          </div>
+        </div>
+      </FadeIn>
+    </section>
+  );
+}
+
+/* ─── Section: Certifications & Skills ────────────────────── */
+
+function Certifications() {
+  return (
+    <section className="py-12 md:py-16 bg-surface">
+      <FadeIn>
+        <div className="max-w-6xl mx-auto px-4">
+          <SectionHeading
+            eyebrow="Expertise"
+            title="Certifications & Skills"
+            subtitle="Our team holds industry-recognized certifications across leading digital platforms."
+          />
+          <div className="mt-10 flex flex-wrap justify-center gap-3">
+            {certifications.map((cert, i) => (
+              <FadeIn key={cert} delay={i * 60}>
+                <div className="inline-flex items-center gap-2 px-4 py-2.5 bg-background border border-border rounded-lg hover:shadow-sm transition">
+                  <svg className="w-4 h-4 text-primary shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                    <path fillRule="evenodd" d="M6.267 3.455a3.066 3.066 0 001.745-.723 3.066 3.066 0 013.976 0 3.066 3.066 0 001.745.723 3.066 3.066 0 012.812 2.812c.051.643.304 1.254.723 1.745a3.066 3.066 0 010 3.976 3.066 3.066 0 00-.723 1.745 3.066 3.066 0 01-2.812 2.812 3.066 3.066 0 00-1.745.723 3.066 3.066 0 01-3.976 0 3.066 3.066 0 00-1.745-.723 3.066 3.066 0 01-2.812-2.812 3.066 3.066 0 00-.723-1.745 3.066 3.066 0 010-3.976 3.066 3.066 0 00.723-1.745 3.066 3.066 0 012.812-2.812zm7.44 5.252a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                  </svg>
+                  <span className="text-sm font-semibold text-heading">{cert}</span>
+                </div>
+              </FadeIn>
+            ))}
+          </div>
+        </div>
+      </FadeIn>
+    </section>
+  );
+}
+
+/* ─── Section: CTA ────────────────────────────────────────── */
+
+function TeamCTA() {
+  const navigate = useNavigate();
+
+  return (
+    <section className="bg-dark py-16">
+      <FadeIn>
+        <div className="max-w-4xl mx-auto px-4 text-center text-white">
+          <div className="text-4xl md:text-5xl font-extrabold">
+            <span className="font-cursive text-primary pr-2">Join</span> Our Team
+          </div>
+          <p className="mt-4 text-gray-300 max-w-2xl mx-auto leading-relaxed">
+            We're always looking for talented people who are passionate about digital marketing.
+            Explore open positions and grow with us.
+          </p>
+          <div className="mt-8 flex flex-wrap items-center justify-center gap-4">
+            <button
+              type="button"
+              className="inline-flex items-center rounded-lg bg-primary text-white px-6 py-3 text-sm font-semibold hover:bg-primary-hover transition cursor-pointer"
+              onClick={() => navigate("/contact")}>
+              Contact Us
+            </button>
+            <Link
+              to="/services"
+              className="inline-flex items-center rounded-lg border border-white text-white px-6 py-3 text-sm font-semibold hover:bg-white/10 transition">
+              View Services
+            </Link>
+          </div>
+        </div>
+      </FadeIn>
+    </section>
+  );
+}
+
+/* ─── Page ────────────────────────────────────────────────── */
 
 export default function Team() {
   const { team, fetchTeam } = useTeamStore()
@@ -84,24 +379,42 @@ export default function Team() {
 
   return (
     <div className="bg-background min-h-screen">
-      <HeroSplit 
-        title="Our Team" 
-        titleHighlight="Meet" 
-        subtitle="A team of creative builders and marketers." 
-        leftColor="bg-dark" 
+      <HeroSplit
+        title="Our Team"
+        titleHighlight="Meet"
+        subtitle="A team of creative builders and marketers."
+        leftColor="bg-dark"
       />
 
+      {/* Team Cards */}
       <section className="py-14 bg-surface">
-        <div className="max-w-6xl mx-auto px-4">
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 auto-rows-fr">
-            {sorted.map((m, i) => (
-              <FadeIn key={m._id || m.member_id} delay={i * 100}>
-                <TeamCard member={m} />
-              </FadeIn>
-            ))}
+        <FadeIn>
+          <div className="max-w-6xl mx-auto px-4">
+            <div className="text-center mb-10">
+              <div className="text-primary font-semibold text-sm">Our People</div>
+              <h2 className="mt-2 text-3xl md:text-4xl font-extrabold text-gray-900">
+                <span className="font-cursive text-primary pr-2">Leadership</span> Team
+              </h2>
+              <p className="mt-3 text-gray-600 max-w-2xl mx-auto text-sm md:text-base">
+                The driving force behind our mission to deliver exceptional digital marketing results.
+              </p>
+            </div>
+            <div className="flex flex-wrap justify-center gap-6">
+              {sorted.map((m, i) => (
+                <FadeIn key={m._id || m.member_id} delay={i * 100}>
+                  <TeamCard member={m} />
+                </FadeIn>
+              ))}
+            </div>
           </div>
-        </div>
+        </FadeIn>
       </section>
+
+      <Departments />
+      <TeamStatistics />
+      <OurCulture />
+      <Certifications />
+      <TeamCTA />
     </div>
   )
 }

@@ -162,7 +162,7 @@ function HeroCarousel() {
             <div className="relative">
               <div className="w-full max-w-sm mx-auto md:mx-0 aspect-4/3 flex items-center justify-center">
                 <div className="text-white/90 text-center">
-                  <img src="/undraw_mobile-marketing_7x7m.svg" alt="" />
+                  <img src="/Hero-Image.png" alt="" />
                 </div>
               </div>
             </div>

@@ -1,7 +1,9 @@
 import { useEffect, useMemo, useRef, useState } from "react";
+import { toast } from "sonner";
 import useServiceStore from "../../store/serviceStore.js";
 import ConfirmModal from "../../components/ui/ConfirmModal.jsx";
 import Select from "../../components/ui/Select.jsx";
+import Pagination from "../../components/ui/Pagination.jsx";
 import { TableSkeleton } from "../../components/ui/Skeleton.jsx";
 import imageUrl from "../../utils/imageUrl.js";
 
@@ -23,6 +25,8 @@ export default function AdminServices() {
   const [search, setSearch] = useState("");
   const [status, setStatus] = useState("");
   const [loading, setLoading] = useState(false);
+  const [page, setPage] = useState(1);
+  const [pagination, setPagination] = useState({ total: 0, page: 1, pages: 1 });
 
   const emptyForm = useMemo(
     () => ({
@@ -41,7 +45,6 @@ export default function AdminServices() {
 
   const [form, setForm] = useState(emptyForm);
   const [error, setError] = useState("");
-  const [toast, setToast] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const formRef = useRef(null);
   const [deleteTarget, setDeleteTarget] = useState(null);
@@ -92,13 +95,14 @@ export default function AdminServices() {
   const load = async () => {
     setLoading(true);
     try {
-      const data = await fetchAdminServices({
+      const result = await fetchAdminServices({
         search: search || undefined,
         status: status || undefined,
-        page: 1,
-        limit: 50,
+        page,
+        limit: 10,
       });
-      setItems(data ?? []);
+      setItems(result?.items ?? []);
+      setPagination(result?.pagination ?? { total: 0, page: 1, pages: 1 });
     } finally {
       setLoading(false);
     }
@@ -111,10 +115,14 @@ export default function AdminServices() {
   }, []);
 
   useEffect(() => {
+    setPage(1);
+  }, [search, status]);
+
+  useEffect(() => {
     const t = setTimeout(() => load(), 250);
     return () => clearTimeout(t);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [search, status]);
+  }, [page, search, status]);
 
   function onPickImage(e) {
     const file = e.target.files?.[0];
@@ -129,7 +137,6 @@ export default function AdminServices() {
   async function onSubmit(e) {
     e.preventDefault();
     setError("");
-    setToast("");
     setSubmitting(true);
 
     if (
@@ -146,6 +153,21 @@ export default function AdminServices() {
       setError("Please upload an image.");
       setSubmitting(false);
       return;
+    }
+
+    if (form.clients.length === 0) {
+      setError("Please add at least one client testimonial.");
+      setSubmitting(false);
+      return;
+    }
+
+    for (let i = 0; i < form.clients.length; i++) {
+      const c = form.clients[i];
+      if (!c.name.trim() || !c.position.trim() || !c.company.trim() || !c.quote.trim()) {
+        setError(`Please fill all fields for Client ${i + 1}.`);
+        setSubmitting(false);
+        return;
+      }
     }
 
     const payload = new FormData();
@@ -175,19 +197,19 @@ export default function AdminServices() {
     try {
       if (form.service_id) {
         await updateService(form.service_id, payload);
-        setToast("Service updated successfully.");
+        toast.success("Service updated successfully.");
       } else {
         await createService(payload);
-        setToast("Service created successfully.");
+        toast.success("Service created successfully.");
       }
 
       setForm(emptyForm);
       setTagInputs({ offerings: "", target_audience: "" });
       await load();
     } catch (err) {
-      setError(
-        err?.response?.data?.message || err?.message || "Operation failed.",
-      );
+      const msg = err?.response?.data?.message || err?.message || "Operation failed.";
+      setError(msg);
+      toast.error(msg);
     } finally {
       setSubmitting(false);
     }
@@ -201,13 +223,13 @@ export default function AdminServices() {
     if (!deleteTarget) return;
     try {
       await deleteService(deleteTarget);
-      setToast("Service deleted successfully.");
+      toast.success("Service deleted successfully.");
       setDeleteTarget(null);
       await load();
     } catch (err) {
-      setError(
-        err?.response?.data?.message || err?.message || "Delete failed.",
-      );
+      const msg = err?.response?.data?.message || err?.message || "Delete failed.";
+      setError(msg);
+      toast.error(msg);
       setDeleteTarget(null);
     }
   }
@@ -215,13 +237,13 @@ export default function AdminServices() {
   async function onConfirmDeleteAll() {
     try {
       await deleteAllServices();
-      setToast("All services deleted successfully.");
+      toast.success("All services deleted successfully.");
       setDeleteAllTarget(false);
       await load();
     } catch (err) {
-      setError(
-        err?.response?.data?.message || err?.message || "Delete all failed.",
-      );
+      const msg = err?.response?.data?.message || err?.message || "Delete all failed.";
+      setError(msg);
+      toast.error(msg);
       setDeleteAllTarget(false);
     }
   }
@@ -239,7 +261,7 @@ export default function AdminServices() {
         </div>
       </div>
 
-      <div className="mt-6 bg-white border border-gray-200 rounded p-5 shadow-sm">
+      <div className="mt-6 bg-white border border-gray-200 rounded p-5 shadow-xs">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
           <div className="relative">
             <svg className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -266,7 +288,7 @@ export default function AdminServices() {
       </div>
 
       <div className="mt-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
-        <div ref={formRef} className="lg:col-span-2 bg-white border border-gray-200 rounded p-4 shadow-sm self-start">
+        <div ref={formRef} className="lg:col-span-2 bg-white border border-gray-200 rounded p-4 shadow-xs">
           <div className="font-extrabold text-gray-900">
             {form.service_id ? "Edit Service" : "Add New Service"}
           </div>
@@ -363,7 +385,7 @@ export default function AdminServices() {
                 value={tagInputs.offerings}
                 onChange={(e) => setTagInputs((t) => ({ ...t, offerings: e.target.value }))}
                 onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); onAddTag("offerings", tagInputs.offerings); } }}
-                placeholder="Type and press Enter to add"
+                placeholder="e.g. SEO, Content Marketing, PPC"
               />
             </div>
 
@@ -382,58 +404,60 @@ export default function AdminServices() {
                 value={tagInputs.target_audience}
                 onChange={(e) => setTagInputs((t) => ({ ...t, target_audience: e.target.value }))}
                 onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); onAddTag("target_audience", tagInputs.target_audience); } }}
-                placeholder="Type and press Enter to add"
+                placeholder="e.g. Small Businesses, E-commerce, Startups"
               />
             </div>
 
             <div>
-              <label className="text-sm font-semibold text-gray-800">Client Testimonials</label>
+              <div className="flex items-center justify-between">
+                <label className="text-sm font-semibold text-gray-800">Client Testimonials</label>
+                <button type="button" onClick={onAddClient} className="text-sm font-semibold text-red-600 hover:text-red-500 cursor-pointer">+ Add</button>
+              </div>
               {form.clients.map((client, i) => (
-                <div key={i} className="mt-3 border border-gray-200 rounded overflow-hidden">
-                  <div className="flex items-center justify-between px-3 py-2 bg-gray-100 border-b border-gray-200">
-                    <span className="text-xs font-semibold text-gray-500">Client {i + 1}</span>
+                <div key={i} className="mt-3 relative border border-gray-200 rounded-lg p-4 space-y-3 bg-gray-50/50">
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-semibold text-gray-500 uppercase tracking-wide">Client {i + 1}</span>
                     <button
                       type="button"
                       onClick={() => onRemoveClient(i)}
-                      className="text-red-400 hover:text-red-600 cursor-pointer"
+                      className="text-gray-400 hover:text-red-500 transition cursor-pointer"
                       title="Remove client">
                       <TrashIcon />
                     </button>
                   </div>
-                  <div className="p-3 space-y-2">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <input className={inputCls} placeholder="Name" value={client.name} onChange={(e) => onUpdateClient(i, "name", e.target.value)} />
                     <input className={inputCls} placeholder="Position" value={client.position} onChange={(e) => onUpdateClient(i, "position", e.target.value)} />
-                    <input className={inputCls} placeholder="Company" value={client.company} onChange={(e) => onUpdateClient(i, "company", e.target.value)} />
-                    <textarea rows={2} className={`${inputCls} resize-none`} placeholder="Quote" value={client.quote} onChange={(e) => onUpdateClient(i, "quote", e.target.value)} />
-                    <div>
-                      <label className="text-xs font-semibold text-gray-700">Avatar</label>
-                      <label className="mt-1.5 flex items-center gap-3 w-full border-2 border-dashed border-gray-300 rounded px-3 py-2 cursor-pointer hover:border-red-400 hover:bg-red-50 transition group">
-                        {(client._avatarFile || client.avatar) ? (
-                          <img
-                            src={client._avatarFile ? client.avatar : imageUrl(client.avatar)}
-                            alt="avatar"
-                            className="w-10 h-10 rounded-full object-cover border border-gray-200 shrink-0"
-                          />
-                        ) : (
-                          <div className="w-10 h-10 rounded-full bg-gray-100 border border-dashed border-gray-300 flex items-center justify-center shrink-0">
-                            <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                            </svg>
-                          </div>
-                        )}
-                        <div className="flex flex-col">
-                          <span className="text-sm font-medium text-gray-600 group-hover:text-red-600 transition">
-                            {(client._avatarFile || client.avatar) ? "Change Avatar" : "Upload Avatar"}
-                          </span>
-                          <span className="text-xs text-gray-400">JPG, PNG, WEBP · max 4MB</span>
+                  </div>
+                  <input className={inputCls} placeholder="Company" value={client.company} onChange={(e) => onUpdateClient(i, "company", e.target.value)} />
+                  <textarea rows={2} className={`${inputCls} resize-none`} placeholder="Quote" value={client.quote} onChange={(e) => onUpdateClient(i, "quote", e.target.value)} />
+                  <div>
+                    <label className="text-xs font-semibold text-gray-600">Avatar</label>
+                    <label className="mt-1.5 flex items-center gap-3 w-full border-2 border-dashed border-gray-300 rounded-lg px-3 py-2.5 cursor-pointer hover:border-red-400 hover:bg-red-50 transition group">
+                      {(client._avatarFile || client.avatar) ? (
+                        <img
+                          src={client._avatarFile ? client.avatar : imageUrl(client.avatar)}
+                          alt="avatar"
+                          className="w-9 h-9 rounded-full object-cover border border-gray-200 shrink-0"
+                        />
+                      ) : (
+                        <div className="w-9 h-9 rounded-full bg-gray-100 border border-dashed border-gray-300 flex items-center justify-center shrink-0">
+                          <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                          </svg>
                         </div>
-                        <input type="file" accept="image/*" className="hidden" onChange={(e) => onPickClientAvatar(i, e.target.files?.[0])} />
-                      </label>
-                    </div>
+                      )}
+                      <div className="flex flex-col">
+                        <span className="text-sm font-medium text-gray-600 group-hover:text-red-600 transition">
+                          {(client._avatarFile || client.avatar) ? "Change Avatar" : "Upload Avatar"}
+                        </span>
+                        <span className="text-xs text-gray-400">JPG, PNG, WEBP · max 4MB</span>
+                      </div>
+                      <input type="file" accept="image/*" className="hidden" onChange={(e) => onPickClientAvatar(i, e.target.files?.[0])} />
+                    </label>
                   </div>
                 </div>
               ))}
-              <button type="button" onClick={onAddClient} className="mt-2 text-sm font-semibold text-red-600 hover:text-red-500 cursor-pointer">+ Add Client</button>
             </div>
 
             {error && (
@@ -442,14 +466,6 @@ export default function AdminServices() {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
                 {error}
-              </div>
-            )}
-            {toast && (
-              <div className="flex items-center gap-2 text-sm text-green-600 bg-green-50 rounded px-4 py-2">
-                <svg className="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
-                {toast}
               </div>
             )}
 
@@ -465,14 +481,14 @@ export default function AdminServices() {
               <button
                 type="submit"
                 disabled={submitting}
-                className="flex-1 rounded bg-red-600 text-white py-2.5 font-extrabold hover:bg-red-500 transition disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer">
+                className="flex-1 rounded bg-primary text-white py-2.5 font-extrabold hover:bg-primary-hover transition disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer">
                 {submitting ? "Saving..." : form.service_id ? "Update Service" : "Create Service"}
               </button>
             </div>
           </form>
         </div>
 
-        <div className="lg:col-span-3 bg-white border border-gray-200 rounded p-5 shadow-sm">
+        <div className="lg:col-span-3 bg-white border border-gray-200 rounded p-5 shadow-xs flex flex-col">
           <div className="flex items-center justify-between">
             <div className="font-extrabold text-gray-900">Services</div>
             <div className="flex items-center gap-3">
@@ -485,12 +501,12 @@ export default function AdminServices() {
                 </button>
               )}
               <div className="text-sm text-gray-500">
-                {loading ? "Loading..." : `${items.length} items`}
+                {loading ? "Loading..." : `${pagination.total} items`}
               </div>
             </div>
           </div>
 
-          <div className="mt-4 overflow-auto">
+          <div className="mt-4 overflow-auto flex-1">
             <table className="w-full text-sm">
               <thead>
                 <tr className="text-left text-gray-600">
@@ -575,6 +591,7 @@ export default function AdminServices() {
               </tbody>
             </table>
           </div>
+          <Pagination page={pagination.page} pages={pagination.pages} onPageChange={setPage} />
         </div>
       </div>
 

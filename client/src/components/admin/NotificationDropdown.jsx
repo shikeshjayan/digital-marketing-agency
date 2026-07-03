@@ -161,7 +161,7 @@ export default function NotificationDropdown() {
       </button>
 
       {isOpen && (
-        <div className="fixed sm:absolute left-4 right-4 sm:left-auto sm:right-0 sm:translate-x-0 mt-2 sm:w-80 bg-white border border-gray-200 rounded-xl shadow-lg z-50 overflow-hidden top-16 sm:top-auto sm:mt-2">
+        <div className="fixed sm:absolute left-4 right-4 sm:left-auto sm:right-0 sm:translate-x-0 mt-2 sm:w-80 bg-white border border-gray-200 rounded-lg shadow-lg z-50 overflow-hidden top-16 sm:top-auto sm:mt-2">
           <div className="flex items-center justify-between px-3 sm:px-4 py-3 border-b border-gray-100">
             <span className="font-semibold text-gray-900 text-sm sm:text-base">Notifications</span>
             <span className="text-xs text-gray-500">{notifications.length} total</span>

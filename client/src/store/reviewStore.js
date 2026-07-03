@@ -41,7 +41,7 @@ const useReviewStore = create((set) => ({
       const { data } = await apiService.get("/admin/reviews", { params });
       const reviews = data.data ?? [];
       set({ adminReviews: reviews, loading: false });
-      return { reviews, counters: data.counters ?? null };
+      return { reviews, counters: data.counters ?? null, pagination: data.pagination ?? { total: reviews.length, page: 1, pages: 1 } };
     } catch (error) {
       set({
         error: error.response?.data?.message || error.message,

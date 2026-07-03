@@ -1,6 +1,8 @@
 import { useEffect, useRef, useState } from "react";
+import { toast } from "sonner";
 import useReviewStore from "../../store/reviewStore.js";
 import ConfirmModal from "../../components/ui/ConfirmModal.jsx";
+import Pagination from "../../components/ui/Pagination.jsx";
 import { relativeTime } from "../../utils/time.js";
 
 function Stars({ rating }) {
@@ -51,8 +53,9 @@ export default function AdminReviews() {
   const [items, setItems] = useState([]);
   const [counters, setCounters] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [page, setPage] = useState(1);
+  const [pagination, setPagination] = useState({ total: 0, page: 1, pages: 1 });
   const [error, setError] = useState("");
-  const [toast, setToast] = useState("");
   const [actionLoading, setActionLoading] = useState(null);
   const [deleteTarget, setDeleteTarget] = useState(null);
   const [deleteType, setDeleteType] = useState(null);
@@ -71,15 +74,16 @@ export default function AdminReviews() {
       const result = await fetchAdminReviews({
         status: tab === "All" ? undefined : tab,
         search: search || undefined,
-        page: 1,
-        limit: 50,
+        page,
+        limit: 10,
       });
       setItems(result.reviews);
       setCounters(result.counters);
+      setPagination(result.pagination ?? { total: 0, page: 1, pages: 1 });
     } catch (err) {
-      setError(
-        err.response?.data?.message || err.message || "Failed to load reviews",
-      );
+      const msg = err.response?.data?.message || err.message || "Failed to load reviews";
+      setError(msg);
+      toast.error(msg);
     } finally {
       setLoading(false);
     }
@@ -92,21 +96,27 @@ export default function AdminReviews() {
   }, [tab]);
 
   useEffect(() => {
+    setPage(1);
+  }, [tab, search]);
+
+  useEffect(() => {
     const t = setTimeout(() => load(), 300);
     return () => clearTimeout(t);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [search]);
+  }, [page, search]);
 
   async function handleApprove(id) {
     setActionLoading(id);
     try {
       await approveReview(id);
       setDeleteTarget(null);
-      setToast("Review approved and published.");
+      toast.success("Review approved and published.");
       window.dispatchEvent(new Event('refresh-badges'));
       await load();
     } catch (err) {
-      setError(err.response?.data?.message || err.message || "Approve failed");
+      const msg = err.response?.data?.message || err.message || "Approve failed";
+      setError(msg);
+      toast.error(msg);
     } finally {
       setActionLoading(null);
     }
@@ -117,11 +127,13 @@ export default function AdminReviews() {
     try {
       await rejectReview(id);
       setDeleteTarget(null);
-      setToast("Review rejected.");
+      toast.success("Review rejected.");
       window.dispatchEvent(new Event('refresh-badges'));
       await load();
     } catch (err) {
-      setError(err.response?.data?.message || err.message || "Reject failed");
+      const msg = err.response?.data?.message || err.message || "Reject failed";
+      setError(msg);
+      toast.error(msg);
     } finally {
       setActionLoading(null);
     }
@@ -130,12 +142,14 @@ export default function AdminReviews() {
   async function onConfirmDeleteAll() {
     try {
       await deleteAllReviews();
-      setToast("All reviews deleted successfully.");
+      toast.success("All reviews deleted successfully.");
       setDeleteAllTarget(false);
       window.dispatchEvent(new Event('refresh-badges'));
       await load();
     } catch (err) {
-      setError(err.response?.data?.message || err.message || "Delete all failed");
+      const msg = err.response?.data?.message || err.message || "Delete all failed";
+      setError(msg);
+      toast.error(msg);
       setDeleteAllTarget(false);
     }
   }
@@ -160,14 +174,14 @@ export default function AdminReviews() {
         </div>
       </div>
 
-      <div className="mt-6 bg-white border border-gray-200 rounded p-5 shadow-sm">
+      <div className="mt-6 bg-white border border-gray-200 rounded p-5 shadow-xs">
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
           <div className="flex flex-wrap gap-2">
             {tabs.map((t) => (
               <button
                 key={t.key}
                 type="button"
-                className={`px-4 py-2.5 min-h-[44px] rounded-full text-sm font-semibold border transition cursor-pointer ${
+                className={`px-4 py-2.5 min-h-[44px] rounded-lg text-sm font-semibold border transition cursor-pointer ${
                   tab === t.key
                     ? "bg-red-600 text-white border-red-600"
                     : "bg-white text-gray-700 border-gray-200 hover:text-red-700 hover:bg-red-50"
@@ -176,7 +190,7 @@ export default function AdminReviews() {
                 {t.label}
                 {t.count != null && (
                   <span
-                    className={`ml-1.5 inline-flex items-center justify-center w-5 h-5 text-xs rounded-full ${
+                    className={`ml-1.5 inline-flex items-center justify-center w-5 h-5 text-xs rounded-lg ${
                       tab === t.key
                         ? "bg-white/20 text-white"
                         : "bg-gray-100 text-gray-600"
@@ -229,25 +243,8 @@ export default function AdminReviews() {
           {error}
         </div>
       )}
-      {toast && (
-        <div className="mt-4 flex items-center gap-2 text-sm text-green-600 bg-green-50 rounded px-4 py-2">
-          <svg
-            className="w-4 h-4 shrink-0"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24">
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
-            />
-          </svg>
-          {toast}
-        </div>
-      )}
 
-      <div className="mt-4 bg-white border border-gray-200 rounded p-5 shadow-sm">
+      <div className="mt-4 bg-white border border-gray-200 rounded p-5 shadow-xs">
         <div className="flex items-center justify-between">
           <div className="font-extrabold text-gray-900">Reviews</div>
           <div className="flex items-center gap-3">
@@ -260,7 +257,7 @@ export default function AdminReviews() {
               </button>
             )}
             <div className="text-sm text-gray-500">
-              {loading ? "Loading..." : `${items.length} items`}
+              {loading ? "Loading..." : `${pagination.total} items`}
             </div>
           </div>
         </div>
@@ -270,7 +267,7 @@ export default function AdminReviews() {
             {[...Array(3)].map((_, i) => (
               <div key={i} className="border border-gray-100 rounded p-4">
                 <div className="flex gap-4 animate-pulse">
-                  <div className="w-10 h-10 rounded-full bg-gray-200 shrink-0" />
+                  <div className="w-10 h-10 rounded-lg bg-gray-200 shrink-0" />
                   <div className="flex-1 space-y-2">
                     <div className="h-4 w-32 bg-gray-200 rounded" />
                     <div className="h-3 w-48 bg-gray-100 rounded" />
@@ -304,7 +301,7 @@ export default function AdminReviews() {
                         {r.location}
                       </span>
                       <span
-                        className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium border ${statusChip(r.status)}`}>
+                        className={`inline-flex items-center px-2 py-0.5 rounded-lg text-xs font-medium border ${statusChip(r.status)}`}>
                         {r.status}
                       </span>
                     </div>
@@ -440,6 +437,7 @@ export default function AdminReviews() {
             </div>
           </div>
         )}
+        <Pagination page={pagination.page} pages={pagination.pages} onPageChange={setPage} />
       </div>
 
       <ConfirmModal

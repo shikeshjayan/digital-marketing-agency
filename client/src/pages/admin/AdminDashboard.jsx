@@ -160,7 +160,7 @@ function StatCard({ label, value, icon, color, onClick }) {
     <button
       type="button"
       onClick={onClick}
-      className="text-left bg-white border border-gray-200 rounded p-5 shadow-sm cursor-pointer hover:shadow-md transition group">
+      className="text-left bg-white border border-gray-200 rounded p-5 shadow-xs cursor-pointer hover:shadow-sm transition group">
       <div className="flex items-center justify-between">
         <span
           className={`w-10 h-10 rounded flex items-center justify-center ${color}`}>
@@ -175,7 +175,7 @@ function StatCard({ label, value, icon, color, onClick }) {
 
 function Panel({ title, children, rightLink }) {
   return (
-    <div className="bg-white border border-gray-200 rounded p-5 shadow-sm">
+    <div className="bg-white border border-gray-200 rounded p-5 shadow-xs">
       <div className="flex items-center justify-between gap-3">
         <div className="font-extrabold text-gray-900">{title}</div>
         {rightLink}
@@ -201,7 +201,7 @@ function LoadingSkeleton() {
         {[...Array(4)].map((_, i) => (
           <div
             key={i}
-            className="bg-white border border-gray-200 rounded p-5 shadow-sm">
+            className="bg-white border border-gray-200 rounded p-5 shadow-xs">
             <div className="flex justify-between">
               <SkeletonBlock className="h-10 w-10 rounded" />
               <SkeletonBlock className="h-4 w-12" />
@@ -216,7 +216,7 @@ function LoadingSkeleton() {
         {[...Array(3)].map((_, i) => (
           <div
             key={i}
-            className="bg-white border border-gray-200 rounded p-5 shadow-sm">
+            className="bg-white border border-gray-200 rounded p-5 shadow-xs">
             <SkeletonBlock className="h-5 w-32" />
             <div className="mt-4 space-y-3">
               {[...Array(3)].map((_, j) => (
@@ -248,14 +248,17 @@ export default function AdminDashboard() {
     setLoading(true);
     setError(null);
     try {
-      const [services, projects, enquiriesResult, team] = await Promise.all([
+      const [servicesResult, projectsResult, enquiriesResult, teamResult] = await Promise.all([
         fetchAdminServices(),
         fetchAdminProjects(),
         fetchAdminEnquiries(),
         fetchAdminTeam(),
       ]);
 
+      const services = servicesResult?.items ?? [];
+      const projects = projectsResult?.items ?? [];
       const enquiries = enquiriesResult.enquiries ?? [];
+      const team = teamResult?.items ?? [];
 
       setStats({
         total_services: services.length,
@@ -313,7 +316,7 @@ export default function AdminDashboard() {
       label: "Add Team Member",
       to: "/admin/team",
       icon: <PlusIcon />,
-      color: "text-red-600 bg-red-50",
+      color: "text-primary bg-red-50",
     },
     {
       label: "View Enquiries",
@@ -340,10 +343,10 @@ export default function AdminDashboard() {
           Dashboard Overview
         </h2>
         <div className="mt-6 bg-red-50 border border-red-200 rounded p-5 text-center">
-          <div className="text-sm text-red-600">{error}</div>
+          <div className="text-sm text-primary">{error}</div>
           <button
             type="button"
-            className="mt-3 px-4 py-2 text-sm font-semibold text-white bg-red-600 rounded-xl hover:bg-red-700 transition cursor-pointer"
+            className="mt-3 px-4 py-2 text-sm font-semibold text-white bg-primary rounded-lg hover:bg-primary-hover transition cursor-pointer"
             onClick={load}>
             Retry
           </button>
@@ -404,7 +407,7 @@ export default function AdminDashboard() {
           label="Team Members"
           value={stats.total_team_members}
           icon={<TeamIcon />}
-          color="bg-red-50 text-red-600"
+          color="bg-red-50 text-primary"
           onClick={() => navigate("/admin/team")}
         />
       </div>
@@ -415,7 +418,7 @@ export default function AdminDashboard() {
           rightLink={
             <button
               type="button"
-              className="text-sm font-semibold text-red-700 hover:text-red-600 cursor-pointer"
+              className="text-sm font-semibold text-primary hover:text-primary-hover cursor-pointer"
               onClick={() => navigate("/admin/messages")}>
               View All
             </button>
@@ -467,7 +470,7 @@ export default function AdminDashboard() {
           rightLink={
             <button
               type="button"
-              className="text-sm font-semibold text-red-700 hover:text-red-600 cursor-pointer"
+              className="text-sm font-semibold text-primary hover:text-primary-hover cursor-pointer"
               onClick={() => navigate("/admin/projects")}>
               View All
             </button>
@@ -512,7 +515,7 @@ export default function AdminDashboard() {
               <button
                 key={a.to}
                 type="button"
-                className="w-full flex items-center gap-3 bg-gray-50 border border-gray-200 rounded p-3 hover:bg-red-100 hover:border-red-100 transition group cursor-pointer"
+                className="w-full flex items-center gap-3 bg-gray-50 border border-gray-200 rounded p-3 hover:bg-primary-light hover:border-primary transition group cursor-pointer"
                 onClick={() => navigate(a.to)}>
                 <span
                   className={`w-9 h-9 rounded flex items-center justify-center shrink-0 ${a.color} group-hover:scale-110 transition`}>

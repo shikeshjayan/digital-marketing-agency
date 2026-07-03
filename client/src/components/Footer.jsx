@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faAngleUp } from '@fortawesome/free-solid-svg-icons'
+import { faAngleUp, faPhone, faEnvelope, faMapMarkerAlt } from '@fortawesome/free-solid-svg-icons'
+import { faFacebookF, faInstagram, faLinkedinIn, faYoutube } from '@fortawesome/free-brands-svg-icons'
 import FadeIn from '../components/ui/FadeIn.jsx'
 import useServiceStore from '../store/serviceStore.js'
 import { slugify } from '../utils/slugify.js'
@@ -37,6 +38,14 @@ export default function Footer() {
     })
   }
 
+  // Social handles structural data mapping directly onto corresponding brand icons
+  const socialMedias = [
+    { icon: faFacebookF, label: 'Facebook', url: 'https://facebook.com' },
+    { icon: faInstagram, label: 'Instagram', url: 'https://instagram.com' },
+    { icon: faLinkedinIn, label: 'LinkedIn', url: 'https://linkedin.com' },
+    { icon: faYoutube, label: 'YouTube', url: 'https://youtube.com' },
+  ]
+
   return (
     <footer className="bg-dark text-white mt-14 relative flex flex-col items-center">
       <div className="w-full max-w-7xl">
@@ -53,10 +62,18 @@ export default function Footer() {
                 <p className="mt-4 text-sm text-white/80 leading-relaxed max-w-sm">
                   Full-service digital marketing agency with design, development, and performance growth.
                 </p>
-                <div className="mt-5 flex gap-4 text-sm text-white/70">
-                  {['Facebook', 'Instagram', 'LinkedIn', 'YouTube'].map((x) => (
-                    <a key={x} href="#" className="hover:text-primary transition-colors cursor-pointer" onClick={(e) => e.preventDefault()}>
-                      {x}
+                {/* Renders social links as cleanly structured brand icons */}
+                <div className="mt-5 flex gap-3 text-base text-white/70">
+                  {socialMedias.map((social) => (
+                    <a 
+                      key={social.label} 
+                      href={social.url} 
+                      target="_blank" 
+                      rel="noopener noreferrer"
+                      className="w-8 h-8 rounded-lg bg-white/10 flex items-center justify-center hover:bg-primary hover:text-white transition-all duration-200 cursor-pointer" 
+                      aria-label={social.label}
+                    >
+                      <FontAwesomeIcon icon={social.icon} className="text-sm" />
                     </a>
                   ))}
                 </div>
@@ -103,13 +120,34 @@ export default function Footer() {
                 </div>
               </div>
 
-              {/* Static Contact Block */}
+              {/* Synchronized Contact Block using explicit icon parameters matching Testimonials sidebars */}
               <div>
                 <div className="text-sm font-semibold mb-4 text-white">Contact</div>
-                <div className="text-sm text-white/70 space-y-2.5">
-                  <div>Phone: +91 8891212323</div>
-                  <div>Email: info@s.com</div>
-                  <div className="text-white/50">Address: Kochi, India</div>
+                <div className="space-y-3 text-sm text-white/80">
+                  <div className="flex items-center gap-3">
+                    <span className="w-8 h-8 rounded-lg flex items-center justify-center text-xs text-gray-300">
+                      <FontAwesomeIcon icon={faPhone} />
+                    </span>
+                    <a href="tel:+91 8891212323" className="text-white/80 hover:text-primary transition-colors">
+                      +91 8891212323
+                    </a>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <span className="w-8 h-8 rounded-lg flex items-center justify-center text-xs text-gray-300">
+                      <FontAwesomeIcon icon={faEnvelope} />
+                    </span>
+                    <a href="mailto:crowlcrown@gmail.com" className="text-white/80 hover:text-primary transition-colors">
+                      crowlcrown@gmail.com
+                    </a>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <span className="w-8 h-8 rounded-lg flex items-center justify-center text-xs text-gray-300">
+                      <FontAwesomeIcon icon={faMapMarkerAlt} />
+                    </span>
+                    <a href="http://map.google.com" target="_blank" rel="noopener noreferrer" className="text-white/80 hover:text-primary transition-colors">
+                      Ernakulam, Kochi, Kerala, India
+                    </a>
+                  </div>
                 </div>
               </div>
             </div>

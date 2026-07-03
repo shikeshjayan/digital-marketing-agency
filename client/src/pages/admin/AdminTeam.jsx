@@ -1,7 +1,9 @@
 import { useEffect, useMemo, useRef, useState } from "react";
+import { toast } from "sonner";
 import useTeamStore from "../../store/teamStore.js";
 import ConfirmModal from "../../components/ui/ConfirmModal.jsx";
 import Select from "../../components/ui/Select.jsx";
+import Pagination from "../../components/ui/Pagination.jsx";
 import { TableSkeleton } from "../../components/ui/Skeleton.jsx";
 
 const resolveUrl = (path) => {
@@ -27,6 +29,8 @@ export default function AdminTeam() {
   const [search, setSearch] = useState("");
   const [status, setStatus] = useState("");
   const [loading, setLoading] = useState(false);
+  const [page, setPage] = useState(1);
+  const [pagination, setPagination] = useState({ total: 0, page: 1, pages: 1 });
 
   const emptyForm = useMemo(
     () => ({
@@ -35,6 +39,8 @@ export default function AdminTeam() {
       name: "",
       designation: "",
       description: "",
+      linkedin: "",
+      email: "",
       display_order: 1,
       status: "Active",
     }),
@@ -43,7 +49,6 @@ export default function AdminTeam() {
 
   const [form, setForm] = useState(emptyForm);
   const [error, setError] = useState("");
-  const [toast, setToast] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const formRef = useRef(null);
   const [deleteTarget, setDeleteTarget] = useState(null);
@@ -52,13 +57,14 @@ export default function AdminTeam() {
   const load = async () => {
     setLoading(true);
     try {
-      const res = await fetchAdminTeam({
+      const result = await fetchAdminTeam({
         search: search || undefined,
         status: status || undefined,
-        page: 1,
-        limit: 50,
+        page,
+        limit: 10,
       });
-      setItems(res ?? []);
+      setItems(result?.items ?? []);
+      setPagination(result?.pagination ?? { total: 0, page: 1, pages: 1 });
     } finally {
       setLoading(false);
     }
@@ -71,10 +77,14 @@ export default function AdminTeam() {
   }, []);
 
   useEffect(() => {
+    setPage(1);
+  }, [search, status]);
+
+  useEffect(() => {
     const t = setTimeout(() => load(), 250);
     return () => clearTimeout(t);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [search, status]);
+  }, [page, search, status]);
 
   function onPickImage(e) {
     const file = e.target.files?.[0];
@@ -89,7 +99,6 @@ export default function AdminTeam() {
   async function onSubmit(e) {
     e.preventDefault();
     setError("");
-    setToast("");
     setSubmitting(true);
 
     if (!form.name.trim() || !form.designation.trim()) {
@@ -107,21 +116,25 @@ export default function AdminTeam() {
     payload.append("name", form.name.trim());
     payload.append("designation", form.designation.trim());
     payload.append("description", form.description.trim());
+    payload.append("linkedin", form.linkedin.trim());
+    payload.append("email", form.email.trim());
     payload.append("display_order", form.display_order);
     payload.append("status", form.status);
 
     try {
       if (form._id) {
         await updateMember(form._id, payload);
-        setToast("Team member updated successfully.");
+        toast.success("Team member updated successfully.");
       } else {
         await createMember(payload);
-        setToast("Team member added successfully.");
+        toast.success("Team member added successfully.");
       }
       setForm(emptyForm);
       await load();
     } catch (err) {
-      setError(err?.message || "Operation failed.");
+      const msg = err?.message || "Operation failed.";
+      setError(msg);
+      toast.error(msg);
     } finally {
       setSubmitting(false);
     }
@@ -135,11 +148,13 @@ export default function AdminTeam() {
     if (!deleteTarget) return;
     try {
       await deleteMember(deleteTarget);
-      setToast("Team member deleted successfully.");
+      toast.success("Team member deleted successfully.");
       setDeleteTarget(null);
       await load();
     } catch (err) {
-      setError(err?.message || "Delete failed.");
+      const msg = err?.message || "Delete failed.";
+      setError(msg);
+      toast.error(msg);
       setDeleteTarget(null);
     }
   }
@@ -147,11 +162,13 @@ export default function AdminTeam() {
   async function onConfirmDeleteAll() {
     try {
       await deleteAllMembers();
-      setToast("All team members deleted successfully.");
+      toast.success("All team members deleted successfully.");
       setDeleteAllTarget(false);
       await load();
     } catch (err) {
-      setError(err?.message || "Delete all failed.");
+      const msg = err?.message || "Delete all failed.";
+      setError(msg);
+      toast.error(msg);
       setDeleteAllTarget(false);
     }
   }
@@ -169,7 +186,7 @@ export default function AdminTeam() {
         </div>
       </div>
 
-      <div className="mt-6 bg-white border border-gray-200 rounded p-5 shadow-sm">
+      <div className="mt-6 bg-white border border-gray-200 rounded p-5 shadow-xs">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
           <div className="relative">
             <svg
@@ -207,7 +224,7 @@ export default function AdminTeam() {
       <div className="mt-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
         <div
           ref={formRef}
-          className="lg:col-span-2 bg-white border border-gray-200 rounded p-4 shadow-sm self-start">
+          className="lg:col-span-2 bg-white border border-gray-200 rounded p-4 shadow-xs">
           <div className="font-extrabold text-gray-900">
             {form._id ? "Edit Member" : "Add New Member"}
           </div>
@@ -284,6 +301,35 @@ export default function AdminTeam() {
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div>
                 <label className="text-sm font-semibold text-gray-800">
+                  LinkedIn URL
+                </label>
+                <input
+                  className="mt-2 w-full rounded border border-gray-200 px-4 py-2 outline-none focus:ring-2 focus:ring-red-100"
+                  value={form.linkedin}
+                  onChange={(e) =>
+                    setForm((f) => ({ ...f, linkedin: e.target.value }))
+                  }
+                  placeholder="https://linkedin.com/in/..."
+                />
+              </div>
+              <div>
+                <label className="text-sm font-semibold text-gray-800">
+                  Email
+                </label>
+                <input
+                  type="email"
+                  className="mt-2 w-full rounded border border-gray-200 px-4 py-2 outline-none focus:ring-2 focus:ring-red-100"
+                  value={form.email}
+                  onChange={(e) =>
+                    setForm((f) => ({ ...f, email: e.target.value }))
+                  }
+                  placeholder="member@example.com"
+                />
+              </div>
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div>
+                <label className="text-sm font-semibold text-gray-800">
                   Display Order
                 </label>
                 <input
@@ -331,23 +377,6 @@ export default function AdminTeam() {
                 {error}
               </div>
             )}
-            {toast && (
-              <div className="flex items-center gap-2 text-sm text-green-600 bg-green-50 rounded px-4 py-2">
-                <svg
-                  className="w-4 h-4 shrink-0"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24">
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
-                  />
-                </svg>
-                {toast}
-              </div>
-            )}
 
             <div className="flex gap-2">
               {form._id && (
@@ -361,7 +390,7 @@ export default function AdminTeam() {
               <button
                 type="submit"
                 disabled={submitting}
-                className="flex-1 rounded bg-red-600 text-white py-2.5 font-extrabold hover:bg-red-500 transition disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer">
+                className="flex-1 rounded bg-primary text-white py-2.5 font-extrabold hover:bg-primary-hover transition disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer">
                 {submitting
                   ? "Saving..."
                   : form._id
@@ -372,7 +401,7 @@ export default function AdminTeam() {
           </form>
         </div>
 
-        <div className="lg:col-span-3 bg-white border border-gray-200 rounded p-5 shadow-sm">
+        <div className="lg:col-span-3 bg-white border border-gray-200 rounded p-5 shadow-xs flex flex-col">
           <div className="flex items-center justify-between">
             <div className="font-extrabold text-gray-900">Team Members</div>
             <div className="flex items-center gap-3">
@@ -385,12 +414,12 @@ export default function AdminTeam() {
                 </button>
               )}
               <div className="text-sm text-gray-500">
-                {loading ? "Loading..." : `${items.length} items`}
+                {loading ? "Loading..." : `${pagination.total} items`}
               </div>
             </div>
           </div>
 
-          <div className="mt-4 overflow-auto">
+          <div className="mt-4 overflow-auto flex-1">
             <table className="w-full text-sm">
               <thead>
                 <tr className="text-left text-gray-600">
@@ -465,6 +494,8 @@ export default function AdminTeam() {
                               name: m.name,
                               designation: m.designation,
                               description: m.description ?? "",
+                              linkedin: m.linkedin ?? "",
+                              email: m.email ?? "",
                               display_order: m.display_order ?? 1,
                               status: m.status,
                             });
@@ -512,6 +543,7 @@ export default function AdminTeam() {
               </tbody>
             </table>
           </div>
+          <Pagination page={pagination.page} pages={pagination.pages} onPageChange={setPage} />
         </div>
       </div>
 

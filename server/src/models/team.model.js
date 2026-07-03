@@ -21,6 +21,16 @@ const teamSchema = new mongoose.Schema(
       trim: true,
       default: "",
     },
+    linkedin: {
+      type: String,
+      trim: true,
+      default: "",
+    },
+    email: {
+      type: String,
+      trim: true,
+      default: "",
+    },
     display_order: {
       type: Number,
       default: 0,
