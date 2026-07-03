@@ -36,15 +36,6 @@ const ProjectsIcon = memo(function ProjectsIcon() {
   )
 })
 
-const CoursesIcon = memo(function CoursesIcon() {
-  return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M2 3h6a4 4 0 014 4v14a3 3 0 00-3-3H2z" />
-      <path d="M22 3h-6a4 4 0 00-4 4v14a3 3 0 013-3h7z" />
-    </svg>
-  )
-})
-
 const TeamIcon = memo(function TeamIcon() {
   return (
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -114,7 +105,7 @@ const navSections = [
     items: [
       { to: '/admin/services', label: 'Services', icon: ServicesIcon },
       { to: '/admin/projects', label: 'Projects', icon: ProjectsIcon },
-      { to: '/admin/courses', label: 'Courses', icon: CoursesIcon },
+
       { to: '/admin/team', label: 'Team', icon: TeamIcon },
     ],
   },
@@ -142,7 +133,7 @@ const NavItem = memo(function NavItem({ item, collapsed, onClick, badges }) {
       to={item.to}
       end={item.end}
       className={({ isActive }) =>
-        `group relative flex items-center ${collapsed ? 'justify-center px-2' : 'gap-3 px-3'} py-2.5 rounded-xl text-sm font-medium transition-all duration-150 cursor-pointer ${
+        `group relative flex items-center ${collapsed ? 'justify-center px-2' : 'gap-3 px-3'} py-2.5 rounded-lg text-sm font-medium transition-all duration-150 cursor-pointer ${
           isActive
             ? 'bg-red-50 text-red-700'
             : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
@@ -306,7 +297,7 @@ export default function AdminSidebar() {
         {/* Collapse Toggle */}
         <button
           type="button"
-          className="hidden md:flex w-full items-center justify-center gap-2 px-3 py-2 rounded-xl text-gray-400 hover:text-gray-600 hover:bg-gray-50 transition-colors duration-150 cursor-pointer"
+          className="hidden md:flex w-full items-center justify-center gap-2 px-3 py-2 rounded-lg text-gray-400 hover:text-gray-600 hover:bg-gray-50 transition-colors duration-150 cursor-pointer"
           onClick={() => setCollapsed((v) => !v)}
           aria-label={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
         >
@@ -317,7 +308,7 @@ export default function AdminSidebar() {
         {/* Logout */}
         <button
           type="button"
-          className={`w-full flex items-center ${collapsed ? 'justify-center px-2' : 'gap-3 px-3'} py-2.5 rounded-xl text-sm font-medium text-gray-600 hover:bg-red-50 hover:text-red-600 transition-all duration-150 mt-1 cursor-pointer`}
+          className={`w-full flex items-center ${collapsed ? 'justify-center px-2' : 'gap-3 px-3'} py-2.5 rounded-lg text-sm font-medium text-gray-600 hover:bg-red-50 hover:text-red-600 transition-all duration-150 mt-1 cursor-pointer`}
           onClick={() => setLogoutOpen(true)}
           disabled={isLoggingOut}
         >
@@ -354,7 +345,7 @@ export default function AdminSidebar() {
           aria-modal="true"
           aria-labelledby="logout-dialog-title"
         >
-          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-sm p-6 transform transition-all duration-200">
+          <div className="bg-white rounded-lg shadow-2xl w-full max-w-sm p-6 transform transition-all duration-200">
             <div className="w-12 h-12 rounded-full bg-red-100 flex items-center justify-center mx-auto">
               <Icon className="text-red-600"><LogoutIcon /></Icon>
             </div>
@@ -365,7 +356,7 @@ export default function AdminSidebar() {
             <div className="flex gap-3 mt-6">
               <button
                 type="button"
-                className="flex-1 px-4 py-2.5 rounded-xl border border-gray-200 hover:bg-gray-50 text-sm font-medium transition-colors duration-150 cursor-pointer"
+                className="flex-1 px-4 py-2.5 rounded-lg border border-gray-200 hover:bg-gray-50 text-sm font-medium transition-colors duration-150 cursor-pointer"
                 onClick={() => setLogoutOpen(false)}
                 disabled={isLoggingOut}
               >
@@ -373,7 +364,7 @@ export default function AdminSidebar() {
               </button>
               <button
                 type="button"
-                className="flex-1 px-4 py-2.5 rounded-xl bg-red-600 text-white hover:bg-red-700 text-sm font-medium transition-colors duration-150 disabled:opacity-50 cursor-pointer"
+                className="flex-1 px-4 py-2.5 rounded-lg bg-red-600 text-white hover:bg-red-700 text-sm font-medium transition-colors duration-150 disabled:opacity-50 cursor-pointer"
                 onClick={doLogout}
                 disabled={isLoggingOut}
               >

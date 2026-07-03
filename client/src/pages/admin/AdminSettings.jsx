@@ -99,7 +99,7 @@ export default function AdminSettings() {
         </div>
       </div>
 
-      <div className="mt-6 bg-white border border-gray-200 rounded p-5 shadow-sm">
+      <div className="mt-6 bg-white border border-gray-200 rounded p-5 shadow-xs">
         <form
           onSubmit={onSubmit}
           className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
@@ -222,7 +222,7 @@ export default function AdminSettings() {
                 <button
                   type="submit"
                   disabled={saving || loading}
-                  className="w-full rounded bg-red-600 text-white py-2.5 font-extrabold hover:bg-red-500 transition disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer">
+                  className="w-full rounded bg-primary text-white py-2.5 font-extrabold hover:bg-primary-hover transition disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer">
                   {saving ? "Saving..." : "Save Changes"}
                 </button>
               </div>

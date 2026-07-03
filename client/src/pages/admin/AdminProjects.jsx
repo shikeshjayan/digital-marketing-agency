@@ -2,6 +2,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import useProjectStore from "../../store/projectStore.js";
 import ConfirmModal from "../../components/ui/ConfirmModal.jsx";
 import Select from "../../components/ui/Select.jsx";
+import Pagination from "../../components/ui/Pagination.jsx";
 import { TableSkeleton } from "../../components/ui/Skeleton.jsx";
 
 export default function AdminProjects() {
@@ -20,6 +21,8 @@ export default function AdminProjects() {
   const [category, setCategory] = useState("");
   const [status, setStatus] = useState("");
   const [loading, setLoading] = useState(false);
+  const [page, setPage] = useState(1);
+  const [pagination, setPagination] = useState({ total: 0, page: 1, pages: 1 });
 
   const emptyForm = useMemo(
     () => ({
@@ -46,14 +49,15 @@ export default function AdminProjects() {
   const load = async () => {
     setLoading(true);
     try {
-      const data = await fetchAdminProjects({
+      const result = await fetchAdminProjects({
         search: search || undefined,
         category: category || undefined,
         status: status || undefined,
-        page: 1,
-        limit: 50,
+        page,
+        limit: 10,
       });
-      setItems(data ?? []);
+      setItems(result?.items ?? []);
+      setPagination(result?.pagination ?? { total: 0, page: 1, pages: 1 });
     } finally {
       setLoading(false);
     }
@@ -69,10 +73,14 @@ export default function AdminProjects() {
   }, []);
 
   useEffect(() => {
+    setPage(1);
+  }, [search, category, status]);
+
+  useEffect(() => {
     const t = setTimeout(() => load(), 250);
     return () => clearTimeout(t);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [search, category, status]);
+  }, [page, search, category, status]);
 
   function onPickImage(e) {
     const file = e.target.files?.[0];
@@ -186,7 +194,7 @@ export default function AdminProjects() {
         </div>
       </div>
 
-      <div className="mt-6 bg-white border border-gray-200 rounded p-5 shadow-sm">
+      <div className="mt-6 bg-white border border-gray-200 rounded p-5 shadow-xs">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
           <div className="relative">
             <svg
@@ -233,7 +241,7 @@ export default function AdminProjects() {
       <div className="mt-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
         <div
           ref={formRef}
-          className="lg:col-span-2 bg-white border border-gray-200 rounded p-4 shadow-sm self-start">
+          className="lg:col-span-2 bg-white border border-gray-200 rounded p-4 shadow-xs">
           <div className="font-extrabold text-gray-900">
             {form.project_id ? "Edit Project" : "Add New Project"}
           </div>
@@ -399,7 +407,7 @@ export default function AdminProjects() {
               <button
                 type="submit"
                 disabled={submitting}
-                className="flex-1 rounded bg-red-600 text-white py-2.5 font-extrabold hover:bg-red-500 transition disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer">
+                className="flex-1 rounded bg-primary text-white py-2.5 font-extrabold hover:bg-primary-hover transition disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer">
                 {submitting
                   ? "Saving..."
                   : form.project_id
@@ -410,7 +418,7 @@ export default function AdminProjects() {
           </form>
         </div>
 
-        <div className="lg:col-span-3 bg-white border border-gray-200 rounded p-5 shadow-sm">
+        <div className="lg:col-span-3 bg-white border border-gray-200 rounded p-5 shadow-xs flex flex-col">
           <div className="flex items-center justify-between">
             <div className="font-extrabold text-gray-900">Projects</div>
             <div className="flex items-center gap-3">
@@ -423,12 +431,12 @@ export default function AdminProjects() {
                 </button>
               )}
               <div className="text-sm text-gray-500">
-                {loading ? "Loading..." : `${items.length} items`}
+                {loading ? "Loading..." : `${pagination.total} items`}
               </div>
             </div>
           </div>
 
-          <div className="mt-4 overflow-auto">
+          <div className="mt-4 overflow-auto flex-1">
             <table className="w-full text-sm">
               <thead>
                 <tr className="text-left text-gray-600">
@@ -536,6 +544,7 @@ export default function AdminProjects() {
               </tbody>
             </table>
           </div>
+          <Pagination page={pagination.page} pages={pagination.pages} onPageChange={setPage} />
         </div>
       </div>
 

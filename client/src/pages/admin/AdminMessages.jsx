@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import useContactStore from "../../store/contactStore.js";
 import ConfirmModal from "../../components/ui/ConfirmModal.jsx";
 import Select from "../../components/ui/Select.jsx";
+import Pagination from "../../components/ui/Pagination.jsx";
 import { TableSkeleton } from "../../components/ui/Skeleton.jsx";
 
 function statusChip(status) {
@@ -24,6 +25,8 @@ export default function AdminMessages() {
   const [status, setStatus] = useState("");
   const [date, setDate] = useState("");
   const [loading, setLoading] = useState(false);
+  const [page, setPage] = useState(1);
+  const [pagination, setPagination] = useState({ total: 0, page: 1, pages: 1 });
   const [error, setError] = useState("");
   const [toast, setToast] = useState("");
   const [deleteTarget, setDeleteTarget] = useState(null);
@@ -37,11 +40,12 @@ export default function AdminMessages() {
         search: search || undefined,
         status: status || undefined,
         date: date || undefined,
-        page: 1,
-        limit: 50,
+        page,
+        limit: 10,
       });
       setItems(res.enquiries ?? []);
       setCounters(res.counters ?? null);
+      setPagination(res.pagination ?? { total: 0, page: 1, pages: 1 });
     } catch (e) {
       setError(e?.message ?? "Failed to load.");
     } finally {
@@ -56,10 +60,14 @@ export default function AdminMessages() {
   }, []);
 
   useEffect(() => {
+    setPage(1);
+  }, [search, status, date]);
+
+  useEffect(() => {
     const t = setTimeout(() => load(), 250);
     return () => clearTimeout(t);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [search, status, date]);
+  }, [page, search, status, date]);
 
   async function transition(id, nextStatus) {
     try {
@@ -116,7 +124,7 @@ export default function AdminMessages() {
         </div>
       </div>
 
-      <div className="mt-6 bg-white border border-gray-200 rounded p-5 shadow-sm">
+      <div className="mt-6 bg-white border border-gray-200 rounded p-5 shadow-xs">
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3">
           <div className="relative">
             <svg
@@ -233,7 +241,7 @@ export default function AdminMessages() {
         </div>
       )}
 
-      <div className="mt-4 bg-white border border-gray-200 rounded p-5 shadow-sm">
+      <div className="mt-4 bg-white border border-gray-200 rounded p-5 shadow-xs">
         <div className="flex items-center justify-between">
           <div className="font-extrabold text-gray-900">Enquiries</div>
           <div className="flex items-center gap-3">
@@ -246,7 +254,7 @@ export default function AdminMessages() {
               </button>
             )}
             <div className="text-sm text-gray-500">
-              {loading ? "Loading..." : `${items.length} items`}
+              {loading ? "Loading..." : `${pagination.total} items`}
             </div>
           </div>
         </div>
@@ -357,6 +365,7 @@ export default function AdminMessages() {
             </tbody>
           </table>
         </div>
+        <Pagination page={pagination.page} pages={pagination.pages} onPageChange={setPage} />
       </div>
 
       <ConfirmModal

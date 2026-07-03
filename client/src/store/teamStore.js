@@ -27,7 +27,7 @@ const useTeamStore = create((set) => ({
       const { data } = await apiService.get("/admin/team", { params });
       const team = data.data ?? [];
       set({ adminTeam: team, loading: false });
-      return team;
+      return { items: team, pagination: data.pagination ?? { total: team.length, page: 1, pages: 1 } };
     } catch (error) {
       set({
         error: error.response?.data?.message || error.message,

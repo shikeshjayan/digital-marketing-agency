@@ -36,21 +36,6 @@ export function ServiceCardSkeleton() {
   );
 }
 
-export function CourseCardSkeleton() {
-  return (
-    <div className="flex flex-col bg-white border border-gray-100 rounded-xl shadow-sm h-full overflow-hidden">
-      <div className="h-40 overflow-hidden">
-        <SkeletonBlock className="w-full h-full rounded-none" />
-      </div>
-      <div className="flex flex-col items-center text-center p-5 flex-1 gap-4">
-        <SkeletonBlock className="h-5 w-32" />
-        <SkeletonText lines={2} className="w-full" />
-        <SkeletonBlock className="h-10 w-24 rounded-xl" />
-      </div>
-    </div>
-  );
-}
-
 export function ProjectCardSkeleton() {
   return (
     <div className="flex flex-col bg-white border border-gray-100 rounded-xl shadow-sm overflow-hidden">

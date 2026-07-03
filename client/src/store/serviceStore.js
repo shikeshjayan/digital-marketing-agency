@@ -27,7 +27,7 @@ const useServiceStore = create((set) => ({
       const { data } = await apiService.get("/admin/services", { params });
       const services = data.data ?? [];
       set({ adminServices: services, loading: false });
-      return services;
+      return { items: services, pagination: data.pagination ?? { total: services.length, page: 1, pages: 1 } };
     } catch (error) {
       set({
         error: error.response?.data?.message || error.message,

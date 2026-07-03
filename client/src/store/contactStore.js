@@ -26,7 +26,7 @@ const useContactStore = create((set) => ({
       const { data } = await apiService.get("/admin/contact/enquiries", { params });
       const enquiries = data.data ?? [];
       set({ adminEnquiries: enquiries, loading: false });
-      return { enquiries, counters: data.counters ?? null };
+      return { enquiries, counters: data.counters ?? null, pagination: data.pagination ?? { total: enquiries.length, page: 1, pages: 1 } };
     } catch (error) {
       set({
         error: error.response?.data?.message || error.message,

@@ -39,7 +39,7 @@ const useProjectStore = create((set) => ({
       const { data } = await apiService.get("/admin/projects", { params });
       const projects = data.data ?? [];
       set({ adminProjects: projects, loading: false });
-      return projects;
+      return { items: projects, pagination: data.pagination ?? { total: projects.length, page: 1, pages: 1 } };
     } catch (error) {
       set({
         error: error.response?.data?.message || error.message,
