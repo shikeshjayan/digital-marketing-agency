@@ -5,6 +5,7 @@ const useServiceStore = create((set) => ({
   services: [],
   adminServices: [],
   selectedService: null,
+  relatedServices: [],
   loading: false,
   error: null,
 
@@ -18,6 +19,17 @@ const useServiceStore = create((set) => ({
         error: error.response?.data?.message || error.message,
         loading: false,
       });
+    }
+  },
+
+  fetchRelatedServices: async (serviceId, limit = 3) => {
+    try {
+      const { data } = await apiService.get(`/services/related/${serviceId}`, {
+        params: { limit },
+      });
+      set({ relatedServices: data.data ?? [] });
+    } catch {
+      set({ relatedServices: [] });
     }
   },
 
