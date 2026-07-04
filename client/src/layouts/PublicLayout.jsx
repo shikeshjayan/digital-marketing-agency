@@ -7,7 +7,7 @@ export default function PublicLayout() {
   const location = useLocation()
 
   return (
-    <div className="min-h-screen flex flex-col bg-white text-gray-900">
+    <div className="min-h-screen flex flex-col bg-background text-heading">
       <Toaster position="top-right" richColors closeButton />
       <Navbar />
       <main className="flex-1">

@@ -5,6 +5,14 @@ import ConfirmModal from "../../components/ui/ConfirmModal.jsx";
 import Select from "../../components/ui/Select.jsx";
 import Pagination from "../../components/ui/Pagination.jsx";
 import { TableSkeleton } from "../../components/ui/Skeleton.jsx";
+import AdminPageHeader from "../../components/ui/AdminPageHeader.jsx";
+import AdminListFooter from "../../components/ui/AdminListFooter.jsx";
+import SearchInput from "../../components/ui/SearchInput.jsx";
+import TableEmptyState from "../../components/ui/TableEmptyState.jsx";
+import FormField from "../../components/ui/FormField.jsx";
+import FileUploadField from "../../components/ui/FileUploadField.jsx";
+import FormActions from "../../components/ui/FormActions.jsx";
+import ErrorBanner from "../../components/ui/ErrorBanner.jsx";
 
 export default function AdminProjects() {
   const {
@@ -82,13 +90,7 @@ export default function AdminProjects() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [page, search, category, status]);
 
-  function onPickImage(e) {
-    const file = e.target.files?.[0];
-    if (!file) return;
-    if (file.size > 5 * 1024 * 1024) {
-      setError("Image must be less than 5MB.");
-      return;
-    }
+  function onPickImage(file) {
     setForm((f) => ({ ...f, image: file }));
   }
 
@@ -183,38 +185,19 @@ export default function AdminProjects() {
   return (
     <div>
       <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-3">
-        <div>
-          <h2 className="text-xl font-extrabold text-gray-900">
-            Projects Management
-          </h2>
-          <p className="mt-1 text-sm text-gray-600">
-            Create, update, and remove project records.
-          </p>
-        </div>
+        <AdminPageHeader
+          title="Projects Management"
+          subtitle="Create, update, and remove project records."
+        />
       </div>
 
       <div className="mt-6 bg-white border border-gray-200 rounded p-5 shadow-xs">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-          <div className="relative">
-            <svg
-              className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24">
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-              />
-            </svg>
-            <input
-              className="w-full rounded border border-gray-200 pl-10 pr-4 py-2 outline-none focus:ring-2 focus:ring-red-100"
-              placeholder="Search by project name..."
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-            />
-          </div>
+          <SearchInput
+            value={search}
+            onChange={setSearch}
+            placeholder="Search by project name..."
+          />
           <Select
             value={category}
             onChange={setCategory}
@@ -246,177 +229,82 @@ export default function AdminProjects() {
           </div>
 
           <form onSubmit={onSubmit} className="mt-4 space-y-3">
-            <div>
-              <label className="text-sm font-semibold text-gray-800">
-                Project Name
-              </label>
-              <input
-                className="mt-2 w-full rounded border border-gray-200 px-4 py-2 outline-none focus:ring-2 focus:ring-red-100"
-                value={form.project_name}
-                onChange={(e) =>
-                  setForm((f) => ({ ...f, project_name: e.target.value }))
-                }
-                placeholder="e.g. E-commerce Website"
-              />
-            </div>
+            <FormField
+              label="Project Name"
+              value={form.project_name}
+              onChange={(e) => setForm((f) => ({ ...f, project_name: e.target.value }))}
+              placeholder="e.g. E-commerce Website"
+            />
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-              <div>
-                <label className="text-sm font-semibold text-gray-800">
-                  Category
-                </label>
-                <Select
-                  value={form.category}
-                  onChange={(val) => setForm((f) => ({ ...f, category: val }))}
-                  className="mt-2"
-                  options={[
-                    { value: "Static", label: "Static" },
-                    { value: "Dynamic", label: "Dynamic" },
-                    { value: "Landing Pages", label: "Landing Pages" },
-                  ]}
-                />
-              </div>
-              <div>
-                <label className="text-sm font-semibold text-gray-800">
-                  Status
-                </label>
-                <Select
-                  value={form.status}
-                  onChange={(val) => setForm((f) => ({ ...f, status: val }))}
-                  className="mt-2"
-                  options={[
-                    { value: "Active", label: "Active" },
-                    { value: "Inactive", label: "Inactive" },
-                  ]}
-                />
-              </div>
-            </div>
-            <div>
-              <label className="text-sm font-semibold text-gray-800">
-                Short Description
-              </label>
-              <input
-                className="mt-2 w-full rounded border border-gray-200 px-4 py-2 outline-none focus:ring-2 focus:ring-red-100"
-                value={form.short_description}
-                onChange={(e) =>
-                  setForm((f) => ({ ...f, short_description: e.target.value }))
-                }
-                placeholder="Brief summary of the project"
+              <FormField
+                label="Category"
+                value={form.category}
+                onChange={(val) => setForm((f) => ({ ...f, category: val }))}
+                selectOptions={[
+                  { value: "Static", label: "Static" },
+                  { value: "Dynamic", label: "Dynamic" },
+                  { value: "Landing Pages", label: "Landing Pages" },
+                ]}
+              />
+              <FormField
+                label="Status"
+                value={form.status}
+                onChange={(val) => setForm((f) => ({ ...f, status: val }))}
+                selectOptions={[
+                  { value: "Active", label: "Active" },
+                  { value: "Inactive", label: "Inactive" },
+                ]}
               />
             </div>
-            <div>
-              <label className="text-sm font-semibold text-gray-800">
-                Description
-              </label>
-              <textarea
-                rows={2}
-                className="mt-2 w-full rounded border border-gray-200 px-4 py-2 outline-none focus:ring-2 focus:ring-red-100 resize-none"
-                value={form.description}
-                onChange={(e) =>
-                  setForm((f) => ({ ...f, description: e.target.value }))
-                }
-                placeholder="Detailed description of the project"
-              />
-            </div>
-            <div>
-              <label className="text-sm font-semibold text-gray-800">
-                Live URL
-              </label>
-              <input
-                className="mt-2 w-full rounded border border-gray-200 px-4 py-2 outline-none focus:ring-2 focus:ring-red-100"
-                value={form.live_url}
-                onChange={(e) =>
-                  setForm((f) => ({ ...f, live_url: e.target.value }))
-                }
-                placeholder="https://example.com"
-              />
-            </div>
-            <div>
-              <label className="text-sm font-semibold text-gray-800">
-                Image <span className="text-red-500">*</span>
-              </label>
-              <label className="mt-2 flex flex-col items-center justify-center w-full h-16 border-2 border-dashed border-gray-300 rounded cursor-pointer hover:border-red-400 hover:bg-red-50 transition">
-                <svg
-                  className="w-5 h-5 text-gray-400"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24">
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={1.5}
-                    d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
-                  />
-                </svg>
-                <span className="text-sm text-gray-500 mt-1">
-                  {form.image ? "Change Photo" : "Choose Photo"}
-                </span>
-                <input
-                  type="file"
-                  accept="image/*"
-                  className="hidden"
-                  onChange={onPickImage}
-                />
-              </label>
-            </div>
+            <FormField
+              label="Short Description"
+              value={form.short_description}
+              onChange={(e) => setForm((f) => ({ ...f, short_description: e.target.value }))}
+              placeholder="Brief summary of the project"
+            />
+            <FormField
+              label="Description"
+              textarea
+              rows={2}
+              value={form.description}
+              onChange={(e) => setForm((f) => ({ ...f, description: e.target.value }))}
+              placeholder="Detailed description of the project"
+            />
+            <FormField
+              label="Live URL"
+              value={form.live_url}
+              onChange={(e) => setForm((f) => ({ ...f, live_url: e.target.value }))}
+              placeholder="https://example.com"
+            />
+            <FileUploadField
+              label="Image"
+              required
+              file={form.image instanceof File ? form.image : null}
+              existingUrl={typeof form.image === "string" ? form.image : ""}
+              onChange={onPickImage}
+              onRemove={() => setForm((f) => ({ ...f, image: "" }))}
+            />
 
-            {error && (
-              <div className="flex items-center gap-2 text-sm text-red-600 bg-red-50 rounded px-4 py-2">
-                <svg
-                  className="w-4 h-4 shrink-0"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24">
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-                  />
-                </svg>
-                {error}
-              </div>
-            )}
+            <ErrorBanner message={error} />
 
-            <div className="flex gap-2">
-              {form.project_id && (
-                <button
-                  type="button"
-                  className="flex-1 rounded border border-gray-200 py-2.5 text-sm font-semibold text-gray-700 hover:bg-gray-50 transition cursor-pointer"
-                  onClick={() => setForm(emptyForm)}>
-                  Cancel
-                </button>
-              )}
-              <button
-                type="submit"
-                disabled={submitting}
-                className="flex-1 rounded bg-primary text-white py-2.5 font-extrabold hover:bg-primary-hover transition disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer">
-                {submitting
-                  ? "Saving..."
-                  : form.project_id
-                    ? "Update Project"
-                    : "Create Project"}
-              </button>
-            </div>
+            <FormActions
+              submitting={submitting}
+              editId={form.project_id}
+              onSubmit={onSubmit}
+              onReset={() => setForm(emptyForm)}
+              submitLabel={form.project_id ? "Update Project" : "Create Project"}
+            />
           </form>
         </div>
 
         <div className="lg:col-span-3 bg-white border border-gray-200 rounded p-5 shadow-xs flex flex-col">
-          <div className="flex items-center justify-between">
-            <div className="font-extrabold text-gray-900">Projects</div>
-            <div className="flex items-center gap-3">
-              {items.length > 0 && (
-                <button
-                  type="button"
-                  className="text-sm font-semibold text-red-600 hover:text-red-500 transition cursor-pointer"
-                  onClick={() => setDeleteAllTarget(true)}>
-                  Delete All
-                </button>
-              )}
-              <div className="text-sm text-gray-500">
-                {loading ? "Loading..." : `${pagination.total} items`}
-              </div>
-            </div>
-          </div>
+          <AdminListFooter
+            loading={loading}
+            total={pagination.total}
+            itemsLength={items.length}
+            onDeleteAll={() => setDeleteAllTarget(true)}
+            label="Projects"
+          />
 
           <div className="mt-4 overflow-auto flex-1">
             <table className="w-full text-sm">
@@ -500,28 +388,16 @@ export default function AdminProjects() {
                   </tr>
                 ))}
                 {!items.length && !loading && (
-                  <tr>
-                    <td colSpan={5} className="py-12 text-center">
-                      <div className="flex flex-col items-center text-gray-400">
-                        <svg
-                          className="w-12 h-12 mb-3"
-                          fill="none"
-                          stroke="currentColor"
-                          viewBox="0 0 24 24">
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={1.5}
-                            d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"
-                          />
-                        </svg>
-                        <div className="font-semibold">No projects found</div>
-                        <div className="text-sm mt-1">
-                          Create a new project to get started.
-                        </div>
-                      </div>
-                    </td>
-                  </tr>
+                  <TableEmptyState
+                    colSpan={5}
+                    message="No projects found"
+                    submessage="Create a new project to get started."
+                    icon={
+                      <svg className="w-12 h-12 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+                      </svg>
+                    }
+                  />
                 )}
               </tbody>
             </table>

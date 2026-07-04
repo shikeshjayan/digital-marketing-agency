@@ -1,4 +1,5 @@
 import { BrowserRouter, Route, Routes } from 'react-router-dom'
+import ScrollToTop from './components/ui/ScrollToTop.jsx'
 import PublicLayout from './layouts/PublicLayout.jsx'
 import AdminLayout from './layouts/AdminLayout.jsx'
 import AdminGuard from './auth/AdminGuard.jsx'
@@ -32,6 +33,7 @@ import NotFound from './pages/NotFound.jsx'
 export default function App() {
   return (
     <BrowserRouter>
+      <ScrollToTop />
       <Routes>
         {/* Public site */}
         <Route element={<PublicLayout />}>

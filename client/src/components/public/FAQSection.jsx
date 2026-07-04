@@ -6,7 +6,7 @@ import SectionHeading from "../ui/SectionHeading.jsx";
 export default function FAQSection({
   items = [],
   eyebrow = "Questions",
-  title = "Frequently Asked Questionss",
+  title = "Frequently Asked Questions",
   subtitle = "Find answers to common questions about our services and process.",
 }) {
   const [activeIndex, setActiveIndex] = useState(null);
@@ -29,9 +29,11 @@ export default function FAQSection({
               className="bg-background border border-border rounded-lg overflow-hidden">
               <button
                 type="button"
+                aria-expanded={activeIndex === i}
+                aria-controls={`faq-panel-${i}`}
                 className="w-full flex items-center justify-between px-6 py-4 text-left cursor-pointer hover:bg-surface transition"
                 onClick={() => toggle(i)}>
-                <span className="font-semibold text-heading text-sm md:text-base pr-4">
+                <span className="font-semibold text-heading small-text md:body-text pr-4">
                   {item.q}
                 </span>
                 <FontAwesomeIcon
@@ -40,8 +42,8 @@ export default function FAQSection({
                 />
               </button>
               {activeIndex === i && (
-                <div className="px-6 pb-4">
-                  <p className="text-sm text-text leading-relaxed">{item.a}</p>
+                <div id={`faq-panel-${i}`} role="region" className="px-6 pb-4">
+                  <p className="small-text text-text body-text">{item.a}</p>
                 </div>
               )}
             </div>

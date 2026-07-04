@@ -1,56 +1,45 @@
-import { useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useEffect } from "react";
+import { Link } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
-  faSearch,
-  faLightbulb,
-  faPalette,
-  faCode,
-  faRocket,
-  faChartLine,
-  faCheckCircle,
-  faStar,
-  faMinus,
-  faPlus,
+  faHeartPulse,
+  faCartShopping,
+  faGraduationCap,
+  faBuilding,
+  faMoneyBillTrendUp,
+  faMicrochip,
+  faConciergeBell,
+  faStore,
+  faArrowRight,
 } from "@fortawesome/free-solid-svg-icons";
 import HeroSplit from "../../components/public/HeroSplit";
 import FadeIn from "../../components/ui/FadeIn.jsx";
 import SectionHeading from "../../components/ui/SectionHeading.jsx";
 import AnimatedCounter from "../../components/ui/AnimatedCounter.jsx";
 import { ServiceCardSkeleton } from "../../components/ui/Skeleton.jsx";
+import OurProcess from "../../components/public/OurProcess.jsx";
+import WhyChooseUs from "../../components/public/WhyChooseUs.jsx";
+import FAQSection from "../../components/public/FAQSection.jsx";
+import FinalCTA from "../../components/public/FinalCTA.jsx";
+import TestimonialsSection from "../../components/public/TestimonialsSection.jsx";
+import LogoMarquee from "../../components/public/LogoMarquee.jsx";
 import useServiceStore from "../../store/serviceStore";
 import useReviewStore from "../../store/reviewStore.js";
 import { slugify } from "../../utils/slugify";
-import imageUrl from "../../utils/imageUrl";
-
-/* ─── Image resolver ──────────────────────────────────────── */
-const resolveImagePath = (path) => {
-  if (!path) return "";
-  if (path.startsWith("http") || path.startsWith("data:")) return path;
-
-  const isDev = import.meta.env.DEV;
-  const hasApiUrlEnv = !!import.meta.env.VITE_API_URL;
-
-  const cleanPath = path.startsWith("/") ? path : `/${path}`;
-
-  if (isDev && !hasApiUrlEnv) {
-    return `http://localhost:5000${cleanPath}`;
-  }
-  return imageUrl(cleanPath);
-};
+import resolveImagePath from "../../utils/resolveImagePath";
 
 /* ─── Service Card ────────────────────────────────────────── */
 const ServiceCard = ({ service }) => (
   <Link
     to={`/services/${slugify(service.service_name)}`}
-    className="flex flex-col bg-background border border-border rounded-lg h-full overflow-hidden cursor-pointer hover:-translate-y-1 transition-all duration-300">
-    <div className="h-40 overflow-hidden">
+    className="flex flex-col bg-background border border-border rounded-lg h-full overflow-hidden group hover:-translate-y-1 hover:shadow-lg transition-all duration-300">
+    <div className="h-48 overflow-hidden">
       <img
         src={resolveImagePath(service.image)}
         alt={service.service_name}
         loading="lazy"
         decoding="async"
-        className="w-full h-full object-cover bg-surface"
+        className="w-full h-full object-cover bg-surface transition-transform duration-500 group-hover:scale-110"
         onError={(e) => {
           e.target.onerror = null;
           e.target.src =
@@ -58,75 +47,153 @@ const ServiceCard = ({ service }) => (
         }}
       />
     </div>
-    <div className="flex flex-col items-center text-center p-5 flex-1">
-      <h3 className="text-lg font-extrabold text-heading">
+    <div className="flex flex-col items-center text-center p-6 flex-1">
+      <h3 className="subheading text-heading">
         {service.service_name}
       </h3>
-      <p className="mt-4 text-sm text-text leading-relaxed line-clamp-3">
+      <p className="mt-3 small-text text-text body-text line-clamp-3">
         {service.short_description}
       </p>
-      <span className="mt-6 mt-auto inline-flex items-center rounded-lg bg-primary text-white px-5 py-2.5 text-sm font-semibold hover:bg-primary-hover transition">
-        Read More
+      <span className="mt-auto pt-6 inline-flex items-center gap-2 text-sm font-semibold text-primary group-hover:gap-3 transition-all">
+        Learn More <FontAwesomeIcon icon={faArrowRight} />
       </span>
     </div>
   </Link>
 );
 
-/* ─── Process Steps ──────────────────────────────────────── */
-const processSteps = [
-  {
-    icon: faSearch,
-    title: "Discovery & Research",
-    desc: "We dive deep into your business, audience, and goals to build a strategic foundation.",
-  },
-  {
-    icon: faLightbulb,
-    title: "Strategy & Planning",
-    desc: "We craft a tailored roadmap with clear timelines, milestones, and deliverables.",
-  },
-  {
-    icon: faPalette,
-    title: "Design & Prototyping",
-    desc: "Our designers create wireframes and visual mockups that align with your brand identity.",
-  },
-  {
-    icon: faCode,
-    title: "Development & Testing",
-    desc: "Our engineers build robust, scalable solutions with rigorous quality assurance.",
-  },
-  {
-    icon: faRocket,
-    title: "Launch & Deployment",
-    desc: "We handle the full launch process, ensuring everything runs smoothly from day one.",
-  },
-  {
-    icon: faChartLine,
-    title: "Optimization & Growth",
-    desc: "Post-launch, we monitor performance and optimize for continuous improvement.",
-  },
-];
-
-/* ─── Why Choose Us Reasons ──────────────────────────────── */
-const whyChooseReasons = [
-  "Custom strategies tailored to your unique business goals",
-  "Transparent communication and dedicated project management",
-  "Data-driven approach with measurable KPIs and reporting",
-  "End-to-end solutions from design to deployment and marketing",
-  "Agile development process with fast turnaround times",
-  "Long-term partnership focus with ongoing support",
-];
+/* ─── Introduction ────────────────────────────────────────── */
+function Introduction() {
+  return (
+    <section className="py-16 md:py-20 bg-background">
+      <div className="max-w-4xl mx-auto px-4 text-center">
+        <FadeIn>
+          <p className="body-text md:subheading text-text">
+            We are a full-service digital marketing agency dedicated to helping businesses
+            of all sizes grow their online presence and achieve measurable results. From
+            custom web development and SEO to social media management and brand strategy,
+            our team crafts tailored solutions that solve real business problems and drive
+            long-term success.
+          </p>
+        </FadeIn>
+      </div>
+    </section>
+  );
+}
 
 /* ─── Industries We Serve ────────────────────────────────── */
 const industries = [
-  "Healthcare",
-  "E-Commerce",
-  "Education",
-  "Real Estate",
-  "Finance",
-  "Technology",
-  "Hospitality",
-  "Retail",
+  { name: "Healthcare", icon: faHeartPulse, desc: "Digital solutions for clinics, hospitals, and health tech startups." },
+  { name: "E-Commerce", icon: faCartShopping, desc: "Conversion-focused stores and marketplace strategies." },
+  { name: "Education", icon: faGraduationCap, desc: "Engaging platforms for schools, courses, and ed-tech." },
+  { name: "Real Estate", icon: faBuilding, desc: "Listings, virtual tours, and lead generation systems." },
+  { name: "Finance", icon: faMoneyBillTrendUp, desc: "Trust-building websites for fintech and advisory firms." },
+  { name: "Technology", icon: faMicrochip, desc: "SaaS, apps, and tech product marketing." },
+  { name: "Hospitality", icon: faConciergeBell, desc: "Booking-driven designs for hotels and restaurants." },
+  { name: "Retail", icon: faStore, desc: "Omnichannel strategies for physical and online stores." },
 ];
+
+function IndustriesWeServe() {
+  return (
+    <section className="py-16 md:py-20 bg-background">
+      <div className="max-w-6xl mx-auto px-4">
+        <FadeIn>
+          <SectionHeading
+            eyebrow="Who We Help"
+            title="Industries We Serve"
+            subtitle="We partner with businesses across a wide range of industries to deliver tailored digital solutions that drive growth."
+          />
+        </FadeIn>
+
+        <div className="mt-10 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
+          {industries.map((ind, i) => (
+            <FadeIn key={ind.name} delay={i * 80}>
+              <div className="bg-surface border border-border rounded-lg p-5 text-center hover:shadow-md hover:-translate-y-0.5 transition-all duration-300 group cursor-default h-full">
+                <div className="w-12 h-12 mx-auto rounded-lg bg-primary-light flex items-center justify-center group-hover:bg-primary transition-colors">
+                  <FontAwesomeIcon
+                    icon={ind.icon}
+                    className="text-primary text-xl group-hover:text-white transition-colors"
+                  />
+                </div>
+                <h3 className="mt-3 small-text font-bold text-heading">{ind.name}</h3>
+                <p className="mt-1.5 text-xs text-text leading-relaxed">{ind.desc}</p>
+              </div>
+            </FadeIn>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ─── Featured Case Studies ──────────────────────────────── */
+const featuredCases = [
+  {
+    client: "NovaTech Solutions",
+    industry: "Technology",
+    challenge: "Low organic traffic and poor search visibility in a competitive SaaS market.",
+    solution: "Full SEO audit, content strategy, technical optimization, and link-building campaign.",
+    result: "312% increase in organic traffic and top-3 rankings for 15 target keywords.",
+  },
+  {
+    client: "GreenLeaf Retail",
+    industry: "Retail / E-Commerce",
+    challenge: "High cart abandonment rate and low conversion on mobile devices.",
+    solution: "UX redesign, mobile-first checkout flow, and retargeting ad campaigns.",
+    result: "47% boost in conversion rate and 2.8x increase in monthly revenue.",
+  },
+  {
+    client: "BrightPath Academy",
+    industry: "Education",
+    challenge: "Limited online enrollment and weak brand presence in local search.",
+    solution: "Brand refresh, landing page optimization, and Google Ads lead generation.",
+    result: "180% increase in enrollment inquiries and 65% reduction in cost-per-lead.",
+  },
+];
+
+function FeaturedCaseStudies() {
+  return (
+    <section className="py-16 md:py-20 bg-surface">
+      <div className="max-w-6xl mx-auto px-4">
+        <FadeIn>
+          <SectionHeading
+            eyebrow="Success Stories"
+            title="Featured Case Studies"
+            subtitle="Real challenges. Strategic solutions. Measurable outcomes."
+          />
+        </FadeIn>
+
+        <div className="mt-10 grid grid-cols-1 md:grid-cols-3 gap-6">
+          {featuredCases.map((cs, i) => (
+            <FadeIn key={i} delay={i * 100}>
+              <div className="bg-background border border-border rounded-lg p-6 h-full flex flex-col hover:shadow-md transition">
+                <div className="flex items-center gap-2 mb-3">
+                  <span className="text-xs font-semibold text-primary bg-primary-light px-2.5 py-1 rounded">
+                    {cs.industry}
+                  </span>
+                </div>
+                <h3 className="body-text font-bold text-heading">{cs.client}</h3>
+                <div className="mt-3 space-y-2 flex-1">
+                  <div>
+                    <span className="text-xs font-semibold text-muted uppercase tracking-wider">Challenge</span>
+                    <p className="mt-0.5 small-text text-text body-text">{cs.challenge}</p>
+                  </div>
+                  <div>
+                    <span className="text-xs font-semibold text-muted uppercase tracking-wider">Solution</span>
+                    <p className="mt-0.5 small-text text-text body-text">{cs.solution}</p>
+                  </div>
+                  <div>
+                    <span className="text-xs font-semibold text-primary uppercase tracking-wider">Result</span>
+                    <p className="mt-0.5 text-sm text-heading font-semibold leading-relaxed">{cs.result}</p>
+                  </div>
+                </div>
+              </div>
+            </FadeIn>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
 
 /* ─── Case Studies Stats ─────────────────────────────────── */
 const caseStudyStats = [
@@ -135,6 +202,37 @@ const caseStudyStats = [
   { target: 500, suffix: "+", label: "Projects Delivered" },
   { target: 24, suffix: "/7", label: "Support Available" },
 ];
+
+function ResultsStatistics() {
+  return (
+    <section className="py-16 md:py-20 bg-background">
+      <div className="max-w-6xl mx-auto px-4">
+        <FadeIn>
+          <SectionHeading
+            eyebrow="Proven Results"
+            title="Results & Statistics"
+            subtitle="Numbers that speak louder than words. Our track record of delivering measurable outcomes."
+          />
+        </FadeIn>
+
+        <div className="mt-10 grid grid-cols-2 sm:grid-cols-4 gap-6">
+          {caseStudyStats.map((stat, i) => (
+            <FadeIn key={stat.label} delay={i * 100}>
+              <div className="bg-surface border border-border rounded-lg p-6 text-center hover:shadow-sm transition">
+                <div className="text-4xl font-extrabold text-primary">
+                  <AnimatedCounter target={stat.target} suffix={stat.suffix} />
+                </div>
+                <div className="mt-2 text-sm font-semibold text-text">
+                  {stat.label}
+                </div>
+              </div>
+            </FadeIn>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
 
 /* ─── FAQ Data ────────────────────────────────────────────── */
 const faqItems = [
@@ -158,417 +256,19 @@ const faqItems = [
     q: "Do you provide ongoing support after launch?",
     a: "Yes. We offer ongoing maintenance, optimization, and support packages to ensure your digital presence continues to perform. Our team is available for updates, troubleshooting, and growth strategies.",
   },
+  {
+    q: "How do you handle communication during a project?",
+    a: "We assign a dedicated project manager to every engagement. You'll receive regular progress updates, have access to a shared dashboard, and can reach us via email, phone, or Slack during business hours.",
+  },
+  {
+    q: "What if I need revisions after the project is delivered?",
+    a: "We include a revision round in every project scope. If additional changes are needed beyond the initial agreement, we offer flexible revision packages at transparent rates so you're never caught off guard.",
+  },
+  {
+    q: "Can you help with post-launch marketing and growth?",
+    a: "Yes. Our services extend well beyond launch. We offer SEO, paid advertising, social media management, content marketing, and analytics reporting to keep your business growing long after the site goes live.",
+  },
 ];
-
-/* ─── StarRow ─────────────────────────────────────────────── */
-function StarRow({ rating }) {
-  const full = Math.floor(rating);
-  return (
-    <div className="flex items-center gap-1 text-amber-500">
-      {Array.from({ length: 5 }).map((_, i) => (
-        <FontAwesomeIcon
-          key={i}
-          icon={faStar}
-          className={i < full ? "text-amber-500" : "text-gray-300"}
-          aria-hidden="true"
-        />
-      ))}
-    </div>
-  );
-}
-
-/* ─── Section: Our Process (Timeline) ─────────────────────── */
-function OurProcess() {
-  return (
-    <section className="py-12 md:py-16 bg-background">
-      <div className="max-w-6xl mx-auto px-4">
-        <FadeIn>
-          <SectionHeading
-            eyebrow="How We Work"
-            title="Our Process"
-            subtitle="A proven methodology that delivers results every time."
-          />
-        </FadeIn>
-
-        <div className="mt-10 relative">
-          <div className="hidden md:block absolute left-1/2 top-0 bottom-0 w-0.5 bg-border -translate-x-1/2" />
-
-          <div className="space-y-8 md:space-y-0">
-            {processSteps.map((step, i) => {
-              const isLeft = i % 2 === 0;
-              return (
-                <FadeIn
-                  key={step.title}
-                  delay={i * 100}
-                  direction={isLeft ? "left" : "right"}>
-                  <div
-                    className={`relative md:grid md:grid-cols-2 md:gap-12 md:items-center ${i > 0 ? "md:mt-8" : ""}`}>
-                    <div className="hidden md:block absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-10">
-                      <div className="w-10 h-10 rounded-full bg-primary text-white flex items-center justify-center text-sm font-bold shadow-lg">
-                        {i + 1}
-                      </div>
-                    </div>
-
-                    <div
-                      className={`${isLeft ? "md:text-right md:pr-12" : "md:col-start-2 md:pl-12"}`}>
-                      <div className="bg-surface border border-border rounded-lg p-6 hover:shadow-sm transition">
-                        <div
-                          className={`flex items-center gap-3 ${isLeft ? "md:justify-end" : ""}`}>
-                          <div className="w-10 h-10 rounded-lg bg-primary-light flex items-center justify-center shrink-0">
-                            <FontAwesomeIcon
-                              icon={step.icon}
-                              className="text-primary"
-                            />
-                          </div>
-                          <div>
-                            <div className="text-xs font-semibold text-primary uppercase tracking-wider">
-                              Step {i + 1}
-                            </div>
-                            <h3 className="text-lg font-extrabold text-heading">
-                              {step.title}
-                            </h3>
-                          </div>
-                        </div>
-                        <p className="mt-3 text-sm text-text leading-relaxed">
-                          {step.desc}
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                </FadeIn>
-              );
-            })}
-          </div>
-        </div>
-      </div>
-    </section>
-  );
-}
-
-/* ─── Section: Why Choose Us ──────────────────────────────── */
-function WhyChooseUs() {
-  return (
-    <section className="py-12 md:py-16 bg-surface">
-      <div className="max-w-6xl mx-auto px-4">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-10 md:gap-16 items-center">
-          <FadeIn direction="left">
-            <div className="bg-background border border-border rounded-lg p-8">
-              <div className="grid grid-cols-2 gap-4">
-                <div className="text-center p-4">
-                  <div className="text-4xl font-extrabold text-primary">
-                    98%
-                  </div>
-                  <div className="mt-1 text-xs text-muted">
-                    Client Retention
-                  </div>
-                </div>
-                <div className="text-center p-4">
-                  <div className="text-4xl font-extrabold text-primary">
-                    24/7
-                  </div>
-                  <div className="mt-1 text-xs text-muted">
-                    Support Available
-                  </div>
-                </div>
-                <div className="text-center p-4">
-                  <div className="text-4xl font-extrabold text-primary">3x</div>
-                  <div className="mt-1 text-xs text-muted">Average ROI</div>
-                </div>
-                <div className="text-center p-4">
-                  <div className="text-4xl font-extrabold text-primary">
-                    100%
-                  </div>
-                  <div className="mt-1 text-xs text-muted">
-                    Satisfaction Goal
-                  </div>
-                </div>
-              </div>
-            </div>
-          </FadeIn>
-
-          <FadeIn direction="right">
-            <div>
-              <SectionHeading
-                eyebrow="Our Edge"
-                title="Why Choose Us"
-                subtitle=""
-              />
-              <div className="mt-4 space-y-3">
-                {whyChooseReasons.map((r, i) => (
-                  <div key={i} className="flex items-start gap-3">
-                    <FontAwesomeIcon
-                      icon={faCheckCircle}
-                      className="text-primary mt-0.5 shrink-0"
-                    />
-                    <span className="text-sm text-text leading-relaxed">
-                      {r}
-                    </span>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </FadeIn>
-        </div>
-      </div>
-    </section>
-  );
-}
-
-/* ─── Section: Industries We Serve ────────────────────────── */
-function IndustriesWeServe() {
-  return (
-    <section className="py-12 md:py-16 bg-background">
-      <div className="max-w-6xl mx-auto px-4">
-        <FadeIn>
-          <SectionHeading
-            eyebrow="Who We Help"
-            title="Industries We Serve"
-            subtitle="We partner with businesses across a wide range of industries to deliver tailored digital solutions."
-          />
-        </FadeIn>
-
-        <div className="mt-10 flex flex-wrap justify-center gap-4">
-          {industries.map((ind, i) => (
-            <FadeIn key={ind} delay={i * 80}>
-              <div className="px-6 py-4 bg-surface border border-border rounded-lg text-center flex items-center justify-center min-w-[150px] font-bold text-heading hover:text-primary transition-colors cursor-default select-none">
-                {ind}
-              </div>
-            </FadeIn>
-          ))}
-        </div>
-      </div>
-    </section>
-  );
-}
-
-/* ─── Section: Case Studies / Results ─────────────────────── */
-function CaseStudiesResults() {
-  return (
-    <section className="py-12 md:py-16 bg-surface">
-      <div className="max-w-6xl mx-auto px-4">
-        <FadeIn>
-          <SectionHeading
-            eyebrow="Proven Results"
-            title="Case Studies & Results"
-            subtitle="Numbers that speak louder than words. Our track record of delivering measurable outcomes."
-          />
-        </FadeIn>
-
-        <div className="mt-10 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          {caseStudyStats.map((stat, i) => (
-            <FadeIn key={stat.label} delay={i * 100}>
-              <div className="bg-background border border-border rounded-lg p-6 text-center hover:shadow-sm transition">
-                <div className="text-4xl font-extrabold text-primary">
-                  <AnimatedCounter target={stat.target} suffix={stat.suffix} />
-                </div>
-                <div className="mt-2 text-sm font-semibold text-text">
-                  {stat.label}
-                </div>
-              </div>
-            </FadeIn>
-          ))}
-        </div>
-      </div>
-    </section>
-  );
-}
-
-/* ─── Section: Client Testimonials ────────────────────────── */
-function TestimonialsSection({ reviews, loading }) {
-  const [index, setIndex] = useState(0);
-  const [paused, setPaused] = useState(false);
-
-  useEffect(() => {
-    if (reviews.length === 0 || paused) return;
-    const t = setInterval(
-      () => setIndex((v) => (v + 1) % reviews.length),
-      3000,
-    );
-    return () => clearInterval(t);
-  }, [reviews.length, paused]);
-
-  if (loading) {
-    return (
-      <section className="py-12 bg-background">
-        <div className="max-w-5xl mx-auto px-4">
-          <div className="text-center">
-            <div className="h-8 w-48 bg-gray-200 rounded mx-auto animate-pulse" />
-          </div>
-          <div className="mt-8 flex justify-center">
-            <div className="w-full max-w-xl border border-border rounded-lg px-6 py-8 bg-surface text-center">
-              <div className="mx-auto w-16 h-16 rounded-full bg-gray-200 animate-pulse ring-2 ring-gray-300 ring-offset-2" />
-              <div className="mt-4 h-4 w-24 bg-gray-200 rounded mx-auto animate-pulse" />
-              <div className="mt-2 h-3 w-16 bg-gray-200 rounded mx-auto animate-pulse" />
-              <div className="mt-4 space-y-2">
-                <div className="h-3 w-full bg-gray-200 rounded animate-pulse" />
-                <div className="h-3 w-3/4 bg-gray-200 rounded mx-auto animate-pulse" />
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-    );
-  }
-
-  if (!reviews.length) return null;
-  const current = reviews[index];
-
-  return (
-    <section
-      className="py-12 bg-background"
-      onMouseEnter={() => setPaused(true)}
-      onMouseLeave={() => setPaused(false)}>
-      <div className="max-w-5xl mx-auto px-4">
-        <FadeIn>
-          <SectionHeading
-            eyebrow="Testimonials"
-            title="What Our Clients Say"
-            subtitle="Real feedback from businesses we've helped grow."
-          />
-        </FadeIn>
-
-        <div className="mt-8 flex justify-center">
-          <div className="w-full max-w-6xl border border-border rounded-lg px-6 py-8 bg-surface text-center">
-            <div className="mx-auto w-16 h-16 rounded-full overflow-hidden ring-2 ring-primary ring-offset-2 flex items-center justify-center shadow-md">
-              {current.user_avatar ? (
-                <img
-                  src={imageUrl(current.user_avatar)}
-                  alt={current.name}
-                  loading="lazy"
-                  decoding="async"
-                  className="w-full h-full object-cover"
-                  onError={(e) => {
-                    e.target.style.display = "none";
-                    e.target.nextSibling.style.display = "flex";
-                  }}
-                />
-              ) : null}
-              <div
-                className={`w-full h-full items-center justify-center text-lg font-bold text-primary-hover ${current.user_avatar ? "hidden" : "flex"}`}>
-                {current.name
-                  ?.split(" ")
-                  .map((w) => w[0])
-                  .join("")
-                  .toUpperCase()
-                  .slice(0, 2) || "?"}
-              </div>
-            </div>
-            <div className="mt-4 font-bold text-heading">{current.name}</div>
-            <div className="text-sm text-muted">{current.location}</div>
-            <p className="mt-4 text-gray-700 leading-relaxed max-w-2xl mx-auto">
-              &ldquo;{current.review_text}&rdquo;
-            </p>
-            <div className="mt-4">
-              <StarRow rating={current.rating} />
-            </div>
-          </div>
-        </div>
-
-        <div className="flex items-center justify-center gap-2 mt-5">
-          {reviews.map((_, i) => (
-            <button
-              key={i}
-              type="button"
-              className={`w-2.5 h-2.5 rounded-full transition cursor-pointer ${
-                i === index
-                  ? "bg-primary"
-                  : "bg-primary-light hover:bg-primary-hover"
-              }`}
-              onClick={() => setIndex(i)}
-              aria-label={`Go to testimonial ${i + 1}`}
-            />
-          ))}
-        </div>
-      </div>
-    </section>
-  );
-}
-
-/* ─── Section: FAQ Accordion ──────────────────────────────── */
-function FAQSection() {
-  const [activeIndex, setActiveIndex] = useState(null);
-
-  const toggle = (i) => {
-    setActiveIndex(activeIndex === i ? null : i);
-  };
-
-  return (
-    <section className="py-12 md:py-16 bg-surface">
-      <div className="max-w-3xl mx-auto px-4">
-        <FadeIn>
-          <SectionHeading
-            eyebrow="Questions"
-            title="Frequently Asked Questions"
-            subtitle="Find answers to common questions about our services and process."
-          />
-        </FadeIn>
-
-        <div className="mt-10 space-y-3">
-          {faqItems.map((item, i) => (
-            <FadeIn key={i} delay={i * 80}>
-              <div className="bg-background border border-border rounded-lg overflow-hidden">
-                <button
-                  type="button"
-                  className="w-full flex items-center justify-between px-6 py-4 text-left cursor-pointer hover:bg-surface transition"
-                  onClick={() => toggle(i)}>
-                  <span className="font-semibold text-heading text-sm md:text-base pr-4">
-                    {item.q}
-                  </span>
-                  <FontAwesomeIcon
-                    icon={activeIndex === i ? faMinus : faPlus}
-                    className="text-primary shrink-0"
-                  />
-                </button>
-                {activeIndex === i && (
-                  <div className="px-6 pb-4">
-                    <p className="text-sm text-text leading-relaxed">
-                      {item.a}
-                    </p>
-                  </div>
-                )}
-              </div>
-            </FadeIn>
-          ))}
-        </div>
-      </div>
-    </section>
-  );
-}
-
-/* ─── Section: Final CTA ──────────────────────────────────── */
-function FinalCTA() {
-  const navigate = useNavigate();
-
-  return (
-    <section className="bg-dark py-16">
-      <FadeIn>
-        <div className="max-w-4xl mx-auto px-4 text-center text-white">
-          <h2 className="text-3xl md:text-4xl font-extrabold">
-            Ready to Grow Your Business?
-          </h2>
-          <p className="mt-4 text-gray-300 max-w-2xl mx-auto leading-relaxed">
-            Let's discuss how our digital marketing expertise can help you
-            achieve your goals. Get in touch with us today for a free
-            consultation.
-          </p>
-          <div className="mt-8 flex flex-wrap items-center justify-center gap-4">
-            <button
-              type="button"
-              className="inline-flex items-center rounded-lg bg-primary text-white px-6 py-3 text-sm font-semibold hover:bg-primary-hover transition cursor-pointer"
-              onClick={() => navigate("/contact")}>
-              Contact Us
-            </button>
-            <Link
-              to="/about"
-              className="inline-flex items-center rounded-lg border border-white text-white px-6 py-3 text-sm font-semibold hover:bg-white/10 transition">
-              Learn More About Us
-            </Link>
-          </div>
-        </div>
-      </FadeIn>
-    </section>
-  );
-}
 
 /* ─── Main Services Page ──────────────────────────────────── */
 const Services = () => {
@@ -627,12 +327,33 @@ const Services = () => {
       {/* 1. Hero */}
       <HeroSplit
         title="Services"
-        subtitle="We offer a wide range of services to meet your needs."
+        titleHighlight="Our"
+        subtitle="From high-converting websites to data-driven marketing campaigns, we deliver end-to-end digital solutions that help businesses attract more customers, increase revenue, and scale with confidence."
+        primaryCTA={{ label: "Get a Free Quote", to: "/contact" }}
+        secondaryCTA={{ label: "View Portfolio", to: "/projects" }}
+        imageSrc="/services.webp"
+        imageAlt="Our Services"
+        trustIndicators={[
+          { value: "500+", label: "Projects\nCompleted" },
+          { value: "98%", label: "Client\nSatisfaction" },
+          { value: "10+", label: "Years\nExperience" },
+        ]}
       />
 
-      {/* 2. Services Grid */}
-      <section className="py-14 bg-surface">
+      {/* 2. Introduction */}
+      <Introduction />
+
+      {/* 3. Services Grid */}
+      <section className="py-16 md:py-20 bg-surface">
         <div className="max-w-6xl mx-auto px-4">
+          <FadeIn>
+            <SectionHeading
+              eyebrow="What We Offer"
+              title="Our Services"
+              subtitle="Comprehensive digital solutions tailored to your business goals."
+            />
+          </FadeIn>
+
           {services.length === 0 ? (
             <div className="text-center py-20">
               <svg
@@ -655,7 +376,7 @@ const Services = () => {
               </div>
             </div>
           ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="mt-10 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
               {services.map((s, i) => (
                 <FadeIn key={s._id} delay={i * 100}>
                   <ServiceCard service={s} />
@@ -666,26 +387,32 @@ const Services = () => {
         </div>
       </section>
 
-      {/* 3. Our Process (Timeline) */}
-      <OurProcess />
-
-      {/* 4. Why Choose Us */}
+      {/* 4. Why Choose Us (moved above Our Process) */}
       <WhyChooseUs />
 
-      {/* 5. Industries We Serve */}
+      {/* 5. Our Process */}
+      <OurProcess />
+
+      {/* 6. Industries We Serve */}
       <IndustriesWeServe />
 
-      {/* 6. Case Studies / Results */}
-      <CaseStudiesResults />
+      {/* 7. Featured Case Studies */}
+      <FeaturedCaseStudies />
 
-      {/* 7. Client Testimonials */}
+      {/* 8. Results & Statistics */}
+      <ResultsStatistics />
+
+      {/* 9. Client Testimonials */}
       <TestimonialsSection reviews={reviews} loading={reviewsLoading} />
 
-      {/* 8. FAQ */}
-      <FAQSection />
+      {/* 10. FAQ */}
+      <FAQSection items={faqItems} />
 
-      {/* 9. Final CTA */}
+      {/* 11. Final CTA */}
       <FinalCTA />
+
+      {/* 12. Trust Section */}
+      <LogoMarquee />
     </div>
   );
 };

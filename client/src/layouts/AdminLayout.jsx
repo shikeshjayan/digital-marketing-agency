@@ -39,7 +39,7 @@ export default function AdminLayout() {
       <Toaster position="top-right" richColors closeButton />
       <header className="sticky top-0 z-20 bg-white border-b border-gray-200">
         <div className="relative flex items-center px-4 sm:px-6 h-16">
-          {/* Left: hamburger (mobile) */}
+          {/* Left: hamburger + brand */}
           <div className="flex items-center md:w-64 shrink-0">
             <button
               type="button"
@@ -53,13 +53,11 @@ export default function AdminLayout() {
                 <span className={`block h-0.5 bg-gray-600 rounded-full transition-all duration-200 ${sidebarOpen ? 'w-5 -rotate-45 -translate-y-[3px]' : 'w-3.5 translate-y-[3px]'}`} />
               </span>
             </button>
+            <Link to="/" className="flex items-center gap-3 cursor-pointer shrink-0">
+              <img src="/crown-96.png" alt="CrawlCrown Logo" className="w-9 h-9 rounded-xl object-contain" />
+              <span className="font-bold text-gray-900 text-lg">CrawlCrown</span>
+            </Link>
           </div>
-
-          {/* Center: logo — absolute on mobile, flex on desktop */}
-          <Link to="/" className="absolute left-1/2 -translate-x-1/2 md:static md:translate-x-0 flex items-center gap-3 cursor-pointer shrink-0">
-            <img src="/crown-96.png" alt="CrawlCrown Logo" className="w-9 h-9 rounded-xl object-contain" />
-            <span className="font-bold text-gray-900 text-lg">CrawlCrown</span>
-          </Link>
 
           {/* Right: notifications + profile */}
           <div className="flex items-center justify-end gap-2 sm:gap-4 flex-1 min-w-0">

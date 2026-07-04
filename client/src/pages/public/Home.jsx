@@ -1,33 +1,14 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  faAngleLeft,
-  faAngleRight,
-  faStar,
-} from "@fortawesome/free-solid-svg-icons";
+import { faAngleLeft, faAngleRight } from "@fortawesome/free-solid-svg-icons";
 import { slugify } from "../../utils/slugify.js";
 import AnimatedCounter from "../../components/ui/AnimatedCounter.jsx";
 import FadeIn from "../../components/ui/FadeIn.jsx";
+import LogoMarquee from "../../components/public/LogoMarquee.jsx";
+import TestimonialsSection from "../../components/public/TestimonialsSection.jsx";
 import useServiceStore from "../../store/serviceStore.js";
 import useReviewStore from "../../store/reviewStore.js";
-import imageUrl from "../../utils/imageUrl.js";
-
-function StarRow({ rating }) {
-  const full = Math.floor(rating);
-  return (
-    <div className="flex items-center gap-1 text-amber-500">
-      {Array.from({ length: 5 }).map((_, i) => (
-        <FontAwesomeIcon
-          key={i}
-          icon={faStar}
-          className={i < full ? "text-amber-500" : "text-gray-300"}
-          aria-hidden="true"
-        />
-      ))}
-    </div>
-  );
-}
 
 function HeroCarousel() {
   const slides = useMemo(
@@ -62,66 +43,6 @@ function HeroCarousel() {
         description:
           "From strategy and branding to development and marketing, we help businesses grow with confidence.",
       },
-      {
-        subheading: "Launch faster. Grow smarter.",
-        description:
-          "Whether you're starting from scratch or scaling an established business, we build digital solutions that support your next stage of growth.",
-      },
-      {
-        subheading: "Everything your business needs to succeed online.",
-        description:
-          "Web development, SEO, content marketing, branding, and digital campaigns—all under one roof.",
-      },
-      {
-        subheading: "Helping businesses grow with confidence.",
-        description:
-          "Our digital marketing strategies are tailored to attract qualified leads, improve visibility, and deliver sustainable business growth.",
-      },
-      {
-        subheading: "Results driven by creativity and strategy.",
-        description:
-          "We combine innovative design with data-backed marketing to create digital experiences that convert visitors into customers.",
-      },
-      {
-        subheading: "Build a website that works as hard as you do.",
-        description:
-          "We create fast, responsive, and conversion-focused websites that help your business make a lasting first impression.",
-      },
-      {
-        subheading: "Marketing that drives meaningful growth.",
-        description:
-          "From SEO and social media to paid advertising and content marketing, we help you reach the right audience.",
-      },
-      {
-        subheading: "Smart digital solutions for ambitious businesses.",
-        description:
-          "We help brands grow through exceptional design, innovative development, and strategic digital marketing.",
-      },
-      {
-        subheading: "Where creativity meets technology.",
-        description:
-          "Transform your online presence with websites and marketing campaigns built for performance and long-term success.",
-      },
-      {
-        subheading: "Building brands that people remember.",
-        description:
-          "Our integrated approach to branding, web development, and digital marketing helps businesses create lasting customer relationships.",
-      },
-      {
-        subheading: "Digital experiences designed to deliver.",
-        description:
-          "We create scalable digital solutions that improve engagement, increase conversions, and accelerate business growth.",
-      },
-      {
-        subheading: "Turn your ideas into measurable business growth.",
-        description:
-          "We build high-performing websites, powerful brands, and data-driven marketing campaigns that help businesses attract customers and increase revenue.",
-      },
-      {
-        subheading: "Digital solutions designed to grow with your business.",
-        description:
-          "From strategy and branding to web development, SEO, and performance marketing, we create experiences that deliver real results.",
-      },
     ],
     [],
   );
@@ -129,6 +50,7 @@ function HeroCarousel() {
   const [index, setIndex] = useState(0);
   const [animating, setAnimating] = useState(false);
   const [paused, setPaused] = useState(false);
+  const [loaded, setLoaded] = useState(false);
 
   useEffect(() => {
     if (paused) return;
@@ -147,7 +69,7 @@ function HeroCarousel() {
 
   return (
     <section
-      className="bg-primary relative overflow-hidden"
+      className="bg-primary relative overflow-hidden min-h-[520px] md:min-h-[580px] lg:min-h-[620px]"
       onMouseEnter={() => setPaused(true)}
       onMouseLeave={() => setPaused(false)}>
       <div className="absolute inset-0 pointer-events-none">
@@ -156,58 +78,64 @@ function HeroCarousel() {
         <div className="absolute bottom-10 right-16 w-20 h-20 bg-white/10 rounded-lg rotate-12" />
       </div>
 
-      <div className="max-w-7xl mx-auto px-4 py-12">
-        <div className="relative">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center p-8 md:p-12">
-            <div className="relative">
-              <div className="w-full max-w-sm mx-auto md:mx-0 aspect-4/3 flex items-center justify-center">
-                <div className="text-white/90 text-center">
-                  <img src="/Hero-Image.png" alt="" />
-                </div>
+      <div className="relative mx-auto max-w-7xl px-6 py-16 md:py-20 lg:py-24">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-center">
+          <div
+            className={`relative transition-all duration-700 ease-out ${loaded ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"}`}>
+            <img
+              src="/homepage.webp"
+              alt="Digital Marketing Agency Hero"
+              width="380"
+              height="380"
+              loading="eager"
+              decoding="async"
+              fetchPriority="high"
+              onLoad={() => setLoaded(true)}
+              className="w-full h-[280px] md:h-[340px] lg:h-[380px] rounded-3xl object-cover"
+            />
+            <div className="absolute -bottom-8 -right-8 -z-10 h-36 w-36 rounded-full bg-white/10 blur-3xl" />
+          </div>
+          <div className="text-white min-h-50" key={index}>
+            <div className="animate-page-fade">
+              <div className="text-sm font-bold tracking-widest uppercase inline-block px-3 py-1 rounded">
+                DIGITAL MARKETING AGENCY
               </div>
-            </div>
-            <div className="text-white min-h-50" key={index}>
-              <div className="animate-page-fade">
-                <div className="text-sm font-bold tracking-widest uppercase inline-block px-3 py-1 rounded">
-                  DIGITAL MARKETING AGENCY
-                </div>
-                <h2 className="mt-3 text-3xl md:text-4xl font-extrabold leading-tight">
-                  {slides[index].subheading}
-                </h2>
-                <p className="mt-4 text-white/90 leading-relaxed max-w-prose">
-                  {slides[index].description}
-                </p>
-              </div>
+              <h2 className="mt-3 hero-heading text-white">
+                {slides[index].subheading}
+              </h2>
+              <p className="mt-4 text-white/90 leading-relaxed max-w-prose">
+                {slides[index].description}
+              </p>
             </div>
           </div>
+        </div>
 
-          <div className="flex items-center justify-center gap-4 mt-6">
+        <div className="flex items-center justify-center gap-4 mt-6">
+          <button
+            type="button"
+            className="w-9 h-9 rounded-full bg-white/15 border border-white/20 hover:bg-white/25 text-white flex items-center justify-center cursor-pointer"
+            onClick={() => go((index - 1 + slides.length) % slides.length)}
+            aria-label="Previous slide">
+            <FontAwesomeIcon icon={faAngleLeft} />
+          </button>
+          {slides.map((_, i) => (
             <button
+              key={i}
               type="button"
-              className="w-9 h-9 rounded-full bg-white/15 border border-white/20 hover:bg-white/25 text-white flex items-center justify-center cursor-pointer"
-              onClick={() => go((index - 1 + slides.length) % slides.length)}
-              aria-label="Previous slide">
-              <FontAwesomeIcon icon={faAngleLeft} />
-            </button>
-            {slides.map((_, i) => (
-              <button
-                key={i}
-                type="button"
-                className={`w-2.5 h-2.5 rounded-full transition cursor-pointer ${
-                  i === index ? "bg-background" : "bg-white/40 hover:bg-white/70"
-                }`}
-                onClick={() => go(i)}
-                aria-label={`Go to slide ${i + 1}`}
-              />
-            ))}
-            <button
-              type="button"
-              className="w-9 h-9 rounded-full bg-white/15 border border-white/20 hover:bg-white/25 text-white flex items-center justify-center cursor-pointer"
-              onClick={() => go((index + 1) % slides.length)}
-              aria-label="Next slide">
-              <FontAwesomeIcon icon={faAngleRight} />
-            </button>
-          </div>
+              className={`w-2.5 h-2.5 rounded-full transition cursor-pointer ${
+                i === index ? "bg-background" : "bg-white/40 hover:bg-white/70"
+              }`}
+              onClick={() => go(i)}
+              aria-label={`Go to slide ${i + 1}`}
+            />
+          ))}
+          <button
+            type="button"
+            className="w-9 h-9 rounded-full bg-white/15 border border-white/20 hover:bg-white/25 text-white flex items-center justify-center cursor-pointer"
+            onClick={() => go((index + 1) % slides.length)}
+            aria-label="Next slide">
+            <FontAwesomeIcon icon={faAngleRight} />
+          </button>
         </div>
       </div>
     </section>
@@ -288,23 +216,23 @@ function ServicesCarousel({ services }) {
                 <div className="flex items-stretch gap-6">
                   <div className="hidden md:flex items-center justify-center">
                     <div className="w-24 h-24 rounded-lg flex items-center justify-center">
-                      <div className="text-8xl font-extrabold text-muted select-none" aria-hidden="true">
+                      <div
+                        className="text-8xl font-extrabold text-muted select-none"
+                        aria-hidden="true">
                         {index + 1}
                       </div>
                     </div>
                   </div>
 
                   <div className="flex-1 text-center md:text-left">
-                    <div className="text-sm text-muted">
-                      Featured Service
-                    </div>
-                    <h3 className="mt-2 text-2xl font-extrabold text-heading">
+                    <div className="text-sm text-muted">Featured Service</div>
+                    <h3 className="mt-2 section-heading text-heading">
                       {current.service_name.split(" ").slice(0, 2).join(" ")}{" "}
                       <span className="text-primary-hover">
                         {current.service_name.split(" ").slice(2).join(" ")}
                       </span>
                     </h3>
-                    <p className="mt-3 text-text leading-relaxed max-w-xl line-clamp-3 mx-auto md:mx-0">
+                    <p className="mt-3 text-text body-text max-w-xl line-clamp-3 mx-auto md:mx-0">
                       {current.description}
                     </p>
                     <div className="mt-6 flex items-center justify-center md:justify-start gap-3">
@@ -369,7 +297,9 @@ function ServicesCarousel({ services }) {
                 key={s._id}
                 type="button"
                 className={`w-2.5 h-2.5 rounded-full transition cursor-pointer ${
-                  i === index ? "bg-primary" : "bg-primary-light hover:bg-primary-hover"
+                  i === index
+                    ? "bg-primary"
+                    : "bg-primary-light hover:bg-primary-hover"
                 }`}
                 onClick={() => go(i)}
                 aria-label={`Go to service ${i + 1}`}
@@ -394,12 +324,12 @@ const techItems = [
 
 function TechnologyStack() {
   return (
-    <section className="bg-dark py-14">
+    <section className="bg-secondary py-14">
       <div className="max-w-6xl mx-auto px-4">
         <FadeIn>
           <div className="text-center text-white">
-            <div className="font-cursive text-4xl text-primary">Our</div>
-            <h2 className="mt-2 text-4xl font-extrabold">Technology Stack</h2>
+            <div className="font-headings text-4xl text-primary">Our</div>
+            <h2 className="mt-2 section-heading">Technology Stack</h2>
           </div>
         </FadeIn>
 
@@ -408,165 +338,13 @@ function TechnologyStack() {
             <FadeIn key={it.name} delay={i * 80}>
               <div className="w-28 h-28 flex flex-col items-center justify-center text-white  rounded-lg hover:text-primary hover:scale-110 transition-all duration-300 cursor-default shadow-lg">
                 <div className="text-2xl font-extrabold">{it.code}</div>
-                <div className="mt-1 text-xs text-white/90 text-center max-w-20 truncate" title={it.name}>
+                <div
+                  className="mt-1 text-xs text-white/90 text-center max-w-20 truncate"
+                  title={it.name}>
                   {it.name}
                 </div>
               </div>
             </FadeIn>
-          ))}
-        </div>
-      </div>
-    </section>
-  );
-}
-
-function LogoMarquee() {
-  const logos = [
-    "HR Consultancy",
-    "Selfy LinguaTrainer",
-    "Rising Moon",
-    "StepUp",
-    "Tymos",
-    "BrightPath",
-    "NovaTech",
-    "Zenith Solutions",
-    "CloudBridge",
-    "PixelCraft",
-    "SwiftWave",
-    "BlueVista",
-    "IronPeak",
-    "GreenLeaf",
-    "SkyPulse",
-  ];
-
-  return (
-    <section className="bg-surface py-10">
-      <div className="text-center py-6 px-6">
-        <h2 className="font-bold text-heading text-3xl">
-          Trusted by teams who value quality
-        </h2>
-        <p className="mt-2 text-sm text-text">
-          We deliver measurable results with transparent workflows.
-        </p>
-      </div>
-
-      <div className="overflow-hidden py-6">
-        <div className="logo-marquee">
-          {[...logos, ...logos].map((logo, index) => (
-            <span
-              key={index}
-              className="inline-flex items-center px-8 whitespace-font tracking-wider font-extrabold text-muted hover:text-primary transition-colors duration-300 text-sm md:text-xl uppercase cursor-default select-none">
-              {logo}
-            </span>
-          ))}
-        </div>
-      </div>
-    </section>
-  );
-}
-
-function TestimonialsCarousel({ reviews, loading }) {
-  const [index, setIndex] = useState(0);
-  const [paused, setPaused] = useState(false);
-
-  useEffect(() => {
-    if (reviews.length === 0 || paused) return;
-    const t = setInterval(
-      () => setIndex((v) => (v + 1) % reviews.length),
-      3000,
-    );
-    return () => clearInterval(t);
-  }, [reviews.length, paused]);
-
-  if (loading) {
-    return (
-      <section className="py-12 bg-background">
-        <div className="max-w-5xl mx-auto px-4">
-          <div className="text-center">
-            <div className="h-8 w-48 bg-gray-200 rounded mx-auto animate-pulse" />
-          </div>
-          <div className="mt-8 flex justify-center">
-            <div className="w-full max-w-xl border border-border rounded-lg px-6 py-8 bg-surface text-center">
-              <div className="mx-auto w-16 h-16 rounded-full bg-gray-200 animate-pulse ring-2 ring-gray-300 ring-offset-2" />
-              <div className="mt-4 h-4 w-24 bg-gray-200 rounded mx-auto animate-pulse" />
-              <div className="mt-2 h-3 w-16 bg-surface rounded mx-auto animate-pulse" />
-              <div className="mt-4 space-y-2">
-                <div className="h-3 w-full bg-surface rounded animate-pulse" />
-                <div className="h-3 w-3/4 bg-surface rounded mx-auto animate-pulse" />
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-    );
-  }
-
-  if (!reviews.length) return null;
-  const current = reviews[index];
-
-  return (
-    <section
-      className="py-12 bg-background"
-      onMouseEnter={() => setPaused(true)}
-      onMouseLeave={() => setPaused(false)}>
-      <div className="max-w-5xl mx-auto px-4">
-        <FadeIn>
-          <div className="text-center">
-            <h2 className="text-3xl font-extrabold text-heading">
-              <span className="font-cursive text-primary-hover pr-2">Feedback</span>{" "}
-              That Speaks
-            </h2>
-          </div>
-        </FadeIn>
-
-        <div className="mt-8 flex justify-center">
-          <div className="w-full max-w-6xl border border-border rounded-lg px-6 py-8 bg-surface text-center">
-            <div className="mx-auto w-16 h-16 rounded-full overflow-hidden ring-2 ring-primary ring-offset-2 flex items-center justify-center shadow-md">
-              {current.user_avatar ? (
-                <img
-                  src={imageUrl(current.user_avatar)}
-                  alt={current.name}
-                  loading="lazy"
-                  decoding="async"
-                  className="w-full h-full object-cover"
-                  onError={(e) => {
-                    e.target.style.display = "none";
-                    e.target.nextSibling.style.display = "flex";
-                  }}
-                />
-              ) : null}
-              <div
-                className={`w-full h-full items-center justify-center text-lg font-bold text-primary-hover ${current.user_avatar ? "hidden" : "flex"}`}>
-                {current.name
-                  ?.split(" ")
-                  .map((w) => w[0])
-                  .join("")
-                  .toUpperCase()
-                  .slice(0, 2) || "?"}
-              </div>
-            </div>
-            <div className="mt-4 font-bold text-heading">{current.name}</div>
-            <div className="text-sm text-muted">{current.location}</div>
-            <p className="mt-4 text-gray-700 leading-relaxed">
-              "{current.review_text}"
-            </p>
-            <div className="mt-4">
-              <StarRow rating={current.rating} />
-            </div>
-          </div>
-        </div>
-
-        <div className="flex items-center justify-center gap-2 mt-5">
-          {reviews.map((_, i) => (
-            <button
-              key={i}
-              type="button"
-              className={`w-2.5 h-2.5 rounded-full transition cursor-pointer ${
-                i === index ? "bg-primary" : "bg-primary-light hover:bg-primary-hover"
-              }`}
-              onClick={() => setIndex(i)}
-              aria-label={`Go to testimonial ${i + 1}`}
-            />
           ))}
         </div>
       </div>
@@ -588,10 +366,10 @@ function StatsSection() {
                     Innovation meets execution
                   </span>
                 </div>
-                <h3 className="mt-4 text-3xl font-extrabold text-heading">
+                <h3 className="mt-4 section-heading text-heading">
                   Why teams trust us
                 </h3>
-                <p className="mt-3 text-text leading-relaxed">
+                <p className="mt-3 text-text body-text">
                   We combine design, engineering, and marketing strategy to
                   deliver websites and campaigns that perform.
                 </p>
@@ -663,11 +441,11 @@ export default function Home() {
       <LogoMarquee />
 
       {/* Team teaser */}
-      <section className="bg-dark py-16 text-white">
+      <section className="bg-secondary py-16 text-white">
         <FadeIn>
           <div className="max-w-6xl mx-auto px-4 text-center">
-            <div className="text-4xl md:text-5xl font-extrabold">
-              <span className="font-cursive text-primary pr-2">Meet</span> Our
+            <div className="section-heading">
+              <span className="font-headings text-primary pr-2">Meet</span> Our
               Team
             </div>
             <p className="mt-4 text-gray-300 max-w-2xl mx-auto leading-relaxed">
@@ -686,7 +464,12 @@ export default function Home() {
         </FadeIn>
       </section>
 
-      <TestimonialsCarousel reviews={reviews} loading={reviewsLoading} />
+      <TestimonialsSection
+        reviews={reviews}
+        loading={reviewsLoading}
+        eyebrow="Feedback"
+        title="That Speaks"
+      />
     </div>
   );
 }

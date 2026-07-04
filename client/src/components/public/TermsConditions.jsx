@@ -8,7 +8,6 @@ export default function TermsConditions() {
         title="Conditions"
         titleHighlight="Terms &"
         subtitle="Please read our terms of service agreement carefully before accessing our website."
-        leftColor="bg-dark"
       />
 
       <section className="py-14 bg-surface animate-page-fade">

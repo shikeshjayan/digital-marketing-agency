@@ -45,7 +45,7 @@ const defaultSteps = [
 
 export default function OurProcess({ steps = defaultSteps }) {
   return (
-    <section className="py-12 md:py-16 bg-background">
+    <section className="py-16 md:py-20 bg-background">
       <div className="max-w-6xl mx-auto px-4">
         <FadeIn>
           <SectionHeading
@@ -53,6 +53,10 @@ export default function OurProcess({ steps = defaultSteps }) {
             title="Our Process"
             subtitle="A proven methodology that delivers results every time."
           />
+          <p className="text-center mt-4 text-sm text-text max-w-2xl mx-auto">
+            From initial discovery to ongoing optimization, our structured workflow ensures
+            every project is delivered on time, within scope, and with measurable impact.
+          </p>
         </FadeIn>
 
         <div className="mt-10 relative">
@@ -89,12 +93,12 @@ export default function OurProcess({ steps = defaultSteps }) {
                             <div className="text-xs font-semibold text-primary uppercase tracking-wider">
                               Step {i + 1}
                             </div>
-                            <h3 className="text-lg font-extrabold text-heading">
+                            <h3 className="subheading text-heading">
                               {step.title}
                             </h3>
                           </div>
                         </div>
-                        <p className="mt-3 text-sm text-text leading-relaxed">
+                        <p className="mt-3 small-text text-text body-text">
                           {step.desc}
                         </p>
                       </div>

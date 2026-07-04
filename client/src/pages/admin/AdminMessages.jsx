@@ -5,6 +5,11 @@ import ConfirmModal from "../../components/ui/ConfirmModal.jsx";
 import Select from "../../components/ui/Select.jsx";
 import Pagination from "../../components/ui/Pagination.jsx";
 import { TableSkeleton } from "../../components/ui/Skeleton.jsx";
+import AdminPageHeader from "../../components/ui/AdminPageHeader.jsx";
+import AdminListFooter from "../../components/ui/AdminListFooter.jsx";
+import SearchInput from "../../components/ui/SearchInput.jsx";
+import TableEmptyState from "../../components/ui/TableEmptyState.jsx";
+import ErrorBanner from "../../components/ui/ErrorBanner.jsx";
 
 function statusChip(status) {
   const map = {
@@ -120,38 +125,19 @@ export default function AdminMessages() {
   return (
     <div>
       <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-3">
-        <div>
-          <h2 className="text-xl font-extrabold text-gray-900">
-            Contact Enquiries
-          </h2>
-          <p className="mt-1 text-sm text-gray-600">
-            Search and manage enquiry status workflow.
-          </p>
-        </div>
+        <AdminPageHeader
+          title="Contact Enquiries"
+          subtitle="Search and manage enquiry status workflow."
+        />
       </div>
 
       <div className="mt-6 bg-white border border-gray-200 rounded p-5 shadow-xs">
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3">
-          <div className="relative">
-            <svg
-              className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24">
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-              />
-            </svg>
-            <input
-              className="w-full rounded border border-gray-200 pl-10 pr-4 py-2 outline-none focus:ring-2 focus:ring-red-100"
-              placeholder="Search by name..."
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-            />
-          </div>
+          <SearchInput
+            value={search}
+            onChange={setSearch}
+            placeholder="Search by name..."
+          />
           <Select
             value={status}
             onChange={setStatus}
@@ -212,41 +198,16 @@ export default function AdminMessages() {
         )}
       </div>
 
-      {error && (
-        <div className="mt-4 flex items-center gap-2 text-sm text-red-600 bg-red-50 rounded px-4 py-2">
-          <svg
-            className="w-4 h-4 shrink-0"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24">
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-            />
-          </svg>
-          {error}
-        </div>
-      )}
+      <ErrorBanner message={error} className="mt-4" />
 
       <div className="mt-4 bg-white border border-gray-200 rounded p-5 shadow-xs">
-        <div className="flex items-center justify-between">
-          <div className="font-extrabold text-gray-900">Enquiries</div>
-          <div className="flex items-center gap-3">
-            {items.length > 0 && (
-              <button
-                type="button"
-                className="text-sm font-semibold text-red-600 hover:text-red-500 transition cursor-pointer"
-                onClick={() => setDeleteAllTarget(true)}>
-                Delete All
-              </button>
-            )}
-            <div className="text-sm text-gray-500">
-              {loading ? "Loading..." : `${pagination.total} items`}
-            </div>
-          </div>
-        </div>
+        <AdminListFooter
+          loading={loading}
+          total={pagination.total}
+          itemsLength={items.length}
+          onDeleteAll={() => setDeleteAllTarget(true)}
+          label="Enquiries"
+        />
 
         <div className="mt-4 overflow-auto">
           <table className="w-full text-sm">
@@ -260,10 +221,10 @@ export default function AdminMessages() {
                 <th className="py-2">Actions</th>
               </tr>
             </thead>
-              <tbody>
-                {loading && !items.length ? (
-                  <TableSkeleton rows={5} cols={6} />
-                ) : items.map((e) => (
+            <tbody>
+              {loading && !items.length ? (
+                <TableSkeleton rows={5} cols={6} />
+              ) : items.map((e) => (
                 <tr
                   key={e.enquiry_id}
                   className="border-t border-gray-100 align-top">
@@ -327,29 +288,16 @@ export default function AdminMessages() {
                 </tr>
               ))}
               {!items.length && !loading && (
-                <tr>
-                  <td colSpan={6} className="py-12 text-center">
-                    <div className="flex flex-col items-center text-gray-400">
-                      <svg
-                        className="w-12 h-12 mb-3"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24">
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={1.5}
-                          d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
-                        />
-                      </svg>
-                      <div className="font-semibold">No enquiries found</div>
-                      <div className="text-sm mt-1">
-                        Enquiries will appear here when users submit the contact
-                        form.
-                      </div>
-                    </div>
-                  </td>
-                </tr>
+                <TableEmptyState
+                  colSpan={6}
+                  message="No enquiries found"
+                  submessage="Enquiries will appear here when users submit the contact form."
+                  icon={
+                    <svg className="w-12 h-12 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                    </svg>
+                  }
+                />
               )}
             </tbody>
           </table>

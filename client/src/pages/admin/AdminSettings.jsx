@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import useSettingsStore from "../../store/settingsStore.js";
 import { setAdminProfile } from "../../auth/adminAuth.js";
+import FileUploadField from "../../components/ui/FileUploadField.jsx";
+import resolveImagePath from "../../utils/resolveImagePath.js";
 
 export default function AdminSettings() {
   const { profile, loading, fetchProfile, updateProfile } = useSettingsStore();
@@ -30,17 +32,6 @@ export default function AdminSettings() {
       })
       .catch(() => {});
   }, [fetchProfile]);
-
-  function onPickImage(e) {
-    const file = e.target.files?.[0];
-    if (!file) return;
-    if (file.size > 5 * 1024 * 1024) {
-      setError("Image must be less than 5MB.");
-      return;
-    }
-    setImageFile(file);
-    setPhotoRemoved(false);
-  }
 
   async function onSubmit(e) {
     e.preventDefault();
@@ -104,32 +95,50 @@ export default function AdminSettings() {
           className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
           <div className="lg:col-span-2">
             <div className="font-extrabold text-gray-900">Profile Image</div>
-            <div className="mt-4">
-              <label className="text-sm font-semibold text-gray-800">
-                Photo
-              </label>
-              <label className="mt-2 flex flex-col items-center justify-center w-full h-16 border-2 border-dashed border-gray-300 rounded cursor-pointer hover:border-red-400 hover:bg-red-50 transition">
-                <svg
-                  className="w-5 h-5 text-gray-400"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24">
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={1.5}
-                    d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
-                  />
-                </svg>
-                <span className="text-sm text-gray-500 mt-1">Choose Photo</span>
-                <input
-                  type="file"
-                  accept="image/*"
-                  className="hidden"
-                  onChange={onPickImage}
+            <FileUploadField
+              label="Photo"
+              file={null}
+              existingUrl=""
+              onChange={(f) => {
+                setImageFile(f);
+                setPhotoRemoved(false);
+              }}
+              onRemove={() => {
+                setImageFile(null);
+                setPhotoRemoved(true);
+              }}
+              className="mt-4"
+            />
+            {(imageFile || (form.photo && !photoRemoved)) && (
+              <div className="mt-3 relative">
+                <img
+                  src={imageFile ? URL.createObjectURL(imageFile) : resolveImagePath(form.photo)}
+                  alt="Preview"
+                  className="w-full h-40 object-cover rounded border border-gray-200"
                 />
-              </label>
-            </div>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setImageFile(null);
+                    setPhotoRemoved(true);
+                  }}
+                  className="absolute top-1 right-1 p-1 bg-white/80 hover:bg-red-50 rounded-full shadow transition cursor-pointer"
+                  title="Remove image">
+                  <svg
+                    className="w-4 h-4 text-red-500 hover:text-red-700"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24">
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                    />
+                  </svg>
+                </button>
+              </div>
+            )}
           </div>
 
           <div className="lg:col-span-3">

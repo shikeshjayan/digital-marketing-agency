@@ -1,9 +1,9 @@
 export function SkeletonBlock({ className = "" }) {
-  return <div className={`animate-pulse bg-gray-200 rounded ${className}`} />;
+  return <div className={`animate-pulse bg-surface rounded ${className}`} />;
 }
 
 export function SkeletonCircle({ className = "" }) {
-  return <div className={`animate-pulse bg-gray-200 rounded-full ${className}`} />;
+  return <div className={`animate-pulse bg-surface rounded-full ${className}`} />;
 }
 
 export function SkeletonText({ lines = 3, className = "" }) {
@@ -12,7 +12,7 @@ export function SkeletonText({ lines = 3, className = "" }) {
       {Array.from({ length: lines }).map((_, i) => (
         <div
           key={i}
-          className={`animate-pulse bg-gray-200 rounded h-4 ${
+          className={`animate-pulse bg-surface rounded h-4 ${
             i === lines - 1 ? "w-3/4" : "w-full"
           }`}
         />
@@ -23,7 +23,7 @@ export function SkeletonText({ lines = 3, className = "" }) {
 
 export function ServiceCardSkeleton() {
   return (
-    <div className="flex flex-col bg-white border border-gray-100 rounded-xl shadow-sm h-full overflow-hidden">
+    <div className="flex flex-col bg-background border border-border rounded-xl shadow-sm h-full overflow-hidden">
       <div className="h-40 overflow-hidden">
         <SkeletonBlock className="w-full h-full rounded-none" />
       </div>
@@ -38,7 +38,7 @@ export function ServiceCardSkeleton() {
 
 export function ProjectCardSkeleton() {
   return (
-    <div className="flex flex-col bg-white border border-gray-100 rounded-xl shadow-sm overflow-hidden">
+    <div className="flex flex-col bg-background border border-border rounded-xl shadow-sm overflow-hidden">
       <div className="h-48 overflow-hidden">
         <SkeletonBlock className="w-full h-full rounded-none" />
       </div>
@@ -48,7 +48,7 @@ export function ProjectCardSkeleton() {
 
 export function DetailSkeleton() {
   return (
-    <div className="py-16 md:py-24 bg-white">
+    <div className="py-16 md:py-24 bg-background">
       <div className="max-w-4xl mx-auto px-4 text-center">
         <SkeletonBlock className="h-12 w-96 mx-auto" />
         <div className="mt-10 flex justify-center">
@@ -69,7 +69,7 @@ export function TableSkeleton({ rows = 5, cols = 4 }) {
   return (
     <tbody>
       {Array.from({ length: rows }).map((_, i) => (
-        <tr key={i} className="border-t border-gray-100">
+        <tr key={i} className="border-t border-border">
           {Array.from({ length: cols }).map((_, j) => (
             <td key={j} className="py-3 pr-3">
               <SkeletonBlock className={`h-4 ${j === 0 ? "w-16" : "w-24"}`} />
@@ -83,7 +83,7 @@ export function TableSkeleton({ rows = 5, cols = 4 }) {
 
 export function ReviewCardSkeleton() {
   return (
-    <div className="border border-gray-100 rounded p-4">
+    <div className="border border-border rounded p-4">
       <div className="flex gap-4 animate-pulse">
         <SkeletonCircle className="w-10 h-10 shrink-0" />
         <div className="flex-1 space-y-2">
@@ -98,7 +98,7 @@ export function ReviewCardSkeleton() {
 
 export function TestimonialCardSkeleton() {
   return (
-    <div className="bg-white border border-gray-200 rounded-3xl p-6 shadow-sm">
+    <div className="bg-background border border-border rounded-3xl p-6 shadow-sm">
       <div className="flex items-center gap-3">
         <SkeletonCircle className="w-12 h-12" />
         <div className="space-y-2">
@@ -109,6 +109,16 @@ export function TestimonialCardSkeleton() {
       <div className="mt-4 space-y-2">
         <SkeletonBlock className="h-3 w-20" />
         <SkeletonText lines={2} />
+      </div>
+    </div>
+  );
+}
+
+export function TeamCardSkeleton() {
+  return (
+    <div className="flex flex-col bg-background border border-border rounded-lg overflow-hidden w-[300px] max-w-full">
+      <div className="w-full aspect-[3/4]">
+        <SkeletonBlock className="w-full h-full rounded-none" />
       </div>
     </div>
   );
