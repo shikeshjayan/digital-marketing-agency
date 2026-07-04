@@ -4,6 +4,9 @@ import useReviewStore from "../../store/reviewStore.js";
 import ConfirmModal from "../../components/ui/ConfirmModal.jsx";
 import Pagination from "../../components/ui/Pagination.jsx";
 import { relativeTime } from "../../utils/time.js";
+import AdminPageHeader from "../../components/ui/AdminPageHeader.jsx";
+import AdminListFooter from "../../components/ui/AdminListFooter.jsx";
+import ErrorBanner from "../../components/ui/ErrorBanner.jsx";
 
 function Stars({ rating }) {
   const full = Math.round(rating);
@@ -164,14 +167,10 @@ export default function AdminReviews() {
   return (
     <div>
       <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-3">
-        <div>
-          <h2 className="text-xl font-extrabold text-gray-900">
-            Reviews Moderation
-          </h2>
-          <p className="mt-1 text-sm text-gray-600">
-            Approve or reject submitted customer reviews.
-          </p>
-        </div>
+        <AdminPageHeader
+          title="Reviews Moderation"
+          subtitle="Approve or reject submitted customer reviews."
+        />
       </div>
 
       <div className="mt-6 bg-white border border-gray-200 rounded p-5 shadow-xs">
@@ -226,41 +225,16 @@ export default function AdminReviews() {
         </div>
       </div>
 
-      {error && (
-        <div className="mt-4 flex items-center gap-2 text-sm text-red-600 bg-red-50 rounded px-4 py-2">
-          <svg
-            className="w-4 h-4 shrink-0"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24">
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-            />
-          </svg>
-          {error}
-        </div>
-      )}
+      <ErrorBanner message={error} className="mt-4" />
 
       <div className="mt-4 bg-white border border-gray-200 rounded p-5 shadow-xs">
-        <div className="flex items-center justify-between">
-          <div className="font-extrabold text-gray-900">Reviews</div>
-          <div className="flex items-center gap-3">
-            {items.length > 0 && (
-              <button
-                type="button"
-                className="text-sm font-semibold text-red-600 hover:text-red-500 transition cursor-pointer"
-                onClick={() => setDeleteAllTarget(true)}>
-                Delete All
-              </button>
-            )}
-            <div className="text-sm text-gray-500">
-              {loading ? "Loading..." : `${pagination.total} items`}
-            </div>
-          </div>
-        </div>
+        <AdminListFooter
+          loading={loading}
+          total={pagination.total}
+          itemsLength={items.length}
+          onDeleteAll={() => setDeleteAllTarget(true)}
+          label="Reviews"
+        />
 
         {loading && !items.length ? (
           <div className="mt-4 space-y-3">

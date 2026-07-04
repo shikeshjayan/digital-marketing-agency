@@ -1,0 +1,33 @@
+export default function TableEmptyState({
+  icon,
+  message = "No items found",
+  submessage = "",
+  colSpan = 4,
+}) {
+  return (
+    <tr>
+      <td colSpan={colSpan} className="py-12 text-center">
+        <div className="flex flex-col items-center text-gray-400">
+          {icon || (
+            <svg
+              className="w-12 h-12 mb-3"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24">
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={1.5}
+                d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"
+              />
+            </svg>
+          )}
+          <div className="font-semibold">{message}</div>
+          {submessage && (
+            <div className="text-sm mt-1">{submessage}</div>
+          )}
+        </div>
+      </td>
+    </tr>
+  );
+}
