@@ -57,7 +57,7 @@ export default function WhyChooseUs({
   return (
     <section className="py-16 md:py-20 bg-surface">
       <div className="max-w-6xl mx-auto px-4">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-10 md:gap-16 items-start">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-10 md:gap-16 items-center">
           <FadeIn direction="left">
             <div>
               <SectionHeading
@@ -75,7 +75,7 @@ export default function WhyChooseUs({
                           className="text-primary group-hover:text-white transition-colors"
                         />
                       </div>
-                      <h3 className="mt-3 text-sm font-bold text-heading">{r.title}</h3>
+                      <h3 className="mt-3 small-text font-bold text-heading">{r.title}</h3>
                       <p className="mt-1.5 text-xs text-text leading-relaxed">{r.desc}</p>
                     </div>
                   </FadeIn>

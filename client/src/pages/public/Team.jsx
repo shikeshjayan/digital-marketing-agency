@@ -1,9 +1,9 @@
 import { useEffect, useMemo } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
 import HeroSplit from '../../components/public/HeroSplit.jsx'
 import FadeIn from '../../components/ui/FadeIn.jsx'
 import SectionHeading from '../../components/ui/SectionHeading.jsx'
 import FinalCTA from '../../components/public/FinalCTA.jsx'
+import { TeamCardSkeleton } from '../../components/ui/Skeleton.jsx'
 import useTeamStore from '../../store/teamStore.js'
 import resolveImagePath from '../../utils/resolveImagePath.js'
 
@@ -186,7 +186,7 @@ function TeamCard({ member }) {
         )}
 
         <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent px-5 pb-5 pt-16">
-          <h3 className="text-lg font-extrabold text-white leading-tight">
+          <h3 className="subheading text-white leading-tight">
             {member.name}
           </h3>
           <p className="mt-1 text-sm text-white/80 line-clamp-2">
@@ -217,8 +217,8 @@ function Departments() {
                   <div className="w-12 h-12 rounded-lg bg-primary-light flex items-center justify-center group-hover:bg-primary group-hover:text-white transition text-primary">
                     {dept.icon}
                   </div>
-                  <h3 className="mt-4 text-lg font-extrabold text-heading">{dept.name}</h3>
-                  <p className="mt-2 text-sm text-text leading-relaxed">{dept.description}</p>
+                  <h3 className="mt-4 subheading text-heading">{dept.name}</h3>
+                  <p className="mt-2 small-text text-text body-text">{dept.description}</p>
                 </div>
               </FadeIn>
             ))}
@@ -275,9 +275,9 @@ function OurCulture() {
                 <div className="bg-surface border border-border rounded-lg p-6 h-full hover:shadow-sm transition group">
                   <div className="flex items-center gap-3">
                     <div className="w-2.5 h-2.5 rounded-full bg-primary shrink-0" />
-                    <h3 className="text-lg font-extrabold text-heading">{item.title}</h3>
+                    <h3 className="subheading text-heading">{item.title}</h3>
                   </div>
-                  <p className="mt-3 text-sm text-text leading-relaxed pl-5">{item.description}</p>
+                  <p className="mt-3 small-text text-text body-text pl-5">{item.description}</p>
                 </div>
               </FadeIn>
             ))}
@@ -321,7 +321,7 @@ function Certifications() {
 /* ─── Page ────────────────────────────────────────────────── */
 
 export default function Team() {
-  const { team, fetchTeam } = useTeamStore()
+  const { team, loading, error, fetchTeam } = useTeamStore()
 
   useEffect(() => {
     fetchTeam()
@@ -354,20 +354,60 @@ export default function Team() {
           <div className="max-w-6xl mx-auto px-4">
             <div className="text-center mb-10">
               <div className="text-primary font-semibold text-sm">Our People</div>
-              <h2 className="mt-2 text-3xl md:text-4xl font-extrabold text-gray-900">
-                <span className="font-cursive text-primary pr-2">Leadership</span> Team
+              <h2 className="mt-2 section-heading text-heading">
+                <span className="font-headings text-primary pr-2">Leadership</span> Team
               </h2>
-              <p className="mt-3 text-gray-600 max-w-2xl mx-auto text-sm md:text-base">
+              <p className="mt-3 text-text max-w-2xl mx-auto small-text md:body-text">
                 The driving force behind our mission to deliver exceptional digital marketing results.
               </p>
             </div>
-            <div className="flex flex-wrap justify-center gap-6">
-              {sorted.map((m, i) => (
-                <FadeIn key={m._id || m.member_id} delay={i * 100}>
-                  <TeamCard member={m} />
-                </FadeIn>
-              ))}
-            </div>
+
+            {loading ? (
+              <div className="flex flex-wrap justify-center gap-6">
+                {[...Array(4)].map((_, i) => (
+                  <TeamCardSkeleton key={i} />
+                ))}
+              </div>
+            ) : error ? (
+              <div className="text-center py-10">
+                <div className="text-primary font-medium mb-4">{error}</div>
+                <button
+                  type="button"
+                  onClick={() => fetchTeam()}
+                  className="px-5 py-2.5 text-sm font-semibold text-white bg-primary rounded-lg hover:bg-primary-hover transition cursor-pointer">
+                  Retry
+                </button>
+              </div>
+            ) : sorted.length === 0 ? (
+              <div className="text-center py-10">
+                <svg
+                  className="w-16 h-16 mx-auto text-muted opacity-50"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24">
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={1.5}
+                    d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"
+                  />
+                </svg>
+                <div className="mt-4 text-lg font-semibold text-heading">
+                  No team members found
+                </div>
+                <div className="mt-2 text-sm text-text">
+                  Check back later for updates.
+                </div>
+              </div>
+            ) : (
+              <div className="flex flex-wrap justify-center gap-6">
+                {sorted.map((m, i) => (
+                  <FadeIn key={m._id || m.member_id} delay={i * 100}>
+                    <TeamCard member={m} />
+                  </FadeIn>
+                ))}
+              </div>
+            )}
           </div>
         </FadeIn>
       </section>
@@ -381,6 +421,7 @@ export default function Team() {
         description="We're always looking for talented people who are passionate about digital marketing. Explore open positions and grow with us."
         primaryLabel="Contact Us"
         secondaryLabel="View Services"
+        secondaryTo="/services"
       />
     </div>
   )

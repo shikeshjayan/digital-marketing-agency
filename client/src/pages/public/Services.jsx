@@ -10,7 +10,6 @@ import {
   faMicrochip,
   faConciergeBell,
   faStore,
-  faCheckCircle,
   faArrowRight,
 } from "@fortawesome/free-solid-svg-icons";
 import HeroSplit from "../../components/public/HeroSplit";
@@ -49,10 +48,10 @@ const ServiceCard = ({ service }) => (
       />
     </div>
     <div className="flex flex-col items-center text-center p-6 flex-1">
-      <h3 className="text-lg font-extrabold text-heading">
+      <h3 className="subheading text-heading">
         {service.service_name}
       </h3>
-      <p className="mt-3 text-sm text-text leading-relaxed line-clamp-3">
+      <p className="mt-3 small-text text-text body-text line-clamp-3">
         {service.short_description}
       </p>
       <span className="mt-auto pt-6 inline-flex items-center gap-2 text-sm font-semibold text-primary group-hover:gap-3 transition-all">
@@ -68,7 +67,7 @@ function Introduction() {
     <section className="py-16 md:py-20 bg-background">
       <div className="max-w-4xl mx-auto px-4 text-center">
         <FadeIn>
-          <p className="text-base md:text-lg text-text leading-relaxed">
+          <p className="body-text md:subheading text-text">
             We are a full-service digital marketing agency dedicated to helping businesses
             of all sizes grow their online presence and achieve measurable results. From
             custom web development and SEO to social media management and brand strategy,
@@ -115,7 +114,7 @@ function IndustriesWeServe() {
                     className="text-primary text-xl group-hover:text-white transition-colors"
                   />
                 </div>
-                <h3 className="mt-3 text-sm font-bold text-heading">{ind.name}</h3>
+                <h3 className="mt-3 small-text font-bold text-heading">{ind.name}</h3>
                 <p className="mt-1.5 text-xs text-text leading-relaxed">{ind.desc}</p>
               </div>
             </FadeIn>
@@ -172,15 +171,15 @@ function FeaturedCaseStudies() {
                     {cs.industry}
                   </span>
                 </div>
-                <h3 className="text-base font-bold text-heading">{cs.client}</h3>
+                <h3 className="body-text font-bold text-heading">{cs.client}</h3>
                 <div className="mt-3 space-y-2 flex-1">
                   <div>
                     <span className="text-xs font-semibold text-muted uppercase tracking-wider">Challenge</span>
-                    <p className="mt-0.5 text-sm text-text leading-relaxed">{cs.challenge}</p>
+                    <p className="mt-0.5 small-text text-text body-text">{cs.challenge}</p>
                   </div>
                   <div>
                     <span className="text-xs font-semibold text-muted uppercase tracking-wider">Solution</span>
-                    <p className="mt-0.5 text-sm text-text leading-relaxed">{cs.solution}</p>
+                    <p className="mt-0.5 small-text text-text body-text">{cs.solution}</p>
                   </div>
                   <div>
                     <span className="text-xs font-semibold text-primary uppercase tracking-wider">Result</span>

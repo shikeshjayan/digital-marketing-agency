@@ -19,11 +19,11 @@ export default function FileUploadField({
 
   return (
     <div className={className}>
-      <label className="text-sm font-semibold text-gray-800">
+      <label className="text-sm font-semibold text-heading">
         {label} {required && <span className="text-red-500">*</span>}
       </label>
       <div className="mt-2 relative w-full h-16">
-        <label className="flex flex-col items-center justify-center w-full h-16 border-2 border-dashed border-gray-300 rounded cursor-pointer hover:border-red-400 hover:bg-red-50 transition">
+        <label className="flex flex-col items-center justify-center w-full h-16 border-2 border-dashed border-border rounded cursor-pointer hover:border-primary hover:bg-primary-light transition">
           {displayUrl ? (
             <img
               src={displayUrl}
@@ -33,7 +33,7 @@ export default function FileUploadField({
           ) : (
             <>
               <svg
-                className="w-5 h-5 text-gray-400"
+                className="w-5 h-5 text-muted"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24">
@@ -44,7 +44,7 @@ export default function FileUploadField({
                   d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
                 />
               </svg>
-              <span className="text-sm text-gray-500 mt-1">
+              <span className="text-sm text-muted mt-1">
                 {file ? "Change Photo" : "Choose Photo"}
               </span>
             </>
@@ -72,10 +72,10 @@ export default function FileUploadField({
               e.stopPropagation();
               onRemove?.();
             }}
-            className="absolute top-1 right-1 p-1 bg-white/80 hover:bg-red-50 rounded-full shadow transition cursor-pointer"
+            className="absolute top-1 right-1 p-1 bg-background/80 hover:bg-primary-light rounded-full shadow transition cursor-pointer"
             title="Remove image">
             <svg
-              className="w-4 h-4 text-red-500 hover:text-red-700"
+              className="w-4 h-4 text-primary hover:text-primary-hover"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24">

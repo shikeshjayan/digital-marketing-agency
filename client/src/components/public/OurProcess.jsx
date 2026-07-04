@@ -93,12 +93,12 @@ export default function OurProcess({ steps = defaultSteps }) {
                             <div className="text-xs font-semibold text-primary uppercase tracking-wider">
                               Step {i + 1}
                             </div>
-                            <h3 className="text-lg font-extrabold text-heading">
+                            <h3 className="subheading text-heading">
                               {step.title}
                             </h3>
                           </div>
                         </div>
-                        <p className="mt-3 text-sm text-text leading-relaxed">
+                        <p className="mt-3 small-text text-text body-text">
                           {step.desc}
                         </p>
                       </div>

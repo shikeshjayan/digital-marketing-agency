@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faBullseye,
@@ -27,19 +26,15 @@ import { ProjectCardSkeleton } from "../../components/ui/Skeleton.jsx";
 import OurProcess from "../../components/public/OurProcess.jsx";
 import FinalCTA from "../../components/public/FinalCTA.jsx";
 import TestimonialsSection from "../../components/public/TestimonialsSection.jsx";
+import DetailModal from "../../components/ui/DetailModal.jsx";
 import resolveImagePath from "../../utils/resolveImagePath.js";
 
 const categories = ["All", "Static", "Dynamic", "Landing Pages"];
 
 /* ─── Project Card ────────────────────────────────────────── */
-const ProjectCard = ({ project }) => {
+const ProjectCard = ({ project, onDetail }) => {
   return (
-    <a
-      href={project.live_url}
-      target="_blank"
-      rel="noreferrer"
-      className="group block bg-background border border-border rounded-lg overflow-hidden hover:shadow-lg hover:border-primary transition-all duration-300 cursor-pointer">
-      {/* Large Project Image */}
+    <div className="group block bg-background border border-border rounded-lg overflow-hidden hover:shadow-lg hover:border-primary transition-all duration-300">
       <div className="relative overflow-hidden aspect-[16/10] w-full bg-surface">
         <img
           src={resolveImagePath(project.image)}
@@ -55,9 +50,8 @@ const ProjectCard = ({ project }) => {
         />
       </div>
 
-      {/* Card Content */}
       <div className="p-5">
-        <h3 className="text-lg font-extrabold text-heading group-hover:text-primary transition-colors duration-300 line-clamp-1">
+        <h3 className="subheading text-heading group-hover:text-primary transition-colors duration-300 line-clamp-1">
           {project.project_name}
         </h3>
 
@@ -76,16 +70,28 @@ const ProjectCard = ({ project }) => {
           </span>
         </div>
 
-        <p className="mt-3 text-sm text-text leading-relaxed line-clamp-2">
+        <p className="mt-3 small-text text-text body-text line-clamp-2">
           {project.short_description}
         </p>
 
-        <div className="mt-4 flex items-center gap-2 text-sm font-semibold text-primary group-hover:gap-3 transition-all duration-300">
-          <span>View Project</span>
-          <FontAwesomeIcon icon={faArrowRight} className="text-xs" />
+        <div className="mt-4 flex items-center gap-4 text-sm font-semibold">
+          <button
+            type="button"
+            onClick={() => onDetail(project)}
+            className="text-primary hover:text-primary-hover transition cursor-pointer">
+            Read more
+          </button>
+          <a
+            href={project.live_url}
+            target="_blank"
+            rel="noreferrer"
+            className="inline-flex items-center gap-2 text-primary hover:text-primary-hover hover:gap-3 transition-all duration-300">
+            <span>View Project</span>
+            <FontAwesomeIcon icon={faArrowRight} className="text-xs" />
+          </a>
         </div>
       </div>
-    </a>
+    </div>
   );
 };
 
@@ -99,12 +105,12 @@ function ProjectStatistics() {
   ];
 
   return (
-    <section className="py-12 md:py-16 bg-dark">
+    <section className="py-12 md:py-16 bg-secondary">
       <div className="max-w-6xl mx-auto px-4">
         <FadeIn>
           <div className="text-center text-white">
-            <div className="font-cursive text-4xl text-primary">Our</div>
-            <h2 className="mt-2 text-3xl md:text-4xl font-extrabold">
+            <h2 className="mt-2 section-heading">
+              <span className="font-headings text-4xl text-primary mr-4">Our</span>
               Track Record
             </h2>
             <p className="mt-3 text-gray-300 max-w-xl mx-auto text-sm md:text-base">
@@ -133,14 +139,13 @@ function ProjectStatistics() {
 }
 
 /* ─── Section: Featured Case Study ────────────────────────── */
-function FeaturedCaseStudy({ projects }) {
-  const navigate = useNavigate();
+function FeaturedCaseStudy({ projects, onDetail }) {
   const featured = projects.find((p) => p.status === "Active") || projects[0];
 
   if (!featured) return null;
 
   return (
-    <section className="py-12 md:py-16 bg-surface">
+    <section className="py-10 md:py-12 bg-surface">
       <div className="max-w-6xl mx-auto px-4">
         <FadeIn>
           <SectionHeading
@@ -151,9 +156,9 @@ function FeaturedCaseStudy({ projects }) {
         </FadeIn>
 
         <FadeIn delay={100}>
-          <div className="mt-10 bg-background border border-border rounded-lg overflow-hidden hover:shadow-lg transition-shadow duration-300">
+          <div className="mt-8 bg-background border border-border rounded-lg overflow-hidden hover:shadow-lg transition-shadow duration-300">
             <div className="grid grid-cols-1 lg:grid-cols-2">
-              <div className="relative overflow-hidden aspect-[16/10] lg:aspect-auto lg:min-h-[360px] bg-surface">
+              <div className="relative overflow-hidden aspect-[16/10] lg:aspect-auto lg:min-h-[260px] bg-surface">
                 <img
                   src={resolveImagePath(featured.image)}
                   alt={featured.project_name}
@@ -168,7 +173,7 @@ function FeaturedCaseStudy({ projects }) {
                 />
               </div>
 
-              <div className="p-8 lg:p-10 flex flex-col justify-center">
+              <div className="p-5 lg:p-6 flex flex-col justify-center">
                 <div className="flex items-center gap-2 text-xs">
                   <span className="inline-block px-2.5 py-0.5 rounded-full bg-primary-light text-primary font-semibold">
                     {featured.category}
@@ -183,24 +188,29 @@ function FeaturedCaseStudy({ projects }) {
                   </span>
                 </div>
 
-                <h3 className="mt-4 text-2xl md:text-3xl font-extrabold text-heading">
+                <h3 className="mt-3 subheading text-heading">
                   {featured.project_name}
                 </h3>
 
-                <p className="mt-4 text-text leading-relaxed text-sm md:text-base">
+                <p className="mt-2 text-text small-text line-clamp-3">
                   {featured.short_description}
                 </p>
+                {featured.short_description &&
+                  featured.short_description.length > 120 && (
+                    <button
+                      type="button"
+                      onClick={() => onDetail(featured)}
+                      className="mt-1 text-xs font-semibold text-primary hover:text-primary-hover transition cursor-pointer">
+                      Read more
+                    </button>
+                  )}
 
-                <p className="mt-3 text-sm text-muted leading-relaxed">
-                  {featured.description}
-                </p>
-
-                <div className="mt-6">
+                <div className="mt-4">
                   <a
                     href={featured.live_url}
                     target="_blank"
                     rel="noreferrer"
-                    className="inline-flex items-center gap-2 rounded-lg bg-primary text-white px-6 py-3 text-sm font-semibold hover:bg-primary-hover transition cursor-pointer">
+                    className="inline-flex items-center gap-2 rounded-lg bg-primary text-white px-5 py-2.5 text-sm font-semibold hover:bg-primary-hover transition cursor-pointer">
                     <span>View Live Project</span>
                     <FontAwesomeIcon icon={faArrowRight} className="text-xs" />
                   </a>
@@ -217,10 +227,30 @@ function FeaturedCaseStudy({ projects }) {
 /* ─── Section: Results & Analytics ────────────────────────── */
 function ResultsAnalytics() {
   const metrics = [
-    { icon: faChartLine, value: "3x", label: "Average ROI", desc: "Return on investment for our clients" },
-    { icon: faBullseye, value: "95%", label: "On-Time Delivery", desc: "Projects delivered within deadline" },
-    { icon: faGlobe, value: "10+", label: "Countries Served", desc: "Global client reach" },
-    { icon: faCheckCircle, value: "99%", label: "Uptime Guaranteed", desc: "Reliable hosted solutions" },
+    {
+      icon: faChartLine,
+      value: "3x",
+      label: "Average ROI",
+      desc: "Return on investment for our clients",
+    },
+    {
+      icon: faBullseye,
+      value: "95%",
+      label: "On-Time Delivery",
+      desc: "Projects delivered within deadline",
+    },
+    {
+      icon: faGlobe,
+      value: "10+",
+      label: "Countries Served",
+      desc: "Global client reach",
+    },
+    {
+      icon: faCheckCircle,
+      value: "99%",
+      label: "Uptime Guaranteed",
+      desc: "Reliable hosted solutions",
+    },
   ];
 
   return (
@@ -311,12 +341,10 @@ function IndustriesServed() {
 /* ─── Main Projects Page ──────────────────────────────────── */
 const Projects = () => {
   const [active, setActive] = useState("All");
+  const [detail, setDetail] = useState(null);
+  const handleDetail = (project) => setDetail(project);
   const { projects, loading, error, fetchProjects } = useProjectStore();
-  const {
-    reviews,
-    loading: reviewsLoading,
-    fetchReviews,
-  } = useReviewStore();
+  const { reviews, loading: reviewsLoading, fetchReviews } = useReviewStore();
 
   useEffect(() => {
     fetchProjects(active);
@@ -415,7 +443,7 @@ const Projects = () => {
             <div className="mt-10 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
               {projects.map((p, i) => (
                 <FadeIn key={p.project_id || p._id} delay={i * 100}>
-                  <ProjectCard project={p} />
+                  <ProjectCard project={p} onDetail={handleDetail} />
                 </FadeIn>
               ))}
             </div>
@@ -424,7 +452,7 @@ const Projects = () => {
       </section>
 
       {/* 4. Featured Case Study */}
-      <FeaturedCaseStudy projects={projects} />
+      <FeaturedCaseStudy projects={projects} onDetail={handleDetail} />
 
       {/* 5. Results & Analytics */}
       <ResultsAnalytics />
@@ -444,6 +472,31 @@ const Projects = () => {
         description="Let's bring your vision to life. Get in touch with us today for a free consultation and let's discuss how we can help you achieve your goals."
         primaryLabel="Start a Project"
         secondaryLabel="View Services"
+        secondaryTo="/services"
+      />
+
+      <DetailModal
+        open={!!detail}
+        onClose={() => setDetail(null)}
+        image={detail ? resolveImagePath(detail.image) : ""}
+        title={detail?.project_name || ""}
+        tags={
+          detail
+            ? [
+                { label: detail.category, variant: "primary" },
+                {
+                  label: detail.status,
+                  variant: detail.status === "Active" ? "success" : "default",
+                },
+              ]
+            : []
+        }
+        description={detail?.description || detail?.short_description || ""}
+        cta={
+          detail?.live_url
+            ? { label: "View Project", href: detail.live_url }
+            : null
+        }
       />
     </div>
   );

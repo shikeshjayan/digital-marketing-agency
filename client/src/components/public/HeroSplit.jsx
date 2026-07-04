@@ -7,8 +7,8 @@ export default function HeroSplit({
   subtitle,
   imageSrc,
   imageAlt = "Hero image",
-  gradientFrom = "from-gray-900",
-  gradientVia = "via-gray-800",
+  gradientFrom = "from-secondary",
+  gradientVia = "via-secondary",
   gradientTo = "to-black",
   primaryCTA,
   secondaryCTA,
@@ -56,8 +56,8 @@ export default function HeroSplit({
           </div>
 
           <div className="text-center lg:text-left">
-            <h1 className="text-4xl font-black leading-tight tracking-tight text-white md:text-5xl lg:text-6xl">
-              <span className="text-red-500">{titleHighlight}</span> {title}
+            <h1 className="hero-heading text-white">
+              <span className="text-primary">{titleHighlight}</span> {title}
             </h1>
 
             {subtitle && (

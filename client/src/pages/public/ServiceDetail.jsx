@@ -15,7 +15,7 @@ import resolveImagePath from "../../utils/resolveImagePath.js";
 function SectionHeading({ eyebrow, title }) {
   return (
     <div className="text-center mb-10">
-      <div className="font-cursive text-4xl text-primary">{eyebrow}</div>
+      <div className="font-headings text-4xl text-primary">{eyebrow}</div>
       <h2 className="mt-2 text-3xl font-extrabold text-heading">{title}</h2>
     </div>
   );
@@ -82,7 +82,7 @@ export default function ServiceDetail() {
   return (
     <div className="bg-background animate-page-fade">
       {/* Hero + Overview Section */}
-      <section className="bg-dark text-white relative overflow-hidden py-16">
+      <section className="bg-secondary text-white relative overflow-hidden py-16">
         <div className="absolute inset-0 pointer-events-none">
           <div className="absolute -top-10 -left-10 w-32 h-32 bg-white/10 rounded-lg rotate-12" />
           <div className="absolute bottom-10 right-16 w-20 h-20 bg-white/10 rounded-lg rotate-12" />
@@ -276,26 +276,26 @@ export default function ServiceDetail() {
                 <FadeIn key={client._id || i} delay={i * 60}>
                   <div className="flex flex-col bg-background border border-border rounded-lg px-6 py-6 transition-all duration-300 h-full">
                     <p className="text-gray-700 leading-relaxed text-sm flex-1 italic break-words">
-                      &ldquo;{client.quote}&rdquo;
+                      &ldquo;{client.quote || "No feedback provided."}&rdquo;
                     </p>
                     <div className="mt-6 flex items-center gap-3 pt-4 border-t border-border">
                       {client.avatar ? (
                         <img
                           src={resolveImagePath(client.avatar)}
-                          alt={client.name}
+                          alt={client.name || "Client"}
                           loading="lazy"
                           decoding="async"
                           className="h-10 w-10 rounded-full object-cover shrink-0"
                         />
                       ) : (
                         <div className="h-10 w-10 rounded-full bg-primary-light text-primary-hover flex items-center justify-center font-bold text-sm shrink-0 select-none">
-                          {client.name?.split(" ").map((n) => n[0]).join("").toUpperCase() || "?"}
+                          {client.name?.split(" ").map((n) => n[0]).join("").toUpperCase().slice(0, 2) || "?"}
                         </div>
                       )}
                       <div className="min-w-0 text-left flex-1">
-                        <div className="font-bold text-heading text-sm truncate">{client.name}</div>
+                        <div className="font-bold text-heading text-sm truncate">{client.name || "Anonymous"}</div>
                         <div className="text-xs text-muted truncate">
-                          {client.position}{client.company ? `, ${client.company}` : ""}
+                          {[client.position, client.company].filter(Boolean).join(", ") || "Valued Client"}
                         </div>
                       </div>
                     </div>

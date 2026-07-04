@@ -28,7 +28,7 @@ export default function LogoMarquee({
     <section className={`${bg} py-10`}>
       <div className="text-center py-6 px-6">
         <FadeIn>
-          <h2 className="font-bold text-heading text-3xl">{heading}</h2>
+          <h2 className="section-heading text-heading">{heading}</h2>
           {subheading && (
             <p className="mt-2 text-sm text-text">{subheading}</p>
           )}

@@ -12,7 +12,7 @@ export default function AdminListFooter({
         {itemsLength > 0 && (
           <button
             type="button"
-            className="text-sm font-semibold text-red-600 hover:text-red-500 transition cursor-pointer"
+            className="text-sm font-semibold text-primary hover:text-primary-hover transition cursor-pointer"
             onClick={onDeleteAll}>
             Delete All
           </button>

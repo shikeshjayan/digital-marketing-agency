@@ -40,14 +40,14 @@ export default function Footer() {
 
   // Social handles structural data mapping directly onto corresponding brand icons
   const socialMedias = [
-    { icon: faFacebookF, label: 'Facebook', url: 'https://facebook.com' },
-    { icon: faInstagram, label: 'Instagram', url: 'https://instagram.com' },
-    { icon: faLinkedinIn, label: 'LinkedIn', url: 'https://linkedin.com' },
-    { icon: faYoutube, label: 'YouTube', url: 'https://youtube.com' },
+    { icon: faFacebookF, label: 'Facebook', url: 'https://facebook.com/crawlcrown' },
+    { icon: faInstagram, label: 'Instagram', url: 'https://instagram.com/crawlcrown' },
+    { icon: faLinkedinIn, label: 'LinkedIn', url: 'https://linkedin.com/company/crawlcrown' },
+    { icon: faYoutube, label: 'YouTube', url: 'https://youtube.com/@crawlcrown' },
   ]
 
   return (
-    <footer className="bg-dark text-white mt-14 relative flex flex-col items-center">
+    <footer className="text-white mt-14 relative flex flex-col items-center" style={{ backgroundColor: "var(--color-footer)" }}>
       <div className="w-full max-w-7xl">
         <FadeIn>
           <div className="px-4 py-12">

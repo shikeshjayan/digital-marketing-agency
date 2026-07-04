@@ -7,8 +7,10 @@
   --color-primary-hover: #B91C1C;
   --color-primary-light: #FEE2E2;
 
+  --color-secondary: #0E1E42;
+
   /* Background */
-  --color-background: #FFFFFF;
+  --color-background: #FAFAFA;
   --color-surface: #F8FAFC;
   --color-border: #E5E7EB;
 
@@ -17,8 +19,8 @@
   --color-text: #4B5563;
   --color-muted: #6B7280;
 
-  /* Dark */
-  --color-dark: #0E1E42;
+  /* Footer */
+  --color-footer: #1A1A1A;
 
   /* Status */
   --color-success: #16A34A;
@@ -26,8 +28,47 @@
   --color-info: #2563EB;
 
   /* Typography */
-  --font-sans: "Poppins", sans-serif;
-  --font-cursive: "Great Vibes", cursive;
+  --font-headings: "Poppins", sans-serif;
+  --font-body: "Inter", sans-serif;
+
+  /* Font Sizes */
+  /* Hero Heading */
+  --font-size-hh: 3.5rem;
+  /* Section Heading */
+  --font-size-sh: 2.5rem;
+  /* Subheading */
+  --font-size-sb: 1.5rem;
+  /* Body Text */
+  --font-size-bt: 1.125rem;
+  /* Small Text */
+  --font-size-st: 1rem;
+  /* Button Text */
+  --font-size-b: 1rem;
+
+  /* Font Weights */
+  /* Hero Heading */
+  --font-weight-hh: 700;
+  /* Section Heading */
+  --font-weight-sh: 700;
+  /* Subheading */
+  --font-weight-sb: 600;
+  /* Body Text */
+  --font-weight-bt: 400;
+  /* Small Text */
+  --font-weight-st: 400;
+  /* Button Text */
+  --font-weight-b: 600;
+
+  /* Line Heights */
+  /* Heading */
+  --line-height-hh: 1.2;
+  /* Body Text */
+  --line-height-bt: 1.5;
+
+  /* Letter Spacing */
+  --letter-spacing-h: -0.02em;
+  --letter-spacing-b: 0;
+
 
   /* Border Radius */
   --radius-sm: 0.125rem;
@@ -36,14 +77,70 @@
   /* 3px – dropdowns       */
   --radius-lg: 0.25rem;
   /* 4px – cards           */
+  /* Button */
+  --radius-b: 0.5rem;
+  /* Input Field */
+  --radius-ip: 0.5rem;
+  /* Cards */
+  --radius-c: 0.75rem;
+  /* Image */
+  --radius-img: 1rem;
+  /* Small badges/tags */
+  --radius-sb: 9999px;
+  /* modals */
+  --radius-m: 1rem;
 }
 
 /* ─────────────────────────────────────────────────────────── */
 
+.hero-heading {
+  font-family: var(--font-headings);
+  font-size: var(--font-size-hh);
+  font-weight: var(--font-weight-hh);
+  line-height: var(--line-height-hh);
+  letter-spacing: var(--letter-spacing-h);
+}
+
+.section-heading {
+  font-family: var(--font-headings);
+  font-size: var(--font-size-sh);
+  font-weight: var(--font-weight-sh);
+  letter-spacing: var(--letter-spacing-h);
+}
+
+.subheading {
+  font-family: var(--font-headings);
+  font-size: var(--font-size-sb);
+  font-weight: var(--font-weight-sb);
+}
+
+.body-text {
+  font-size: var(--font-size-bt);
+  font-weight: var(--font-weight-bt);
+  line-height: var(--line-height-bt);
+}
+
+.small-text {
+  font-size: var(--font-size-st);
+  font-weight: var(--font-weight-st);
+}
+
+.button-text {
+  font-size: var(--font-size-b);
+  font-weight: var(--font-weight-b);
+}
+
+.radius-b { border-radius: var(--radius-b); }
+.radius-ip { border-radius: var(--radius-ip); }
+.radius-c { border-radius: var(--radius-c); }
+.radius-img { border-radius: var(--radius-img); }
+.radius-sb { border-radius: var(--radius-sb); }
+.radius-m { border-radius: var(--radius-m); }
+
 @layer base {
   body {
     @apply antialiased;
-    font-family: "Poppins", sans-serif;
+    font-family: var(--font-body);
   }
 }
 
@@ -67,26 +164,22 @@
   }
 }
 
-.font-cursive {
-  font-family: "Great Vibes", cursive;
-}
-
 textarea::-webkit-scrollbar {
   width: 6px;
 }
 
 textarea::-webkit-scrollbar-track {
-  background: #f1f1f1;
+  background: var(--color-surface);
   border-radius: 10px;
 }
 
 textarea::-webkit-scrollbar-thumb {
-  background: #dc2626;
+  background: var(--color-primary);
   border-radius: 10px;
 }
 
 textarea::-webkit-scrollbar-thumb:hover {
-  background: #ea580c;
+  background: var(--color-primary-hover);
 }
 
 @keyframes page-fade-in {

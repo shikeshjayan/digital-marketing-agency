@@ -68,6 +68,12 @@ async function processBuffer(buffer, originalname) {
 
 export const processImage = async (req, res, next) => {
   try {
+    // Handle upload.single() — file is on req.file (singular)
+    if (req.file) {
+      req.file.url = await processBuffer(req.file.buffer, req.file.originalname);
+    }
+
+    // Handle upload.fields() / upload.array() — files are on req.files (plural)
     if (req.files) {
       // Process main image
       if (req.files.image?.[0]) {

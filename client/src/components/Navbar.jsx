@@ -1,47 +1,30 @@
-import { useEffect, useMemo, useState } from "react";
-import { NavLink, Link, useLocation } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { NavLink, Link } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBars, faTimes } from "@fortawesome/free-solid-svg-icons";
 
 // Stores
 import useServiceStore from "../store/serviceStore.js";
-import { slugify } from "../utils/slugify.js";
 
 const navItems = [
   { to: "/", label: "Home" },
   { to: "/about", label: "About Us" },
-  { to: "/services", label: "Our Services", dropdown: true },
+  { to: "/services", label: "Our Services" },
   { to: "/projects", label: "Our Projects" },
   { to: "/team", label: "Our Team" },
   { to: "/testimonials", label: "Testimonials" },
 ];
 
 export default function Navbar() {
-  const location = useLocation();
   const [mobileOpen, setMobileOpen] = useState(false);
-  const [servicesOpen, setServicesOpen] = useState(false);
 
   // Connect directly to backend dynamic state layers
-  const { services, fetchServices } = useServiceStore();
+  const { fetchServices } = useServiceStore();
 
   // Trigger automated repository fetches when header initializes
   useEffect(() => {
     fetchServices();
   }, [fetchServices]);
-
-  // Compute live services dropdown links—strictly showing database contents
-  const dynamicServiceLinks = useMemo(() => {
-    const activeServices = (services ?? []).filter((s) => s.status === "Active");
-    return activeServices.map((s) => ({
-      label: s.service_name,
-      to: `/services/${slugify(s.service_name)}`,
-    }));
-  }, [services]);
-
-  const isActive = useMemo(() => {
-    if (location.pathname.startsWith("/services")) return "services";
-    return null;
-  }, [location.pathname]);
 
   return (
     <header className="sticky top-0 z-50 bg-background/90 backdrop-blur border-b border-border">
@@ -57,62 +40,18 @@ export default function Navbar() {
           </Link>
 
           <nav className="hidden md:flex items-center gap-2">
-            {navItems.map((item) => {
-              if (item.dropdown && item.label === "Our Services") {
-                const active = isActive === "services";
-                return (
-                  <div
-                    key={item.label}
-                    className="relative"
-                    onMouseEnter={() => setServicesOpen(true)}
-                    onMouseLeave={() => setServicesOpen(false)}>
-                    <NavLink
-                      to="/services"
-                      className={`px-3 py-2 rounded-lg text-sm font-medium transition cursor-pointer ${
-                        active ? "text-primary" : "text-text hover:text-primary"
-                      }`}>
-                      Our Services
-                    </NavLink>
-                    {servicesOpen && (
-                      <div className="absolute left-0 top-full pt-2 w-64">
-                        <div className="bg-background border border-border rounded-lg p-2 max-h-80 overflow-y-auto">
-                          <NavLink
-                            to="/services"
-                            className="block px-3 py-2 rounded-lg text-sm font-semibold hover:text-primary border-b border-border mb-1 cursor-pointer">
-                            All Services
-                          </NavLink>
-                          {dynamicServiceLinks.length > 0 ? (
-                            dynamicServiceLinks.map((service, index) => (
-                              <NavLink
-                                key={`${service.to}-${index}`}
-                                to={service.to}
-                                className="block px-3 py-2 rounded-lg text-sm text-text hover:text-primary cursor-pointer">
-                                {service.label}
-                              </NavLink>
-                            ))
-                          ) : (
-                            <div className="px-3 py-2 text-xs text-gray-400 italic">No active services</div>
-                          )}
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                );
-              }
-
-              return (
-                <NavLink
-                  key={item.to}
-                  to={item.to}
-                  className={({ isActive: active }) =>
-                    `px-3 py-2 rounded-lg text-sm font-medium transition cursor-pointer ${
-                      active ? "text-primary" : "text-text hover:text-primary"
-                    }`
-                  }>
-                  {item.label}
-                </NavLink>
-              );
-            })}
+            {navItems.map((item) => (
+              <NavLink
+                key={item.to}
+                to={item.to}
+                className={({ isActive: active }) =>
+                  `px-3 py-2 rounded-lg text-sm font-medium transition cursor-pointer ${
+                    active ? "text-primary" : "text-text hover:text-primary"
+                  }`
+                }>
+                {item.label}
+              </NavLink>
+            ))}
           </nav>
 
           <div className="hidden lg:flex items-center gap-3">

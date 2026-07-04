@@ -80,7 +80,8 @@ function HeroCarousel() {
 
       <div className="relative mx-auto max-w-7xl px-6 py-16 md:py-20 lg:py-24">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-center">
-          <div className={`relative transition-all duration-700 ease-out ${loaded ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"}`}>
+          <div
+            className={`relative transition-all duration-700 ease-out ${loaded ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"}`}>
             <img
               src="/homepage.webp"
               alt="Digital Marketing Agency Hero"
@@ -88,7 +89,7 @@ function HeroCarousel() {
               height="380"
               loading="eager"
               decoding="async"
-              fetchpriority="high"
+              fetchPriority="high"
               onLoad={() => setLoaded(true)}
               className="w-full h-[280px] md:h-[340px] lg:h-[380px] rounded-3xl object-cover"
             />
@@ -99,7 +100,7 @@ function HeroCarousel() {
               <div className="text-sm font-bold tracking-widest uppercase inline-block px-3 py-1 rounded">
                 DIGITAL MARKETING AGENCY
               </div>
-              <h2 className="mt-3 text-3xl md:text-4xl font-extrabold leading-tight">
+              <h2 className="mt-3 hero-heading text-white">
                 {slides[index].subheading}
               </h2>
               <p className="mt-4 text-white/90 leading-relaxed max-w-prose">
@@ -215,23 +216,23 @@ function ServicesCarousel({ services }) {
                 <div className="flex items-stretch gap-6">
                   <div className="hidden md:flex items-center justify-center">
                     <div className="w-24 h-24 rounded-lg flex items-center justify-center">
-                      <div className="text-8xl font-extrabold text-muted select-none" aria-hidden="true">
+                      <div
+                        className="text-8xl font-extrabold text-muted select-none"
+                        aria-hidden="true">
                         {index + 1}
                       </div>
                     </div>
                   </div>
 
                   <div className="flex-1 text-center md:text-left">
-                    <div className="text-sm text-muted">
-                      Featured Service
-                    </div>
-                    <h3 className="mt-2 text-2xl font-extrabold text-heading">
+                    <div className="text-sm text-muted">Featured Service</div>
+                    <h3 className="mt-2 section-heading text-heading">
                       {current.service_name.split(" ").slice(0, 2).join(" ")}{" "}
                       <span className="text-primary-hover">
                         {current.service_name.split(" ").slice(2).join(" ")}
                       </span>
                     </h3>
-                    <p className="mt-3 text-text leading-relaxed max-w-xl line-clamp-3 mx-auto md:mx-0">
+                    <p className="mt-3 text-text body-text max-w-xl line-clamp-3 mx-auto md:mx-0">
                       {current.description}
                     </p>
                     <div className="mt-6 flex items-center justify-center md:justify-start gap-3">
@@ -296,7 +297,9 @@ function ServicesCarousel({ services }) {
                 key={s._id}
                 type="button"
                 className={`w-2.5 h-2.5 rounded-full transition cursor-pointer ${
-                  i === index ? "bg-primary" : "bg-primary-light hover:bg-primary-hover"
+                  i === index
+                    ? "bg-primary"
+                    : "bg-primary-light hover:bg-primary-hover"
                 }`}
                 onClick={() => go(i)}
                 aria-label={`Go to service ${i + 1}`}
@@ -321,12 +324,12 @@ const techItems = [
 
 function TechnologyStack() {
   return (
-    <section className="bg-dark py-14">
+    <section className="bg-secondary py-14">
       <div className="max-w-6xl mx-auto px-4">
         <FadeIn>
           <div className="text-center text-white">
-            <div className="font-cursive text-4xl text-primary">Our</div>
-            <h2 className="mt-2 text-4xl font-extrabold">Technology Stack</h2>
+            <div className="font-headings text-4xl text-primary">Our</div>
+            <h2 className="mt-2 section-heading">Technology Stack</h2>
           </div>
         </FadeIn>
 
@@ -335,7 +338,9 @@ function TechnologyStack() {
             <FadeIn key={it.name} delay={i * 80}>
               <div className="w-28 h-28 flex flex-col items-center justify-center text-white  rounded-lg hover:text-primary hover:scale-110 transition-all duration-300 cursor-default shadow-lg">
                 <div className="text-2xl font-extrabold">{it.code}</div>
-                <div className="mt-1 text-xs text-white/90 text-center max-w-20 truncate" title={it.name}>
+                <div
+                  className="mt-1 text-xs text-white/90 text-center max-w-20 truncate"
+                  title={it.name}>
                   {it.name}
                 </div>
               </div>
@@ -361,10 +366,10 @@ function StatsSection() {
                     Innovation meets execution
                   </span>
                 </div>
-                <h3 className="mt-4 text-3xl font-extrabold text-heading">
+                <h3 className="mt-4 section-heading text-heading">
                   Why teams trust us
                 </h3>
-                <p className="mt-3 text-text leading-relaxed">
+                <p className="mt-3 text-text body-text">
                   We combine design, engineering, and marketing strategy to
                   deliver websites and campaigns that perform.
                 </p>
@@ -436,11 +441,11 @@ export default function Home() {
       <LogoMarquee />
 
       {/* Team teaser */}
-      <section className="bg-dark py-16 text-white">
+      <section className="bg-secondary py-16 text-white">
         <FadeIn>
           <div className="max-w-6xl mx-auto px-4 text-center">
-            <div className="text-4xl md:text-5xl font-extrabold">
-              <span className="font-cursive text-primary pr-2">Meet</span> Our
+            <div className="section-heading">
+              <span className="font-headings text-primary pr-2">Meet</span> Our
               Team
             </div>
             <p className="mt-4 text-gray-300 max-w-2xl mx-auto leading-relaxed">

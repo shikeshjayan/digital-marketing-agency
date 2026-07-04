@@ -1,9 +1,9 @@
 export default function AdminPageHeader({ title, subtitle }) {
   return (
     <div>
-      <h2 className="text-xl font-extrabold text-gray-900">{title}</h2>
+      <h2 className="subheading text-heading">{title}</h2>
       {subtitle && (
-        <p className="mt-1 text-sm text-gray-600">{subtitle}</p>
+        <p className="mt-1 small-text text-text">{subtitle}</p>
       )}
     </div>
   );

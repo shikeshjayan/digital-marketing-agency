@@ -15,11 +15,11 @@ export default function FinalCTA({
   const navigate = useNavigate();
 
   return (
-    <section className="bg-dark py-16 md:py-20">
+    <section className="bg-secondary py-16 md:py-20">
       <FadeIn>
         <div className="max-w-4xl mx-auto px-4 text-center text-white">
-          <h2 className="text-3xl md:text-4xl font-extrabold">{title}</h2>
-          <p className="mt-4 text-gray-300 max-w-2xl mx-auto leading-relaxed">
+          <h2 className="section-heading text-white">{title}</h2>
+          <p className="mt-4 text-gray-300 max-w-2xl mx-auto body-text">
             {description}
           </p>
           <div className="mt-8 flex flex-wrap items-center justify-center gap-4">
@@ -39,25 +39,16 @@ export default function FinalCTA({
             </button>
             {showWhatsApp && (
               <a
-                href="https://wa.me/1234567890"
+                href="https://wa.me/918891212323"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-flex items-center gap-2 rounded-lg bg-green-600 text-white px-6 py-3 text-sm font-semibold hover:bg-green-700 transition">
-                <FontAwesomeIcon icon={faPhone} />
+                <FontAwesomeIcon icon={faComments} />
                 WhatsApp Us
               </a>
             )}
           </div>
-          <div className="mt-6 flex items-center justify-center gap-6 text-sm text-gray-400">
-            <span className="flex items-center gap-1.5">
-              <FontAwesomeIcon icon={faEnvelope} className="text-primary" />
-              info@agency.com
-            </span>
-            <span className="flex items-center gap-1.5">
-              <FontAwesomeIcon icon={faPhone} className="text-primary" />
-              +1 (555) 123-4567
-            </span>
-          </div>
+
         </div>
       </FadeIn>
     </section>

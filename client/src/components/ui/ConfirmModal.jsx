@@ -11,9 +11,9 @@ export default function ConfirmModal({
       <div className="absolute inset-0 bg-black/50" onClick={onCancel} />
       <div className="relative bg-white rounded-lg shadow-xl w-full max-w-sm p-6">
         <div className="flex flex-col items-center text-center">
-          <div className="w-12 h-12 rounded-full bg-red-100 flex items-center justify-center mb-4">
+          <div className="w-12 h-12 rounded-full bg-primary-light flex items-center justify-center mb-4">
             <svg
-              className="w-6 h-6 text-red-600"
+              className="w-6 h-6 text-primary"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24">
@@ -34,7 +34,7 @@ export default function ConfirmModal({
             </button>
             <button
               onClick={onConfirm}
-              className="flex-1 rounded-lg bg-red-600 py-2.5 text-sm font-semibold text-white hover:bg-red-500 transition cursor-pointer">
+              className="flex-1 rounded-lg bg-primary py-2.5 text-sm font-semibold text-white hover:bg-primary-hover transition cursor-pointer">
               Confirm
             </button>
           </div>

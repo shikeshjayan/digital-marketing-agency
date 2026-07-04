@@ -33,7 +33,7 @@ export default function FAQSection({
                 aria-controls={`faq-panel-${i}`}
                 className="w-full flex items-center justify-between px-6 py-4 text-left cursor-pointer hover:bg-surface transition"
                 onClick={() => toggle(i)}>
-                <span className="font-semibold text-heading text-sm md:text-base pr-4">
+                <span className="font-semibold text-heading small-text md:body-text pr-4">
                   {item.q}
                 </span>
                 <FontAwesomeIcon
@@ -43,7 +43,7 @@ export default function FAQSection({
               </button>
               {activeIndex === i && (
                 <div id={`faq-panel-${i}`} role="region" className="px-6 pb-4">
-                  <p className="text-sm text-text leading-relaxed">{item.a}</p>
+                  <p className="small-text text-text body-text">{item.a}</p>
                 </div>
               )}
             </div>

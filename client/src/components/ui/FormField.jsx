@@ -1,7 +1,7 @@
 import Select from "./Select.jsx";
 
 const inputCls =
-  "mt-2 w-full rounded border border-gray-200 bg-gray-50 px-4 py-2 text-sm text-gray-800 outline-none transition focus:border-red-400 focus:bg-white focus:ring-2 focus:ring-red-100 placeholder:text-gray-400";
+  "mt-2 w-full rounded border border-border bg-surface px-4 py-2 text-sm text-heading outline-none transition focus:border-primary focus:bg-background focus:ring-2 focus:ring-primary-light placeholder:text-muted";
 
 export default function FormField({
   label,
@@ -18,7 +18,7 @@ export default function FormField({
 }) {
   return (
     <div className={className}>
-      <label className="text-sm font-semibold text-gray-800">
+      <label className="text-sm font-semibold text-heading">
         {label} {required && <span className="text-red-500">*</span>}
       </label>
       {selectOptions ? (

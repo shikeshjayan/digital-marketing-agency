@@ -1,7 +1,7 @@
 export default function ErrorBanner({ message, className = "" }) {
   if (!message) return null;
   return (
-    <div className={`flex items-center gap-2 text-sm text-red-600 bg-red-50 rounded px-4 py-2 ${className}`}>
+    <div className={`flex items-center gap-2 text-sm text-primary bg-primary-light rounded px-4 py-2 ${className}`}>
       <svg
         className="w-4 h-4 shrink-0"
         fill="none"

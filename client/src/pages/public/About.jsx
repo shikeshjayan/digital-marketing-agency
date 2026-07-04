@@ -9,7 +9,6 @@ import {
   faChartLine,
   faUsers,
   faRocket,
-  faCheckCircle,
   faLightbulb,
 } from "@fortawesome/free-solid-svg-icons";
 import HeroSplit from "../../components/public/HeroSplit.jsx";
@@ -128,10 +127,10 @@ function MissionVision() {
                   className="text-2xl text-primary"
                 />
               </div>
-              <h3 className="mt-6 text-xl font-extrabold text-heading">
+              <h3 className="mt-6 subheading text-heading">
                 Our Mission
               </h3>
-              <p className="mt-3 text-sm text-text leading-relaxed">
+              <p className="mt-3 small-text text-text body-text">
                 To empower businesses of all sizes with innovative digital
                 solutions that drive growth, enhance brand visibility, and
                 create meaningful connections with their audiences. We are
@@ -149,10 +148,10 @@ function MissionVision() {
                   className="text-2xl text-primary"
                 />
               </div>
-              <h3 className="mt-6 text-xl font-extrabold text-heading">
+              <h3 className="mt-6 subheading text-heading">
                 Our Vision
               </h3>
-              <p className="mt-3 text-sm text-text leading-relaxed">
+              <p className="mt-3 small-text text-text body-text">
                 To be the most trusted digital partner for businesses worldwide,
                 recognized for our commitment to quality, innovation, and
                 measurable results. We envision a future where every brand has
@@ -212,10 +211,10 @@ function OurValues() {
                     className="text-xl text-primary group-hover:text-white transition"
                   />
                 </div>
-                <h3 className="mt-4 text-lg font-extrabold text-heading">
+                <h3 className="mt-4 subheading text-heading">
                   {v.title}
                 </h3>
-                <p className="mt-2 text-sm text-text leading-relaxed">
+                <p className="mt-2 small-text text-text body-text">
                   {v.desc}
                 </p>
               </div>
@@ -232,11 +231,11 @@ function MeetOurTeam() {
   const navigate = useNavigate();
 
   return (
-    <section className="bg-dark py-16 text-white">
+    <section className="bg-secondary py-16 text-white">
       <FadeIn>
         <div className="max-w-6xl mx-auto px-4 text-center">
           <div className="text-4xl md:text-5xl font-extrabold">
-            <span className="font-cursive text-primary pr-2">Meet</span> Our
+            <span className="font-headings text-primary pr-2">Meet</span> Our
             Team
           </div>
           <p className="mt-4 text-gray-300 max-w-2xl mx-auto leading-relaxed">
@@ -288,12 +287,12 @@ export default function About() {
         <div className="max-w-6xl mx-auto px-4 space-y-12 md:space-y-16">
           <FadeIn>
             <div className="p-4 md:p-10 text-center select-none">
-              <h2 className="text-3xl md:text-4xl font-extrabold text-gray-900 tracking-tight">
+              <h2 className="section-heading text-heading tracking-tight">
                 Hello, <span className="text-primary">Welcome</span> to Digital
                 Marketing
               </h2>
               <div className="mt-4 text-sm text-gray-700 leading-relaxed max-w-3xl mx-auto text-justify md:text-center space-y-3">
-                <p className="text-sm text-text leading-relaxed">
+                <p className="small-text text-text body-text">
                   We help brands navigate and scale modern digital landscapes by
                   executing high-performance web engineering alongside robust
                   marketing strategy. Our engineering principles cut out
@@ -302,7 +301,7 @@ export default function About() {
                   customer pipelines, building platforms with structural
                   cleanliness, and monitoring active engagement behaviors.
                 </p>
-                <p className="text-sm text-text leading-relaxed">
+                <p className="small-text text-text body-text">
                   By linking functional data capture analytics directly with
                   human-centric interfaces, we transform your digital channels
                   from static online bookmarks into high-velocity engines that

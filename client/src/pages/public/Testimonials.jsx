@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPhone, faEnvelope } from "@fortawesome/free-solid-svg-icons";
@@ -9,6 +8,7 @@ import AnimatedCounter from "../../components/ui/AnimatedCounter.jsx";
 import { TestimonialCardSkeleton } from "../../components/ui/Skeleton.jsx";
 import LogoMarquee from "../../components/public/LogoMarquee.jsx";
 import FinalCTA from "../../components/public/FinalCTA.jsx";
+import DetailModal from "../../components/ui/DetailModal.jsx";
 import apiService from "../../services/apiService.js";
 import { Link } from "react-router-dom";
 
@@ -55,10 +55,10 @@ function TrustStatistics() {
                     Innovation meets execution
                   </span>
                 </div>
-                <h3 className="mt-4 text-3xl font-extrabold text-heading">
+                <h3 className="mt-4 section-heading text-heading">
                   Why teams trust us
                 </h3>
-                <p className="mt-3 text-text leading-relaxed">
+                <p className="mt-3 text-text body-text">
                   We combine design, engineering, and marketing strategy to
                   deliver websites and campaigns that perform.
                 </p>
@@ -105,6 +105,7 @@ export default function Testimonials() {
   })
   const [formError, setFormError] = useState('')
   const [success, setSuccess] = useState('')
+  const [detail, setDetail] = useState(null)
 
   useEffect(() => {
     setLoading(true)
@@ -169,7 +170,7 @@ export default function Testimonials() {
             
             {/* Sidebar Branding Meta Banner Block */}
             <FadeIn direction="left">
-              <div className="bg-dark text-white rounded-lg p-8 relative overflow-hidden">
+              <div className="bg-secondary text-white rounded-lg p-8 relative overflow-hidden">
                 <div className="absolute inset-0 pointer-events-none">
                   <div className="absolute -top-10 -left-10 w-32 h-32 bg-white/5 rounded-lg rotate-12" />
                 </div>
@@ -185,7 +186,7 @@ export default function Testimonials() {
 
                 <div className="mt-6 space-y-2 text-sm text-gray-200 border-t border-white/10 pt-6">
                   <div className="flex items-center gap-3">
-                    <span className="w-10 h-8 rounded-lg bg-dark/10 flex items-center justify-center text-xs text-gray-300">
+                    <span className="w-10 h-8 rounded-lg bg-secondary/10 flex items-center justify-center text-xs text-gray-300">
                       <FontAwesomeIcon icon={faPhone} />
                     </span>
                     <a href="tel:+91 8891212323" className="text-gray-200 hover:text-primary transition-colors">
@@ -193,7 +194,7 @@ export default function Testimonials() {
                     </a>
                   </div>
                   <div className="flex items-center gap-3">
-                    <span className="w-10 h-8 rounded-lg bg-dark/10 flex items-center justify-center text-xs text-gray-300">
+                    <span className="w-10 h-8 rounded-lg bg-secondary/10 flex items-center justify-center text-xs text-gray-300">
                       <FontAwesomeIcon icon={faEnvelope} />
                     </span>
                     <a href="mailto:crowlcrown@gmail.com" className="text-gray-200 hover:text-primary transition-colors">
@@ -201,7 +202,7 @@ export default function Testimonials() {
                     </a>
                   </div>
                   <div className="flex items-center gap-3">
-                    <span className="w-10 h-8 rounded-lg bg-dark/10 flex items-center justify-center text-xs text-gray-300">
+                    <span className="w-10 h-8 rounded-lg bg-secondary/10 flex items-center justify-center text-xs text-gray-300">
                     <FontAwesomeIcon icon={faEnvelope} />
                     </span>
                     <a href="https://www.google.com/maps/search/Ernakulam+Kochi+Kerala+India" target="_blank" rel="noopener noreferrer" className="text-gray-200 hover:text-primary transition-colors">
@@ -218,7 +219,7 @@ export default function Testimonials() {
                 <div className="flex items-start justify-between gap-4 border-b border-border pb-4">
                   <div>
                     <div className="text-xs font-bold tracking-wider uppercase text-primary">SHARE YOUR EXPERIENCE!</div>
-                    <div className="mt-1 text-2xl font-extrabold text-heading">Send Review</div>
+                    <div className="mt-1 section-heading text-heading">Send Review</div>
                   </div>
                 </div>
 
@@ -279,8 +280,8 @@ export default function Testimonials() {
           <div className="mt-14 pt-6 border-t border-border">
             <FadeIn>
               <div className="text-center">
-                <div className="font-cursive text-4xl text-primary">Approved Reviews</div>
-                <div className="mt-2 text-3xl font-extrabold text-heading">What learners say</div>
+                <div className="font-headings text-sm text-primary">Approved Reviews</div>
+                <div className="mt-2 section-heading text-heading">What learners say</div>
               </div>
             </FadeIn>
 
@@ -330,9 +331,18 @@ export default function Testimonials() {
                         ))}
                       </div>
                       
-                      <p className="mt-4 text-text text-sm leading-relaxed break-words w-full italic">
+                      <p className="mt-4 text-text small-text body-text break-words w-full italic line-clamp-3">
                         &ldquo;{r.review_text}&rdquo;
                       </p>
+
+                      {r.review_text && r.review_text.length > 100 && (
+                        <button
+                          type="button"
+                          onClick={() => setDetail(r)}
+                          className="mt-2 text-xs font-semibold text-primary hover:text-primary-hover transition cursor-pointer self-start">
+                          Read more
+                        </button>
+                      )}
                     </div>
                   </FadeIn>
                 ))
@@ -351,6 +361,21 @@ export default function Testimonials() {
       <LogoMarquee />
 
       <FinalCTA />
+
+      <DetailModal
+        open={!!detail}
+        onClose={() => setDetail(null)}
+        title={detail?.name || ""}
+        tags={
+          detail
+            ? [
+                detail.location && { label: detail.location, variant: "default" },
+              ].filter(Boolean)
+            : []
+        }
+        rating={detail?.rating}
+        description={detail?.review_text || ""}
+      />
     </div>
   )
 }

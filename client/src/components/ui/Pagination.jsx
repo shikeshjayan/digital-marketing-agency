@@ -58,7 +58,7 @@ const Pagination = memo(function Pagination({ page, pages, onPageChange }) {
             onClick={() => onPageChange(num)}
             className={`inline-flex items-center justify-center w-9 h-9 rounded-lg text-sm font-medium transition cursor-pointer ${
               num === page
-                ? "bg-red-600 text-white shadow-sm"
+                ? "bg-primary text-white shadow-sm"
                 : "text-gray-600 hover:bg-gray-100"
             }`}
             aria-current={num === page ? "page" : undefined}
