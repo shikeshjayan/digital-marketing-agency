@@ -1,5 +1,12 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCheckCircle } from "@fortawesome/free-solid-svg-icons";
+import {
+  faUsers,
+  faComments,
+  faChartLine,
+  faHeadset,
+  faClock,
+  faHandshake,
+} from "@fortawesome/free-solid-svg-icons";
 import FadeIn from "../ui/FadeIn.jsx";
 import SectionHeading from "../ui/SectionHeading.jsx";
 
@@ -11,12 +18,36 @@ const defaultStats = [
 ];
 
 const defaultReasons = [
-  "Custom strategies tailored to your unique business goals",
-  "Transparent communication and dedicated project management",
-  "Data-driven approach with measurable KPIs and reporting",
-  "End-to-end solutions from design to deployment and marketing",
-  "Agile development process with fast turnaround times",
-  "Long-term partnership focus with ongoing support",
+  {
+    icon: faUsers,
+    title: "Experienced Team",
+    desc: "Seasoned professionals with deep expertise across industries and technologies.",
+  },
+  {
+    icon: faComments,
+    title: "Transparent Communication",
+    desc: "Clear, consistent updates at every stage so you're never left guessing.",
+  },
+  {
+    icon: faChartLine,
+    title: "ROI-Focused Strategies",
+    desc: "Data-driven decisions designed to maximize your return on investment.",
+  },
+  {
+    icon: faHeadset,
+    title: "Dedicated Support",
+    desc: "A dedicated account manager ensures your needs are always prioritized.",
+  },
+  {
+    icon: faClock,
+    title: "On-Time Delivery",
+    desc: "We respect deadlines and deliver quality work within the agreed timeline.",
+  },
+  {
+    icon: faHandshake,
+    title: "Long-Term Partnership",
+    desc: "We build lasting relationships focused on your sustained growth and success.",
+  },
 ];
 
 export default function WhyChooseUs({
@@ -24,10 +55,36 @@ export default function WhyChooseUs({
   reasons = defaultReasons,
 }) {
   return (
-    <section className="py-12 md:py-16 bg-surface">
+    <section className="py-16 md:py-20 bg-surface">
       <div className="max-w-6xl mx-auto px-4">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-10 md:gap-16 items-center">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-10 md:gap-16 items-start">
           <FadeIn direction="left">
+            <div>
+              <SectionHeading
+                eyebrow="Our Edge"
+                title="Why Choose Us"
+                subtitle="We combine expertise, transparency, and a results-driven approach to help your business thrive."
+              />
+              <div className="mt-8 grid grid-cols-1 sm:grid-cols-2 gap-4">
+                {reasons.map((r, i) => (
+                  <FadeIn key={i} delay={i * 80} direction="up">
+                    <div className="bg-background border border-border rounded-lg p-5 hover:shadow-md hover:-translate-y-0.5 transition-all duration-300 group">
+                      <div className="w-10 h-10 rounded-lg bg-primary-light flex items-center justify-center shrink-0 group-hover:bg-primary transition-colors">
+                        <FontAwesomeIcon
+                          icon={r.icon}
+                          className="text-primary group-hover:text-white transition-colors"
+                        />
+                      </div>
+                      <h3 className="mt-3 text-sm font-bold text-heading">{r.title}</h3>
+                      <p className="mt-1.5 text-xs text-text leading-relaxed">{r.desc}</p>
+                    </div>
+                  </FadeIn>
+                ))}
+              </div>
+            </div>
+          </FadeIn>
+
+          <FadeIn direction="right">
             <div className="bg-background border border-border rounded-lg p-8">
               <div className="grid grid-cols-2 gap-4">
                 {stats.map((stat) => (
@@ -36,29 +93,6 @@ export default function WhyChooseUs({
                       {stat.value}
                     </div>
                     <div className="mt-1 text-xs text-muted">{stat.label}</div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </FadeIn>
-
-          <FadeIn direction="right">
-            <div>
-              <SectionHeading
-                eyebrow="Our Edge"
-                title="Why Choose Us"
-                subtitle=""
-              />
-              <div className="mt-4 space-y-3">
-                {reasons.map((r, i) => (
-                  <div key={i} className="flex items-start gap-3">
-                    <FontAwesomeIcon
-                      icon={faCheckCircle}
-                      className="text-primary mt-0.5 shrink-0"
-                    />
-                    <span className="text-sm text-text leading-relaxed">
-                      {r}
-                    </span>
                   </div>
                 ))}
               </div>

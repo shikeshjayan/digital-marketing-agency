@@ -150,12 +150,20 @@ export default function Contact() {
     <div>
       <HeroSplit
         title="Contact Us"
-        titleHighlight=" "
-        subtitle="Get in touch and let's plan your next growth step."
-        leftColor="bg-gray-900"
+        titleHighlight="Let's"
+        subtitle="Ready to grow your business? Get in touch with us today for a free consultation and let's discuss how we can help you achieve your goals."
+        primaryCTA={{ label: "Get a Free Quote", to: "#contact-form" }}
+        secondaryCTA={{ label: "Call Us Now", to: "tel:+918891212323" }}
+        imageSrc="/contact.webp"
+        imageAlt="Contact Us"
+        trustIndicators={[
+          { value: "24/7", label: "Support\nAvailable" },
+          { value: "Free", label: "Consultation" },
+          { value: "24h", label: "Response\nTime" },
+        ]}
       />
 
-      <section className="py-12 bg-gray-50">
+      <section id="contact-form" className="py-12 bg-gray-50">
         <div className="max-w-6xl mx-auto px-4">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <FadeIn delay={0}>
@@ -205,7 +213,9 @@ export default function Contact() {
                       <span className="w-10 h-8 rounded-lg bg-dark/10 flex items-center justify-center text-xs text-gray-300">
                         <FontAwesomeIcon icon={faEnvelope} />
                       </span>
-                      <a href="mailto:crowlcrown@gmail.com" className="text-gray-200">
+                      <a
+                        href="mailto:crowlcrown@gmail.com"
+                        className="text-gray-200">
                         crowlcrown@gmail.com
                       </a>
                     </div>
@@ -213,7 +223,11 @@ export default function Contact() {
                       <span className="w-10 h-8 rounded-lg bg-dark/10 flex items-center justify-center text-xs text-gray-300">
                         <FontAwesomeIcon icon={faLocation} />
                       </span>
-                      <a href="http://map.google.com" target="_blank" rel="noopener noreferrer" className="text-gray-200">
+                      <a
+                        href="https://www.google.com/maps/search/Ernakulam+Kochi+Kerala+India"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-gray-200">
                         Ernakulam, Kochi, Kerala, India
                       </a>
                     </div>

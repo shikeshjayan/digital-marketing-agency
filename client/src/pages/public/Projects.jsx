@@ -3,13 +3,6 @@ import { Link, useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faBullseye,
-  faSearch,
-  faLightbulb,
-  faPalette,
-  faCode,
-  faRocket,
-  faChartLine,
-  faCheckCircle,
   faArrowRight,
   faGlobe,
   faShoppingCart,
@@ -21,6 +14,8 @@ import {
   faDumbbell,
   faHome,
   faPlane,
+  faCheckCircle,
+  faChartLine,
 } from "@fortawesome/free-solid-svg-icons";
 import useProjectStore from "../../store/projectStore.js";
 import useReviewStore from "../../store/reviewStore.js";
@@ -29,21 +24,12 @@ import FadeIn from "../../components/ui/FadeIn.jsx";
 import SectionHeading from "../../components/ui/SectionHeading.jsx";
 import AnimatedCounter from "../../components/ui/AnimatedCounter.jsx";
 import { ProjectCardSkeleton } from "../../components/ui/Skeleton.jsx";
-import imageUrl from "../../utils/imageUrl.js";
+import OurProcess from "../../components/public/OurProcess.jsx";
+import FinalCTA from "../../components/public/FinalCTA.jsx";
+import TestimonialsSection from "../../components/public/TestimonialsSection.jsx";
+import resolveImagePath from "../../utils/resolveImagePath.js";
 
 const categories = ["All", "Static", "Dynamic", "Landing Pages"];
-
-const resolveImagePath = (path) => {
-  if (!path) return "";
-  if (path.startsWith("http") || path.startsWith("data:")) return path;
-  const isDev = import.meta.env.DEV;
-  const hasApiUrlEnv = !!import.meta.env.VITE_API_URL;
-  const cleanPath = path.startsWith("/") ? path : `/${path}`;
-  if (isDev && !hasApiUrlEnv) {
-    return `http://localhost:5000${cleanPath}`;
-  }
-  return imageUrl(cleanPath);
-};
 
 /* ─── Project Card ────────────────────────────────────────── */
 const ProjectCard = ({ project }) => {
@@ -71,12 +57,10 @@ const ProjectCard = ({ project }) => {
 
       {/* Card Content */}
       <div className="p-5">
-        {/* Project Name */}
         <h3 className="text-lg font-extrabold text-heading group-hover:text-primary transition-colors duration-300 line-clamp-1">
           {project.project_name}
         </h3>
 
-        {/* Category | Status Badges */}
         <div className="mt-2 flex items-center gap-2 text-xs">
           <span className="inline-block px-2.5 py-0.5 rounded-full bg-primary-light text-primary font-semibold">
             {project.category}
@@ -92,12 +76,10 @@ const ProjectCard = ({ project }) => {
           </span>
         </div>
 
-        {/* Short Description */}
         <p className="mt-3 text-sm text-text leading-relaxed line-clamp-2">
           {project.short_description}
         </p>
 
-        {/* View Project Link */}
         <div className="mt-4 flex items-center gap-2 text-sm font-semibold text-primary group-hover:gap-3 transition-all duration-300">
           <span>View Project</span>
           <FontAwesomeIcon icon={faArrowRight} className="text-xs" />
@@ -171,7 +153,6 @@ function FeaturedCaseStudy({ projects }) {
         <FadeIn delay={100}>
           <div className="mt-10 bg-background border border-border rounded-lg overflow-hidden hover:shadow-lg transition-shadow duration-300">
             <div className="grid grid-cols-1 lg:grid-cols-2">
-              {/* Image */}
               <div className="relative overflow-hidden aspect-[16/10] lg:aspect-auto lg:min-h-[360px] bg-surface">
                 <img
                   src={resolveImagePath(featured.image)}
@@ -187,7 +168,6 @@ function FeaturedCaseStudy({ projects }) {
                 />
               </div>
 
-              {/* Content */}
               <div className="p-8 lg:p-10 flex flex-col justify-center">
                 <div className="flex items-center gap-2 text-xs">
                   <span className="inline-block px-2.5 py-0.5 rounded-full bg-primary-light text-primary font-semibold">
@@ -328,258 +308,6 @@ function IndustriesServed() {
   );
 }
 
-/* ─── Section: Testimonials ───────────────────────────────── */
-function StarRow({ rating }) {
-  const full = Math.floor(rating);
-  return (
-    <div className="flex items-center gap-1 text-amber-500">
-      {Array.from({ length: 5 }).map((_, i) => (
-        <span
-          key={i}
-          className={i < full ? "text-amber-500" : "text-gray-300"}
-          aria-hidden="true">
-          ★
-        </span>
-      ))}
-    </div>
-  );
-}
-
-function TestimonialsSection({ reviews, loading }) {
-  const [index, setIndex] = useState(0);
-  const [paused, setPaused] = useState(false);
-
-  useEffect(() => {
-    if (reviews.length === 0 || paused) return;
-    const t = setInterval(
-      () => setIndex((v) => (v + 1) % reviews.length),
-      3000,
-    );
-    return () => clearInterval(t);
-  }, [reviews.length, paused]);
-
-  if (loading) {
-    return (
-      <section className="py-12 bg-background">
-        <div className="max-w-5xl mx-auto px-4">
-          <div className="text-center">
-            <div className="h-8 w-48 bg-gray-200 rounded mx-auto animate-pulse" />
-          </div>
-          <div className="mt-8 flex justify-center">
-            <div className="w-full max-w-xl border border-border rounded-lg px-6 py-8 bg-surface text-center">
-              <div className="mx-auto w-16 h-16 rounded-full bg-gray-200 animate-pulse ring-2 ring-gray-300 ring-offset-2" />
-              <div className="mt-4 h-4 w-24 bg-gray-200 rounded mx-auto animate-pulse" />
-              <div className="mt-2 h-3 w-16 bg-gray-200 rounded mx-auto animate-pulse" />
-              <div className="mt-4 space-y-2">
-                <div className="h-3 w-full bg-gray-200 rounded animate-pulse" />
-                <div className="h-3 w-3/4 bg-gray-200 rounded mx-auto animate-pulse" />
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-    );
-  }
-
-  if (!reviews.length) return null;
-  const current = reviews[index];
-
-  return (
-    <section
-      className="py-12 bg-background"
-      onMouseEnter={() => setPaused(true)}
-      onMouseLeave={() => setPaused(false)}>
-      <div className="max-w-5xl mx-auto px-4">
-        <FadeIn>
-          <SectionHeading
-            eyebrow="Testimonials"
-            title="What Our Clients Say"
-            subtitle="Real feedback from businesses we've helped grow."
-          />
-        </FadeIn>
-
-        <div className="mt-8 flex justify-center">
-          <div className="w-full max-w-6xl border border-border rounded-lg px-6 py-8 bg-surface text-center">
-            <div className="mx-auto w-16 h-16 rounded-full overflow-hidden ring-2 ring-primary ring-offset-2 flex items-center justify-center shadow-md bg-primary-light">
-              <span className="text-lg font-bold text-primary">
-                {current.name
-                  ?.split(" ")
-                  .map((w) => w[0])
-                  .join("")
-                  .toUpperCase()
-                  .slice(0, 2) || "?"}
-              </span>
-            </div>
-            <div className="mt-4 font-bold text-heading">{current.name}</div>
-            <div className="text-sm text-muted">{current.location}</div>
-            <p className="mt-4 text-gray-700 leading-relaxed max-w-2xl mx-auto">
-              &ldquo;{current.review_text}&rdquo;
-            </p>
-            <div className="mt-4">
-              <StarRow rating={current.rating} />
-            </div>
-          </div>
-        </div>
-
-        <div className="flex items-center justify-center gap-2 mt-5">
-          {reviews.map((_, i) => (
-            <button
-              key={i}
-              type="button"
-              className={`w-2.5 h-2.5 rounded-full transition cursor-pointer ${
-                i === index
-                  ? "bg-primary"
-                  : "bg-primary-light hover:bg-primary-hover"
-              }`}
-              onClick={() => setIndex(i)}
-              aria-label={`Go to testimonial ${i + 1}`}
-            />
-          ))}
-        </div>
-      </div>
-    </section>
-  );
-}
-
-/* ─── Section: Our Process (Timeline) ─────────────────────── */
-const processSteps = [
-  {
-    icon: faSearch,
-    title: "Discovery & Research",
-    desc: "We analyze your business, audience, and competitors to build a strategic foundation.",
-  },
-  {
-    icon: faLightbulb,
-    title: "Strategy & Planning",
-    desc: "We craft a tailored roadmap with clear timelines, milestones, and deliverables.",
-  },
-  {
-    icon: faPalette,
-    title: "Design & Prototyping",
-    desc: "Our designers create wireframes and visual mockups aligned with your brand identity.",
-  },
-  {
-    icon: faCode,
-    title: "Development & Testing",
-    desc: "Our engineers build robust, scalable solutions with rigorous quality assurance.",
-  },
-  {
-    icon: faRocket,
-    title: "Launch & Deployment",
-    desc: "We handle the full launch process, ensuring everything runs smoothly from day one.",
-  },
-  {
-    icon: faChartLine,
-    title: "Optimization & Growth",
-    desc: "Post-launch, we monitor performance and optimize for continuous improvement.",
-  },
-];
-
-function OurProcess() {
-  return (
-    <section className="py-12 md:py-16 bg-surface">
-      <div className="max-w-6xl mx-auto px-4">
-        <FadeIn>
-          <SectionHeading
-            eyebrow="How We Work"
-            title="Our Process"
-            subtitle="A proven methodology that delivers results every time."
-          />
-        </FadeIn>
-
-        <div className="mt-10 relative">
-          {/* Vertical line */}
-          <div className="hidden md:block absolute left-1/2 top-0 bottom-0 w-0.5 bg-border -translate-x-1/2" />
-
-          <div className="space-y-8 md:space-y-0">
-            {processSteps.map((step, i) => {
-              const isLeft = i % 2 === 0;
-              return (
-                <FadeIn
-                  key={step.title}
-                  delay={i * 100}
-                  direction={isLeft ? "left" : "right"}>
-                  <div
-                    className={`relative md:grid md:grid-cols-2 md:gap-12 md:items-center ${i > 0 ? "md:mt-8" : ""}`}>
-                    {/* Timeline dot */}
-                    <div className="hidden md:block absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-10">
-                      <div className="w-10 h-10 rounded-full bg-primary text-white flex items-center justify-center text-sm font-bold shadow-lg">
-                        {i + 1}
-                      </div>
-                    </div>
-
-                    {/* Content card */}
-                    <div
-                      className={`${isLeft ? "md:text-right md:pr-12" : "md:col-start-2 md:pl-12"}`}>
-                      <div className="bg-background border border-border rounded-lg p-6 hover:shadow-sm transition">
-                        <div
-                          className={`flex items-center gap-3 ${isLeft ? "md:justify-end" : ""}`}>
-                          <div className="w-10 h-10 rounded-lg bg-primary-light flex items-center justify-center shrink-0">
-                            <FontAwesomeIcon
-                              icon={step.icon}
-                              className="text-primary"
-                            />
-                          </div>
-                          <div>
-                            <div className="text-xs font-semibold text-primary uppercase tracking-wider">
-                              Step {i + 1}
-                            </div>
-                            <h3 className="text-lg font-extrabold text-heading">
-                              {step.title}
-                            </h3>
-                          </div>
-                        </div>
-                        <p className="mt-3 text-sm text-text leading-relaxed">
-                          {step.desc}
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                </FadeIn>
-              );
-            })}
-          </div>
-        </div>
-      </div>
-    </section>
-  );
-}
-
-/* ─── Section: Final CTA ──────────────────────────────────── */
-function FinalCTA() {
-  const navigate = useNavigate();
-
-  return (
-    <section className="bg-dark py-16">
-      <FadeIn>
-        <div className="max-w-4xl mx-auto px-4 text-center text-white">
-          <h2 className="text-3xl md:text-4xl font-extrabold">
-            Have a Project in Mind?
-          </h2>
-          <p className="mt-4 text-gray-300 max-w-2xl mx-auto leading-relaxed">
-            Let's bring your vision to life. Get in touch with us today for a
-            free consultation and let's discuss how we can help you achieve your
-            goals.
-          </p>
-          <div className="mt-8 flex flex-wrap items-center justify-center gap-4">
-            <button
-              type="button"
-              className="inline-flex items-center rounded-lg bg-primary text-white px-6 py-3 text-sm font-semibold hover:bg-primary-hover transition cursor-pointer"
-              onClick={() => navigate("/contact")}>
-              Start a Project
-            </button>
-            <Link
-              to="/services"
-              className="inline-flex items-center rounded-lg border border-white text-white px-6 py-3 text-sm font-semibold hover:bg-white/10 transition">
-              View Services
-            </Link>
-          </div>
-        </div>
-      </FadeIn>
-    </section>
-  );
-}
-
 /* ─── Main Projects Page ──────────────────────────────────── */
 const Projects = () => {
   const [active, setActive] = useState("All");
@@ -604,8 +332,16 @@ const Projects = () => {
       <HeroSplit
         title="Projects"
         titleHighlight="Our"
-        subtitle="A selection of recent work across categories."
-        leftColor="bg-dark"
+        subtitle="Explore our portfolio of successful projects. From static sites to dynamic platforms, see how we've helped businesses achieve their digital goals."
+        primaryCTA={{ label: "Start a Project", to: "/contact" }}
+        secondaryCTA={{ label: "Our Services", to: "/services" }}
+        imageSrc="/projects.webp"
+        imageAlt="Our Projects"
+        trustIndicators={[
+          { value: "150+", label: "Projects\nCompleted" },
+          { value: "50+", label: "Happy\nClients" },
+          { value: "98%", label: "Client\nRetention" },
+        ]}
       />
 
       {/* 2. Project Statistics */}
@@ -622,7 +358,6 @@ const Projects = () => {
             />
           </FadeIn>
 
-          {/* Category Filter Toggle Layout */}
           <div className="mt-8 flex flex-wrap gap-3 justify-center">
             {categories.map((c) => (
               <button
@@ -704,7 +439,12 @@ const Projects = () => {
       <OurProcess />
 
       {/* 9. Final CTA */}
-      <FinalCTA />
+      <FinalCTA
+        title="Have a Project in Mind?"
+        description="Let's bring your vision to life. Get in touch with us today for a free consultation and let's discuss how we can help you achieve your goals."
+        primaryLabel="Start a Project"
+        secondaryLabel="View Services"
+      />
     </div>
   );
 };

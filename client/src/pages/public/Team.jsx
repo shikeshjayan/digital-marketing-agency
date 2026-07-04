@@ -3,20 +3,9 @@ import { Link, useNavigate } from 'react-router-dom'
 import HeroSplit from '../../components/public/HeroSplit.jsx'
 import FadeIn from '../../components/ui/FadeIn.jsx'
 import SectionHeading from '../../components/ui/SectionHeading.jsx'
+import FinalCTA from '../../components/public/FinalCTA.jsx'
 import useTeamStore from '../../store/teamStore.js'
-import imageUrl from '../../utils/imageUrl.js'
-
-const resolveImagePath = (path) => {
-  if (!path) return "";
-  if (path.startsWith("http") || path.startsWith("data:")) return path;
-  const isDev = import.meta.env.DEV;
-  const hasApiUrlEnv = !!import.meta.env.VITE_API_URL;
-  const cleanPath = path.startsWith("/") ? path : `/${path}`;
-  if (isDev && !hasApiUrlEnv) {
-    return `http://localhost:5000${cleanPath}`;
-  }
-  return imageUrl(cleanPath);
-};
+import resolveImagePath from '../../utils/resolveImagePath.js'
 
 /* ─── Data ────────────────────────────────────────────────── */
 
@@ -88,7 +77,7 @@ const departments = [
 
 const stats = [
   { value: "25+", label: "Team Members" },
-  { value: "50+", label: "Projects Delivered" },
+  { value: "500+", label: "Projects Delivered" },
   { value: "8+", label: "Years Experience" },
   { value: "98%", label: "Client Retention" },
 ];
@@ -329,41 +318,6 @@ function Certifications() {
   );
 }
 
-/* ─── Section: CTA ────────────────────────────────────────── */
-
-function TeamCTA() {
-  const navigate = useNavigate();
-
-  return (
-    <section className="bg-dark py-16">
-      <FadeIn>
-        <div className="max-w-4xl mx-auto px-4 text-center text-white">
-          <div className="text-4xl md:text-5xl font-extrabold">
-            <span className="font-cursive text-primary pr-2">Join</span> Our Team
-          </div>
-          <p className="mt-4 text-gray-300 max-w-2xl mx-auto leading-relaxed">
-            We're always looking for talented people who are passionate about digital marketing.
-            Explore open positions and grow with us.
-          </p>
-          <div className="mt-8 flex flex-wrap items-center justify-center gap-4">
-            <button
-              type="button"
-              className="inline-flex items-center rounded-lg bg-primary text-white px-6 py-3 text-sm font-semibold hover:bg-primary-hover transition cursor-pointer"
-              onClick={() => navigate("/contact")}>
-              Contact Us
-            </button>
-            <Link
-              to="/services"
-              className="inline-flex items-center rounded-lg border border-white text-white px-6 py-3 text-sm font-semibold hover:bg-white/10 transition">
-              View Services
-            </Link>
-          </div>
-        </div>
-      </FadeIn>
-    </section>
-  );
-}
-
 /* ─── Page ────────────────────────────────────────────────── */
 
 export default function Team() {
@@ -382,8 +336,16 @@ export default function Team() {
       <HeroSplit
         title="Our Team"
         titleHighlight="Meet"
-        subtitle="A team of creative builders and marketers."
-        leftColor="bg-dark"
+        subtitle="The talented designers, developers, and strategists who bring your vision to life with passion, expertise, and dedication."
+        primaryCTA={{ label: "Join Our Team", to: "/contact" }}
+        secondaryCTA={{ label: "View Services", to: "/services" }}
+        imageSrc="/team.webp"
+        imageAlt="Our Team"
+        trustIndicators={[
+          { value: "25+", label: "Team\nMembers" },
+          { value: "8+", label: "Years\nExperience" },
+          { value: "10+", label: "Certifications\nHeld" },
+        ]}
       />
 
       {/* Team Cards */}
@@ -414,7 +376,12 @@ export default function Team() {
       <TeamStatistics />
       <OurCulture />
       <Certifications />
-      <TeamCTA />
+      <FinalCTA
+        title="Join Our Team"
+        description="We're always looking for talented people who are passionate about digital marketing. Explore open positions and grow with us."
+        primaryLabel="Contact Us"
+        secondaryLabel="View Services"
+      />
     </div>
   )
 }

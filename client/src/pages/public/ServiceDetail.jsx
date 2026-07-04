@@ -4,13 +4,13 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faAngleLeft, faCheckCircle } from "@fortawesome/free-solid-svg-icons";
 import { slugify } from "../../utils/slugify.js";
 import useServiceStore from "../../store/serviceStore";
-import imageUrl from "../../utils/imageUrl.js";
 import FadeIn from "../../components/ui/FadeIn.jsx";
 import AnimatedCounter from "../../components/ui/AnimatedCounter.jsx";
 import OurProcess from "../../components/public/OurProcess.jsx";
 import WhyChooseUs from "../../components/public/WhyChooseUs.jsx";
 import FAQSection from "../../components/public/FAQSection.jsx";
-import CTASection from "../../components/public/CTASection.jsx";
+import FinalCTA from "../../components/public/FinalCTA.jsx";
+import resolveImagePath from "../../utils/resolveImagePath.js";
 
 function SectionHeading({ eyebrow, title }) {
   return (
@@ -74,18 +74,6 @@ export default function ServiceDetail() {
         </Link>
       </div>
     );
-
-  const resolveImagePath = (path) => {
-    if (!path) return "";
-    if (path.startsWith("http") || path.startsWith("data:")) return path;
-    const isDev = import.meta.env.DEV;
-    const hasApiUrlEnv = !!import.meta.env.VITE_API_URL;
-    const cleanPath = path.startsWith("/") ? path : `/${path}`;
-    if (isDev && !hasApiUrlEnv) {
-      return `http://localhost:5000${cleanPath}`;
-    }
-    return imageUrl(cleanPath);
-  };
 
   const hasCaseStudy =
     service.case_study &&
@@ -361,7 +349,7 @@ export default function ServiceDetail() {
       )}
 
       {/* CTA Section */}
-      <CTASection
+      <FinalCTA
         title={`Ready to Get Started with ${service.service_name}?`}
         description="Let's discuss how we can help you achieve your goals. Contact us today for a free consultation."
         primaryLabel="Contact Us"

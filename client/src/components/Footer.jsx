@@ -144,7 +144,7 @@ export default function Footer() {
                     <span className="w-8 h-8 rounded-lg flex items-center justify-center text-xs text-gray-300">
                       <FontAwesomeIcon icon={faMapMarkerAlt} />
                     </span>
-                    <a href="http://map.google.com" target="_blank" rel="noopener noreferrer" className="text-white/80 hover:text-primary transition-colors">
+                     <a href="https://www.google.com/maps/search/Ernakulam+Kochi+Kerala+India" target="_blank" rel="noopener noreferrer" className="text-white/80 hover:text-primary transition-colors">
                       Ernakulam, Kochi, Kerala, India
                     </a>
                   </div>
