@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { toast } from "sonner";
+import { toast, Toaster } from "sonner";
 import { setAdminProfile } from "../../auth/adminAuth.js";
 import useAuthStore from "../../store/authStore.js";
 import apiService from "../../services/apiService.js";
@@ -69,6 +69,7 @@ export default function AdminRegister() {
 
   return (
     <div className="py-10 max-w-md mx-auto">
+      <Toaster position="top-right" richColors closeButton />
       <div className="text-center">
         <div className="w-14 h-14 rounded bg-primary mx-auto text-white flex items-center justify-center font-bold">
           A
