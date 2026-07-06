@@ -143,17 +143,18 @@ function HeroCarousel() {
 }
 
 function ServicesCarousel({ services }) {
+  const displayServices = useMemo(() => services.slice(0, 3), [services]);
   const [index, setIndex] = useState(0);
   const [paused, setPaused] = useState(false);
   const touchRef = useRef(null);
 
   useEffect(() => {
-    if (services.length === 0 || paused) return;
+    if (displayServices.length === 0 || paused) return;
     const t = setInterval(() => {
-      setIndex((v) => (v + 1) % services.length);
+      setIndex((v) => (v + 1) % displayServices.length);
     }, 3500);
     return () => clearInterval(t);
-  }, [services.length, paused]);
+  }, [displayServices.length, paused]);
 
   function go(next) {
     setIndex(next);
@@ -170,17 +171,17 @@ function ServicesCarousel({ services }) {
       const threshold = 50;
       if (Math.abs(diff) > threshold) {
         if (diff > 0) {
-          go((index + 1) % services.length);
+          go((index + 1) % displayServices.length);
         } else {
-          go((index - 1 + services.length) % services.length);
+          go((index - 1 + displayServices.length) % displayServices.length);
         }
       }
       touchRef.current = null;
     },
-    [index, services.length],
+    [index, displayServices.length],
   );
 
-  if (services.length === 0) {
+  if (displayServices.length === 0) {
     return (
       <section className="py-12 bg-background-section">
         <div className="max-w-6xl mx-auto px-4">
@@ -199,7 +200,7 @@ function ServicesCarousel({ services }) {
     );
   }
 
-  const current = services[index];
+  const current = displayServices[index];
 
   return (
     <section className="py-12 bg-background-section">
@@ -212,57 +213,64 @@ function ServicesCarousel({ services }) {
               onMouseLeave={() => setPaused(false)}
               onTouchStart={handleTouchStart}
               onTouchEnd={handleTouchEnd}>
-              <div className="px-6 py-10 md:px-10">
-                <div className="flex items-stretch gap-6">
-                  <div className="hidden md:flex items-center justify-center">
-                    <div className="w-24 h-24 rounded-lg flex items-center justify-center">
-                      <div
-                        className="text-8xl font-extrabold text-muted select-none"
-                        aria-hidden="true">
-                        {index + 1}
+              <div className="min-h-[280px] md:min-h-[260px] lg:min-h-[280px]">
+                <div className="px-6 py-10 md:px-10 h-full">
+                  <div className="flex items-stretch gap-6 h-full">
+                    <div className="hidden md:flex items-center justify-center">
+                      <div className="w-24 h-24 rounded-lg flex items-center justify-center">
+                        <div
+                          className="text-8xl font-extrabold text-muted select-none"
+                          aria-hidden="true">
+                          {index + 1}
+                        </div>
                       </div>
                     </div>
-                  </div>
 
-                  <div className="flex-1 text-center md:text-left">
-                    <div className="text-sm text-muted">Featured Service</div>
-                    <h3 className="mt-2 section-heading text-heading">
-                      {current.service_name.split(" ").slice(0, 2).join(" ")}{" "}
-                      <span className="text-primary-hover">
-                        {current.service_name.split(" ").slice(2).join(" ")}
-                      </span>
-                    </h3>
-                    <p className="mt-3 text-text body-text max-w-xl line-clamp-3 mx-auto md:mx-0">
-                      {current.description}
-                    </p>
-                    <div className="mt-6 flex items-center justify-center md:justify-start gap-3">
-                      <button
-                        type="button"
-                        className="md:hidden w-10 h-10 rounded-full bg-surface border border-border hover:bg-border flex items-center justify-center cursor-pointer"
-                        onClick={() =>
-                          go((index - 1 + services.length) % services.length)
-                        }
-                        aria-label="Previous service">
-                        <FontAwesomeIcon
-                          icon={faAngleLeft}
-                          className="text-sm"
-                        />
-                      </button>
-                      <Link
-                        to={`/services/${slugify(current.service_name)}`}
-                        className="inline-flex items-center rounded-lg bg-primary text-white px-5 py-2.5 text-sm font-semibold hover:bg-primary-hover transition cursor-pointer">
-                        Read More
-                      </Link>
-                      <button
-                        type="button"
-                        className="md:hidden w-10 h-10 rounded-full bg-surface border border-border hover:bg-border flex items-center justify-center cursor-pointer"
-                        onClick={() => go((index + 1) % services.length)}
-                        aria-label="Next service">
-                        <FontAwesomeIcon
-                          icon={faAngleRight}
-                          className="text-sm"
-                        />
-                      </button>
+                    <div className="flex-1 flex flex-col text-center md:text-left h-full">
+                      <div className="text-sm text-muted">Featured Service</div>
+                      <h3 className="mt-2 section-heading text-heading">
+                        {current.service_name.split(" ").slice(0, 2).join(" ")}{" "}
+                        <span className="text-primary-hover">
+                          {current.service_name.split(" ").slice(2).join(" ")}
+                        </span>
+                      </h3>
+                      <p className="mt-3 text-text body-text max-w-xl line-clamp-2 mx-auto md:mx-0 flex-1">
+                        {current.description}
+                      </p>
+                      <div className="mt-auto pt-6 flex items-center justify-center md:justify-start gap-3">
+                        <button
+                          type="button"
+                          className="md:hidden w-10 h-10 rounded-full bg-surface border border-border hover:bg-border flex items-center justify-center cursor-pointer"
+                          onClick={() =>
+                            go(
+                              (index - 1 + displayServices.length) %
+                                displayServices.length,
+                            )
+                          }
+                          aria-label="Previous service">
+                          <FontAwesomeIcon
+                            icon={faAngleLeft}
+                            className="text-sm"
+                          />
+                        </button>
+                        <Link
+                          to={`/services/${slugify(current.service_name)}`}
+                          className="inline-flex items-center rounded-lg bg-primary text-white px-5 py-2.5 text-sm font-semibold hover:bg-primary-hover transition cursor-pointer">
+                          Read More
+                        </Link>
+                        <button
+                          type="button"
+                          className="md:hidden w-10 h-10 rounded-full bg-surface border border-border hover:bg-border flex items-center justify-center cursor-pointer"
+                          onClick={() =>
+                            go((index + 1) % displayServices.length)
+                          }
+                          aria-label="Next service">
+                          <FontAwesomeIcon
+                            icon={faAngleRight}
+                            className="text-sm"
+                          />
+                        </button>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -274,7 +282,10 @@ function ServicesCarousel({ services }) {
                 type="button"
                 className="w-12 h-12 rounded-full bg-background border border-border shadow-sm hover:bg-surface flex items-center justify-center cursor-pointer"
                 onClick={() =>
-                  go((index - 1 + services.length) % services.length)
+                  go(
+                    (index - 1 + displayServices.length) %
+                      displayServices.length,
+                  )
                 }
                 aria-label="Previous service">
                 <FontAwesomeIcon icon={faAngleLeft} />
@@ -284,7 +295,7 @@ function ServicesCarousel({ services }) {
               <button
                 type="button"
                 className="w-12 h-12 rounded-full bg-background border border-border shadow-sm hover:bg-surface flex items-center justify-center cursor-pointer"
-                onClick={() => go((index + 1) % services.length)}
+                onClick={() => go((index + 1) % displayServices.length)}
                 aria-label="Next service">
                 <FontAwesomeIcon icon={faAngleRight} />
               </button>
@@ -292,7 +303,7 @@ function ServicesCarousel({ services }) {
           </div>
 
           <div className="flex items-center justify-center gap-2 mt-6">
-            {services.map((s, i) => (
+            {displayServices.map((s, i) => (
               <button
                 key={s._id}
                 type="button"

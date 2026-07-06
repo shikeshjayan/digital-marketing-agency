@@ -19,15 +19,23 @@ import AnimatedCounter from "../../components/ui/AnimatedCounter.jsx";
 import { ProjectCardSkeleton } from "../../components/ui/Skeleton.jsx";
 import FinalCTA from "../../components/public/FinalCTA.jsx";
 import TestimonialsSection from "../../components/public/TestimonialsSection.jsx";
-import DetailModal from "../../components/ui/DetailModal.jsx";
+import ProjectDetailModal from "../../components/ui/ProjectDetailModal.jsx";
 import resolveImagePath from "../../utils/resolveImagePath.js";
 
-const categories = ["All", "SEO", "Web Design", "Google Ads", "Meta Ads", "Branding", "E-commerce"];
+const categories = [
+  "All",
+  "SEO",
+  "Web Design",
+  "Google Ads",
+  "Meta Ads",
+  "Branding",
+  "E-commerce",
+];
 
 /* ─── Project Card ────────────────────────────────────────── */
 const ProjectCard = ({ project, onDetail }) => {
   return (
-    <div className="group block bg-background border border-border rounded-lg overflow-hidden hover:shadow-lg hover:border-primary transition-all duration-300">
+    <div className="group block bg-background border border-border rounded-lg overflow-hidden hover:shadow-lg hover:border-primary transition-all duration-300 h-full flex flex-col">
       <div className="relative overflow-hidden aspect-[16/10] w-full bg-surface">
         <img
           src={resolveImagePath(project.image)}
@@ -85,7 +93,7 @@ const ProjectCard = ({ project, onDetail }) => {
           {project.short_description}
         </p>
 
-        <div className="mt-4 flex items-center gap-4 text-sm font-semibold">
+        <div className="mt-auto pt-4 flex items-center gap-4 text-sm font-semibold">
           <button
             type="button"
             onClick={() => onDetail(project)}
@@ -116,15 +124,17 @@ function ProjectStatistics() {
   ];
 
   return (
-    <section className="py-12 md:py-16 bg-secondary">
+    <section className="py-12 md:py-16 bg-background-section">
       <div className="max-w-6xl mx-auto px-4">
         <FadeIn>
-          <div className="text-center text-white">
+          <div className="text-center text-text">
             <h2 className="mt-2 section-heading">
-              <span className="font-headings text-4xl text-primary mr-4">Our</span>
+              <span className="font-headings text-4xl text-primary mr-4">
+                Our
+              </span>
               Track Record
             </h2>
-            <p className="mt-3 text-white/70 max-w-xl mx-auto small-text md:body-text">
+            <p className="mt-3 text-text max-w-xl mx-auto small-text md:body-text">
               Numbers that speak for our commitment to delivering excellence.
             </p>
           </div>
@@ -137,7 +147,7 @@ function ProjectStatistics() {
                 <div className="text-3xl md:text-4xl font-extrabold text-primary">
                   <AnimatedCounter target={s.target} suffix={s.suffix} />
                 </div>
-                <div className="mt-2 small-text md:body-text text-white/70">
+                <div className="mt-2 small-text md:body-text text-text/70">
                   {s.label}
                 </div>
               </div>
@@ -203,7 +213,10 @@ function FeaturedCaseStudy({ projects, onDetail }) {
                 <div className="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-xs text-muted">
                   {featured.client_name && (
                     <span className="flex items-center gap-1.5">
-                      <FontAwesomeIcon icon={faBuilding} className="text-[10px]" />
+                      <FontAwesomeIcon
+                        icon={faBuilding}
+                        className="text-[10px]"
+                      />
                       {featured.client_name}
                     </span>
                   )}
@@ -239,12 +252,23 @@ function FeaturedCaseStudy({ projects, onDetail }) {
                 {featured.before_after && featured.before_after.length > 0 && (
                   <div className="mt-5 grid grid-cols-2 gap-3">
                     {featured.before_after.slice(0, 2).map((item, idx) => (
-                      <div key={idx} className="text-center bg-surface rounded-lg p-3 border border-border">
-                        <div className="text-[10px] font-bold text-muted uppercase tracking-wider">{item.metric}</div>
+                      <div
+                        key={idx}
+                        className="text-center bg-surface rounded-lg p-3 border border-border">
+                        <div className="text-[10px] font-bold text-muted uppercase tracking-wider">
+                          {item.metric}
+                        </div>
                         <div className="mt-2 flex items-center justify-center gap-2 text-xs">
-                          <span className="text-muted font-medium">{item.before}</span>
-                          <FontAwesomeIcon icon={faArrowRight} className="text-primary text-[8px]" />
-                          <span className="text-primary font-bold">{item.after}</span>
+                          <span className="text-muted font-medium">
+                            {item.before}
+                          </span>
+                          <FontAwesomeIcon
+                            icon={faArrowRight}
+                            className="text-primary text-[8px]"
+                          />
+                          <span className="text-primary font-bold">
+                            {item.after}
+                          </span>
                         </div>
                       </div>
                     ))}
@@ -364,7 +388,9 @@ function ClientLogos() {
           {clientLogos.map((logo, i) => (
             <FadeIn key={logo.name} delay={i * 60}>
               <div className="flex items-center justify-center bg-background border border-border rounded-lg px-4 py-5 hover:shadow-sm hover:border-primary/30 transition-all duration-200 cursor-default">
-                <span className="text-sm font-semibold text-muted text-center">{logo.name}</span>
+                <span className="text-sm font-semibold text-muted text-center">
+                  {logo.name}
+                </span>
               </div>
             </FadeIn>
           ))}
@@ -398,16 +424,29 @@ function BeforeAfterResults() {
           {beforeAfterData.map((item, i) => (
             <FadeIn key={item.metric} delay={i * 100}>
               <div className="bg-surface border border-border rounded-lg p-5 text-center hover:shadow-sm transition h-full flex flex-col">
-                <div className="text-sm font-bold text-heading">{item.metric}</div>
+                <div className="text-sm font-bold text-heading">
+                  {item.metric}
+                </div>
                 <div className="mt-4 flex items-center justify-center gap-4 flex-1">
                   <div>
-                    <div className="text-xs text-muted uppercase tracking-wider">Before</div>
-                    <div className="mt-1 text-lg font-bold text-muted">{item.before}</div>
+                    <div className="text-xs text-muted uppercase tracking-wider">
+                      Before
+                    </div>
+                    <div className="mt-1 text-lg font-bold text-muted">
+                      {item.before}
+                    </div>
                   </div>
-                  <FontAwesomeIcon icon={faArrowRight} className="text-primary text-sm" />
+                  <FontAwesomeIcon
+                    icon={faArrowRight}
+                    className="text-primary text-sm"
+                  />
                   <div>
-                    <div className="text-xs text-primary uppercase tracking-wider font-semibold">After</div>
-                    <div className="mt-1 text-lg font-bold text-primary">{item.after}</div>
+                    <div className="text-xs text-primary uppercase tracking-wider font-semibold">
+                      After
+                    </div>
+                    <div className="mt-1 text-lg font-bold text-primary">
+                      {item.after}
+                    </div>
                   </div>
                 </div>
               </div>
@@ -523,7 +562,7 @@ const Projects = () => {
           ) : (
             <div className="mt-10 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
               {projects.map((p, i) => (
-                <FadeIn key={p.project_id || p._id} delay={i * 100}>
+                <FadeIn key={p.project_id || p._id} delay={i * 100} className="h-full">
                   <ProjectCard project={p} onDetail={handleDetail} />
                 </FadeIn>
               ))}
@@ -545,7 +584,11 @@ const Projects = () => {
       <BeforeAfterResults />
 
       {/* 8. Testimonials */}
-      <TestimonialsSection reviews={reviews} loading={reviewsLoading} bg="bg-background-section" />
+      <TestimonialsSection
+        reviews={reviews}
+        loading={reviewsLoading}
+        bg="bg-background-section"
+      />
 
       {/* 9. Final CTA */}
       <FinalCTA
@@ -556,28 +599,10 @@ const Projects = () => {
         secondaryTo="/services"
       />
 
-      <DetailModal
+      <ProjectDetailModal
         open={!!detail}
         onClose={() => setDetail(null)}
-        image={detail ? resolveImagePath(detail.image) : ""}
-        title={detail?.project_name || ""}
-        tags={
-          detail
-            ? [
-                { label: detail.category, variant: "primary" },
-                {
-                  label: detail.status,
-                  variant: detail.status === "Active" ? "success" : "default",
-                },
-              ]
-            : []
-        }
-        description={detail?.description || detail?.short_description || ""}
-        cta={
-          detail?.live_url
-            ? { label: "View Project", href: detail.live_url }
-            : null
-        }
+        project={detail}
       />
     </div>
   );

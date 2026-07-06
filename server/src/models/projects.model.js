@@ -58,6 +58,21 @@ const projectsSchema = new mongoose.Schema(
     live_url: {
       type: String,
     },
+    challenge: {
+      type: String,
+      trim: true,
+      default: "",
+    },
+    solution: {
+      type: String,
+      trim: true,
+      default: "",
+    },
+    client_testimonial: {
+      type: String,
+      trim: true,
+      default: "",
+    },
     status: {
       type: String,
       enum: ["Active", "Inactive"],
