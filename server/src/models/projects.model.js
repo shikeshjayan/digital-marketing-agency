@@ -11,8 +11,37 @@ const projectsSchema = new mongoose.Schema(
     category: {
       type: String,
       required: [true, "Category is required"],
-      enum: ["Static", "Dynamic", "Landing Pages"],
+      enum: [
+        "Static", "Dynamic", "Landing Pages",
+        "SEO", "Web Design", "Google Ads", "Meta Ads", "Branding", "E-commerce",
+      ],
     },
+    client_name: {
+      type: String,
+      trim: true,
+      default: "",
+    },
+    industry: {
+      type: String,
+      trim: true,
+      default: "",
+    },
+    technologies: {
+      type: [String],
+      default: [],
+    },
+    duration: {
+      type: String,
+      trim: true,
+      default: "",
+    },
+    before_after: [
+      {
+        metric: { type: String, trim: true },
+        before: { type: String, trim: true },
+        after: { type: String, trim: true },
+      },
+    ],
     short_description: {
       type: String,
       required: [true, "Short description is required"],

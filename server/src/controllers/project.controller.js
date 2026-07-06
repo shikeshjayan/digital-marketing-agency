@@ -3,7 +3,10 @@ import Projects from "../models/projects.model.js";
 import asyncHandler from "../middleware/asyncHandler.js";
 
 // Allowed project categories
-const validCategories = ["Static", "Dynamic", "Landing Pages"];
+const validCategories = [
+  "Static", "Dynamic", "Landing Pages",
+  "SEO", "Web Design", "Google Ads", "Meta Ads", "Branding", "E-commerce",
+];
 
 // Check if the category in the URL is valid
 const validateCategory = (req, res, next) => {
@@ -18,7 +21,10 @@ export { validateCategory };
 
 // Create a new project (admin only)
 export const createProject = asyncHandler(async (req, res) => {
-  const { project_name, category, short_description, description, live_url, status } = req.body;
+  const {
+    project_name, category, client_name, industry, technologies, duration,
+    before_after, short_description, description, live_url, status,
+  } = req.body;
   const image = req.file ? req.file.url : req.body.image;
 
   // Validate required fields
@@ -32,8 +38,22 @@ export const createProject = asyncHandler(async (req, res) => {
     return res.status(409).json({ success: false, message: "Project already exists" });
   }
 
+  // Parse before_after if it arrives as a JSON string (from FormData)
+  let parsedBeforeAfter = before_after;
+  if (typeof before_after === "string") {
+    try { parsedBeforeAfter = JSON.parse(before_after); } catch { parsedBeforeAfter = []; }
+  }
+
+  // Parse technologies if it arrives as a JSON string
+  let parsedTech = technologies;
+  if (typeof technologies === "string") {
+    try { parsedTech = JSON.parse(technologies); } catch { parsedTech = []; }
+  }
+
   const project = await Projects.create({
-    project_name, category, short_description, description, image, live_url, status,
+    project_name, category, client_name, industry, technologies: parsedTech,
+    duration, before_after: parsedBeforeAfter, short_description, description,
+    image, live_url, status,
   });
 
   res.status(201).json({
@@ -91,13 +111,39 @@ export const getProjectsByCategory = asyncHandler(async (req, res) => {
 
 // Update an existing project (admin only)
 export const updateProject = asyncHandler(async (req, res) => {
-  const { project_name, category, short_description, description, live_url, status } = req.body;
+  const {
+    project_name, category, client_name, industry, technologies, duration,
+    before_after, short_description, description, live_url, status,
+  } = req.body;
 
-  if (!project_name && !category && !short_description && !description && !live_url && !status) {
+  if (!project_name && !category && !short_description && !description && !live_url && !status
+    && !client_name && !industry && !technologies && !duration && !before_after) {
     return res.status(400).json({ success: false, message: "No fields to update" });
   }
 
-  const update = { project_name, category, short_description, description, live_url, status };
+  const update = {
+    project_name, category, client_name, industry, duration,
+    short_description, description, live_url, status,
+  };
+
+  // Parse before_after if it arrives as a JSON string (from FormData)
+  if (before_after) {
+    if (typeof before_after === "string") {
+      try { update.before_after = JSON.parse(before_after); } catch { update.before_after = []; }
+    } else {
+      update.before_after = before_after;
+    }
+  }
+
+  // Parse technologies if it arrives as a JSON string
+  if (technologies) {
+    if (typeof technologies === "string") {
+      try { update.technologies = JSON.parse(technologies); } catch { update.technologies = []; }
+    } else {
+      update.technologies = technologies;
+    }
+  }
+
   if (req.file) {
     update.image = req.file.url;
   } else if (req.body.image) {
