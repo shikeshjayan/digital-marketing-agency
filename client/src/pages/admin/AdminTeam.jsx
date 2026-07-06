@@ -16,7 +16,10 @@ import ErrorBanner from "../../components/ui/ErrorBanner.jsx";
 
 const resolveUrl = (path) => {
   if (!path || path.startsWith("blob:") || path.startsWith("http")) return path;
-  const base = (import.meta.env.VITE_API_URL || "/api/v1").replace(/\/api\/v1\/?$/, "");
+  const base = (import.meta.env.VITE_API_URL || "/api/v1").replace(
+    /\/api\/v1\/?$/,
+    "",
+  );
   return base + path;
 };
 
@@ -30,8 +33,13 @@ export default function AdminTeam() {
       .slice(0, 2);
   }
 
-  const { fetchAdminTeam, createMember, updateMember, deleteMember, deleteAllMembers } =
-    useTeamStore();
+  const {
+    fetchAdminTeam,
+    createMember,
+    updateMember,
+    deleteMember,
+    deleteAllMembers,
+  } = useTeamStore();
 
   const [items, setItems] = useState([]);
   const [search, setSearch] = useState("");
@@ -184,7 +192,7 @@ export default function AdminTeam() {
         />
       </div>
 
-      <div className="mt-6 bg-white border border-gray-200 rounded p-5 shadow-xs">
+      <div className="mt-6 bg-background border border-border rounded p-5 shadow-xs">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
           <SearchInput
             value={search}
@@ -207,8 +215,8 @@ export default function AdminTeam() {
       <div className="mt-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
         <div
           ref={formRef}
-          className="lg:col-span-2 bg-white border border-gray-200 rounded p-4 shadow-xs">
-          <div className="font-extrabold text-gray-900">
+          className="lg:col-span-2 bg-background border border-border rounded p-4 shadow-xs">
+          <div className="font-extrabold text-heading">
             {form._id ? "Edit Member" : "Add New Member"}
           </div>
 
@@ -216,7 +224,9 @@ export default function AdminTeam() {
             <FileUploadField
               label="Photo"
               file={form.photo instanceof File ? form.photo : null}
-              existingUrl={typeof form.photo === "string" ? resolveUrl(form.photo) : ""}
+              existingUrl={
+                typeof form.photo === "string" ? resolveUrl(form.photo) : ""
+              }
               onChange={onPickImage}
               onRemove={() => setForm((f) => ({ ...f, photo: "" }))}
             />
@@ -229,7 +239,9 @@ export default function AdminTeam() {
             <FormField
               label="Designation"
               value={form.designation}
-              onChange={(e) => setForm((f) => ({ ...f, designation: e.target.value }))}
+              onChange={(e) =>
+                setForm((f) => ({ ...f, designation: e.target.value }))
+              }
               placeholder="e.g. Frontend Developer"
             />
             <FormField
@@ -237,21 +249,27 @@ export default function AdminTeam() {
               textarea
               rows={2}
               value={form.description}
-              onChange={(e) => setForm((f) => ({ ...f, description: e.target.value }))}
+              onChange={(e) =>
+                setForm((f) => ({ ...f, description: e.target.value }))
+              }
               placeholder="Brief bio or details about the member"
             />
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <FormField
                 label="LinkedIn URL"
                 value={form.linkedin}
-                onChange={(e) => setForm((f) => ({ ...f, linkedin: e.target.value }))}
+                onChange={(e) =>
+                  setForm((f) => ({ ...f, linkedin: e.target.value }))
+                }
                 placeholder="https://linkedin.com/in/..."
               />
               <FormField
                 label="Email"
                 type="email"
                 value={form.email}
-                onChange={(e) => setForm((f) => ({ ...f, email: e.target.value }))}
+                onChange={(e) =>
+                  setForm((f) => ({ ...f, email: e.target.value }))
+                }
                 placeholder="member@example.com"
               />
             </div>
@@ -290,7 +308,7 @@ export default function AdminTeam() {
           </form>
         </div>
 
-        <div className="lg:col-span-3 bg-white border border-gray-200 rounded p-5 shadow-xs flex flex-col">
+        <div className="lg:col-span-3 bg-background border border-border rounded p-5 shadow-xs flex flex-col">
           <AdminListFooter
             loading={loading}
             total={pagination.total}
@@ -302,7 +320,7 @@ export default function AdminTeam() {
           <div className="mt-4 overflow-auto flex-1">
             <table className="w-full text-sm">
               <thead>
-                <tr className="text-left text-gray-600">
+                <tr className="text-left text-text">
                   <th className="py-2 pr-3 hidden sm:table-cell">ID</th>
                   <th className="py-2 pr-3">Member</th>
                   <th className="py-2 pr-3">Designation</th>
@@ -313,97 +331,108 @@ export default function AdminTeam() {
               <tbody>
                 {loading && !items.length ? (
                   <TableSkeleton rows={5} cols={5} />
-                ) : items.map((m) => (
-                  <tr
-                    key={m._id}
-                    className="border-t border-gray-100 align-top">
-                    <td className="py-3 pr-3 text-gray-700 hidden sm:table-cell">
-                      <span
-                        className="block max-w-[80px] truncate"
-                        title={m._id}>
-                        {m._id}
-                      </span>
-                    </td>
-                    <td className="py-3 pr-3">
-                      <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 rounded bg-gray-100 border border-gray-200 overflow-hidden flex items-center justify-center shrink-0">
-                          {m.photo ? (
-                            <img
-                              src={resolveUrl(m.photo)}
-                              alt=""
-                              className="w-full h-full object-cover"
-                            />
-                          ) : (
-                            <span className="text-xs font-bold text-gray-500">
-                              {getInitials(m.name)}
-                            </span>
-                          )}
-                        </div>
-                        <div>
-                          <div className="font-bold text-gray-900 truncate max-w-[150px]">
-                            {m.name}
+                ) : (
+                  items.map((m) => (
+                    <tr
+                      key={m._id}
+                      className="border-t border-border align-top">
+                      <td className="py-3 pr-3 text-text hidden sm:table-cell">
+                        <span
+                          className="block max-w-[80px] truncate"
+                          title={m._id}>
+                          {m._id}
+                        </span>
+                      </td>
+                      <td className="py-3 pr-3">
+                        <div className="flex items-center gap-3">
+                          <div className="w-10 h-10 rounded bg-surface border border-border overflow-hidden flex items-center justify-center shrink-0">
+                            {m.photo ? (
+                              <img
+                                src={resolveUrl(m.photo)}
+                                alt=""
+                                className="w-full h-full object-cover"
+                              />
+                            ) : (
+                              <span className="text-xs font-bold text-muted">
+                                {getInitials(m.name)}
+                              </span>
+                            )}
                           </div>
-                          <div className="text-xs text-gray-500">
-                            Order: {m.display_order}
+                          <div>
+                            <div className="font-bold text-heading truncate max-w-[150px]">
+                              {m.name}
+                            </div>
+                            <div className="text-xs text-muted">
+                              Order: {m.display_order}
+                            </div>
                           </div>
                         </div>
-                      </div>
-                    </td>
-                    <td className="py-3 pr-3 text-gray-600 truncate max-w-[150px]">
-                      {m.designation}
-                    </td>
-                    <td className="py-3 pr-3">
-                      <span
-                        className={`inline-flex items-center rounded-full px-3 py-1 text-xs font-semibold border ${
-                          m.status === "Active"
-                            ? "bg-green-50 text-green-700 border-green-100"
-                            : "bg-yellow-50 text-yellow-700 border-yellow-100"
-                        }`}>
-                        {m.status}
-                      </span>
-                    </td>
-                    <td className="py-3">
-                      <div className="flex gap-2 flex-wrap">
-                        <button
-                          type="button"
-                           className="px-3 py-2 text-xs sm:px-4 sm:py-2 sm:text-sm min-h-[44px] text-gray-600 hover:text-gray-800 rounded transition cursor-pointer"
-                          onClick={() => {
-                            setForm({
-                              _id: m._id,
-                              photo: m.photo ?? "",
-                              name: m.name,
-                              designation: m.designation,
-                              description: m.description ?? "",
-                              linkedin: m.linkedin ?? "",
-                              email: m.email ?? "",
-                              display_order: m.display_order ?? 1,
-                              status: m.status,
-                            });
-                            formRef.current?.scrollIntoView({
-                              behavior: "smooth",
-                              block: "start",
-                            });
-                          }}>
-                          Edit
-                        </button>
-                        <button
-                          type="button"
-                           className="px-3 py-2 text-xs sm:px-4 sm:py-2 sm:text-sm min-h-[44px] text-red-600 hover:text-red-500 rounded transition cursor-pointer"
-                          onClick={() => onDelete(m._id)}>
-                          Delete
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                ))}
+                      </td>
+                      <td className="py-3 pr-3 text-text truncate max-w-[150px]">
+                        {m.designation}
+                      </td>
+                      <td className="py-3 pr-3">
+                        <span
+                          className={`inline-flex items-center rounded-full px-3 py-1 text-xs font-semibold border ${
+                            m.status === "Active"
+                              ? "bg-success/10 text-success border-success/20"
+                              : "bg-warning/10 text-warning border-warning/20"
+                          }`}>
+                          {m.status}
+                        </span>
+                      </td>
+                      <td className="py-3">
+                        <div className="flex gap-2 flex-wrap">
+                          <button
+                            type="button"
+                            className="px-3 py-2 text-xs sm:px-4 sm:py-2 sm:text-sm min-h-[44px] text-text hover:text-heading rounded transition cursor-pointer"
+                            onClick={() => {
+                              setForm({
+                                _id: m._id,
+                                photo: m.photo ?? "",
+                                name: m.name,
+                                designation: m.designation,
+                                description: m.description ?? "",
+                                linkedin: m.linkedin ?? "",
+                                email: m.email ?? "",
+                                display_order: m.display_order ?? 1,
+                                status: m.status,
+                              });
+                              formRef.current?.scrollIntoView({
+                                behavior: "smooth",
+                                block: "start",
+                              });
+                            }}>
+                            Edit
+                          </button>
+                          <button
+                            type="button"
+                            className="px-3 py-2 text-xs sm:px-4 sm:py-2 sm:text-sm min-h-[44px] text-primary hover:text-primary-hover rounded transition cursor-pointer"
+                            onClick={() => onDelete(m._id)}>
+                            Delete
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))
+                )}
                 {!items.length && !loading && (
                   <TableEmptyState
                     colSpan={5}
                     message="No members found"
                     submessage="Add a new team member to get started."
                     icon={
-                      <svg className="w-12 h-12 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" />
+                      <svg
+                        className="w-12 h-12 mb-3"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24">
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={1.5}
+                          d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"
+                        />
                       </svg>
                     }
                   />
@@ -411,7 +440,11 @@ export default function AdminTeam() {
               </tbody>
             </table>
           </div>
-          <Pagination page={pagination.page} pages={pagination.pages} onPageChange={setPage} />
+          <Pagination
+            page={pagination.page}
+            pages={pagination.pages}
+            onPageChange={setPage}
+          />
         </div>
       </div>
 

@@ -80,21 +80,21 @@ export default function AdminSettings() {
     <div>
       <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-3">
         <div>
-          <h2 className="text-xl font-extrabold text-gray-900">
+          <h2 className="text-xl font-extrabold text-heading">
             Admin Settings
           </h2>
-          <p className="mt-1 text-sm text-gray-600">
+          <p className="mt-1 text-sm text-text">
             Update your profile and password.
           </p>
         </div>
       </div>
 
-      <div className="mt-6 bg-white border border-gray-200 rounded p-5 shadow-xs">
+      <div className="mt-6 bg-background border border-border rounded p-5 shadow-xs">
         <form
           onSubmit={onSubmit}
           className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
           <div className="lg:col-span-2">
-            <div className="font-extrabold text-gray-900">Profile Image</div>
+            <div className="font-extrabold text-heading">Profile Image</div>
             <FileUploadField
               label="Photo"
               file={null}
@@ -112,9 +112,13 @@ export default function AdminSettings() {
             {(imageFile || (form.photo && !photoRemoved)) && (
               <div className="mt-3 relative">
                 <img
-                  src={imageFile ? URL.createObjectURL(imageFile) : resolveImagePath(form.photo)}
+                  src={
+                    imageFile
+                      ? URL.createObjectURL(imageFile)
+                      : resolveImagePath(form.photo)
+                  }
                   alt="Preview"
-                  className="w-full h-40 object-cover rounded border border-gray-200"
+                  className="w-full h-40 object-cover rounded border border-border"
                 />
                 <button
                   type="button"
@@ -122,10 +126,10 @@ export default function AdminSettings() {
                     setImageFile(null);
                     setPhotoRemoved(true);
                   }}
-                  className="absolute top-1 right-1 p-1 bg-white/80 hover:bg-red-50 rounded-full shadow transition cursor-pointer"
+                  className="absolute top-1 right-1 p-1 bg-background/80 hover:bg-primary-light rounded-full shadow transition cursor-pointer"
                   title="Remove image">
                   <svg
-                    className="w-4 h-4 text-red-500 hover:text-red-700"
+                    className="w-4 h-4 text-primary hover:text-primary-hover"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24">
@@ -142,16 +146,14 @@ export default function AdminSettings() {
           </div>
 
           <div className="lg:col-span-3">
-            <div className="font-extrabold text-gray-900">
-              Profile Details
-            </div>
+            <div className="font-extrabold text-heading">Profile Details</div>
             <div className="mt-4 space-y-3">
               <div>
-                <label className="text-sm font-semibold text-gray-800">
+                <label className="text-sm font-semibold text-heading">
                   Username
                 </label>
                 <input
-                  className="mt-2 w-full rounded border border-gray-200 px-4 py-2 outline-none focus:ring-2 focus:ring-red-100"
+                  className="mt-2 w-full rounded border border-border bg-surface px-4 py-2 outline-none focus:ring-2 focus:ring-primary-light"
                   value={form.name}
                   onChange={(e) =>
                     setForm((f) => ({ ...f, name: e.target.value }))
@@ -160,12 +162,12 @@ export default function AdminSettings() {
                 />
               </div>
               <div>
-                <label className="text-sm font-semibold text-gray-800">
+                <label className="text-sm font-semibold text-heading">
                   Current Password
                 </label>
                 <input
                   type="password"
-                  className="mt-2 w-full rounded border border-gray-200 px-4 py-2 outline-none focus:ring-2 focus:ring-red-100"
+                  className="mt-2 w-full rounded border border-border bg-surface px-4 py-2 outline-none focus:ring-2 focus:ring-primary-light"
                   value={form.currentPassword}
                   onChange={(e) =>
                     setForm((f) => ({
@@ -177,12 +179,12 @@ export default function AdminSettings() {
                 />
               </div>
               <div>
-                <label className="text-sm font-semibold text-gray-800">
+                <label className="text-sm font-semibold text-heading">
                   New Password
                 </label>
                 <input
                   type="password"
-                  className="mt-2 w-full rounded border border-gray-200 px-4 py-2 outline-none focus:ring-2 focus:ring-red-100"
+                  className="mt-2 w-full rounded border border-border bg-surface px-4 py-2 outline-none focus:ring-2 focus:ring-primary-light"
                   value={form.newPassword}
                   onChange={(e) =>
                     setForm((f) => ({ ...f, newPassword: e.target.value }))
@@ -192,7 +194,7 @@ export default function AdminSettings() {
               </div>
 
               {error && (
-                <div className="flex items-center gap-2 text-sm text-red-600 bg-red-50 rounded px-4 py-2">
+                <div className="flex items-center gap-2 text-sm text-primary bg-primary-light rounded px-4 py-2">
                   <svg
                     className="w-4 h-4 shrink-0"
                     fill="none"

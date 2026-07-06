@@ -11,7 +11,7 @@ import ErrorBanner from "../../components/ui/ErrorBanner.jsx";
 function Stars({ rating }) {
   const full = Math.round(rating);
   return (
-    <div className="text-yellow-500 text-sm">
+    <div className="text-warning text-sm">
       {Array.from({ length: 5 }).map((_, i) => (
         <span key={i} aria-hidden="true">
           {i < full ? "\u2605" : "\u2606"}
@@ -23,11 +23,11 @@ function Stars({ rating }) {
 
 function statusChip(status) {
   const map = {
-    Pending: "bg-yellow-50 text-yellow-700 border-yellow-100",
-    Approved: "bg-green-50 text-green-700 border-green-100",
-    Rejected: "bg-red-50 text-red-700 border-red-100",
+    Pending: "bg-warning/10 text-warning border-warning/20",
+    Approved: "bg-success/10 text-success border-success/20",
+    Rejected: "bg-primary-light text-primary border-primary/20",
   };
-  return map[status] ?? "bg-gray-50 text-gray-600 border-gray-100";
+  return map[status] ?? "bg-surface text-text border-border";
 }
 
 function ReviewText({ text }) {
@@ -36,12 +36,12 @@ function ReviewText({ text }) {
   const display = expanded || !isLong ? text : text.slice(0, 150) + "...";
 
   return (
-    <div className="mt-2 text-sm text-gray-700 leading-relaxed">
+    <div className="mt-2 text-sm text-text leading-relaxed">
       &ldquo;{display}&rdquo;
       {isLong && (
         <button
           type="button"
-          className="ml-1 text-red-600 hover:text-red-700 font-medium cursor-pointer"
+          className="ml-1 text-primary hover:text-primary-hover font-medium cursor-pointer"
           onClick={() => setExpanded(!expanded)}>
           {expanded ? "Show less" : "Read more"}
         </button>
@@ -84,7 +84,8 @@ export default function AdminReviews() {
       setCounters(result.counters);
       setPagination(result.pagination ?? { total: 0, page: 1, pages: 1 });
     } catch (err) {
-      const msg = err.response?.data?.message || err.message || "Failed to load reviews";
+      const msg =
+        err.response?.data?.message || err.message || "Failed to load reviews";
       setError(msg);
       toast.error(msg);
     } finally {
@@ -114,10 +115,11 @@ export default function AdminReviews() {
       await approveReview(id);
       setDeleteTarget(null);
       toast.success("Review approved and published.");
-      window.dispatchEvent(new Event('refresh-badges'));
+      window.dispatchEvent(new Event("refresh-badges"));
       await load();
     } catch (err) {
-      const msg = err.response?.data?.message || err.message || "Approve failed";
+      const msg =
+        err.response?.data?.message || err.message || "Approve failed";
       setError(msg);
       toast.error(msg);
     } finally {
@@ -131,7 +133,7 @@ export default function AdminReviews() {
       await rejectReview(id);
       setDeleteTarget(null);
       toast.success("Review rejected.");
-      window.dispatchEvent(new Event('refresh-badges'));
+      window.dispatchEvent(new Event("refresh-badges"));
       await load();
     } catch (err) {
       const msg = err.response?.data?.message || err.message || "Reject failed";
@@ -147,10 +149,11 @@ export default function AdminReviews() {
       await deleteAllReviews();
       toast.success("All reviews deleted successfully.");
       setDeleteAllTarget(false);
-      window.dispatchEvent(new Event('refresh-badges'));
+      window.dispatchEvent(new Event("refresh-badges"));
       await load();
     } catch (err) {
-      const msg = err.response?.data?.message || err.message || "Delete all failed";
+      const msg =
+        err.response?.data?.message || err.message || "Delete all failed";
       setError(msg);
       toast.error(msg);
       setDeleteAllTarget(false);
@@ -173,7 +176,7 @@ export default function AdminReviews() {
         />
       </div>
 
-      <div className="mt-6 bg-white border border-gray-200 rounded p-5 shadow-xs">
+      <div className="mt-6 bg-background border border-border rounded p-5 shadow-xs">
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
           <div className="flex flex-wrap gap-2">
             {tabs.map((t) => (
@@ -182,8 +185,8 @@ export default function AdminReviews() {
                 type="button"
                 className={`px-4 py-2.5 min-h-[44px] rounded-lg text-sm font-semibold border transition cursor-pointer ${
                   tab === t.key
-                    ? "bg-red-600 text-white border-red-600"
-                    : "bg-white text-gray-700 border-gray-200 hover:text-red-700 hover:bg-red-50"
+                    ? "bg-primary text-white border-primary"
+                    : "bg-background text-text border-border hover:text-primary hover:bg-primary-light"
                 }`}
                 onClick={() => setTab(t.key)}>
                 {t.label}
@@ -191,8 +194,8 @@ export default function AdminReviews() {
                   <span
                     className={`ml-1.5 inline-flex items-center justify-center w-5 h-5 text-xs rounded-lg ${
                       tab === t.key
-                        ? "bg-white/20 text-white"
-                        : "bg-gray-100 text-gray-600"
+                        ? "bg-primary-hover/20 text-white"
+                        : "bg-surface text-muted"
                     }`}>
                     {t.count}
                   </span>
@@ -203,7 +206,7 @@ export default function AdminReviews() {
 
           <div className="relative">
             <svg
-              className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400"
+              className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24">
@@ -216,7 +219,7 @@ export default function AdminReviews() {
             </svg>
             <input
               ref={searchRef}
-              className="w-full md:w-64 rounded border border-gray-200 pl-10 pr-4 py-2 outline-none focus:ring-2 focus:ring-red-100 text-sm"
+              className="w-full md:w-64 rounded border border-border bg-surface pl-10 pr-4 py-2 outline-none focus:ring-2 focus:ring-primary-light text-sm"
               placeholder="Search by name..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
@@ -227,7 +230,7 @@ export default function AdminReviews() {
 
       <ErrorBanner message={error} className="mt-4" />
 
-      <div className="mt-4 bg-white border border-gray-200 rounded p-5 shadow-xs">
+      <div className="mt-4 bg-background border border-border rounded p-5 shadow-xs">
         <AdminListFooter
           loading={loading}
           total={pagination.total}
@@ -239,13 +242,13 @@ export default function AdminReviews() {
         {loading && !items.length ? (
           <div className="mt-4 space-y-3">
             {[...Array(3)].map((_, i) => (
-              <div key={i} className="border border-gray-100 rounded p-4">
+              <div key={i} className="border border-border rounded p-4">
                 <div className="flex gap-4 animate-pulse">
-                  <div className="w-10 h-10 rounded-lg bg-gray-200 shrink-0" />
+                  <div className="w-10 h-10 rounded-lg bg-surface shrink-0" />
                   <div className="flex-1 space-y-2">
-                    <div className="h-4 w-32 bg-gray-200 rounded" />
-                    <div className="h-3 w-48 bg-gray-100 rounded" />
-                    <div className="h-3 w-full bg-gray-100 rounded" />
+                    <div className="h-4 w-32 bg-surface rounded" />
+                    <div className="h-3 w-48 bg-surface rounded" />
+                    <div className="h-3 w-full bg-surface rounded" />
                   </div>
                 </div>
               </div>
@@ -256,22 +259,22 @@ export default function AdminReviews() {
             {items.map((r) => (
               <div
                 key={r.review_id}
-                className="border border-gray-100 rounded p-4 hover:bg-gray-50 transition">
+                className="border border-border rounded p-4 hover:bg-surface transition">
                 <div className="flex items-start gap-3 sm:gap-4">
                   <img
                     src={r.user_avatar}
                     alt={r.name}
-                    className="w-10 h-10 rounded-full object-cover shrink-0 bg-gray-100"
+                    className="w-10 h-10 rounded-full object-cover shrink-0 bg-surface"
                     onError={(e) => {
                       e.target.src = `data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'><rect fill='%23e5e7eb' width='40' height='40'/><text x='50%' y='55%' dominant-baseline='middle' text-anchor='middle' fill='%236b7280' font-size='16' font-family='sans-serif'>${r.name?.charAt(0)?.toUpperCase() ?? "?"}</text></svg>`;
                     }}
                   />
                   <div className="min-w-0 flex-1">
                     <div className="flex items-center gap-2 flex-wrap">
-                      <div className="font-bold text-gray-900 truncate">
+                      <div className="font-bold text-heading truncate">
                         {r.name}
                       </div>
-                      <span className="text-xs text-gray-400 truncate">
+                      <span className="text-xs text-muted truncate">
                         {r.location}
                       </span>
                       <span
@@ -281,7 +284,7 @@ export default function AdminReviews() {
                     </div>
                     <div className="mt-1 flex items-center gap-2">
                       <Stars rating={r.rating} />
-                      <span className="text-xs text-gray-400">
+                      <span className="text-xs text-muted">
                         {relativeTime(r.date)}
                       </span>
                     </div>
@@ -290,7 +293,7 @@ export default function AdminReviews() {
                       {r.status !== "Approved" && (
                         <button
                           type="button"
-                          className="inline-flex items-center gap-1.5 px-3 py-2 min-h-[44px] text-xs font-semibold text-green-700 bg-green-50 border border-green-200 rounded hover:bg-green-100 transition cursor-pointer disabled:opacity-50"
+                          className="inline-flex items-center gap-1.5 px-3 py-2 min-h-[44px] text-xs font-semibold text-success bg-success/10 border border-success/20 rounded hover:bg-success/20 transition cursor-pointer disabled:opacity-50"
                           onClick={() =>
                             setDeleteTarget({
                               type: "approve",
@@ -337,7 +340,7 @@ export default function AdminReviews() {
                       {r.status !== "Rejected" && (
                         <button
                           type="button"
-                          className="inline-flex items-center gap-1.5 px-3 py-2 min-h-[44px] text-xs font-semibold text-red-700 bg-red-50 border border-red-200 rounded hover:bg-red-100 transition cursor-pointer disabled:opacity-50"
+                          className="inline-flex items-center gap-1.5 px-3 py-2 min-h-[44px] text-xs font-semibold text-primary bg-primary-light border border-primary/20 rounded hover:bg-primary/10 transition cursor-pointer disabled:opacity-50"
                           onClick={() =>
                             setDeleteTarget({
                               type: "reject",
@@ -390,7 +393,7 @@ export default function AdminReviews() {
         ) : (
           <div className="flex flex-col items-center justify-center py-12 text-center">
             <svg
-              className="w-12 h-12 text-gray-300"
+              className="w-12 h-12 text-muted"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24">
@@ -401,17 +404,21 @@ export default function AdminReviews() {
                 d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"
               />
             </svg>
-            <div className="mt-3 text-sm font-medium text-gray-500">
+            <div className="mt-3 text-sm font-medium text-muted">
               No reviews found
             </div>
-            <div className="mt-1 text-xs text-gray-400">
+            <div className="mt-1 text-xs text-muted">
               {tab === "All"
                 ? "No reviews have been submitted yet"
                 : `No ${tab.toLowerCase()} reviews`}
             </div>
           </div>
         )}
-        <Pagination page={pagination.page} pages={pagination.pages} onPageChange={setPage} />
+        <Pagination
+          page={pagination.page}
+          pages={pagination.pages}
+          onPageChange={setPage}
+        />
       </div>
 
       <ConfirmModal

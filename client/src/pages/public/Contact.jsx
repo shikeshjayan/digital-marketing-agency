@@ -167,7 +167,11 @@ export default function Contact() {
         <div className="max-w-6xl mx-auto px-4">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <FadeIn delay={0}>
-              <ContactCard title="Phone" value="+91 8891212323" icon={faPhone} />
+              <ContactCard
+                title="Phone"
+                value="+91 8891212323"
+                icon={faPhone}
+              />
             </FadeIn>
             <FadeIn delay={100}>
               <ContactCard
@@ -193,8 +197,7 @@ export default function Contact() {
                     How Can I Help You?
                   </div>
                   <div className="mt-3 section-heading">
-                    Wanna <span className="text-primary">Hear</span> From
-                    You
+                    Wanna <span className="text-primary">Hear</span> From You
                   </div>
                   <p className="mt-4 text-gray-300 body-text">
                     Tell us what you need and we'll respond with a clear plan
@@ -241,9 +244,7 @@ export default function Contact() {
                 <div className="text-sm font-semibold text-primary">
                   Get in Touch
                 </div>
-                <div className="mt-2 section-heading text-heading">
-                  Submit
-                </div>
+                <div className="mt-2 section-heading text-heading">Submit</div>
 
                 <form className="mt-6 space-y-4" onSubmit={onSubmit}>
                   <div>
