@@ -5,7 +5,6 @@ import FadeIn from "../ui/FadeIn.jsx";
 import SectionHeading from "../ui/SectionHeading.jsx";
 import StarRow from "../ui/StarRow.jsx";
 import DetailModal from "../ui/DetailModal.jsx";
-import imageUrl from "../../utils/imageUrl.js";
 
 export default function TestimonialsSection({
   reviews = [],
@@ -13,7 +12,6 @@ export default function TestimonialsSection({
   eyebrow = "Testimonials",
   title = "What Our Clients Say",
   subtitle = "Real feedback from businesses we've helped grow.",
-  showAvatar = true,
   bg = "bg-background",
 }) {
   const [page, setPage] = useState(0);
@@ -51,7 +49,6 @@ export default function TestimonialsSection({
   const perPage = 3;
   const totalPages = Math.ceil(reviews.length / perPage);
   const visible = reviews.slice(page * perPage, page * perPage + perPage);
-  const handleDetail = (review) => setDetail(review);
 
   const prev = () => setPage((v) => (v - 1 + totalPages) % totalPages);
   const next = () => setPage((v) => (v + 1) % totalPages);
@@ -68,7 +65,7 @@ export default function TestimonialsSection({
             />
           </div>
         </FadeIn>
-
+        
         {totalPages > 1 && (
           <div className="flex items-center justify-center gap-2 mt-6">
             <button
@@ -92,87 +89,85 @@ export default function TestimonialsSection({
         )}
 
         <div className="mt-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {visible.map((review, i) => (
-            <FadeIn key={review._id || i} delay={i * 100}>
-              <div className="h-full bg-surface border border-border rounded-lg px-6 py-6 flex flex-col items-center text-center hover:shadow-md transition">
-                {showAvatar && (
-                  <div className="w-14 h-14 rounded-full overflow-hidden ring-2 ring-primary ring-offset-2 flex items-center justify-center shadow-sm">
-                    {review.user_avatar ? (
-                      <img
-                        src={imageUrl(review.user_avatar)}
-                        alt={review.name}
-                        loading="lazy"
-                        decoding="async"
-                        className="w-full h-full object-cover"
-                        onError={(e) => {
-                          e.target.style.display = "none";
-                          e.target.nextSibling.style.display = "flex";
-                        }}
-                      />
-                    ) : null}
-                    <div
-                      className={`w-full h-full items-center justify-center text-sm font-bold text-primary-hover ${
-                        review.user_avatar ? "hidden" : "flex"
-                      }`}>
-                      {review.name
-                        ?.split(" ")
-                        .map((w) => w[0])
-                        .join("")
-                        .toUpperCase()
-                        .slice(0, 2) || "?"}
+          {visible.map((review, i) => {
+            const isLongText = review.review_text && review.review_text.length > 100;
+            const initials = review.name ? review.name.split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 2) : '?';
+            const shortText = isLongText ? review.review_text.slice(0, 100).trim() : review.review_text;
+
+            return (
+              <FadeIn key={review._id || i} delay={i * 100}>
+                <div className="h-full bg-surface border border-border rounded-lg p-6 flex flex-col justify-between hover:shadow-md transition">
+                  <div>
+                    <div className="flex items-center gap-3 w-full min-w-0">
+                      {/* Initials Circle with light red highlight branding style */}
+                      <div className="w-12 h-12 rounded-full bg-primary-light/40 border border-primary/20 flex items-center justify-center shrink-0 overflow-hidden shadow-inner">
+                        <span className="text-sm font-extrabold text-primary select-none tracking-wider">
+                          {initials}
+                        </span>
+                      </div>
+                      <div className="min-w-0 flex-1 text-left">
+                        <div className="font-bold text-heading text-sm truncate">
+                          {review.name}
+                        </div>
+                        {(review.company || review.location) && (
+                          <div className="text-xs text-muted truncate">
+                            {review.company && <span>{review.company}</span>}
+                            {review.company && review.location && <span> &middot; </span>}
+                            {review.location && <span>{review.location}</span>}
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                    
+                    <div className="mt-3 flex justify-start">
+                      <StarRow rating={review.rating} />
+                    </div>
+
+                    {/* Flat inline sentence container to avoid responsive hidden line-clamp breaks */}
+                    <div className="mt-4 text-text text-sm leading-relaxed break-words w-full italic text-left">
+                      <span className="inline">
+                        &ldquo;{shortText}
+                      </span>
+                      {isLongText ? (
+                        <span className="inline">
+                          ...{" "}
+                          <button
+                            type="button"
+                            onClick={() => setDetail(review)}
+                            className="inline text-xs font-bold text-primary hover:text-primary-hover hover:underline transition cursor-pointer not-italic select-none p-0 bg-transparent border-none outline-none">
+                            Read more
+                          </button>
+                          &rdquo;
+                        </span>
+                      ) : (
+                        <span className="inline">&rdquo;</span>
+                      )}
                     </div>
                   </div>
-                )}
-
-                <div className="mt-3">
-                  <StarRow rating={review.rating} />
                 </div>
-
-                <div className="mt-2 font-bold text-heading text-sm">
-                  {review.name}
-                </div>
-                {(review.company || review.location) && (
-                  <div className="text-xs text-muted">
-                    {review.company && <span>{review.company}</span>}
-                    {review.company && review.location && (
-                      <span> &middot; </span>
-                    )}
-                    {review.location && <span>{review.location}</span>}
-                  </div>
-                )}
-
-                <p className="mt-3 text-text text-sm leading-relaxed flex-1 line-clamp-3">
-                  &ldquo;{review.review_text}&rdquo;
-                </p>
-
-                {review.review_text && review.review_text.length > 100 && (
-                  <button
-                    type="button"
-                    onClick={() => handleDetail(review)}
-                    className="mt-2 text-xs font-semibold text-primary hover:text-primary-hover transition cursor-pointer">
-                    Read more
-                  </button>
-                )}
-              </div>
-            </FadeIn>
-          ))}
+              </FadeIn>
+            );
+          })}
         </div>
       </div>
 
+      {/* DetailModal maps empty images to consistently generate name letter bubbles inside popups */}
       <DetailModal
         open={!!detail}
         onClose={() => setDetail(null)}
-        image={detail?.user_avatar ? imageUrl(detail.user_avatar) : ""}
+        image="" 
         imageVariant="avatar"
         title={detail?.name || ""}
+        initials={
+          detail?.name
+            ? detail.name.split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 2)
+            : "?"
+        }
         tags={
           detail
             ? [
                 detail.company && { label: detail.company, variant: "primary" },
-                detail.location && {
-                  label: detail.location,
-                  variant: "default",
-                },
+                detail.location && { label: detail.location, variant: "default" },
               ].filter(Boolean)
             : []
         }
