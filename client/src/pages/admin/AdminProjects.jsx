@@ -38,6 +38,11 @@ export default function AdminProjects() {
       project_id: null,
       project_name: "",
       category: "Dynamic",
+      client_name: "",
+      industry: "",
+      technologies: "",
+      duration: "",
+      before_after: [],
       short_description: "",
       description: "",
       live_url: "",
@@ -126,6 +131,11 @@ export default function AdminProjects() {
     }
     payload.append("project_name", form.project_name.trim());
     payload.append("category", form.category);
+    payload.append("client_name", form.client_name.trim());
+    payload.append("industry", form.industry.trim());
+    payload.append("technologies", JSON.stringify(form.technologies.split(",").map((t) => t.trim()).filter(Boolean)));
+    payload.append("duration", form.duration.trim());
+    payload.append("before_after", JSON.stringify(form.before_after));
     payload.append("short_description", form.short_description.trim());
     payload.append("description", form.description.trim());
     payload.append("live_url", form.live_url.trim());
@@ -251,6 +261,12 @@ export default function AdminProjects() {
                   { value: "Static", label: "Static" },
                   { value: "Dynamic", label: "Dynamic" },
                   { value: "Landing Pages", label: "Landing Pages" },
+                  { value: "SEO", label: "SEO" },
+                  { value: "Web Design", label: "Web Design" },
+                  { value: "Google Ads", label: "Google Ads" },
+                  { value: "Meta Ads", label: "Meta Ads" },
+                  { value: "Branding", label: "Branding" },
+                  { value: "E-commerce", label: "E-commerce" },
                 ]}
               />
               <FormField
@@ -263,6 +279,118 @@ export default function AdminProjects() {
                 ]}
               />
             </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <FormField
+                label="Client Name"
+                value={form.client_name}
+                onChange={(e) =>
+                  setForm((f) => ({ ...f, client_name: e.target.value }))
+                }
+                placeholder="e.g. ABC Hospital"
+              />
+              <FormField
+                label="Industry"
+                value={form.industry}
+                onChange={(e) =>
+                  setForm((f) => ({ ...f, industry: e.target.value }))
+                }
+                placeholder="e.g. Healthcare"
+              />
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <FormField
+                label="Technologies"
+                value={form.technologies}
+                onChange={(e) =>
+                  setForm((f) => ({ ...f, technologies: e.target.value }))
+                }
+                placeholder="Comma-separated, e.g. React, Node.js, MongoDB"
+              />
+              <FormField
+                label="Duration"
+                value={form.duration}
+                onChange={(e) =>
+                  setForm((f) => ({ ...f, duration: e.target.value }))
+                }
+                placeholder="e.g. 6 Months"
+              />
+            </div>
+
+            <div>
+              <div className="flex items-center justify-between">
+                <label className="block text-sm font-medium text-heading">
+                  Before / After Results
+                </label>
+                <button
+                  type="button"
+                  onClick={() =>
+                    setForm((f) => ({
+                      ...f,
+                      before_after: [
+                        ...f.before_after,
+                        { metric: "", before: "", after: "" },
+                      ],
+                    }))
+                  }
+                  className="text-xs text-primary hover:underline cursor-pointer">
+                  + Add Metric
+                </button>
+              </div>
+              {form.before_after.length === 0 && (
+                <p className="mt-1 text-xs text-muted">
+                  Optional — add before/after metrics for this project.
+                </p>
+              )}
+              {form.before_after.map((item, idx) => (
+                <div key={idx} className="mt-2 grid grid-cols-[1fr_1fr_1fr_auto] gap-2 items-end">
+                  <input
+                    type="text"
+                    className="rounded border border-border bg-surface px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-primary-light placeholder:text-muted"
+                    placeholder="Metric (e.g. Traffic)"
+                    value={item.metric}
+                    onChange={(e) => {
+                      const updated = [...form.before_after];
+                      updated[idx] = { ...updated[idx], metric: e.target.value };
+                      setForm((f) => ({ ...f, before_after: updated }));
+                    }}
+                  />
+                  <input
+                    type="text"
+                    className="rounded border border-border bg-surface px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-primary-light placeholder:text-muted"
+                    placeholder="Before"
+                    value={item.before}
+                    onChange={(e) => {
+                      const updated = [...form.before_after];
+                      updated[idx] = { ...updated[idx], before: e.target.value };
+                      setForm((f) => ({ ...f, before_after: updated }));
+                    }}
+                  />
+                  <input
+                    type="text"
+                    className="rounded border border-border bg-surface px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-primary-light placeholder:text-muted"
+                    placeholder="After"
+                    value={item.after}
+                    onChange={(e) => {
+                      const updated = [...form.before_after];
+                      updated[idx] = { ...updated[idx], after: e.target.value };
+                      setForm((f) => ({ ...f, before_after: updated }));
+                    }}
+                  />
+                  <button
+                    type="button"
+                    onClick={() =>
+                      setForm((f) => ({
+                        ...f,
+                        before_after: f.before_after.filter((_, i) => i !== idx),
+                      }))
+                    }
+                    className="px-2 py-2 text-primary hover:text-primary-hover cursor-pointer">
+                    ✕
+                  </button>
+                </div>
+              ))}
+            </div>
+
             <FormField
               label="Short Description"
               value={form.short_description}
@@ -380,6 +508,15 @@ export default function AdminProjects() {
                                 project_id: p._id,
                                 project_name: p.project_name,
                                 category: p.category,
+                                client_name: p.client_name ?? "",
+                                industry: p.industry ?? "",
+                                technologies: Array.isArray(p.technologies)
+                                  ? p.technologies.join(", ")
+                                  : "",
+                                duration: p.duration ?? "",
+                                before_after: Array.isArray(p.before_after)
+                                  ? p.before_after
+                                  : [],
                                 short_description: p.short_description,
                                 description: p.description ?? "",
                                 live_url: p.live_url,

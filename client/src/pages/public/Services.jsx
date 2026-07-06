@@ -11,6 +11,13 @@ import {
   faConciergeBell,
   faStore,
   faArrowRight,
+  faSearch,
+  faAd,
+  faEnvelope,
+  faChartLine,
+  faGlobe,
+  faPalette,
+  faShoppingBag,
 } from "@fortawesome/free-solid-svg-icons";
 import HeroSplit from "../../components/public/HeroSplit";
 import FadeIn from "../../components/ui/FadeIn.jsx";
@@ -130,23 +137,20 @@ const featuredCases = [
   {
     client: "NovaTech Solutions",
     industry: "Technology",
-    challenge: "Low organic traffic and poor search visibility in a competitive SaaS market.",
-    solution: "Full SEO audit, content strategy, technical optimization, and link-building campaign.",
-    result: "312% increase in organic traffic and top-3 rankings for 15 target keywords.",
+    metric: "+312% Organic Traffic",
+    result: "Top-3 rankings for 15 target keywords in 6 months.",
   },
   {
     client: "GreenLeaf Retail",
     industry: "Retail / E-Commerce",
-    challenge: "High cart abandonment rate and low conversion on mobile devices.",
-    solution: "UX redesign, mobile-first checkout flow, and retargeting ad campaigns.",
-    result: "47% boost in conversion rate and 2.8x increase in monthly revenue.",
+    metric: "+47% Conversion Rate",
+    result: "2.8x increase in monthly revenue after UX redesign.",
   },
   {
     client: "BrightPath Academy",
     industry: "Education",
-    challenge: "Limited online enrollment and weak brand presence in local search.",
-    solution: "Brand refresh, landing page optimization, and Google Ads lead generation.",
-    result: "180% increase in enrollment inquiries and 65% reduction in cost-per-lead.",
+    metric: "+180% Enrollment Inquiries",
+    result: "65% reduction in cost-per-lead via Google Ads.",
   },
 ];
 
@@ -165,27 +169,65 @@ function FeaturedCaseStudies() {
         <div className="mt-10 grid grid-cols-1 md:grid-cols-3 gap-6">
           {featuredCases.map((cs, i) => (
             <FadeIn key={i} delay={i * 100}>
-              <div className="bg-background border border-border rounded-lg p-6 h-full flex flex-col hover:shadow-md transition">
-                <div className="flex items-center gap-2 mb-3">
-                  <span className="text-xs font-semibold text-primary bg-primary-light px-2.5 py-1 rounded">
-                    {cs.industry}
-                  </span>
+              <div className="bg-background border border-border rounded-lg p-6 h-full flex flex-col hover:shadow-md transition group">
+                <span className="text-xs font-semibold text-primary bg-primary-light px-2.5 py-1 rounded w-fit">
+                  {cs.industry}
+                </span>
+                <h3 className="mt-3 body-text font-bold text-heading">{cs.client}</h3>
+                <div className="mt-3 text-2xl font-extrabold text-primary">
+                  {cs.metric}
                 </div>
-                <h3 className="body-text font-bold text-heading">{cs.client}</h3>
-                <div className="mt-3 space-y-2 flex-1">
-                  <div>
-                    <span className="text-xs font-semibold text-muted uppercase tracking-wider">Challenge</span>
-                    <p className="mt-0.5 small-text text-text body-text">{cs.challenge}</p>
-                  </div>
-                  <div>
-                    <span className="text-xs font-semibold text-muted uppercase tracking-wider">Solution</span>
-                    <p className="mt-0.5 small-text text-text body-text">{cs.solution}</p>
-                  </div>
-                  <div>
-                    <span className="text-xs font-semibold text-primary uppercase tracking-wider">Result</span>
-                    <p className="mt-0.5 text-sm text-heading font-semibold leading-relaxed">{cs.result}</p>
-                  </div>
+                <p className="mt-2 small-text text-text body-text flex-1">{cs.result}</p>
+                <Link
+                  to="/projects"
+                  className="mt-4 inline-flex items-center gap-2 text-sm font-semibold text-primary group-hover:gap-3 transition-all">
+                  Read Case Study <FontAwesomeIcon icon={faArrowRight} />
+                </Link>
+              </div>
+            </FadeIn>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ─── Technologies & Platforms ──────────────────────────── */
+const technologies = [
+  { name: "Google Ads", icon: faAd },
+  { name: "Meta Ads", icon: faGlobe },
+  { name: "SEO", icon: faSearch },
+  { name: "WordPress", icon: faGlobe },
+  { name: "Shopify", icon: faShoppingBag },
+  { name: "WooCommerce", icon: faCartShopping },
+  { name: "Google Analytics", icon: faChartLine },
+  { name: "Search Console", icon: faSearch },
+  { name: "HubSpot", icon: faChartLine },
+  { name: "Mailchimp", icon: faEnvelope },
+  { name: "Brand Strategy", icon: faPalette },
+  { name: "Custom Development", icon: faMicrochip },
+];
+
+function TechnologiesPlatforms() {
+  return (
+    <section className="py-16 md:py-20 bg-background">
+      <div className="max-w-6xl mx-auto px-4">
+        <FadeIn>
+          <SectionHeading
+            eyebrow="Our Ecosystem"
+            title="Technologies & Platforms"
+            subtitle="We work with the tools and platforms that power modern digital businesses."
+          />
+        </FadeIn>
+
+        <div className="mt-10 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
+          {technologies.map((tech, i) => (
+            <FadeIn key={tech.name} delay={i * 60}>
+              <div className="flex items-center gap-3 bg-surface border border-border rounded-lg px-4 py-3 hover:shadow-sm hover:border-primary/30 transition-all duration-200 cursor-default">
+                <div className="w-9 h-9 rounded-md bg-primary-light flex items-center justify-center shrink-0">
+                  <FontAwesomeIcon icon={tech.icon} className="text-primary text-sm" />
                 </div>
+                <span className="small-text font-semibold text-heading">{tech.name}</span>
               </div>
             </FadeIn>
           ))}
@@ -210,7 +252,7 @@ function ResultsStatistics() {
         <FadeIn>
           <SectionHeading
             eyebrow="Proven Results"
-            title="Results & Statistics"
+            title="Our Impact"
             subtitle="Numbers that speak louder than words. Our track record of delivering measurable outcomes."
           />
         </FadeIn>
@@ -396,22 +438,25 @@ const Services = () => {
       {/* 6. Industries We Serve */}
       <IndustriesWeServe />
 
-      {/* 7. Featured Case Studies */}
+      {/* 7. Technologies & Platforms */}
+      <TechnologiesPlatforms />
+
+      {/* 8. Featured Case Studies */}
       <FeaturedCaseStudies />
 
-      {/* 8. Results & Statistics */}
+      {/* 9. Results & Statistics */}
       <ResultsStatistics />
 
-      {/* 9. Client Testimonials */}
+      {/* 10. Client Testimonials */}
       <TestimonialsSection reviews={reviews} loading={reviewsLoading} />
 
-      {/* 10. FAQ */}
+      {/* 11. FAQ */}
       <FAQSection items={faqItems} />
 
-      {/* 11. Final CTA */}
+      {/* 12. Final CTA */}
       <FinalCTA />
 
-      {/* 12. Trust Section */}
+      {/* 13. Trust Section */}
       <LogoMarquee />
     </div>
   );

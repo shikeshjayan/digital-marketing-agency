@@ -4,17 +4,11 @@ import {
   faBullseye,
   faArrowRight,
   faGlobe,
-  faShoppingCart,
-  faHospital,
-  faBuilding,
-  faGraduationCap,
-  faUtensils,
-  faCar,
-  faDumbbell,
-  faHome,
-  faPlane,
   faCheckCircle,
   faChartLine,
+  faBuilding,
+  faClock,
+  faCogs,
 } from "@fortawesome/free-solid-svg-icons";
 import useProjectStore from "../../store/projectStore.js";
 import useReviewStore from "../../store/reviewStore.js";
@@ -23,13 +17,12 @@ import FadeIn from "../../components/ui/FadeIn.jsx";
 import SectionHeading from "../../components/ui/SectionHeading.jsx";
 import AnimatedCounter from "../../components/ui/AnimatedCounter.jsx";
 import { ProjectCardSkeleton } from "../../components/ui/Skeleton.jsx";
-import OurProcess from "../../components/public/OurProcess.jsx";
 import FinalCTA from "../../components/public/FinalCTA.jsx";
 import TestimonialsSection from "../../components/public/TestimonialsSection.jsx";
 import DetailModal from "../../components/ui/DetailModal.jsx";
 import resolveImagePath from "../../utils/resolveImagePath.js";
 
-const categories = ["All", "Static", "Dynamic", "Landing Pages"];
+const categories = ["All", "SEO", "Web Design", "Google Ads", "Meta Ads", "Branding", "E-commerce"];
 
 /* ─── Project Card ────────────────────────────────────────── */
 const ProjectCard = ({ project, onDetail }) => {
@@ -55,20 +48,38 @@ const ProjectCard = ({ project, onDetail }) => {
           {project.project_name}
         </h3>
 
-        <div className="mt-2 flex items-center gap-2 text-xs">
+        <div className="mt-2 flex items-center gap-2 text-xs flex-wrap">
           <span className="inline-block px-2.5 py-0.5 rounded-full bg-primary-light text-primary font-semibold">
             {project.category}
           </span>
-          <span className="text-muted">|</span>
-          <span
-            className={`inline-block px-2.5 py-0.5 rounded-full font-semibold ${
-              project.status === "Active"
-                ? "bg-green-50 text-green-600"
-                : "bg-gray-100 text-gray-500"
-            }`}>
-            {project.status}
-          </span>
+          {project.industry && (
+            <span className="inline-block px-2.5 py-0.5 rounded-full bg-surface text-text font-semibold border border-border">
+              {project.industry}
+            </span>
+          )}
         </div>
+
+        <div className="mt-3 flex flex-wrap gap-x-4 gap-y-1 text-xs text-muted">
+          {project.client_name && (
+            <span className="flex items-center gap-1">
+              <FontAwesomeIcon icon={faBuilding} className="text-[10px]" />
+              {project.client_name}
+            </span>
+          )}
+          {project.duration && (
+            <span className="flex items-center gap-1">
+              <FontAwesomeIcon icon={faClock} className="text-[10px]" />
+              {project.duration}
+            </span>
+          )}
+        </div>
+
+        {project.technologies && project.technologies.length > 0 && (
+          <div className="mt-2 flex items-center gap-1 text-xs text-muted">
+            <FontAwesomeIcon icon={faCogs} className="text-[10px]" />
+            <span className="truncate">{project.technologies.join(", ")}</span>
+          </div>
+        )}
 
         <p className="mt-3 small-text text-text body-text line-clamp-2">
           {project.short_description}
@@ -98,10 +109,10 @@ const ProjectCard = ({ project, onDetail }) => {
 /* ─── Section: Project Statistics ─────────────────────────── */
 function ProjectStatistics() {
   const stats = [
-    { target: 150, suffix: "+", label: "Projects Completed" },
+    { target: 150, suffix: "+", label: "Projects Delivered" },
     { target: 50, suffix: "+", label: "Happy Clients" },
-    { target: 98, suffix: "%", label: "Client Retention" },
-    { target: 24, suffix: "/7", label: "Support Available" },
+    { target: 10, suffix: "+", label: "Countries Served" },
+    { target: 15, suffix: "+", label: "Industry Awards" },
   ];
 
   return (
@@ -145,7 +156,7 @@ function FeaturedCaseStudy({ projects, onDetail }) {
   if (!featured) return null;
 
   return (
-    <section className="py-10 md:py-12 bg-surface">
+    <section className="py-12 md:py-16 bg-surface">
       <div className="max-w-6xl mx-auto px-4">
         <FadeIn>
           <SectionHeading
@@ -158,7 +169,7 @@ function FeaturedCaseStudy({ projects, onDetail }) {
         <FadeIn delay={100}>
           <div className="mt-8 bg-background border border-border rounded-lg overflow-hidden hover:shadow-lg transition-shadow duration-300">
             <div className="grid grid-cols-1 lg:grid-cols-2">
-              <div className="relative overflow-hidden aspect-[16/10] lg:aspect-auto lg:min-h-[260px] bg-surface">
+              <div className="relative overflow-hidden aspect-[16/10] sm:aspect-[16/9] lg:aspect-auto lg:min-h-[320px] bg-surface">
                 <img
                   src={resolveImagePath(featured.image)}
                   alt={featured.project_name}
@@ -173,39 +184,74 @@ function FeaturedCaseStudy({ projects, onDetail }) {
                 />
               </div>
 
-              <div className="p-5 lg:p-6 flex flex-col justify-center">
-                <div className="flex items-center gap-2 text-xs">
+              <div className="p-5 sm:p-6 lg:p-8 flex flex-col">
+                <div className="flex items-center gap-2 text-xs flex-wrap">
                   <span className="inline-block px-2.5 py-0.5 rounded-full bg-primary-light text-primary font-semibold">
                     {featured.category}
                   </span>
-                  <span
-                    className={`inline-block px-2.5 py-0.5 rounded-full font-semibold ${
-                      featured.status === "Active"
-                        ? "bg-green-50 text-green-600"
-                        : "bg-gray-100 text-gray-500"
-                    }`}>
-                    {featured.status}
-                  </span>
+                  {featured.industry && (
+                    <span className="inline-block px-2.5 py-0.5 rounded-full bg-surface text-text font-semibold border border-border">
+                      {featured.industry}
+                    </span>
+                  )}
                 </div>
 
                 <h3 className="mt-3 subheading text-heading">
                   {featured.project_name}
                 </h3>
 
-                <p className="mt-2 text-text small-text line-clamp-3">
+                <div className="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-xs text-muted">
+                  {featured.client_name && (
+                    <span className="flex items-center gap-1.5">
+                      <FontAwesomeIcon icon={faBuilding} className="text-[10px]" />
+                      {featured.client_name}
+                    </span>
+                  )}
+                  {featured.duration && (
+                    <span className="flex items-center gap-1.5">
+                      <FontAwesomeIcon icon={faClock} className="text-[10px]" />
+                      {featured.duration}
+                    </span>
+                  )}
+                </div>
+
+                {featured.technologies && featured.technologies.length > 0 && (
+                  <div className="mt-2 flex items-center gap-1.5 text-xs text-muted">
+                    <FontAwesomeIcon icon={faCogs} className="text-[10px]" />
+                    <span>{featured.technologies.join(", ")}</span>
+                  </div>
+                )}
+
+                <p className="mt-4 text-text small-text leading-relaxed">
                   {featured.short_description}
                 </p>
+
                 {featured.short_description &&
                   featured.short_description.length > 120 && (
                     <button
                       type="button"
                       onClick={() => onDetail(featured)}
-                      className="mt-1 text-xs font-semibold text-primary hover:text-primary-hover transition cursor-pointer">
-                      Read more
+                      className="mt-1.5 self-start text-xs font-semibold text-primary hover:text-primary-hover transition cursor-pointer">
+                      Read more →
                     </button>
                   )}
 
-                <div className="mt-4">
+                {featured.before_after && featured.before_after.length > 0 && (
+                  <div className="mt-5 grid grid-cols-2 gap-3">
+                    {featured.before_after.slice(0, 2).map((item, idx) => (
+                      <div key={idx} className="text-center bg-surface rounded-lg p-3 border border-border">
+                        <div className="text-[10px] font-bold text-muted uppercase tracking-wider">{item.metric}</div>
+                        <div className="mt-2 flex items-center justify-center gap-2 text-xs">
+                          <span className="text-muted font-medium">{item.before}</span>
+                          <FontAwesomeIcon icon={faArrowRight} className="text-primary text-[8px]" />
+                          <span className="text-primary font-bold">{item.after}</span>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+
+                <div className="mt-auto pt-5">
                   <a
                     href={featured.live_url}
                     target="_blank"
@@ -290,44 +336,79 @@ function ResultsAnalytics() {
   );
 }
 
-/* ─── Section: Industries Served ──────────────────────────── */
-const industries = [
-  { icon: faBuilding, name: "Corporate" },
-  { icon: faShoppingCart, name: "E-Commerce" },
-  { icon: faHospital, name: "Healthcare" },
-  { icon: faGraduationCap, name: "Education" },
-  { icon: faUtensils, name: "Food & Beverage" },
-  { icon: faCar, name: "Automotive" },
-  { icon: faDumbbell, name: "Fitness & Wellness" },
-  { icon: faHome, name: "Real Estate" },
-  { icon: faPlane, name: "Travel & Tourism" },
-  { icon: faGlobe, name: "Technology" },
+/* ─── Section: Client Logos (Trusted By) ──────────────────── */
+const clientLogos = [
+  { name: "Google Partner" },
+  { name: "TechVista Solutions" },
+  { name: "GreenLeaf Organics" },
+  { name: "NovaTech Systems" },
+  { name: "BrightPath Education" },
+  { name: "UrbanEdge Realty" },
+  { name: "FreshBite Foods" },
+  { name: "MedCore Health" },
 ];
 
-function IndustriesServed() {
+function ClientLogos() {
   return (
     <section className="py-12 md:py-16 bg-surface">
       <div className="max-w-6xl mx-auto px-4">
         <FadeIn>
           <SectionHeading
-            eyebrow="Who We Help"
-            title="Industries Served"
-            subtitle="Tailored digital solutions for diverse business sectors."
+            eyebrow="Trusted By"
+            title="Our Clients"
+            subtitle="We've had the privilege of working with amazing brands across industries."
           />
         </FadeIn>
 
-        <div className="mt-10 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4">
-          {industries.map((ind, i) => (
-            <FadeIn key={ind.name} delay={i * 60}>
-              <div className="bg-background border border-border rounded-lg p-5 text-center hover:border-primary hover:shadow-sm transition group cursor-default">
-                <div className="w-12 h-12 rounded-lg bg-primary-light flex items-center justify-center mx-auto group-hover:bg-primary group-hover:text-white transition">
-                  <FontAwesomeIcon
-                    icon={ind.icon}
-                    className="text-xl text-primary group-hover:text-white transition"
-                  />
-                </div>
-                <div className="mt-3 text-sm font-semibold text-heading">
-                  {ind.name}
+        <div className="mt-10 grid grid-cols-2 sm:grid-cols-4 gap-4">
+          {clientLogos.map((logo, i) => (
+            <FadeIn key={logo.name} delay={i * 60}>
+              <div className="flex items-center justify-center bg-background border border-border rounded-lg px-4 py-5 hover:shadow-sm hover:border-primary/30 transition-all duration-200 cursor-default">
+                <span className="text-sm font-semibold text-muted text-center">{logo.name}</span>
+              </div>
+            </FadeIn>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ─── Section: Before / After Results ────────────────────── */
+const beforeAfterData = [
+  { metric: "Organic Traffic", before: "4,200/mo", after: "12,100/mo" },
+  { metric: "Lead Generation", before: "20/mo", after: "68/mo" },
+  { metric: "Conversion Rate", before: "1.8%", after: "4.7%" },
+  { metric: "Monthly Revenue", before: "$12K", after: "$38K" },
+];
+
+function BeforeAfterResults() {
+  return (
+    <section className="py-16 md:py-20 bg-background">
+      <div className="max-w-6xl mx-auto px-4">
+        <FadeIn>
+          <SectionHeading
+            eyebrow="Impact"
+            title="Before & After"
+            subtitle="Real transformations that speak for our work."
+          />
+        </FadeIn>
+
+        <div className="mt-10 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          {beforeAfterData.map((item, i) => (
+            <FadeIn key={item.metric} delay={i * 100}>
+              <div className="bg-surface border border-border rounded-lg p-5 text-center hover:shadow-sm transition h-full flex flex-col">
+                <div className="text-sm font-bold text-heading">{item.metric}</div>
+                <div className="mt-4 flex items-center justify-center gap-4 flex-1">
+                  <div>
+                    <div className="text-xs text-muted uppercase tracking-wider">Before</div>
+                    <div className="mt-1 text-lg font-bold text-muted">{item.before}</div>
+                  </div>
+                  <FontAwesomeIcon icon={faArrowRight} className="text-primary text-sm" />
+                  <div>
+                    <div className="text-xs text-primary uppercase tracking-wider font-semibold">After</div>
+                    <div className="mt-1 text-lg font-bold text-primary">{item.after}</div>
+                  </div>
                 </div>
               </div>
             </FadeIn>
@@ -457,14 +538,14 @@ const Projects = () => {
       {/* 5. Results & Analytics */}
       <ResultsAnalytics />
 
-      {/* 6. Industries Served */}
-      <IndustriesServed />
+      {/* 6. Client Logos */}
+      <ClientLogos />
 
-      {/* 7. Testimonials */}
+      {/* 7. Before & After Results */}
+      <BeforeAfterResults />
+
+      {/* 8. Testimonials */}
       <TestimonialsSection reviews={reviews} loading={reviewsLoading} />
-
-      {/* 8. Our Process */}
-      <OurProcess />
 
       {/* 9. Final CTA */}
       <FinalCTA

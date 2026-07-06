@@ -358,8 +358,9 @@ export default function AdminDashboard() {
     <div>
       <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4">
         <div>
-          <h2 className="text-xl font-extrabold text-heading">
-            {greeting()}, {user?.name ?? "Admin"} 👋
+          <h2 className="flex items-center gap-4 text-xl font-extrabold text-heading">
+            {greeting()}, {user?.name ?? "Admin"}
+            <img src="/waving-hand.png" alt="waving-hand-icon" className="w-8 h-8 animate-wave" />
           </h2>
           <p className="mt-1 text-sm text-muted">
             {dateStr} — Here's what's happening today.
