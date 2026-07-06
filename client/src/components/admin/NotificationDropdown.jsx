@@ -229,8 +229,8 @@ export default function NotificationDropdown() {
                     <div
                       className={`mt-0.5 w-7 h-7 sm:w-8 sm:h-8 rounded-full flex items-center justify-center flex-shrink-0 ${
                         n.type === "message"
-                          ? "bg-blue-100 text-blue-600"
-                          : "bg-yellow-100 text-yellow-600"
+                          ? "bg-info/10 text-info"
+                          : "bg-warning/10 text-warning"
                       }`}>
                       {n.type === "message" ? <EnvelopeIcon /> : <StarIcon />}
                     </div>

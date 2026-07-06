@@ -89,7 +89,7 @@ export default function DetailModal({
                       tag.variant === "primary"
                         ? "bg-primary-light text-primary"
                         : tag.variant === "success"
-                          ? "bg-green-50 text-green-600"
+                          ? "bg-success/10 text-success"
                           : "bg-surface text-muted border border-border"
                     }`}>
                     {tag.label}
@@ -124,7 +124,7 @@ export default function DetailModal({
                           tag.variant === "primary"
                             ? "bg-primary-light text-primary"
                             : tag.variant === "success"
-                              ? "bg-green-50 text-green-600"
+                              ? "bg-success/10 text-success"
                               : "bg-surface text-muted border border-border"
                         }`}>
                         {tag.label}
@@ -143,9 +143,9 @@ export default function DetailModal({
             )}
 
             <div className={`text-text text-sm sm:text-base leading-relaxed whitespace-pre-line bg-surface rounded-xl p-4 border border-border/40 ${isAvatar ? "italic text-center text-text/90" : ""}`}>
-              {isAvatar && <span className="text-primary font-serif text-2xl block -mb-2 text-left leading-none">“</span>}
+              {isAvatar && <span className="text-primary font-headings text-2xl block -mb-2 text-left leading-none">“</span>}
               {description}
-              {isAvatar && <span className="text-primary font-serif text-2xl block text-right leading-none -mt-2">”</span>}
+              {isAvatar && <span className="text-primary font-headings text-2xl block text-right leading-none -mt-2">”</span>}
             </div>
           </div>
 

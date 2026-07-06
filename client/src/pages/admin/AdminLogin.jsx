@@ -164,13 +164,13 @@ export default function AdminLogin() {
                   <p className="text-base font-semibold tracking-tight sm:text-lg">
                     CrawlCrown
                   </p>
-                  <p className="text-xs text-red-100 sm:text-sm">Admin Portal</p>
+                  <p className="small-text text-white/70 sm:text-sm">Admin Portal</p>
                 </div>
               </div>
               <h2 className="mt-6 text-xl font-semibold leading-tight sm:text-2xl lg:text-3xl">
                 Welcome back to your admin workspace
               </h2>
-              <p className="mt-3 max-w-md text-xs text-red-100 sm:text-sm lg:text-base">
+              <p className="mt-3 max-w-md small-text text-white/70 sm:text-sm lg:text-base">
                 Manage services, projects, reviews, and client enquiries from
                 one secure dashboard.
               </p>
@@ -178,7 +178,7 @@ export default function AdminLogin() {
 
             <div className="mt-8 rounded-2xl border border-white/20 bg-white/10 p-4 backdrop-blur-sm">
               <p className="text-sm font-medium">Secure access</p>
-              <p className="mt-1 text-xs text-red-100 sm:text-sm">
+              <p className="mt-1 small-text text-white/70 sm:text-sm">
                 Use your admin credentials to continue managing the platform.
               </p>
             </div>

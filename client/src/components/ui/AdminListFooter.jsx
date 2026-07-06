@@ -7,7 +7,7 @@ export default function AdminListFooter({
 }) {
   return (
     <div className="flex items-center justify-between">
-      <div className="font-extrabold text-gray-900">{label}</div>
+      <div className="font-extrabold text-heading">{label}</div>
       <div className="flex items-center gap-3">
         {itemsLength > 0 && (
           <button
@@ -17,7 +17,7 @@ export default function AdminListFooter({
             Delete All
           </button>
         )}
-        <div className="text-sm text-gray-500">
+        <div className="small-text text-muted">
           {loading ? "Loading..." : `${total} items`}
         </div>
       </div>

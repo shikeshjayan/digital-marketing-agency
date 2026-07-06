@@ -22,19 +22,19 @@ export default function TestimonialsSection({
       <section className={`py-12 ${bg}`}>
         <div className="max-w-6xl mx-auto px-4">
           <div className="text-center">
-            <div className="h-8 w-48 bg-gray-200 rounded mx-auto animate-pulse" />
+            <div className="h-8 w-48 bg-surface rounded mx-auto animate-pulse" />
           </div>
           <div className="mt-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {[...Array(3)].map((_, i) => (
               <div
                 key={i}
                 className="border border-border rounded-lg px-6 py-8 bg-surface text-center">
-                <div className="mx-auto w-14 h-14 rounded-full bg-gray-200 animate-pulse" />
-                <div className="mt-3 h-2 w-16 bg-gray-200 rounded mx-auto animate-pulse" />
-                <div className="mt-3 h-4 w-24 bg-gray-200 rounded mx-auto animate-pulse" />
+                <div className="mx-auto w-14 h-14 rounded-full bg-surface animate-pulse" />
+                <div className="mt-3 h-2 w-16 bg-surface rounded mx-auto animate-pulse" />
+                <div className="mt-3 h-4 w-24 bg-surface rounded mx-auto animate-pulse" />
                 <div className="mt-4 space-y-2">
-                  <div className="h-3 w-full bg-gray-200 rounded animate-pulse" />
-                  <div className="h-3 w-3/4 bg-gray-200 rounded mx-auto animate-pulse" />
+                  <div className="h-3 w-full bg-surface rounded animate-pulse" />
+                  <div className="h-3 w-3/4 bg-surface rounded mx-auto animate-pulse" />
                 </div>
               </div>
             ))}

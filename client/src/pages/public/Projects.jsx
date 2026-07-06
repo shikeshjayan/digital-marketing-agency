@@ -124,7 +124,7 @@ function ProjectStatistics() {
               <span className="font-headings text-4xl text-primary mr-4">Our</span>
               Track Record
             </h2>
-            <p className="mt-3 text-gray-300 max-w-xl mx-auto text-sm md:text-base">
+            <p className="mt-3 text-white/70 max-w-xl mx-auto small-text md:body-text">
               Numbers that speak for our commitment to delivering excellence.
             </p>
           </div>
@@ -137,7 +137,7 @@ function ProjectStatistics() {
                 <div className="text-3xl md:text-4xl font-extrabold text-primary">
                   <AnimatedCounter target={s.target} suffix={s.suffix} />
                 </div>
-                <div className="mt-2 text-xs md:text-sm text-gray-300">
+                <div className="mt-2 small-text md:body-text text-white/70">
                   {s.label}
                 </div>
               </div>
@@ -156,7 +156,7 @@ function FeaturedCaseStudy({ projects, onDetail }) {
   if (!featured) return null;
 
   return (
-    <section className="py-12 md:py-16 bg-surface">
+    <section className="py-12 md:py-16 bg-background-section">
       <div className="max-w-6xl mx-auto px-4">
         <FadeIn>
           <SectionHeading
@@ -350,7 +350,7 @@ const clientLogos = [
 
 function ClientLogos() {
   return (
-    <section className="py-12 md:py-16 bg-surface">
+    <section className="py-12 md:py-16 bg-background-section">
       <div className="max-w-6xl mx-auto px-4">
         <FadeIn>
           <SectionHeading
@@ -457,7 +457,7 @@ const Projects = () => {
       <ProjectStatistics />
 
       {/* 3. Category Filter + Projects Grid */}
-      <section className="py-14 bg-surface">
+      <section className="py-14 bg-background">
         <div className="max-w-6xl mx-auto px-4">
           <FadeIn>
             <SectionHeading
@@ -545,7 +545,7 @@ const Projects = () => {
       <BeforeAfterResults />
 
       {/* 8. Testimonials */}
-      <TestimonialsSection reviews={reviews} loading={reviewsLoading} />
+      <TestimonialsSection reviews={reviews} loading={reviewsLoading} bg="bg-background-section" />
 
       {/* 9. Final CTA */}
       <FinalCTA

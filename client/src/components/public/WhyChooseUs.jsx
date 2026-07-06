@@ -53,9 +53,10 @@ const defaultReasons = [
 export default function WhyChooseUs({
   stats = defaultStats,
   reasons = defaultReasons,
+  bg = "bg-background",
 }) {
   return (
-    <section className="py-16 md:py-20 bg-surface">
+    <section className={`py-16 md:py-20 ${bg}`}>
       <div className="max-w-6xl mx-auto px-4">
         
         {/* 1. Horizontally Centered Heading Layer (Pulled to the top) */}

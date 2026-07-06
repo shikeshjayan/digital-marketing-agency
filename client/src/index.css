@@ -11,13 +11,15 @@
 
   /* Background */
   --color-background: #FAFAFA;
+  --color-background-section: #FEF3E2;
   --color-surface: #F8FAFC;
   --color-border: #E5E7EB;
 
   /* Text */
   --color-heading: #111827;
-  --color-text: #4B5563;
+  --color-text: #2B2A2A;
   --color-muted: #6B7280;
+  --color-dark: #262626;
 
   /* Footer */
   --color-footer: #1A1A1A;
@@ -224,24 +226,31 @@ textarea::-webkit-scrollbar-thumb:hover {
   0% {
     transform: rotate(0deg);
   }
+
   15% {
     transform: rotate(14deg);
   }
+
   30% {
     transform: rotate(-8deg);
   }
+
   40% {
     transform: rotate(14deg);
   }
+
   50% {
     transform: rotate(-4deg);
   }
+
   60% {
     transform: rotate(10deg);
   }
+
   70% {
     transform: rotate(0deg);
   }
+
   100% {
     transform: rotate(0deg);
   }

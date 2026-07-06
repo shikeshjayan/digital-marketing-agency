@@ -14,7 +14,7 @@ import { Link } from "react-router-dom";
 
 function StarPicker({ value, onChange }) {
   return (
-    <div className="flex items-center gap-1 text-amber-500">
+    <div className="flex items-center gap-1 text-warning">
       {Array.from({ length: 5 }).map((_, i) => {
         const v = i + 1;
         const active = v <= value;
@@ -22,7 +22,7 @@ function StarPicker({ value, onChange }) {
           <button
             key={v}
             type="button"
-            className={`text-2xl leading-none cursor-pointer transition-colors duration-150 ${active ? 'text-amber-500' : 'text-gray-300'} hover:text-amber-400`}
+            className={`text-2xl leading-none cursor-pointer transition-colors duration-150 ${active ? 'text-warning' : 'text-muted/40'} hover:text-warning/80`}
             onClick={() => onChange(v)}
             aria-label={`Set rating to ${v}`}
           >
@@ -42,7 +42,7 @@ function TrustStatistics() {
   ];
 
   return (
-    <section className="bg-surface py-12">
+    <section className="bg-background-section py-12">
       <div className="max-w-6xl mx-auto px-4">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 items-center">
           <FadeIn direction="left">
@@ -179,7 +179,7 @@ export default function Testimonials() {
         ]}
       />
 
-      <section id="review-form" className="py-14 bg-surface">
+      <section id="review-form" className="py-14 bg-background">
         <div className="max-w-6xl mx-auto px-4">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
             <FadeIn direction="left">
@@ -197,28 +197,28 @@ export default function Testimonials() {
                   Tell us about your experience. Your review helps future learners make confident decisions.
                 </p>
 
-                <div className="mt-6 space-y-2 text-sm text-gray-200 border-t border-white/10 pt-6">
+                <div className="mt-6 space-y-2 small-text text-white/80 border-t border-white/10 pt-6">
                   <div className="flex items-center gap-3">
-                    <span className="w-10 h-8 rounded-lg bg-secondary/10 flex items-center justify-center text-xs text-gray-300">
+                    <span className="w-10 h-8 rounded-lg bg-secondary/10 flex items-center justify-center small-text text-white/70">
                       <FontAwesomeIcon icon={faPhone} />
                     </span>
-                    <a href="tel:+91 8891212323" className="text-gray-200 hover:text-primary transition-colors">
+                    <a href="tel:+91 8891212323" className="text-white/80 hover:text-primary transition-colors">
                       +91 8891212323
                     </a>
                   </div>
                   <div className="flex items-center gap-3">
-                    <span className="w-10 h-8 rounded-lg bg-secondary/10 flex items-center justify-center text-xs text-gray-300">
+                    <span className="w-10 h-8 rounded-lg bg-secondary/10 flex items-center justify-center small-text text-white/70">
                       <FontAwesomeIcon icon={faEnvelope} />
                     </span>
-                    <a href="mailto:crowlcrown@gmail.com" className="text-gray-200 hover:text-primary transition-colors">
+                    <a href="mailto:crowlcrown@gmail.com" className="text-white/80 hover:text-primary transition-colors">
                       crowlcrown@gmail.com
                     </a>
                   </div>
                   <div className="flex items-center gap-3">
-                    <span className="w-10 h-8 rounded-lg bg-secondary/10 flex items-center justify-center text-xs text-gray-300">
+                    <span className="w-10 h-8 rounded-lg bg-secondary/10 flex items-center justify-center small-text text-white/70">
                       <FontAwesomeIcon icon={faEnvelope} />
                     </span>
-                    <a href="https://www.google.com/maps/search/Ernakulam+Kochi+Kerala+India" target="_blank" rel="noopener noreferrer" className="text-gray-200 hover:text-primary transition-colors">
+                    <a href="https://www.google.com/maps/search/Ernakulam+Kochi+Kerala+India" target="_blank" rel="noopener noreferrer" className="text-white/80 hover:text-primary transition-colors">
                       Ernakulam, Kochi, Kerala, India
                     </a>
                   </div>
@@ -345,7 +345,7 @@ export default function Testimonials() {
                             </div>
                           </div>
                           
-                          <div className="mt-4 flex items-center gap-1.5 text-amber-500">
+                          <div className="mt-4 flex items-center gap-1.5 text-warning">
                             {Array.from({ length: 5 }).map((_, starIndex) => (
                               <span key={starIndex} aria-hidden="true" className="text-lg leading-none select-none">
                                 {starIndex < Math.round(r.rating) ? '★' : '☆'}
@@ -388,7 +388,7 @@ export default function Testimonials() {
       </section>
 
       <TrustStatistics />
-      <LogoMarquee />
+      <LogoMarquee bg="bg-background" />
       <FinalCTA />
 
       <DetailModal

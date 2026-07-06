@@ -40,7 +40,7 @@ const Pagination = memo(function Pagination({ page, pages, onPageChange }) {
         type="button"
         disabled={page <= 1}
         onClick={() => onPageChange(page - 1)}
-        className="inline-flex items-center justify-center w-9 h-9 rounded-lg text-sm font-medium transition disabled:opacity-40 disabled:cursor-not-allowed text-gray-600 hover:bg-gray-100 cursor-pointer"
+        className="inline-flex items-center justify-center w-9 h-9 rounded-lg small-text font-medium transition disabled:opacity-40 disabled:cursor-not-allowed text-muted hover:bg-surface cursor-pointer"
         aria-label="Previous page"
       >
         <ChevronLeft />
@@ -48,7 +48,7 @@ const Pagination = memo(function Pagination({ page, pages, onPageChange }) {
 
       {pageNumbers.map((num, i) =>
         num === "..." ? (
-          <span key={`dots-${i}`} className="w-9 h-9 flex items-center justify-center text-sm text-gray-400">
+          <span key={`dots-${i}`} className="w-9 h-9 flex items-center justify-center small-text text-muted">
             ...
           </span>
         ) : (
@@ -56,10 +56,10 @@ const Pagination = memo(function Pagination({ page, pages, onPageChange }) {
             key={num}
             type="button"
             onClick={() => onPageChange(num)}
-            className={`inline-flex items-center justify-center w-9 h-9 rounded-lg text-sm font-medium transition cursor-pointer ${
+            className={`inline-flex items-center justify-center w-9 h-9 rounded-lg small-text font-medium transition cursor-pointer ${
               num === page
                 ? "bg-primary text-white shadow-sm"
-                : "text-gray-600 hover:bg-gray-100"
+                : "text-muted hover:bg-surface"
             }`}
             aria-current={num === page ? "page" : undefined}
           >
@@ -72,7 +72,7 @@ const Pagination = memo(function Pagination({ page, pages, onPageChange }) {
         type="button"
         disabled={page >= pages}
         onClick={() => onPageChange(page + 1)}
-        className="inline-flex items-center justify-center w-9 h-9 rounded-lg text-sm font-medium transition disabled:opacity-40 disabled:cursor-not-allowed text-gray-600 hover:bg-gray-100 cursor-pointer"
+        className="inline-flex items-center justify-center w-9 h-9 rounded-lg small-text font-medium transition disabled:opacity-40 disabled:cursor-not-allowed text-muted hover:bg-surface cursor-pointer"
         aria-label="Next page"
       >
         <ChevronRight />

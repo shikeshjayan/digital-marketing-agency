@@ -25,16 +25,16 @@ export default function ConfirmModal({
               />
             </svg>
           </div>
-          <p className="text-gray-700 text-sm">{message}</p>
+          <p className="text-text small-text">{message}</p>
           <div className="flex gap-3 mt-6 w-full">
             <button
               onClick={onCancel}
-              className="flex-1 rounded-lg border border-gray-200 py-2.5 text-sm font-semibold text-gray-700 hover:bg-gray-50 transition cursor-pointer">
+              className="flex-1 rounded-lg border border-border py-2.5 small-text font-semibold text-text hover:bg-surface transition cursor-pointer">
               Cancel
             </button>
             <button
               onClick={onConfirm}
-              className="flex-1 rounded-lg bg-primary py-2.5 text-sm font-semibold text-white hover:bg-primary-hover transition cursor-pointer">
+              className="flex-1 rounded-lg bg-primary py-2.5 small-text font-semibold text-white hover:bg-primary-hover transition cursor-pointer">
               Confirm
             </button>
           </div>

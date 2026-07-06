@@ -182,15 +182,15 @@ function ServicesCarousel({ services }) {
 
   if (services.length === 0) {
     return (
-      <section className="py-12 bg-surface">
+      <section className="py-12 bg-background-section">
         <div className="max-w-6xl mx-auto px-4">
           <div className="bg-background rounded-lg shadow-sm border border-border overflow-hidden">
             <div className="px-6 py-10 md:px-10">
               <div className="animate-pulse space-y-4">
-                <div className="h-4 w-24 bg-gray-200 rounded" />
-                <div className="h-6 w-64 bg-gray-200 rounded" />
-                <div className="h-16 w-full max-w-xl bg-gray-200 rounded" />
-                <div className="h-10 w-28 bg-gray-200 rounded-full" />
+                <div className="h-4 w-24 bg-surface rounded" />
+                <div className="h-6 w-64 bg-surface rounded" />
+                <div className="h-16 w-full max-w-xl bg-surface rounded" />
+                <div className="h-10 w-28 bg-surface rounded-full" />
               </div>
             </div>
           </div>
@@ -202,7 +202,7 @@ function ServicesCarousel({ services }) {
   const current = services[index];
 
   return (
-    <section className="py-12 bg-surface">
+    <section className="py-12 bg-background-section">
       <div className="max-w-6xl mx-auto px-4">
         <div className="relative">
           <div className="relative">
@@ -238,7 +238,7 @@ function ServicesCarousel({ services }) {
                     <div className="mt-6 flex items-center justify-center md:justify-start gap-3">
                       <button
                         type="button"
-                        className="md:hidden w-10 h-10 rounded-full bg-surface border border-border hover:bg-gray-200 flex items-center justify-center cursor-pointer"
+                        className="md:hidden w-10 h-10 rounded-full bg-surface border border-border hover:bg-border flex items-center justify-center cursor-pointer"
                         onClick={() =>
                           go((index - 1 + services.length) % services.length)
                         }
@@ -255,7 +255,7 @@ function ServicesCarousel({ services }) {
                       </Link>
                       <button
                         type="button"
-                        className="md:hidden w-10 h-10 rounded-full bg-surface border border-border hover:bg-gray-200 flex items-center justify-center cursor-pointer"
+                        className="md:hidden w-10 h-10 rounded-full bg-surface border border-border hover:bg-border flex items-center justify-center cursor-pointer"
                         onClick={() => go((index + 1) % services.length)}
                         aria-label="Next service">
                         <FontAwesomeIcon
@@ -354,7 +354,7 @@ function TechnologyStack() {
 
 function StatsSection() {
   return (
-    <section className="bg-surface py-12">
+    <section className="bg-background py-12">
       <div className="max-w-6xl mx-auto px-4">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 items-center">
           <FadeIn direction="left">
@@ -438,7 +438,7 @@ export default function Home() {
       <StatsSection />
       <ServicesCarousel services={services} />
       <TechnologyStack />
-      <LogoMarquee />
+      <LogoMarquee bg="bg-background" />
 
       {/* Team teaser */}
       <section className="bg-secondary py-16 text-white">
@@ -448,7 +448,7 @@ export default function Home() {
               <span className="font-headings text-primary pr-2">Meet</span> Our
               Team
             </div>
-            <p className="mt-4 text-gray-300 max-w-2xl mx-auto leading-relaxed">
+            <p className="mt-4 text-white/70 max-w-2xl mx-auto leading-relaxed">
               A creative and technical team focused on delivering premium
               digital experiences.
             </p>
@@ -469,6 +469,7 @@ export default function Home() {
         loading={reviewsLoading}
         eyebrow="Feedback"
         title="That Speaks"
+        bg="bg-background-section"
       />
     </div>
   );

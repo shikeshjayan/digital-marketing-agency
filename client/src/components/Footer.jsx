@@ -125,7 +125,7 @@ export default function Footer() {
                 <div className="text-sm font-semibold mb-4 text-white">Contact</div>
                 <div className="space-y-3 text-sm text-white/80">
                   <div className="flex items-center gap-3">
-                    <span className="w-8 h-8 rounded-lg flex items-center justify-center text-xs text-gray-300">
+                    <span className="w-8 h-8 rounded-lg flex items-center justify-center small-text text-white/70">
                       <FontAwesomeIcon icon={faPhone} />
                     </span>
                     <a href="tel:+91 8891212323" className="text-white/80 hover:text-primary transition-colors">
@@ -133,7 +133,7 @@ export default function Footer() {
                     </a>
                   </div>
                   <div className="flex items-center gap-3">
-                    <span className="w-8 h-8 rounded-lg flex items-center justify-center text-xs text-gray-300">
+                    <span className="w-8 h-8 rounded-lg flex items-center justify-center small-text text-white/70">
                       <FontAwesomeIcon icon={faEnvelope} />
                     </span>
                     <a href="mailto:crowlcrown@gmail.com" className="text-white/80 hover:text-primary transition-colors">
@@ -141,7 +141,7 @@ export default function Footer() {
                     </a>
                   </div>
                   <div className="flex items-center gap-3">
-                    <span className="w-8 h-8 rounded-lg flex items-center justify-center text-xs text-gray-300">
+                    <span className="w-8 h-8 rounded-lg flex items-center justify-center small-text text-white/70">
                       <FontAwesomeIcon icon={faMapMarkerAlt} />
                     </span>
                      <a href="https://www.google.com/maps/search/Ernakulam+Kochi+Kerala+India" target="_blank" rel="noopener noreferrer" className="text-white/80 hover:text-primary transition-colors">

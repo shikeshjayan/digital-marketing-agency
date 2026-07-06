@@ -163,7 +163,7 @@ export default function Contact() {
         ]}
       />
 
-      <section id="contact-form" className="py-12 bg-surface">
+      <section id="contact-form" className="py-12 bg-background">
         <div className="max-w-6xl mx-auto px-4">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <FadeIn delay={0}>
@@ -199,38 +199,38 @@ export default function Contact() {
                   <div className="mt-3 section-heading">
                     Wanna <span className="text-primary">Hear</span> From You
                   </div>
-                  <p className="mt-4 text-gray-300 body-text">
+                  <p className="mt-4 text-white/70 body-text">
                     Tell us what you need and we'll respond with a clear plan
                     and timeline.
                   </p>
-                  <div className="mt-6 space-y-2 text-sm text-gray-200">
+                  <div className="mt-6 space-y-2 small-text text-white/80">
                     <div className="flex items-center gap-3">
-                      <span className="w-10 h-8 rounded-lg bg-secondary/10 flex items-center justify-center text-xs text-gray-300">
+                      <span className="w-10 h-8 rounded-lg bg-secondary/10 flex items-center justify-center small-text text-white/70">
                         <FontAwesomeIcon icon={faPhone} />
                       </span>
-                      <a href="tel:+91 8891212323" className="text-gray-200">
+                      <a href="tel:+91 8891212323" className="text-white/80">
                         +91 8891212323
                       </a>
                     </div>
                     <div className="flex items-center gap-3">
-                      <span className="w-10 h-8 rounded-lg bg-secondary/10 flex items-center justify-center text-xs text-gray-300">
+                      <span className="w-10 h-8 rounded-lg bg-secondary/10 flex items-center justify-center small-text text-white/70">
                         <FontAwesomeIcon icon={faEnvelope} />
                       </span>
                       <a
                         href="mailto:crowlcrown@gmail.com"
-                        className="text-gray-200">
+                        className="text-white/80">
                         crowlcrown@gmail.com
                       </a>
                     </div>
                     <div className="flex items-center gap-3">
-                      <span className="w-10 h-8 rounded-lg bg-secondary/10 flex items-center justify-center text-xs text-gray-300">
+                      <span className="w-10 h-8 rounded-lg bg-secondary/10 flex items-center justify-center small-text text-white/70">
                         <FontAwesomeIcon icon={faLocation} />
                       </span>
                       <a
                         href="https://www.google.com/maps/search/Ernakulam+Kochi+Kerala+India"
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="text-gray-200">
+                        className="text-white/80">
                         Ernakulam, Kochi, Kerala, India
                       </a>
                     </div>
@@ -418,7 +418,7 @@ export default function Contact() {
                       checked={consent}
                       onChange={(e) => setConsent(e.target.checked)}
                       disabled={loading}
-                      className="mt-1 h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary cursor-pointer"
+                      className="mt-1 h-4 w-4 rounded border-border text-primary focus:ring-primary cursor-pointer"
                     />
                     <label
                       htmlFor="consent"
@@ -448,7 +448,7 @@ export default function Contact() {
                     </div>
                   )}
                   {storeSuccess && (
-                    <div className="text-sm text-green-600">
+                    <div className="small-text text-success">
                       Thanks! Your enquiry has been submitted successfully.
                     </div>
                   )}

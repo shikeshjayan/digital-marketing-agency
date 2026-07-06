@@ -20,7 +20,7 @@ export default function FileUploadField({
   return (
     <div className={className}>
       <label className="text-sm font-semibold text-heading">
-        {label} {required && <span className="text-red-500">*</span>}
+        {label} {required && <span className="text-primary">*</span>}
       </label>
       <div className="mt-2 relative w-full h-16">
         <label className="flex flex-col items-center justify-center w-full h-16 border-2 border-dashed border-border rounded cursor-pointer hover:border-primary hover:bg-primary-light transition">

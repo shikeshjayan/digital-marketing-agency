@@ -7,7 +7,7 @@ export default function TableEmptyState({
   return (
     <tr>
       <td colSpan={colSpan} className="py-12 text-center">
-        <div className="flex flex-col items-center text-gray-400">
+        <div className="flex flex-col items-center text-muted">
           {icon || (
             <svg
               className="w-12 h-12 mb-3"
@@ -24,7 +24,7 @@ export default function TableEmptyState({
           )}
           <div className="font-semibold">{message}</div>
           {submessage && (
-            <div className="text-sm mt-1">{submessage}</div>
+            <div className="small-text mt-1">{submessage}</div>
           )}
         </div>
       </td>

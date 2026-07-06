@@ -135,7 +135,7 @@ export default function ForgotPassword() {
                 </div>
               )}
               {success && (
-                <div className="mt-4 rounded border border-success/20 bg-green-50 px-3 py-2 text-sm text-success">
+                <div className="mt-4 rounded border border-success/20 bg-success/10 px-3 py-2 small-text text-success">
                   {success}
                 </div>
               )}
@@ -154,7 +154,7 @@ export default function ForgotPassword() {
               </label>
               <input
                 type="text"
-                className="mt-2 w-full rounded border border-border bg-surface px-3 py-2 outline-none focus:ring-2 focus:ring-primary-light text-center tracking-widest font-mono text-lg"
+                className="mt-2 w-full rounded border border-border bg-surface px-3 py-2 outline-none focus:ring-2 focus:ring-primary-light text-center tracking-widest font-headings subheading"
                 placeholder="000000"
                 value={otp}
                 onChange={(e) =>
@@ -201,7 +201,7 @@ export default function ForgotPassword() {
                 </div>
               )}
               {success && (
-                <div className="mt-4 rounded border border-success/20 bg-green-50 px-3 py-2 text-sm text-success">
+                <div className="mt-4 rounded border border-success/20 bg-success/10 px-3 py-2 small-text text-success">
                   {success}
                 </div>
               )}
@@ -254,7 +254,7 @@ export default function ForgotPassword() {
                   <p className="text-base font-semibold tracking-tight sm:text-lg">
                     CrawlCrown
                   </p>
-                  <p className="text-xs text-red-100 sm:text-sm">Admin Portal</p>
+                  <p className="small-text text-white/70 sm:text-sm">Admin Portal</p>
                 </div>
               </div>
               <h2 className="mt-6 text-xl font-semibold leading-tight sm:text-2xl lg:text-3xl">
@@ -262,7 +262,7 @@ export default function ForgotPassword() {
                   ? "Forgot your password?"
                   : "Reset your password"}
               </h2>
-              <p className="mt-3 max-w-md text-xs text-red-100 sm:text-sm lg:text-base">
+              <p className="mt-3 max-w-md small-text text-white/70 sm:text-sm lg:text-base">
                 {step === 1
                   ? "No worries — enter your email and we'll send you a one-time code to regain access."
                   : "Enter the verification code and set a new password to secure your account."}
@@ -271,7 +271,7 @@ export default function ForgotPassword() {
 
             <div className="mt-8 rounded-2xl border border-white/20 bg-white/10 p-4 backdrop-blur-sm">
               <p className="text-sm font-medium">Secure reset</p>
-              <p className="mt-1 text-xs text-red-100 sm:text-sm">
+              <p className="mt-1 small-text text-white/70 sm:text-sm">
                 The OTP expires shortly. Check your inbox and follow the steps
                 to restore access.
               </p>
