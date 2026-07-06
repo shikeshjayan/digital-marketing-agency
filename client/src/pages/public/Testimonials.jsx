@@ -28,13 +28,12 @@ function StarPicker({ value, onChange }) {
           >
             ★
           </button>
-        )
+        );
       })}
     </div>
-  )
+  );
 }
 
-/* ─── Section: Trust Statistics ────────────────────────────── */
 function TrustStatistics() {
   const stats = [
     { target: 8, suffix: "+", label: "Years of Experience" },
@@ -94,58 +93,74 @@ function TrustStatistics() {
 }
 
 export default function Testimonials() {
-  const [reviews, setReviews] = useState([])
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState('')
+  const [reviews, setReviews] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
   const [form, setForm] = useState({
     name: '',
     location: '',
     rating: 5,
     review_text: '',
-  })
-  const [formError, setFormError] = useState('')
-  const [success, setSuccess] = useState('')
-  const [detail, setDetail] = useState(null)
+  });
+  const [formError, setFormError] = useState('');
+  const [success, setSuccess] = useState('');
+  const [detail, setDetail] = useState(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
-    setLoading(true)
+    let isMounted = true;
+    setLoading(true);
     apiService.get('/reviews')
       .then((res) => {
-        setReviews(res.data.data ?? [])
-        setLoading(false)
+        if (isMounted) {
+          setReviews(res.data.data ?? []);
+          setLoading(false);
+        }
       })
       .catch((err) => {
-        setError(err.response?.data?.message ?? 'Failed to load reviews.')
-        setLoading(false)
-      })
-  }, [])
+        if (isMounted) {
+          setError(err.response?.data?.message ?? 'Failed to load reviews.');
+          setLoading(false);
+        }
+      });
+    return () => { isMounted = false; };
+  }, []);
 
   async function onSubmit(e) {
-    e.preventDefault()
-    setFormError('')
-    setSuccess('')
+    e.preventDefault();
+    if (isSubmitting) return;
+    setFormError('');
+    setSuccess('');
 
     if (!form.name.trim() || !form.location.trim() || !form.review_text.trim()) {
-      setFormError('Please fill the form completely.')
-      return
+      setFormError('Please fill the form completely.');
+      return;
     }
+
+    setIsSubmitting(true);
     try {
-      const res = await apiService.post('/reviews/submit', form)
+      const res = await apiService.post('/reviews/submit', form);
       if (!res.data.success) {
-        setFormError(res.data.error?.message ?? 'Failed to submit.')
-        return
+        setFormError(res.data.error?.message ?? 'Failed to submit.');
+        setIsSubmitting(false);
+        return;
       }
-      setSuccess('Thanks! Your review was submitted and is awaiting moderation.')
-      toast.success('Thanks! Your review was submitted and is awaiting moderation.')
-      setForm({ name: '', location: '', rating: 5, review_text: '' })
-      const latest = await apiService.get('/reviews')
-      setReviews(latest.data.data ?? [])
+      setSuccess('Thanks! Your review was submitted and is awaiting moderation.');
+      toast.success('Thanks! Your review was submitted and is awaiting moderation.');
+      setForm({ name: '', location: '', rating: 5, review_text: '' });
+      
+      const latest = await apiService.get('/reviews');
+      setReviews(latest.data.data ?? []);
     } catch (err) {
-      const msg = err.response?.data?.message ?? 'Failed to submit.'
-      setFormError(msg)
-      toast.error(msg)
+      const msg = err.response?.data?.message ?? 'Failed to submit.';
+      setFormError(msg);
+      toast.error(msg);
+    } finally {
+      setIsSubmitting(false);
     }
   }
+
+  const modalTags = detail && detail.location ? [{ label: detail.location, variant: "default" }] : [];
 
   return (
     <div className="bg-background min-h-screen">
@@ -167,8 +182,6 @@ export default function Testimonials() {
       <section id="review-form" className="py-14 bg-surface">
         <div className="max-w-6xl mx-auto px-4">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
-            
-            {/* Sidebar Branding Meta Banner Block */}
             <FadeIn direction="left">
               <div className="bg-secondary text-white rounded-lg p-8 relative overflow-hidden">
                 <div className="absolute inset-0 pointer-events-none">
@@ -203,7 +216,7 @@ export default function Testimonials() {
                   </div>
                   <div className="flex items-center gap-3">
                     <span className="w-10 h-8 rounded-lg bg-secondary/10 flex items-center justify-center text-xs text-gray-300">
-                    <FontAwesomeIcon icon={faEnvelope} />
+                      <FontAwesomeIcon icon={faEnvelope} />
                     </span>
                     <a href="https://www.google.com/maps/search/Ernakulam+Kochi+Kerala+India" target="_blank" rel="noopener noreferrer" className="text-gray-200 hover:text-primary transition-colors">
                       Ernakulam, Kochi, Kerala, India
@@ -213,7 +226,6 @@ export default function Testimonials() {
               </div>
             </FadeIn>
 
-            {/* Review Submission Content Interactive Form Frame Block */}
             <FadeIn direction="right">
               <div className="bg-background border border-border rounded-lg p-6">
                 <div className="flex items-start justify-between gap-4 border-b border-border pb-4">
@@ -231,6 +243,7 @@ export default function Testimonials() {
                       onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))}
                       className="mt-2 w-full rounded-lg border border-border px-4 py-2 text-sm text-text outline-none focus:ring-2 focus:ring-primary-light bg-background"
                       placeholder="Full Name"
+                      disabled={isSubmitting}
                     />
                   </div>
 
@@ -241,6 +254,7 @@ export default function Testimonials() {
                       onChange={(e) => setForm((f) => ({ ...f, location: e.target.value }))}
                       className="mt-2 w-full rounded-lg border border-border px-4 py-2 text-sm text-text outline-none focus:ring-2 focus:ring-primary-light bg-background"
                       placeholder="City, Country"
+                      disabled={isSubmitting}
                     />
                   </div>
 
@@ -259,6 +273,7 @@ export default function Testimonials() {
                       rows={4}
                       className="mt-2 w-full rounded-lg border border-border px-4 py-2 text-sm text-text outline-none focus:ring-2 focus:ring-primary-light bg-background resize-none"
                       placeholder="Write your review..."
+                      disabled={isSubmitting}
                     />
                   </div>
 
@@ -267,16 +282,16 @@ export default function Testimonials() {
 
                   <button
                     type="submit"
-                    className="w-full rounded-lg bg-primary text-white py-3 font-extrabold hover:bg-primary-hover transition cursor-pointer"
+                    disabled={isSubmitting}
+                    className="w-full rounded-lg bg-primary text-white py-3 font-extrabold hover:bg-primary-hover transition cursor-pointer disabled:opacity-50"
                   >
-                    Send Reviews
+                    {isSubmitting ? "Sending..." : "Send Reviews"}
                   </button>
                 </form>
               </div>
             </FadeIn>
           </div>
 
-          {/* Render Feed Display Grid Panels */}
           <div className="mt-14 pt-6 border-t border-border">
             <FadeIn>
               <div className="text-center">
@@ -297,55 +312,71 @@ export default function Testimonials() {
                   <button
                     type="button"
                     onClick={() => {
-                      setError('')
-                      setLoading(true)
+                      setError('');
+                      setLoading(true);
                       apiService.get('/reviews')
-                        .then((res) => { setReviews(res.data.data ?? []); setLoading(false) })
-                        .catch((err) => { setError(err.response?.data?.message ?? 'Failed to load.'); setLoading(false) })
+                        .then((res) => { setReviews(res.data.data ?? []); setLoading(false); })
+                        .catch((err) => { setError(err.response?.data?.message ?? 'Failed to load.'); setLoading(false); });
                     }}
                     className="px-5 py-2.5 text-sm font-semibold text-white bg-primary rounded-lg hover:bg-primary-hover transition cursor-pointer">
                     Retry
                   </button>
                 </div>
               ) : reviews.length ? (
-                reviews.slice(0, 4).map((r, i) => (
-                  <FadeIn key={i} delay={i * 100}>
-                    <div className="bg-background border border-border rounded-lg p-6 flex flex-col w-full min-w-0">
-                      <div className="flex items-center gap-3 w-full min-w-0">
-                        <div className="w-12 h-12 rounded-full bg-surface border border-border flex items-center justify-center shrink-0">
-                          <span className="text-sm font-bold text-muted select-none">
-                            {r.name?.split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 2) || '?'}
-                          </span>
-                        </div>
-                        <div className="min-w-0 flex-1">
-                          <div className="font-bold text-heading truncate">{r.name}</div>
-                          <div className="text-xs text-muted truncate">{r.location}</div>
-                        </div>
-                      </div>
-                      
-                      <div className="mt-4 flex items-center gap-1.5 text-amber-500">
-                        {Array.from({ length: 5 }).map((_, starIndex) => (
-                          <span key={starIndex} aria-hidden="true" className="text-lg leading-none select-none">
-                            {starIndex < Math.round(r.rating) ? '★' : '☆'}
-                          </span>
-                        ))}
-                      </div>
-                      
-                      <p className="mt-4 text-text small-text body-text break-words w-full italic line-clamp-3">
-                        &ldquo;{r.review_text}&rdquo;
-                      </p>
+                reviews.slice(0, 4).map((r, i) => {
+                  const isLongText = r.review_text && r.review_text.length > 100;
+                  const initials = r.name ? r.name.split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 2) : '?';
+                  const shortText = isLongText ? r.review_text.slice(0, 100).trim() : r.review_text;
 
-                      {r.review_text && r.review_text.length > 100 && (
-                        <button
-                          type="button"
-                          onClick={() => setDetail(r)}
-                          className="mt-2 text-xs font-semibold text-primary hover:text-primary-hover transition cursor-pointer self-start">
-                          Read more
-                        </button>
-                      )}
-                    </div>
-                  </FadeIn>
-                ))
+                  return (
+                    <FadeIn key={i} delay={i * 100}>
+                      <div className="bg-background border border-border rounded-lg p-6 flex flex-col justify-between w-full min-w-0 h-full">
+                        <div>
+                          <div className="flex items-center gap-3 w-full min-w-0">
+                            {/* Visual circle matching design criteria exactly */}
+                            <div className="w-12 h-12 rounded-full bg-primary-light/40 border border-primary/20 flex items-center justify-center shrink-0 overflow-hidden shadow-inner">
+                              <span className="text-sm font-extrabold text-primary select-none tracking-wider">
+                                {initials}
+                              </span>
+                            </div>
+                            <div className="min-w-0 flex-1">
+                              <div className="font-bold text-heading truncate">{r.name}</div>
+                              <div className="text-xs text-muted truncate">{r.location}</div>
+                            </div>
+                          </div>
+                          
+                          <div className="mt-4 flex items-center gap-1.5 text-amber-500">
+                            {Array.from({ length: 5 }).map((_, starIndex) => (
+                              <span key={starIndex} aria-hidden="true" className="text-lg leading-none select-none">
+                                {starIndex < Math.round(r.rating) ? '★' : '☆'}
+                              </span>
+                            ))}
+                          </div>
+                          
+                          <div className="mt-4 text-text small-text body-text break-words w-full italic">
+                            <span className="inline">
+                              &ldquo;{shortText}
+                            </span>
+                            {isLongText ? (
+                              <span className="inline">
+                                ...{" "}
+                                <button
+                                  type="button"
+                                  onClick={() => setDetail(r)}
+                                  className="inline text-xs font-bold text-primary hover:text-primary-hover hover:underline transition cursor-pointer not-italic select-none p-0 bg-transparent border-none outline-none">
+                                  Read more
+                                </button>
+                                &rdquo;
+                              </span>
+                            ) : (
+                              <span className="inline">&rdquo;</span>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+                    </FadeIn>
+                  );
+                })
               ) : (
                 <div className="col-span-full text-center text-muted py-10 font-medium">
                   No approved reviews yet.
@@ -357,25 +388,24 @@ export default function Testimonials() {
       </section>
 
       <TrustStatistics />
-
       <LogoMarquee />
-
       <FinalCTA />
 
       <DetailModal
         open={!!detail}
         onClose={() => setDetail(null)}
+        image=""
+        imageVariant="avatar"
         title={detail?.name || ""}
-        tags={
-          detail
-            ? [
-                detail.location && { label: detail.location, variant: "default" },
-              ].filter(Boolean)
-            : []
+        initials={
+          detail?.name
+            ? detail.name.split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 2)
+            : "?"
         }
+        tags={modalTags}
         rating={detail?.rating}
         description={detail?.review_text || ""}
       />
     </div>
-  )
+  );
 }

@@ -17,6 +17,7 @@ export default function DetailModal({
   description,
   rating,
   cta,
+  initials,
 }) {
   const onCloseRef = useRef(onClose);
   onCloseRef.current = onClose;
@@ -40,37 +41,65 @@ export default function DetailModal({
 
   return createPortal(
     <div
-      className="fixed inset-0 z-[9999] flex items-center justify-center p-2 sm:p-4"
+      className="fixed inset-0 z-[9999] flex items-center justify-center p-3 sm:p-4"
       role="dialog"
       aria-modal="true"
       aria-label={title}>
-      <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" onClick={onClose} />
+      <div className="absolute inset-0 bg-black/60 backdrop-blur-md transition-opacity duration-300" onClick={onClose} />
       <div
-        className="relative z-10 bg-background radius-m shadow-xl w-full max-w-2xl max-h-[95vh] sm:max-h-[90vh] overflow-y-auto flex flex-col"
+        className="relative z-10 bg-background rounded-2xl shadow-2xl w-full max-w-lg max-h-[90vh] overflow-y-auto flex flex-col border border-border/50 transform scale-100 transition-all duration-300"
         onClick={(e) => e.stopPropagation()}>
+        
         <button
           type="button"
           onClick={onClose}
-          className="absolute top-2 right-2 sm:top-3 sm:right-3 z-50 w-8 h-8 radius-sb bg-surface border border-border flex items-center justify-center text-muted hover:text-heading hover:bg-background transition cursor-pointer"
+          className="absolute top-4 right-4 z-50 w-8 h-8 rounded-full bg-surface border border-border flex items-center justify-center text-muted hover:text-heading hover:bg-background shadow-sm hover:shadow transition duration-200 cursor-pointer"
           aria-label="Close">
           <FontAwesomeIcon icon={faTimes} className="text-xs" />
         </button>
 
-        {isAvatar && image ? (
-          <div className="flex flex-col items-center pt-6 sm:pt-8 pb-5 sm:pb-6 border-b border-border bg-surface">
-            <div className="w-16 h-16 sm:w-20 sm:h-20 radius-sb overflow-hidden ring-4 ring-primary/20 shadow-sm">
-              <img
-                src={image}
-                alt={title}
-                className="w-full h-full object-cover"
-                onError={(e) => {
-                  e.target.src = IMAGE_PLACEHOLDER;
-                }}
-              />
+        {isAvatar ? (
+          <div className="flex flex-col items-center pt-10 pb-6 border-b border-border/60 bg-gradient-to-b from-surface to-background px-6 text-center">
+            {/* Renders initials bubble exclusively */}
+            <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-full overflow-hidden ring-4 ring-primary/10 shadow-md flex items-center justify-center bg-surface border border-border">
+              {image ? (
+                <img
+                  src={image}
+                  alt={title}
+                  className="w-full h-full object-cover"
+                  onError={(e) => {
+                    e.target.src = IMAGE_PLACEHOLDER;
+                  }}
+                />
+              ) : (
+                <span className="text-xl sm:text-2xl font-extrabold text-primary tracking-wider select-none">
+                  {initials || "?"}
+                </span>
+              )}
             </div>
+            
+            <h2 className="mt-4 text-xl font-bold text-heading leading-tight">{title}</h2>
+            
+            {tags && tags.length > 0 && (
+              <div className="flex flex-wrap items-center justify-center gap-2 mt-3">
+                {tags.map((tag, i) => tag && (
+                  <span
+                    key={i}
+                    className={`inline-block px-3 py-1 rounded-full text-xs font-semibold ${
+                      tag.variant === "primary"
+                        ? "bg-primary-light text-primary"
+                        : tag.variant === "success"
+                          ? "bg-green-50 text-green-600"
+                          : "bg-surface text-muted border border-border"
+                    }`}>
+                    {tag.label}
+                  </span>
+                ))}
+              </div>
+            )}
           </div>
         ) : image ? (
-          <div className="w-full max-h-48 sm:max-h-75 overflow-hidden radius-m">
+          <div className="w-full max-h-48 sm:max-h-64 overflow-hidden rounded-t-2xl">
             <img
               src={image}
               alt={title}
@@ -82,44 +111,51 @@ export default function DetailModal({
           </div>
         ) : null}
 
-        <div className="p-4 sm:p-6">
-          {tags.length > 0 && (
-            <div className="flex flex-wrap items-center gap-2 mb-3">
-              {tags.map((tag, i) => (
-                <span
-                  key={i}
-                  className={`inline-block px-2.5 py-0.5 radius-sb text-xs font-semibold ${
-                    tag.variant === "primary"
-                      ? "bg-primary-light text-primary"
-                      : tag.variant === "success"
-                        ? "bg-green-50 text-green-600"
-                        : "bg-surface text-muted border border-border"
-                  }`}>
-                  {tag.label}
-                </span>
-              ))}
+        <div className="p-6 sm:p-8 flex-1 flex flex-col justify-between">
+          <div>
+            {!isAvatar && (
+              <>
+                {tags && tags.length > 0 && (
+                  <div className="flex flex-wrap items-center gap-2 mb-3">
+                    {tags.map((tag, i) => tag && (
+                      <span
+                        key={i}
+                        className={`inline-block px-2.5 py-0.5 rounded-full text-xs font-semibold ${
+                          tag.variant === "primary"
+                            ? "bg-primary-light text-primary"
+                            : tag.variant === "success"
+                              ? "bg-green-50 text-green-600"
+                              : "bg-surface text-muted border border-border"
+                        }`}>
+                        {tag.label}
+                      </span>
+                    ))}
+                  </div>
+                )}
+                <h2 className="text-xl font-bold text-heading mb-2">{title}</h2>
+              </>
+            )}
+
+            {rating !== undefined && (
+              <div className={isAvatar ? "flex justify-center mb-4" : "mb-4"}>
+                <StarRow rating={rating} />
+              </div>
+            )}
+
+            <div className={`text-text text-sm sm:text-base leading-relaxed whitespace-pre-line bg-surface rounded-xl p-4 border border-border/40 ${isAvatar ? "italic text-center text-text/90" : ""}`}>
+              {isAvatar && <span className="text-primary font-serif text-2xl block -mb-2 text-left leading-none">“</span>}
+              {description}
+              {isAvatar && <span className="text-primary font-serif text-2xl block text-right leading-none -mt-2">”</span>}
             </div>
-          )}
-
-          {rating !== undefined && (
-            <div className="mb-3">
-              <StarRow rating={rating} />
-            </div>
-          )}
-
-          <h2 className="text-lg sm:subheading text-heading font-semibold leading-snug">{title}</h2>
-
-          <p className="mt-3 sm:mt-4 text-text text-sm sm:body-text whitespace-pre-line">
-            {description}
-          </p>
+          </div>
 
           {cta && (
-            <div className="mt-5 sm:mt-6">
+            <div className="mt-6">
               <a
                 href={cta.href}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center justify-center gap-2 w-full sm:w-auto rounded-lg bg-primary text-white px-6 py-3 button-text font-semibold hover:bg-primary-hover transition cursor-pointer">
+                className="inline-flex items-center justify-center gap-2 w-full rounded-xl bg-primary text-white px-6 py-3 text-sm font-semibold hover:bg-primary-hover shadow-sm hover:shadow transition duration-200 cursor-pointer">
                 {cta.label}
                 <FontAwesomeIcon icon={faArrowRight} className="text-xs" />
               </a>
