@@ -40,7 +40,8 @@ export default function HeroSplit({
 
       <div className="relative mx-auto max-w-7xl px-6 py-16 md:py-20 lg:py-24">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-center">
-          <div className={`relative transition-all duration-700 ease-out ${loaded ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"}`}>
+          <div
+            className={`relative transition-all duration-700 ease-out ${loaded ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"}`}>
             <img
               src={imageSrc || "/the-creative-idea-Nz3ztzCRE9g-unsplash.png"}
               alt={imageAlt}
@@ -61,7 +62,7 @@ export default function HeroSplit({
             </h1>
 
             {subtitle && (
-              <p className="mt-6 max-w-xl text-lg leading-8 text-gray-300 mx-auto lg:mx-0">
+              <p className="mt-6 max-w-xl body-text leading-8 text-gray-300 mx-auto lg:mx-0">
                 {subtitle}
               </p>
             )}
@@ -72,7 +73,11 @@ export default function HeroSplit({
                   <button
                     type="button"
                     className="inline-flex items-center rounded-lg bg-primary text-white px-6 py-3 text-sm font-semibold hover:bg-primary-hover transition cursor-pointer"
-                    onClick={() => primaryCTA.to ? handleCTA(primaryCTA.to) : primaryCTA.onClick?.()}>
+                    onClick={() =>
+                      primaryCTA.to
+                        ? handleCTA(primaryCTA.to)
+                        : primaryCTA.onClick?.()
+                    }>
                     {primaryCTA.label}
                   </button>
                 )}
@@ -80,7 +85,11 @@ export default function HeroSplit({
                   <button
                     type="button"
                     className="inline-flex items-center rounded-lg border border-white text-white px-6 py-3 text-sm font-semibold hover:bg-white/10 transition cursor-pointer"
-                    onClick={() => secondaryCTA.to ? handleCTA(secondaryCTA.to) : secondaryCTA.onClick?.()}>
+                    onClick={() =>
+                      secondaryCTA.to
+                        ? handleCTA(secondaryCTA.to)
+                        : secondaryCTA.onClick?.()
+                    }>
                     {secondaryCTA.label}
                   </button>
                 )}
@@ -93,8 +102,12 @@ export default function HeroSplit({
               <div className="mt-8 flex flex-wrap items-center justify-center lg:justify-start gap-6">
                 {trustIndicators.map((item, i) => (
                   <div key={i} className="flex items-center gap-2">
-                    <span className="text-2xl font-extrabold text-white">{item.value}</span>
-                    <span className="text-xs text-gray-400 leading-tight">{item.label}</span>
+                    <span className="text-2xl font-extrabold text-white">
+                      {item.value}
+                    </span>
+                    <span className="text-xs text-gray-400 leading-tight">
+                      {item.label}
+                    </span>
                   </div>
                 ))}
               </div>

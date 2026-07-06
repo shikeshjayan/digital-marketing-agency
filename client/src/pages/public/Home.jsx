@@ -103,7 +103,7 @@ function HeroCarousel() {
               <h2 className="mt-3 hero-heading text-white">
                 {slides[index].subheading}
               </h2>
-              <p className="mt-4 text-white/90 leading-relaxed max-w-prose">
+              <p className="mt-4 body-text text-white/90 max-w-prose">
                 {slides[index].description}
               </p>
             </div>

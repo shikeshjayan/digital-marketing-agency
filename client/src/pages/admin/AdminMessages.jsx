@@ -13,17 +13,21 @@ import ErrorBanner from "../../components/ui/ErrorBanner.jsx";
 
 function statusChip(status) {
   const map = {
-    New: "bg-blue-50 text-blue-700 border-blue-100",
-    Pending: "bg-yellow-50 text-yellow-700 border-yellow-100",
-    Replied: "bg-green-50 text-green-700 border-green-100",
-    Spam: "bg-red-50 text-red-700 border-red-100",
+    New: "bg-info/10 text-info border-info/20",
+    Pending: "bg-warning/10 text-warning border-warning/20",
+    Replied: "bg-success/10 text-success border-success/20",
+    Spam: "bg-primary-light text-primary border-primary/20",
   };
-  return map[status] ?? "bg-gray-50 text-gray-700 border-gray-100";
+  return map[status] ?? "bg-surface text-text border-border";
 }
 
 export default function AdminMessages() {
-  const { fetchAdminEnquiries, updateEnquiryStatus, deleteEnquiry, deleteAllEnquiries } =
-    useContactStore();
+  const {
+    fetchAdminEnquiries,
+    updateEnquiryStatus,
+    deleteEnquiry,
+    deleteAllEnquiries,
+  } = useContactStore();
 
   const [items, setItems] = useState([]);
   const [counters, setCounters] = useState(null);
@@ -78,7 +82,7 @@ export default function AdminMessages() {
     try {
       await updateEnquiryStatus(id, nextStatus);
       toast.success("Status updated successfully.");
-      window.dispatchEvent(new Event('refresh-badges'));
+      window.dispatchEvent(new Event("refresh-badges"));
       await load();
     } catch (e) {
       const msg = e?.message ?? "Update failed.";
@@ -97,7 +101,7 @@ export default function AdminMessages() {
       await deleteEnquiry(deleteTarget);
       toast.success("Enquiry deleted successfully.");
       setDeleteTarget(null);
-      window.dispatchEvent(new Event('refresh-badges'));
+      window.dispatchEvent(new Event("refresh-badges"));
       await load();
     } catch (e) {
       const msg = e?.message ?? "Delete failed.";
@@ -112,7 +116,7 @@ export default function AdminMessages() {
       await deleteAllEnquiries();
       toast.success("All enquiries deleted successfully.");
       setDeleteAllTarget(false);
-      window.dispatchEvent(new Event('refresh-badges'));
+      window.dispatchEvent(new Event("refresh-badges"));
       await load();
     } catch (e) {
       const msg = e?.message ?? "Delete all failed.";
@@ -131,7 +135,7 @@ export default function AdminMessages() {
         />
       </div>
 
-      <div className="mt-6 bg-white border border-gray-200 rounded p-5 shadow-xs">
+      <div className="mt-6 bg-background border border-border rounded p-5 shadow-xs">
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3">
           <SearchInput
             value={search}
@@ -152,13 +156,13 @@ export default function AdminMessages() {
           />
           <input
             type="date"
-            className="rounded border border-gray-200 px-4 py-2 outline-none focus:ring-2 focus:ring-red-100"
+            className="rounded border border-border bg-surface px-4 py-2 outline-none focus:ring-2 focus:ring-primary-light"
             value={date}
             onChange={(e) => setDate(e.target.value)}
           />
           <button
             type="button"
-            className="rounded border border-gray-200 py-2 text-sm font-semibold text-gray-700 hover:bg-gray-50 transition cursor-pointer"
+            className="rounded border border-border py-2 text-sm font-semibold text-text hover:bg-surface transition cursor-pointer"
             onClick={() => {
               setSearch("");
               setStatus("");
@@ -170,29 +174,29 @@ export default function AdminMessages() {
 
         {counters && (
           <div className="mt-4 grid grid-cols-2 md:grid-cols-4 gap-3">
-            <div className="text-center bg-gray-50 border border-gray-200 rounded py-3">
-              <div className="text-xl font-extrabold text-gray-900">
+            <div className="text-center bg-surface border border-border rounded py-3">
+              <div className="text-xl font-extrabold text-heading">
                 {counters.new ?? 0}
               </div>
-              <div className="text-sm text-gray-600">New</div>
+              <div className="text-sm text-text">New</div>
             </div>
-            <div className="text-center bg-gray-50 border border-gray-200 rounded py-3">
-              <div className="text-xl font-extrabold text-gray-900">
+            <div className="text-center bg-surface border border-border rounded py-3">
+              <div className="text-xl font-extrabold text-heading">
                 {counters.pending ?? 0}
               </div>
-              <div className="text-sm text-gray-600">Pending</div>
+              <div className="text-sm text-text">Pending</div>
             </div>
-            <div className="text-center bg-gray-50 border border-gray-200 rounded py-3">
-              <div className="text-xl font-extrabold text-gray-900">
+            <div className="text-center bg-surface border border-border rounded py-3">
+              <div className="text-xl font-extrabold text-heading">
                 {counters.replied ?? 0}
               </div>
-              <div className="text-sm text-gray-600">Replied</div>
+              <div className="text-sm text-text">Replied</div>
             </div>
-            <div className="text-center bg-gray-50 border border-gray-200 rounded py-3">
-              <div className="text-xl font-extrabold text-gray-900">
+            <div className="text-center bg-surface border border-border rounded py-3">
+              <div className="text-xl font-extrabold text-heading">
                 {counters.spam ?? 0}
               </div>
-              <div className="text-sm text-gray-600">Spam</div>
+              <div className="text-sm text-text">Spam</div>
             </div>
           </div>
         )}
@@ -200,7 +204,7 @@ export default function AdminMessages() {
 
       <ErrorBanner message={error} className="mt-4" />
 
-      <div className="mt-4 bg-white border border-gray-200 rounded p-5 shadow-xs">
+      <div className="mt-4 bg-background border border-border rounded p-5 shadow-xs">
         <AdminListFooter
           loading={loading}
           total={pagination.total}
@@ -212,7 +216,7 @@ export default function AdminMessages() {
         <div className="mt-4 overflow-auto">
           <table className="w-full text-sm">
             <thead>
-              <tr className="text-left text-gray-600">
+              <tr className="text-left text-text">
                 <th className="py-2 pr-3 hidden sm:table-cell">ID</th>
                 <th className="py-2 pr-3">Sender</th>
                 <th className="py-2 pr-3 hidden md:table-cell">Service</th>
@@ -224,77 +228,84 @@ export default function AdminMessages() {
             <tbody>
               {loading && !items.length ? (
                 <TableSkeleton rows={5} cols={6} />
-              ) : items.map((e) => (
-                <tr
-                  key={e.enquiry_id}
-                  className="border-t border-gray-100 align-top">
-                  <td className="py-3 pr-3 text-gray-700 hidden sm:table-cell">
-                    <span
-                      className="block max-w-[80px] truncate"
-                      title={e.enquiry_id}>
-                      {e.enquiry_id}
-                    </span>
-                  </td>
-                  <td className="py-3 pr-3">
-                    <div className="font-bold text-gray-900 truncate max-w-[150px]">
-                      {e.name}
-                    </div>
-                    <div className="text-xs text-gray-500 truncate max-w-[150px]">
-                      {e.email}
-                    </div>
-                  </td>
-                  <td className="py-3 pr-3 text-gray-600 hidden md:table-cell truncate max-w-[120px]">
-                    {e.service}
-                  </td>
-                  <td className="py-3 pr-3">
-                    <span
-                      className={`inline-flex items-center rounded-full px-3 py-1 text-xs font-semibold border ${statusChip(e.status)}`}>
-                      {e.status}
-                    </span>
-                  </td>
-                  <td className="py-3 pr-3 text-xs text-gray-500 hidden sm:table-cell">
-                    {new Date(e.date).toLocaleDateString()}
-                  </td>
-                  <td className="py-3">
-                    <div className="flex gap-2 flex-wrap">
-                      {(e.status === "New" || e.status === "Pending") && (
+              ) : (
+                items.map((e) => (
+                  <tr
+                    key={e.enquiry_id}
+                    className="border-t border-border align-top">
+                    <td className="py-3 pr-3 text-text hidden sm:table-cell">
+                      <span
+                        className="block max-w-[80px] truncate"
+                        title={e.enquiry_id}>
+                        {e.enquiry_id}
+                      </span>
+                    </td>
+                    <td className="py-3 pr-3">
+                      <div className="font-bold text-heading truncate max-w-[150px]">
+                        {e.name}
+                      </div>
+                      <div className="text-xs text-muted truncate max-w-[150px]">
+                        {e.email}
+                      </div>
+                    </td>
+                    <td className="py-3 pr-3 text-text hidden md:table-cell truncate max-w-[120px]">
+                      {e.service}
+                    </td>
+                    <td className="py-3 pr-3">
+                      <span
+                        className={`inline-flex items-center rounded-full px-3 py-1 text-xs font-semibold border ${statusChip(e.status)}`}>
+                        {e.status}
+                      </span>
+                    </td>
+                    <td className="py-3 pr-3 text-xs text-muted hidden sm:table-cell">
+                      {new Date(e.date).toLocaleDateString()}
+                    </td>
+                    <td className="py-3">
+                      <div className="flex gap-2 flex-wrap">
+                        {(e.status === "New" || e.status === "Pending") && (
+                          <button
+                            type="button"
+                            className="px-3 py-2 text-xs sm:px-4 sm:py-2 sm:text-sm min-h-[44px] text-text hover:text-heading rounded transition cursor-pointer"
+                            onClick={() => transition(e.enquiry_id, "Replied")}>
+                            Mark Replied
+                          </button>
+                        )}
+                        {e.status !== "Spam" && (
+                          <button
+                            type="button"
+                            className="px-3 py-2 text-xs sm:px-4 sm:py-2 sm:text-sm min-h-[44px] text-warning hover:text-warning/80 rounded transition cursor-pointer"
+                            onClick={() => transition(e.enquiry_id, "Spam")}>
+                            Mark Spam
+                          </button>
+                        )}
                         <button
                           type="button"
-                          className="px-3 py-2 text-xs sm:px-4 sm:py-2 sm:text-sm min-h-[44px] text-gray-600 hover:text-gray-800 rounded transition cursor-pointer"
-                          onClick={() =>
-                            transition(e.enquiry_id, "Replied")
-                          }>
-                          Mark Replied
+                          className="px-3 py-2 text-xs sm:px-4 sm:py-2 sm:text-sm min-h-[44px] text-primary hover:text-primary-hover rounded transition cursor-pointer"
+                          onClick={() => onDelete(e.enquiry_id)}>
+                          Delete
                         </button>
-                      )}
-                      {e.status !== "Spam" && (
-                        <button
-                          type="button"
-                          className="px-3 py-2 text-xs sm:px-4 sm:py-2 sm:text-sm min-h-[44px] text-yellow-600 hover:text-yellow-500 rounded transition cursor-pointer"
-                          onClick={() =>
-                            transition(e.enquiry_id, "Spam")
-                          }>
-                          Mark Spam
-                        </button>
-                      )}
-                      <button
-                        type="button"
-                        className="px-3 py-2 text-xs sm:px-4 sm:py-2 sm:text-sm min-h-[44px] text-red-600 hover:text-red-500 rounded transition cursor-pointer"
-                        onClick={() => onDelete(e.enquiry_id)}>
-                        Delete
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-              ))}
+                      </div>
+                    </td>
+                  </tr>
+                ))
+              )}
               {!items.length && !loading && (
                 <TableEmptyState
                   colSpan={6}
                   message="No enquiries found"
                   submessage="Enquiries will appear here when users submit the contact form."
                   icon={
-                    <svg className="w-12 h-12 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                    <svg
+                      className="w-12 h-12 mb-3"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24">
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={1.5}
+                        d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
+                      />
                     </svg>
                   }
                 />
@@ -302,7 +313,11 @@ export default function AdminMessages() {
             </tbody>
           </table>
         </div>
-        <Pagination page={pagination.page} pages={pagination.pages} onPageChange={setPage} />
+        <Pagination
+          page={pagination.page}
+          pages={pagination.pages}
+          onPageChange={setPage}
+        />
       </div>
 
       <ConfirmModal

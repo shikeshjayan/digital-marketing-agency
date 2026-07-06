@@ -42,7 +42,8 @@ export default function ForgotPassword() {
       setSuccess("OTP sent to your email. Check your inbox.");
       toast.success("OTP sent to your email. Check your inbox.");
     } catch (err) {
-      const msg = err.response?.data?.message || err.message || "Failed to send OTP";
+      const msg =
+        err.response?.data?.message || err.message || "Failed to send OTP";
       setError(msg);
       toast.error(msg);
     } finally {
@@ -90,10 +91,10 @@ export default function ForgotPassword() {
         <div className="w-14 h-14 rounded bg-primary mx-auto text-white flex items-center justify-center font-bold">
           A
         </div>
-        <h2 className="mt-4 text-xl font-bold text-gray-900">
+        <h2 className="mt-4 text-xl font-bold text-heading">
           {step === 1 ? "Forgot Password" : "Reset Password"}
         </h2>
-        <p className="mt-2 text-sm text-gray-600">
+        <p className="mt-2 text-sm text-text">
           {step === 1
             ? "Enter your email to receive a one-time password."
             : `Enter the OTP sent to ${email}`}
@@ -103,21 +104,23 @@ export default function ForgotPassword() {
       {step === 1 ? (
         <form
           onSubmit={onSendOTP}
-          className="mt-8 bg-white border border-gray-200 rounded p-5 shadow-xs">
-          <label className="block text-sm font-medium text-gray-800">
+          className="mt-8 bg-background border border-border rounded p-5 shadow-xs">
+          <label className="block text-sm font-medium text-heading">
             Email Address
           </label>
           <input
             type="email"
-            className="mt-2 w-full rounded border border-gray-200 px-3 py-2 outline-none focus:ring-2 focus:ring-red-200"
+            className="mt-2 w-full rounded border border-border bg-surface px-3 py-2 outline-none focus:ring-2 focus:ring-primary-light placeholder:text-muted"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             placeholder="admin@example.com"
             autoComplete="email"
           />
 
-          {error && <div className="mt-4 text-sm text-red-600">{error}</div>}
-          {success && <div className="mt-4 text-sm text-green-600">{success}</div>}
+          {error && <div className="mt-4 text-sm text-primary">{error}</div>}
+          {success && (
+            <div className="mt-4 text-sm text-success">{success}</div>
+          )}
 
           <button
             type="submit"
@@ -129,45 +132,49 @@ export default function ForgotPassword() {
       ) : (
         <form
           onSubmit={onResetPassword}
-          className="mt-8 bg-white border border-gray-200 rounded p-5 shadow-xs">
-          <label className="block text-sm font-medium text-gray-800">
+          className="mt-8 bg-background border border-border rounded p-5 shadow-xs">
+          <label className="block text-sm font-medium text-heading">
             OTP Code
           </label>
           <input
             type="text"
-            className="mt-2 w-full rounded border border-gray-200 px-3 py-2 outline-none focus:ring-2 focus:ring-red-200 text-center tracking-widest font-mono text-lg"
+            className="mt-2 w-full rounded border border-border bg-surface px-3 py-2 outline-none focus:ring-2 focus:ring-primary-light text-center tracking-widest font-mono text-lg"
             placeholder="000000"
             value={otp}
-            onChange={(e) => setOtp(e.target.value.replace(/\D/g, "").slice(0, 6))}
+            onChange={(e) =>
+              setOtp(e.target.value.replace(/\D/g, "").slice(0, 6))
+            }
             maxLength={6}
           />
 
-          <label className="block text-sm font-medium text-gray-800 mt-4">
+          <label className="block text-sm font-medium text-heading mt-4">
             New Password
           </label>
           <input
             type="password"
-            className="mt-2 w-full rounded border border-gray-200 px-3 py-2 outline-none focus:ring-2 focus:ring-red-200"
+            className="mt-2 w-full rounded border border-border bg-surface px-3 py-2 outline-none focus:ring-2 focus:ring-primary-light placeholder:text-muted"
             placeholder="At least 6 characters"
             value={newPassword}
             onChange={(e) => setNewPassword(e.target.value)}
             autoComplete="new-password"
           />
 
-          <label className="block text-sm font-medium text-gray-800 mt-4">
+          <label className="block text-sm font-medium text-heading mt-4">
             Confirm Password
           </label>
           <input
             type="password"
-            className="mt-2 w-full rounded border border-gray-200 px-3 py-2 outline-none focus:ring-2 focus:ring-red-200"
+            className="mt-2 w-full rounded border border-border bg-surface px-3 py-2 outline-none focus:ring-2 focus:ring-primary-light placeholder:text-muted"
             placeholder="Repeat new password"
             value={confirmPassword}
             onChange={(e) => setConfirmPassword(e.target.value)}
             autoComplete="new-password"
           />
 
-          {error && <div className="mt-4 text-sm text-red-600">{error}</div>}
-          {success && <div className="mt-4 text-sm text-green-600">{success}</div>}
+          {error && <div className="mt-4 text-sm text-primary">{error}</div>}
+          {success && (
+            <div className="mt-4 text-sm text-success">{success}</div>
+          )}
 
           <button
             type="submit"
@@ -178,8 +185,15 @@ export default function ForgotPassword() {
 
           <button
             type="button"
-            onClick={() => { setStep(1); setError(null); setSuccess(""); setOtp(""); setNewPassword(""); setConfirmPassword(""); }}
-            className="mt-3 w-full rounded bg-gray-100 text-gray-700 py-2.5 font-semibold hover:bg-gray-200 transition cursor-pointer">
+            onClick={() => {
+              setStep(1);
+              setError(null);
+              setSuccess("");
+              setOtp("");
+              setNewPassword("");
+              setConfirmPassword("");
+            }}
+            className="mt-3 w-full rounded bg-surface text-text py-2.5 font-semibold hover:bg-border transition cursor-pointer">
             Back to Email
           </button>
         </form>
@@ -188,7 +202,7 @@ export default function ForgotPassword() {
       <div className="mt-4 text-center">
         <Link
           to="/admin/login"
-          className="text-sm text-gray-600 hover:text-red-600 hover:underline">
+          className="text-sm text-text hover:text-primary hover:underline">
           Back to Login
         </Link>
       </div>

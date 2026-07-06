@@ -105,7 +105,9 @@ export default function AdminProjects() {
       !form.description.trim() ||
       !form.live_url.trim()
     ) {
-      setError("Please fill Project Name, Short Description, Description, and Live URL.");
+      setError(
+        "Please fill Project Name, Short Description, Description, and Live URL.",
+      );
       setSubmitting(false);
       return;
     }
@@ -141,7 +143,8 @@ export default function AdminProjects() {
       setForm(emptyForm);
       await load();
     } catch (err) {
-      const msg = err?.response?.data?.message || err?.message || "Operation failed.";
+      const msg =
+        err?.response?.data?.message || err?.message || "Operation failed.";
       setError(msg);
       toast.error(msg);
     } finally {
@@ -161,7 +164,8 @@ export default function AdminProjects() {
       setDeleteTarget(null);
       await load();
     } catch (err) {
-      const msg = err?.response?.data?.message || err?.message || "Delete failed.";
+      const msg =
+        err?.response?.data?.message || err?.message || "Delete failed.";
       setError(msg);
       toast.error(msg);
       setDeleteTarget(null);
@@ -175,7 +179,8 @@ export default function AdminProjects() {
       setDeleteAllTarget(false);
       await load();
     } catch (err) {
-      const msg = err?.response?.data?.message || err?.message || "Delete all failed.";
+      const msg =
+        err?.response?.data?.message || err?.message || "Delete all failed.";
       setError(msg);
       toast.error(msg);
       setDeleteAllTarget(false);
@@ -191,7 +196,7 @@ export default function AdminProjects() {
         />
       </div>
 
-      <div className="mt-6 bg-white border border-gray-200 rounded p-5 shadow-xs">
+      <div className="mt-6 bg-background border border-border rounded p-5 shadow-xs">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
           <SearchInput
             value={search}
@@ -223,8 +228,8 @@ export default function AdminProjects() {
       <div className="mt-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
         <div
           ref={formRef}
-          className="lg:col-span-2 bg-white border border-gray-200 rounded p-4 shadow-xs">
-          <div className="font-extrabold text-gray-900">
+          className="lg:col-span-2 bg-background border border-border rounded p-4 shadow-xs">
+          <div className="font-extrabold text-heading">
             {form.project_id ? "Edit Project" : "Add New Project"}
           </div>
 
@@ -232,7 +237,9 @@ export default function AdminProjects() {
             <FormField
               label="Project Name"
               value={form.project_name}
-              onChange={(e) => setForm((f) => ({ ...f, project_name: e.target.value }))}
+              onChange={(e) =>
+                setForm((f) => ({ ...f, project_name: e.target.value }))
+              }
               placeholder="e.g. E-commerce Website"
             />
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -259,7 +266,9 @@ export default function AdminProjects() {
             <FormField
               label="Short Description"
               value={form.short_description}
-              onChange={(e) => setForm((f) => ({ ...f, short_description: e.target.value }))}
+              onChange={(e) =>
+                setForm((f) => ({ ...f, short_description: e.target.value }))
+              }
               placeholder="Brief summary of the project"
             />
             <FormField
@@ -267,13 +276,17 @@ export default function AdminProjects() {
               textarea
               rows={2}
               value={form.description}
-              onChange={(e) => setForm((f) => ({ ...f, description: e.target.value }))}
+              onChange={(e) =>
+                setForm((f) => ({ ...f, description: e.target.value }))
+              }
               placeholder="Detailed description of the project"
             />
             <FormField
               label="Live URL"
               value={form.live_url}
-              onChange={(e) => setForm((f) => ({ ...f, live_url: e.target.value }))}
+              onChange={(e) =>
+                setForm((f) => ({ ...f, live_url: e.target.value }))
+              }
               placeholder="https://example.com"
             />
             <FileUploadField
@@ -292,12 +305,14 @@ export default function AdminProjects() {
               editId={form.project_id}
               onSubmit={onSubmit}
               onReset={() => setForm(emptyForm)}
-              submitLabel={form.project_id ? "Update Project" : "Create Project"}
+              submitLabel={
+                form.project_id ? "Update Project" : "Create Project"
+              }
             />
           </form>
         </div>
 
-        <div className="lg:col-span-3 bg-white border border-gray-200 rounded p-5 shadow-xs flex flex-col">
+        <div className="lg:col-span-3 bg-background border border-border rounded p-5 shadow-xs flex flex-col">
           <AdminListFooter
             loading={loading}
             total={pagination.total}
@@ -309,7 +324,7 @@ export default function AdminProjects() {
           <div className="mt-4 overflow-auto flex-1">
             <table className="w-full text-sm">
               <thead>
-                <tr className="text-left text-gray-600">
+                <tr className="text-left text-text">
                   <th className="py-2 pr-3 hidden sm:table-cell">ID</th>
                   <th className="py-2 pr-3">Project</th>
                   <th className="py-2 pr-3">Category</th>
@@ -320,81 +335,92 @@ export default function AdminProjects() {
               <tbody>
                 {loading && !items.length ? (
                   <TableSkeleton rows={5} cols={5} />
-                ) : items.map((p) => (
-                  <tr
-                    key={p._id}
-                    className="border-t border-gray-100 align-top">
-                    <td className="py-3 pr-3 text-gray-700 hidden sm:table-cell">
-                      <span
-                        className="block max-w-[80px] truncate"
-                        title={p._id}>
-                        {p._id}
-                      </span>
-                    </td>
-                    <td className="py-3 pr-3">
-                      <div className="font-bold text-gray-900 truncate max-w-[200px]">
-                        {p.project_name}
-                      </div>
-                      <div className="text-gray-500 text-xs sm:text-sm truncate max-w-[200px]">
-                        {p.short_description}
-                      </div>
-                    </td>
-                    <td className="py-3 pr-3">
-                      <span className="inline-flex px-3 py-1 text-xs font-semibold text-gray-700">
-                        {p.category}
-                      </span>
-                    </td>
-                    <td className="py-3 pr-3">
-                      <span
-                        className={`inline-flex items-center rounded-full px-3 py-1 text-xs font-semibold border ${
-                          p.status === "Active"
-                            ? "bg-green-50 text-green-700 border-green-100"
-                            : "bg-yellow-50 text-yellow-700 border-yellow-100"
-                        }`}>
-                        {p.status}
-                      </span>
-                    </td>
-                    <td className="py-3">
-                      <div className="flex gap-2 flex-wrap">
-                        <button
-                          type="button"
-                           className="px-3 py-2 text-xs sm:px-4 sm:py-2 sm:text-sm min-h-[44px] text-gray-600 hover:text-gray-800 rounded transition cursor-pointer"
-                          onClick={() => {
-                            setForm({
-                              project_id: p._id,
-                              project_name: p.project_name,
-                              category: p.category,
-                              short_description: p.short_description,
-                              description: p.description ?? "",
-                              live_url: p.live_url,
-                              image: p.image ?? "",
-                              status: p.status,
-                            });
-                            formRef.current?.scrollIntoView({
-                              behavior: "smooth",
-                              block: "start",
-                            });
-                          }}>
-                          Edit
-                        </button>
-                        <button
-                          type="button"
-                           className="px-3 py-2 text-xs sm:px-4 sm:py-2 sm:text-sm min-h-[44px] text-red-600 hover:text-red-500 rounded transition cursor-pointer"
-                          onClick={() => onDelete(p._id)}>
-                          Delete
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                ))}
+                ) : (
+                  items.map((p) => (
+                    <tr
+                      key={p._id}
+                      className="border-t border-border align-top">
+                      <td className="py-3 pr-3 text-text hidden sm:table-cell">
+                        <span
+                          className="block max-w-[80px] truncate"
+                          title={p._id}>
+                          {p._id}
+                        </span>
+                      </td>
+                      <td className="py-3 pr-3">
+                        <div className="font-bold text-heading truncate max-w-[200px]">
+                          {p.project_name}
+                        </div>
+                        <div className="text-muted text-xs sm:text-sm truncate max-w-[200px]">
+                          {p.short_description}
+                        </div>
+                      </td>
+                      <td className="py-3 pr-3">
+                        <span className="inline-flex px-3 py-1 text-xs font-semibold text-text">
+                          {p.category}
+                        </span>
+                      </td>
+                      <td className="py-3 pr-3">
+                        <span
+                          className={`inline-flex items-center rounded-full px-3 py-1 text-xs font-semibold border ${
+                            p.status === "Active"
+                              ? "bg-success/10 text-success border-success/20"
+                              : "bg-warning/10 text-warning border-warning/20"
+                          }`}>
+                          {p.status}
+                        </span>
+                      </td>
+                      <td className="py-3">
+                        <div className="flex gap-2 flex-wrap">
+                          <button
+                            type="button"
+                            className="px-3 py-2 text-xs sm:px-4 sm:py-2 sm:text-sm min-h-[44px] text-text hover:text-heading rounded transition cursor-pointer"
+                            onClick={() => {
+                              setForm({
+                                project_id: p._id,
+                                project_name: p.project_name,
+                                category: p.category,
+                                short_description: p.short_description,
+                                description: p.description ?? "",
+                                live_url: p.live_url,
+                                image: p.image ?? "",
+                                status: p.status,
+                              });
+                              formRef.current?.scrollIntoView({
+                                behavior: "smooth",
+                                block: "start",
+                              });
+                            }}>
+                            Edit
+                          </button>
+                          <button
+                            type="button"
+                            className="px-3 py-2 text-xs sm:px-4 sm:py-2 sm:text-sm min-h-[44px] text-primary hover:text-primary-hover rounded transition cursor-pointer"
+                            onClick={() => onDelete(p._id)}>
+                            Delete
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))
+                )}
                 {!items.length && !loading && (
                   <TableEmptyState
                     colSpan={5}
                     message="No projects found"
                     submessage="Create a new project to get started."
                     icon={
-                      <svg className="w-12 h-12 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+                      <svg
+                        className="w-12 h-12 mb-3"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24">
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={1.5}
+                          d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"
+                        />
                       </svg>
                     }
                   />
@@ -402,7 +428,11 @@ export default function AdminProjects() {
               </tbody>
             </table>
           </div>
-          <Pagination page={pagination.page} pages={pagination.pages} onPageChange={setPage} />
+          <Pagination
+            page={pagination.page}
+            pages={pagination.pages}
+            onPageChange={setPage}
+          />
         </div>
       </div>
 
