@@ -49,17 +49,17 @@ export default function DetailModal({
       <div
         className="relative z-10 bg-background rounded-2xl shadow-2xl w-full max-w-lg max-h-[90vh] overflow-y-auto flex flex-col border border-border/50 transform scale-100 transition-all duration-300"
         onClick={(e) => e.stopPropagation()}>
-        
+
         <button
           type="button"
           onClick={onClose}
-          className="absolute top-4 right-4 z-50 w-8 h-8 rounded-full bg-surface border border-border flex items-center justify-center text-muted hover:text-heading hover:bg-background shadow-sm hover:shadow transition duration-200 cursor-pointer"
+          className="absolute top-4 right-4 z-50 w-8 h-8 rounded-full bg-surface border border-border flex items-center justify-center text-muted hover:text-background hover:bg-primary shadow-sm hover:shadow transition duration-200 cursor-pointer"
           aria-label="Close">
           <FontAwesomeIcon icon={faTimes} className="text-xs" />
         </button>
 
         {isAvatar ? (
-          <div className="flex flex-col items-center pt-10 pb-6 border-b border-border/60 bg-gradient-to-b from-surface to-background px-6 text-center">
+          <div className="flex flex-col items-center pt-10 pb-6 border-b border-border/60 bg-background-section px-6 text-center">
             {/* Renders initials bubble exclusively */}
             <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-full overflow-hidden ring-4 ring-primary/10 shadow-md flex items-center justify-center bg-surface border border-border">
               {image ? (
@@ -77,9 +77,9 @@ export default function DetailModal({
                 </span>
               )}
             </div>
-            
+
             <h2 className="mt-4 text-xl font-bold text-heading leading-tight">{title}</h2>
-            
+
             {tags && tags.length > 0 && (
               <div className="flex flex-wrap items-center justify-center gap-2 mt-3">
                 {tags.map((tag, i) => tag && (
@@ -143,9 +143,9 @@ export default function DetailModal({
             )}
 
             <div className={`text-text text-sm sm:text-base leading-relaxed whitespace-pre-line bg-surface rounded-xl p-4 border border-border/40 ${isAvatar ? "italic text-center text-text/90" : ""}`}>
-              {isAvatar && <span className="text-primary font-headings text-2xl block -mb-2 text-left leading-none">“</span>}
+              {isAvatar && <span className="text-primary font-headings text-2xl block -mb-2 text-left leading-none">"</span>}
               {description}
-              {isAvatar && <span className="text-primary font-headings text-2xl block text-right leading-none -mt-2">”</span>}
+              {isAvatar && <span className="text-primary font-headings text-2xl block text-right leading-none -mt-2">"</span>}
             </div>
           </div>
 

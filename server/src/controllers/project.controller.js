@@ -24,6 +24,7 @@ export const createProject = asyncHandler(async (req, res) => {
   const {
     project_name, category, client_name, industry, technologies, duration,
     before_after, short_description, description, live_url, status,
+    challenge, solution, client_testimonial,
   } = req.body;
   const image = req.file ? req.file.url : req.body.image;
 
@@ -53,7 +54,7 @@ export const createProject = asyncHandler(async (req, res) => {
   const project = await Projects.create({
     project_name, category, client_name, industry, technologies: parsedTech,
     duration, before_after: parsedBeforeAfter, short_description, description,
-    image, live_url, status,
+    image, live_url, status, challenge, solution, client_testimonial,
   });
 
   res.status(201).json({
@@ -114,16 +115,19 @@ export const updateProject = asyncHandler(async (req, res) => {
   const {
     project_name, category, client_name, industry, technologies, duration,
     before_after, short_description, description, live_url, status,
+    challenge, solution, client_testimonial,
   } = req.body;
 
   if (!project_name && !category && !short_description && !description && !live_url && !status
-    && !client_name && !industry && !technologies && !duration && !before_after) {
+    && !client_name && !industry && !technologies && !duration && !before_after
+    && !challenge && !solution && !client_testimonial) {
     return res.status(400).json({ success: false, message: "No fields to update" });
   }
 
   const update = {
     project_name, category, client_name, industry, duration,
     short_description, description, live_url, status,
+    challenge, solution, client_testimonial,
   };
 
   // Parse before_after if it arrives as a JSON string (from FormData)

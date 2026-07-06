@@ -45,6 +45,9 @@ export default function AdminProjects() {
       before_after: [],
       short_description: "",
       description: "",
+      challenge: "",
+      solution: "",
+      client_testimonial: "",
       live_url: "",
       image: "",
       status: "Active",
@@ -138,6 +141,9 @@ export default function AdminProjects() {
     payload.append("before_after", JSON.stringify(form.before_after));
     payload.append("short_description", form.short_description.trim());
     payload.append("description", form.description.trim());
+    payload.append("challenge", form.challenge.trim());
+    payload.append("solution", form.solution.trim());
+    payload.append("client_testimonial", form.client_testimonial.trim());
     payload.append("live_url", form.live_url.trim());
     payload.append("status", form.status);
 
@@ -342,7 +348,7 @@ export default function AdminProjects() {
                 </p>
               )}
               {form.before_after.map((item, idx) => (
-                <div key={idx} className="mt-2 grid grid-cols-[1fr_1fr_1fr_auto] gap-2 items-end">
+                <div key={idx} className="mt-2 grid grid-cols-1 sm:grid-cols-3 gap-2 items-end">
                   <input
                     type="text"
                     className="rounded border border-border bg-surface px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-primary-light placeholder:text-muted"
@@ -384,8 +390,8 @@ export default function AdminProjects() {
                         before_after: f.before_after.filter((_, i) => i !== idx),
                       }))
                     }
-                    className="px-2 py-2 text-primary hover:text-primary-hover cursor-pointer">
-                    ✕
+                    className="sm:col-span-3 px-2 py-2 text-primary hover:text-primary-hover cursor-pointer text-sm font-medium">
+                    Remove
                   </button>
                 </div>
               ))}
@@ -408,6 +414,36 @@ export default function AdminProjects() {
                 setForm((f) => ({ ...f, description: e.target.value }))
               }
               placeholder="Detailed description of the project"
+            />
+            <FormField
+              label="Challenge"
+              textarea
+              rows={2}
+              value={form.challenge}
+              onChange={(e) =>
+                setForm((f) => ({ ...f, challenge: e.target.value }))
+              }
+              placeholder="Key challenges faced in this project"
+            />
+            <FormField
+              label="Solution"
+              textarea
+              rows={2}
+              value={form.solution}
+              onChange={(e) =>
+                setForm((f) => ({ ...f, solution: e.target.value }))
+              }
+              placeholder="How we solved the challenges"
+            />
+            <FormField
+              label="Client Testimonial"
+              textarea
+              rows={2}
+              value={form.client_testimonial}
+              onChange={(e) =>
+                setForm((f) => ({ ...f, client_testimonial: e.target.value }))
+              }
+              placeholder="Optional — client feedback or quote"
             />
             <FormField
               label="Live URL"
@@ -519,6 +555,9 @@ export default function AdminProjects() {
                                   : [],
                                 short_description: p.short_description,
                                 description: p.description ?? "",
+                                challenge: p.challenge ?? "",
+                                solution: p.solution ?? "",
+                                client_testimonial: p.client_testimonial ?? "",
                                 live_url: p.live_url,
                                 image: p.image ?? "",
                                 status: p.status,
