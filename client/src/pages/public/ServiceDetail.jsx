@@ -275,7 +275,7 @@ export default function ServiceDetail() {
               {service.clients.map((client, i) => (
                 <FadeIn key={client._id || i} delay={i * 60}>
                   <div className="flex flex-col bg-background border border-border rounded-lg px-6 py-6 transition-all duration-300 h-full">
-                    <p className="text-gray-700 leading-relaxed text-sm flex-1 italic break-words">
+                    <p className="text-text leading-relaxed small-text flex-1 italic break-words">
                       &ldquo;{client.quote || "No feedback provided."}&rdquo;
                     </p>
                     <div className="mt-6 flex items-center gap-3 pt-4 border-t border-border">

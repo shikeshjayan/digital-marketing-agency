@@ -8,6 +8,7 @@ export default function FAQSection({
   eyebrow = "Questions",
   title = "Frequently Asked Questions",
   subtitle = "Find answers to common questions about our services and process.",
+  bg = "bg-background",
 }) {
   const [activeIndex, setActiveIndex] = useState(null);
 
@@ -18,7 +19,7 @@ export default function FAQSection({
   if (!items.length) return null;
 
   return (
-    <section className="py-12 md:py-16 bg-surface">
+    <section className={`py-12 md:py-16 ${bg}`}>
       <div className="max-w-3xl mx-auto px-4">
         <SectionHeading eyebrow={eyebrow} title={title} subtitle={subtitle} />
 

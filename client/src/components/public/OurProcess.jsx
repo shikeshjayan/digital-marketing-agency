@@ -43,9 +43,9 @@ const defaultSteps = [
   },
 ];
 
-export default function OurProcess({ steps = defaultSteps }) {
+export default function OurProcess({ steps = defaultSteps, bg = "bg-background-section" }) {
   return (
-    <section className="py-16 md:py-20 bg-background">
+    <section className={`py-16 md:py-20 ${bg}`}>
       <div className="max-w-6xl mx-auto px-4">
         <FadeIn>
           <SectionHeading

@@ -156,7 +156,7 @@ const featuredCases = [
 
 function FeaturedCaseStudies() {
   return (
-    <section className="py-16 md:py-20 bg-surface">
+    <section className="py-16 md:py-20 bg-background">
       <div className="max-w-6xl mx-auto px-4">
         <FadeIn>
           <SectionHeading
@@ -210,7 +210,7 @@ const technologies = [
 
 function TechnologiesPlatforms() {
   return (
-    <section className="py-16 md:py-20 bg-background">
+    <section className="py-16 md:py-20 bg-background-section">
       <div className="max-w-6xl mx-auto px-4">
         <FadeIn>
           <SectionHeading
@@ -247,7 +247,7 @@ const caseStudyStats = [
 
 function ResultsStatistics() {
   return (
-    <section className="py-16 md:py-20 bg-background">
+    <section className="py-16 md:py-20 bg-background-section">
       <div className="max-w-6xl mx-auto px-4">
         <FadeIn>
           <SectionHeading
@@ -386,7 +386,7 @@ const Services = () => {
       <Introduction />
 
       {/* 3. Services Grid */}
-      <section className="py-16 md:py-20 bg-surface">
+      <section className="py-16 md:py-20 bg-background-section">
         <div className="max-w-6xl mx-auto px-4">
           <FadeIn>
             <SectionHeading
@@ -430,10 +430,10 @@ const Services = () => {
       </section>
 
       {/* 4. Why Choose Us (moved above Our Process) */}
-      <WhyChooseUs />
+      <WhyChooseUs bg="bg-background" />
 
       {/* 5. Our Process */}
-      <OurProcess />
+      <OurProcess bg="bg-background-section" />
 
       {/* 6. Industries We Serve */}
       <IndustriesWeServe />
@@ -448,16 +448,16 @@ const Services = () => {
       <ResultsStatistics />
 
       {/* 10. Client Testimonials */}
-      <TestimonialsSection reviews={reviews} loading={reviewsLoading} />
+      <TestimonialsSection reviews={reviews} loading={reviewsLoading} bg="bg-background" />
 
       {/* 11. FAQ */}
-      <FAQSection items={faqItems} />
+      <FAQSection items={faqItems} bg="bg-background-section" />
 
       {/* 12. Final CTA */}
       <FinalCTA />
 
       {/* 13. Trust Section */}
-      <LogoMarquee />
+      <LogoMarquee bg="bg-background" />
     </div>
   );
 };

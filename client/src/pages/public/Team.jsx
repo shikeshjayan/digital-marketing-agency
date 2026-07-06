@@ -150,7 +150,7 @@ function TeamCard({ member }) {
         ) : null}
 
         <div
-          className="absolute inset-0 w-full h-full items-center justify-center bg-surface text-primary text-5xl font-bold select-none font-sans"
+          className="absolute inset-0 w-full h-full items-center justify-center bg-surface text-primary text-5xl font-bold select-none"
           style={{ display: hasPhoto ? 'none' : 'flex' }}
         >
           {getInitials(member.name)}
@@ -202,7 +202,7 @@ function TeamCard({ member }) {
 
 function Departments() {
   return (
-    <section className="py-12 md:py-16 bg-background">
+    <section className="py-12 md:py-16 bg-background-section">
       <FadeIn>
         <div className="max-w-6xl mx-auto px-4">
           <SectionHeading
@@ -233,7 +233,7 @@ function Departments() {
 
 function TeamStatistics() {
   return (
-    <section className="py-12 md:py-16 bg-surface">
+    <section className="py-12 md:py-16 bg-background">
       <FadeIn>
         <div className="max-w-6xl mx-auto px-4">
           <SectionHeading
@@ -261,7 +261,7 @@ function TeamStatistics() {
 
 function OurCulture() {
   return (
-    <section className="py-12 md:py-16 bg-background">
+    <section className="py-12 md:py-16 bg-background-section">
       <FadeIn>
         <div className="max-w-6xl mx-auto px-4">
           <SectionHeading
@@ -292,7 +292,7 @@ function OurCulture() {
 
 function Certifications() {
   return (
-    <section className="py-12 md:py-16 bg-surface">
+    <section className="py-12 md:py-16 bg-background">
       <FadeIn>
         <div className="max-w-6xl mx-auto px-4">
           <SectionHeading
@@ -342,14 +342,14 @@ export default function Team() {
         imageSrc="/team.webp"
         imageAlt="Our Team"
         trustIndicators={[
-          { value: "25+", label: "Team\nMembers" },
-          { value: "8+", label: "Years\nExperience" },
-          { value: "10+", label: "Certifications\nHeld" },
+          { value: "25+", label: "Team Members" },
+          { value: "500+", label: "Projects Delivered" },
+          { value: "98%", label: "Client Retention" },
         ]}
       />
 
       {/* Team Cards */}
-      <section className="py-14 bg-surface">
+      <section className="py-14 bg-background">
         <FadeIn>
           <div className="max-w-6xl mx-auto px-4">
             <div className="text-center mb-10">

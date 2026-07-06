@@ -303,7 +303,7 @@ export default function AdminDashboard() {
       label: "Add New Project",
       to: "/admin/projects",
       icon: <PlusIcon />,
-      color: "text-purple-600 bg-purple-50",
+      color: "text-info bg-info/10",
     },
     {
       label: "Add New Service",
@@ -393,7 +393,7 @@ export default function AdminDashboard() {
           label="Total Projects"
           value={stats.total_projects}
           icon={<ProjectsIcon />}
-          color="bg-purple-50 text-purple-600"
+          color="bg-info/10 text-info"
           onClick={() => navigate("/admin/projects")}
         />
         <StatCard
@@ -481,7 +481,7 @@ export default function AdminDashboard() {
                 <div
                   key={p._id}
                   className="flex items-start gap-3 border border-border rounded p-3 hover:bg-surface transition">
-                  <div className="w-9 h-9 rounded-xl bg-purple-50 flex items-center justify-center shrink-0">
+                  <div className="w-9 h-9 rounded-xl bg-info/10 flex items-center justify-center shrink-0">
                     <FolderIcon />
                   </div>
                   <div className="min-w-0 flex-1">

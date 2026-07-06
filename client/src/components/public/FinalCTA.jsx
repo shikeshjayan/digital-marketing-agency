@@ -19,7 +19,7 @@ export default function FinalCTA({
       <FadeIn>
         <div className="max-w-4xl mx-auto px-4 text-center text-white">
           <h2 className="section-heading text-white">{title}</h2>
-          <p className="mt-4 text-gray-300 max-w-2xl mx-auto body-text">
+          <p className="mt-4 text-white/70 max-w-2xl mx-auto body-text">
             {description}
           </p>
           <div className="mt-8 flex flex-wrap items-center justify-center gap-4">
@@ -42,7 +42,7 @@ export default function FinalCTA({
                 href="https://wa.me/918891212323"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 rounded-lg bg-green-600 text-white px-6 py-3 text-sm font-semibold hover:bg-green-700 transition">
+                className="inline-flex items-center gap-2 rounded-lg bg-success text-white px-6 py-3 small-text font-semibold hover:opacity-90 transition">
                 <FontAwesomeIcon icon={faComments} />
                 WhatsApp Us
               </a>

@@ -19,7 +19,7 @@ export default function FormField({
   return (
     <div className={className}>
       <label className="text-sm font-semibold text-heading">
-        {label} {required && <span className="text-red-500">*</span>}
+        {label} {required && <span className="text-primary">*</span>}
       </label>
       {selectOptions ? (
         <Select

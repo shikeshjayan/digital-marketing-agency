@@ -24,7 +24,7 @@ import useReviewStore from "../../store/reviewStore.js";
 /* ─── Section: Who We Are ─────────────────────────────────── */
 function WhoWeAre() {
   return (
-    <section className="py-12 md:py-16 bg-background">
+    <section className="py-12 md:py-16 bg-background-section">
       <div className="max-w-6xl mx-auto px-4">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-10 md:gap-16 items-center">
           <FadeIn direction="left">
@@ -108,7 +108,7 @@ function WhoWeAre() {
 /* ─── Section: Mission | Vision ───────────────────────────── */
 function MissionVision() {
   return (
-    <section className="py-12 md:py-16 bg-surface">
+    <section className="py-12 md:py-16 bg-background">
       <div className="max-w-6xl mx-auto px-4">
         <FadeIn>
           <SectionHeading
@@ -191,7 +191,7 @@ const valuesData = [
 
 function OurValues() {
   return (
-    <section className="py-12 md:py-16 bg-background">
+    <section className="py-12 md:py-16 bg-background-section">
       <div className="max-w-6xl mx-auto px-4">
         <FadeIn>
           <SectionHeading
@@ -238,7 +238,7 @@ function MeetOurTeam() {
             <span className="font-headings text-primary pr-2">Meet</span> Our
             Team
           </div>
-          <p className="mt-4 text-gray-300 max-w-2xl mx-auto leading-relaxed">
+          <p className="mt-4 text-white/70 max-w-2xl mx-auto leading-relaxed">
             The talented people behind our success. Meet the designers,
             developers, and strategists who bring your vision to life.
           </p>
@@ -283,7 +283,7 @@ export default function About() {
       />
 
       {/* 2. Welcome Banner */}
-      <section className="py-12 md:py-16 bg-gray-50">
+      <section className="py-12 md:py-16 bg-background">
         <div className="max-w-6xl mx-auto px-4 space-y-12 md:space-y-16">
           <FadeIn>
             <div className="p-4 md:p-10 text-center select-none">
@@ -291,7 +291,7 @@ export default function About() {
                 Hello, <span className="text-primary">Welcome</span> to Digital
                 Marketing
               </h2>
-              <div className="mt-4 text-sm text-gray-700 leading-relaxed max-w-3xl mx-auto text-justify md:text-center space-y-3">
+              <div className="mt-4 small-text text-text leading-relaxed max-w-3xl mx-auto text-justify md:text-center space-y-3">
                 <p className="small-text text-text body-text">
                   We help brands navigate and scale modern digital landscapes by
                   executing high-performance web engineering alongside robust
@@ -324,19 +324,19 @@ export default function About() {
       <OurValues />
 
       {/* 6. Why Choose Us */}
-      <WhyChooseUs />
+      <WhyChooseUs bg="bg-background" />
 
       {/* 7. Our Process (Timeline) */}
-      <OurProcess />
+      <OurProcess bg="bg-background-section" />
 
       {/* 8. Meet Our Team */}
       <MeetOurTeam />
 
       {/* 9. Client Testimonials */}
-      <TestimonialsSection reviews={reviews} loading={reviewsLoading} />
+      <TestimonialsSection reviews={reviews} loading={reviewsLoading} bg="bg-background" />
 
       {/* 10. Trusted By */}
-      <LogoMarquee bg="bg-background" />
+      <LogoMarquee bg="bg-background-section" />
 
       {/* 11. Final CTA */}
       <FinalCTA />
