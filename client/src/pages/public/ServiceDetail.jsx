@@ -1,44 +1,111 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { useParams, Link } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faAngleLeft, faCheckCircle } from "@fortawesome/free-solid-svg-icons";
-import { slugify } from "../../utils/slugify.js";
+import {
+  faAngleLeft,
+  faCheckCircle,
+  faArrowRight,
+  faHeartPulse,
+  faCartShopping,
+  faGraduationCap,
+  faBuilding,
+  faMoneyBillTrendUp,
+  faMicrochip,
+  faConciergeBell,
+  faStore,
+  faIndustry,
+} from "@fortawesome/free-solid-svg-icons";
 import useServiceStore from "../../store/serviceStore";
+import useProjectStore from "../../store/projectStore";
+import useFaqStore from "../../store/faqStore";
 import FadeIn from "../../components/ui/FadeIn.jsx";
-import AnimatedCounter from "../../components/ui/AnimatedCounter.jsx";
+import SectionHeading from "../../components/ui/SectionHeading.jsx";
 import OurProcess from "../../components/public/OurProcess.jsx";
-import WhyChooseUs from "../../components/public/WhyChooseUs.jsx";
 import FAQSection from "../../components/public/FAQSection.jsx";
 import FinalCTA from "../../components/public/FinalCTA.jsx";
 import resolveImagePath from "../../utils/resolveImagePath.js";
 
-function SectionHeading({ eyebrow, title }) {
-  return (
-    <div className="text-center mb-10">
-      <div className="font-headings text-4xl text-primary">{eyebrow}</div>
-      <h2 className="mt-2 text-3xl font-extrabold text-heading">{title}</h2>
-    </div>
-  );
+const industryIcons = {
+  Healthcare: faHeartPulse,
+  "E-Commerce": faCartShopping,
+  Education: faGraduationCap,
+  "Real Estate": faBuilding,
+  Finance: faMoneyBillTrendUp,
+  Technology: faMicrochip,
+  Hospitality: faConciergeBell,
+  Retail: faStore,
+};
+
+function getIndustryIcon(name) {
+  return industryIcons[name] || faIndustry;
 }
+
+const processSteps = [
+  { icon: "🔍", title: "Discovery", desc: "We dive deep into your business, audience, and goals to build a strategic foundation." },
+  { icon: "🎯", title: "Strategy", desc: "We craft a tailored roadmap with clear timelines, milestones, and deliverables." },
+  { icon: "🎨", title: "Design", desc: "Our designers create wireframes and visual mockups that align with your brand identity." },
+  { icon: "💻", title: "Development", desc: "Our engineers build robust, scalable solutions with rigorous quality assurance." },
+  { icon: "🧪", title: "Testing", desc: "Comprehensive testing ensures everything works flawlessly across all devices." },
+  { icon: "🚀", title: "Launch", desc: "We handle the full launch process, ensuring everything runs smoothly from day one." },
+];
 
 export default function ServiceDetail() {
   const { slug } = useParams();
-  const { services, loading, fetchServices, relatedServices, fetchRelatedServices } =
+  const { selectedService, loading, fetchServiceBySlug, relatedServices, fetchRelatedServices } =
     useServiceStore();
+  const { fetchRelatedProjects } = useProjectStore();
+  const { faqs, fetchFAQsByService } = useFaqStore();
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    fetchServices().catch((e) => setError(e.message));
-  }, [slug, fetchServices]);
+    fetchServiceBySlug(slug).catch((e) => setError(e.message));
+  }, [slug, fetchServiceBySlug]);
 
-  const service =
-    (services ?? []).find((s) => slugify(s.service_name) === slug) ?? null;
+  const service = selectedService;
 
   useEffect(() => {
     if (service?._id) {
       fetchRelatedServices(service._id, 3);
+      fetchRelatedProjects(service._id, 10);
+      fetchFAQsByService(service._id);
     }
-  }, [service?._id, fetchRelatedServices]);
+  }, [service?._id, fetchRelatedServices, fetchRelatedProjects, fetchFAQsByService]);
+
+  useEffect(() => {
+    if (service?.seo?.meta_title) {
+      document.title = service.seo.meta_title;
+    }
+    if (service?.seo?.meta_description) {
+      const meta = document.querySelector('meta[name="description"]');
+      if (meta) meta.setAttribute("content", service.seo.meta_description);
+    }
+  }, [service?.seo]);
+
+  const projects = useMemo(() => service?.projects ?? [], [service]);
+
+  const uniqueTechnologies = useMemo(() => {
+    const map = new Map();
+    projects.forEach((p) => {
+      (p.technologies ?? []).forEach((t) => {
+        const id = typeof t === "object" ? t._id : t;
+        const name = typeof t === "object" ? t.name : t;
+        if (id && !map.has(id)) map.set(id, name);
+      });
+    });
+    return [...map.entries()].map(([id, name]) => ({ id, name }));
+  }, [projects]);
+
+  const uniqueIndustries = useMemo(() => {
+    const map = new Map();
+    projects.forEach((p) => {
+      (p.industries ?? []).forEach((ind) => {
+        const id = typeof ind === "object" ? ind._id : ind;
+        const name = typeof ind === "object" ? ind.name : ind;
+        if (id && !map.has(id)) map.set(id, name);
+      });
+    });
+    return [...map.entries()].map(([id, name]) => ({ id, name }));
+  }, [projects]);
 
   if (loading)
     return (
@@ -75,13 +142,10 @@ export default function ServiceDetail() {
       </div>
     );
 
-  const hasCaseStudy =
-    service.case_study &&
-    (service.case_study.title || service.case_study.description || (service.case_study.stats && service.case_study.stats.length > 0));
-
   return (
     <div className="bg-background animate-page-fade">
-      {/* Hero + Overview Section */}
+
+      {/* ─── 1. Hero Section ─────────────────────────────────── */}
       <section className="bg-secondary text-white relative overflow-hidden py-16">
         <div className="absolute inset-0 pointer-events-none">
           <div className="absolute -top-10 -left-10 w-32 h-32 bg-white/10 rounded-lg rotate-12" />
@@ -99,11 +163,13 @@ export default function ServiceDetail() {
           </nav>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
             <div className="text-center md:text-left">
-              <div className="w-full flex justify-start mb-3">
-                <div className="text-sm font-bold tracking-widest uppercase inline-block px-3 py-1 rounded bg-white/10">
-                  FEATURED SERVICE
+              {service.featured && (
+                <div className="w-full flex justify-start mb-3">
+                  <div className="text-sm font-bold tracking-widest uppercase inline-block px-3 py-1 rounded bg-white/10">
+                    FEATURED SERVICE
+                  </div>
                 </div>
-              </div>
+              )}
               <h1 className="mt-3 text-3xl md:text-4xl font-extrabold leading-tight">
                 {service.service_name.split(" ").slice(0, 2).join(" ")}{" "}
                 <span className="text-primary-hover">
@@ -132,7 +198,7 @@ export default function ServiceDetail() {
             <div className="w-full max-w-md mx-auto md:mx-0 aspect-4/3 flex items-center justify-center relative">
               <div className="absolute inset-0 bg-white/5 rounded-lg blur-xl pointer-events-none" />
               <img
-                src={resolveImagePath(service.image)}
+                src={resolveImagePath(service.hero_image)}
                 alt={service.service_name}
                 loading="lazy"
                 decoding="async"
@@ -147,17 +213,54 @@ export default function ServiceDetail() {
         </div>
       </section>
 
-      {/* Benefits Section */}
-      {service.benefits && service.benefits.length > 0 && (
-        <section className="py-14 bg-surface">
+      {/* ─── 2. Service Overview ──────────────────────────────── */}
+      <section className="py-14 md:py-16 bg-background">
+        <div className="max-w-4xl mx-auto px-4">
+          <FadeIn>
+            <SectionHeading eyebrow="Overview" title={`About ${service.service_name}`} />
+          </FadeIn>
+          <FadeIn delay={100}>
+            <div className="mt-8 text-text leading-relaxed text-sm md:text-base text-justify">
+              {service.description}
+            </div>
+          </FadeIn>
+        </div>
+      </section>
+
+      {/* ─── 3. What We Deliver ──────────────────────────────── */}
+      {service.deliverables?.length > 0 && (
+        <section className="py-14 md:py-16 bg-surface">
           <div className="max-w-6xl mx-auto px-4">
             <FadeIn>
-              <SectionHeading eyebrow="Benefits" title="Why This Service Matters" />
+              <SectionHeading eyebrow="Deliverables" title="What We Deliver" subtitle="Everything you get when you choose this service." />
             </FadeIn>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div className="mt-10 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+              {service.deliverables.map((item, i) => (
+                <FadeIn key={i} delay={i * 50}>
+                  <div className="bg-background border border-border rounded-lg p-5 flex items-start gap-3 hover:shadow-sm transition h-full">
+                    <div className="flex items-center justify-center h-9 w-9 rounded-lg bg-primary-light text-primary font-extrabold text-sm shrink-0">
+                      {i + 1}
+                    </div>
+                    <p className="text-text leading-relaxed text-sm md:text-base">{item}</p>
+                  </div>
+                </FadeIn>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* ─── 4. Why Choose This Service ──────────────────────── */}
+      {service.benefits?.length > 0 && (
+        <section className="py-14 md:py-16 bg-background">
+          <div className="max-w-6xl mx-auto px-4">
+            <FadeIn>
+              <SectionHeading eyebrow="Benefits" title="Why Choose This Service" subtitle="The advantages of working with us." />
+            </FadeIn>
+            <div className="mt-10 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
               {service.benefits.map((item, i) => (
                 <FadeIn key={i} delay={i * 50}>
-                  <div className="bg-background border border-border rounded-lg p-5 flex items-start gap-3 hover:shadow-sm transition">
+                  <div className="bg-surface border border-border rounded-lg p-5 flex items-start gap-3 hover:shadow-sm transition h-full">
                     <FontAwesomeIcon icon={faCheckCircle} className="text-primary mt-0.5 shrink-0" />
                     <p className="text-text leading-relaxed text-sm md:text-base">{item}</p>
                   </div>
@@ -168,21 +271,51 @@ export default function ServiceDetail() {
         </section>
       )}
 
-      {/* What's Included Section */}
-      {service.offerings && service.offerings.length > 0 && (
-        <section className="py-14 bg-background">
+      {/* ─── 5. Our Process (Static) ─────────────────────────── */}
+      <OurProcess
+        steps={processSteps.map((s) => ({
+          icon: faArrowRight,
+          title: s.title,
+          desc: s.desc,
+        }))}
+        bg="bg-surface"
+      />
+
+      {/* ─── 6. Technologies & Platforms ──────────────────────── */}
+      {uniqueTechnologies.length > 0 && (
+        <section className="py-14 md:py-16 bg-background">
           <div className="max-w-6xl mx-auto px-4">
             <FadeIn>
-              <SectionHeading eyebrow="Solutions" title="What's Included" />
+              <SectionHeading eyebrow="Tech Stack" title="Technologies & Platforms" subtitle="The tools and technologies we use to build your solutions." />
             </FadeIn>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {service.offerings.map((item, i) => (
-                <FadeIn key={i} delay={i * 50}>
-                  <div className="bg-surface border border-border rounded-lg p-6 flex items-start gap-4 hover:scale-[1.01] transition-all duration-300">
-                    <div className="flex items-center justify-center h-10 w-10 rounded-lg bg-primary-light text-primary font-extrabold shrink-0">
-                      {i + 1}
+            <div className="mt-10 flex flex-wrap justify-center gap-3">
+              {uniqueTechnologies.map((tech, i) => (
+                <FadeIn key={tech.id} delay={i * 30}>
+                  <span className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-surface border border-border text-heading text-sm font-semibold hover:border-primary/40 transition">
+                    {tech.name}
+                  </span>
+                </FadeIn>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* ─── 7. Industries We Serve ──────────────────────────── */}
+      {uniqueIndustries.length > 0 && (
+        <section className="py-14 md:py-16 bg-surface">
+          <div className="max-w-6xl mx-auto px-4">
+            <FadeIn>
+              <SectionHeading eyebrow="Industries" title="Industries We Serve" subtitle="We partner with businesses across a wide range of industries." />
+            </FadeIn>
+            <div className="mt-10 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
+              {uniqueIndustries.map((ind, i) => (
+                <FadeIn key={ind.id} delay={i * 50}>
+                  <div className="bg-background border border-border rounded-lg p-5 flex flex-col items-center text-center hover:shadow-sm transition h-full">
+                    <div className="w-12 h-12 rounded-lg bg-primary-light flex items-center justify-center mb-3">
+                      <FontAwesomeIcon icon={getIndustryIcon(ind.name)} className="text-primary text-lg" />
                     </div>
-                    <p className="text-text leading-relaxed pt-1 text-sm md:text-base">{item}</p>
+                    <h3 className="font-semibold text-heading text-sm">{ind.name}</h3>
                   </div>
                 </FadeIn>
               ))}
@@ -191,113 +324,56 @@ export default function ServiceDetail() {
         </section>
       )}
 
-      {/* Our Process Section (Static) */}
-      <OurProcess />
-
-      {/* Why Choose Us Section (Static) */}
-      <WhyChooseUs />
-
-      {/* Case Study Section */}
-      {hasCaseStudy && (
-        <section className="py-14 bg-surface">
+      {/* ─── 8. Projects We've Delivered ─────────────────────── */}
+      {projects.length > 0 && (
+        <section className="py-14 md:py-16 bg-background">
           <div className="max-w-6xl mx-auto px-4">
             <FadeIn>
-              <SectionHeading eyebrow="Results" title="Case Study" />
+              <SectionHeading eyebrow="Our Work" title="Projects We've Delivered" subtitle="Real results from real projects." />
             </FadeIn>
-            <div className="mt-2 max-w-3xl mx-auto">
-              {service.case_study.title && (
-                <FadeIn>
-                  <h3 className="text-xl font-extrabold text-heading text-center">{service.case_study.title}</h3>
-                </FadeIn>
-              )}
-              {service.case_study.description && (
-                <FadeIn delay={50}>
-                  <p className="mt-4 text-text leading-relaxed text-center text-sm md:text-base">{service.case_study.description}</p>
-                </FadeIn>
-              )}
-              {service.case_study.stats && service.case_study.stats.length > 0 && (
-                <div className="mt-8 grid grid-cols-2 sm:grid-cols-4 gap-4">
-                  {service.case_study.stats.map((stat, i) => (
-                    <FadeIn key={i} delay={i * 100}>
-                      <div className="bg-background border border-border rounded-lg p-5 text-center hover:shadow-sm transition">
-                        <div className="text-3xl font-extrabold text-primary">
-                          <AnimatedCounter target={parseInt(stat.value) || 0} suffix={stat.suffix} />
-                        </div>
-                        <div className="mt-2 text-xs font-semibold text-muted">{stat.label}</div>
-                      </div>
-                    </FadeIn>
-                  ))}
-                </div>
-              )}
-            </div>
-          </div>
-        </section>
-      )}
-
-      {/* FAQ Section */}
-      {service.faq && service.faq.length > 0 && (
-        <FAQSection
-          items={service.faq}
-          eyebrow="Questions"
-          title="Frequently Asked Questions"
-          subtitle={`Common questions about our ${service.service_name} service.`}
-        />
-      )}
-
-      {/* Target Audience Section */}
-      {service.target_audience && service.target_audience.length > 0 && (
-        <section className="py-14 bg-background">
-          <div className="max-w-6xl mx-auto px-4">
-            <FadeIn>
-              <SectionHeading eyebrow="Audience" title="Who This Service Is For" />
-            </FadeIn>
-            <div className="flex flex-wrap justify-center gap-4">
-              {service.target_audience.map((aud, i) => (
-                <FadeIn key={i} delay={i * 80}>
-                  <div className="px-6 py-4 bg-surface border border-border rounded-lg text-center flex items-center justify-center min-w-[150px] font-bold text-heading hover:text-primary transition-colors cursor-default select-none">
-                    {aud}
-                  </div>
-                </FadeIn>
-              ))}
-            </div>
-          </div>
-        </section>
-      )}
-
-      {/* Client Testimonials Section */}
-      {service.clients && service.clients.length > 0 && (
-        <section className="py-14 bg-surface">
-          <div className="max-w-6xl mx-auto px-4">
-            <FadeIn>
-              <SectionHeading eyebrow="Feedback" title="Clients Who Chose This Service" />
-            </FadeIn>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-              {service.clients.map((client, i) => (
-                <FadeIn key={client._id || i} delay={i * 60}>
-                  <div className="flex flex-col bg-background border border-border rounded-lg px-6 py-6 transition-all duration-300 h-full">
-                    <p className="text-text leading-relaxed small-text flex-1 italic break-words">
-                      &ldquo;{client.quote || "No feedback provided."}&rdquo;
-                    </p>
-                    <div className="mt-6 flex items-center gap-3 pt-4 border-t border-border">
-                      {client.avatar ? (
-                        <img
-                          src={resolveImagePath(client.avatar)}
-                          alt={client.name || "Client"}
-                          loading="lazy"
-                          decoding="async"
-                          className="h-10 w-10 rounded-full object-cover shrink-0"
-                        />
-                      ) : (
-                        <div className="h-10 w-10 rounded-full bg-primary-light text-primary-hover flex items-center justify-center font-bold text-sm shrink-0 select-none">
-                          {client.name?.split(" ").map((n) => n[0]).join("").toUpperCase().slice(0, 2) || "?"}
+            <div className="mt-10 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+              {projects.map((project) => (
+                <FadeIn key={project._id}>
+                  <div className="flex flex-col bg-surface border border-border rounded-lg h-full overflow-hidden hover:-translate-y-1 transition-all duration-300">
+                    <div className="h-44 overflow-hidden">
+                      <img
+                        src={resolveImagePath(project.thumbnail)}
+                        alt={project.project_name}
+                        loading="lazy"
+                        decoding="async"
+                        className="w-full h-full object-cover bg-background"
+                        onError={(e) => {
+                          e.target.onerror = null;
+                          e.target.src = "/undraw_mobile-marketing_7x7m.svg";
+                        }}
+                      />
+                    </div>
+                    <div className="flex flex-col p-5 flex-1">
+                      <h3 className="text-lg font-extrabold text-heading">{project.project_name}</h3>
+                      <p className="mt-2 text-sm text-text leading-relaxed line-clamp-2">{project.short_description}</p>
+                      {project.industries?.length > 0 && (
+                        <div className="mt-3 flex flex-wrap gap-2">
+                          {project.industries.slice(0, 2).map((ind, i) => (
+                            <span key={i} className="text-xs px-2 py-0.5 rounded-full bg-primary-light/40 text-primary font-medium">
+                              {typeof ind === "object" ? ind.name : ind}
+                            </span>
+                          ))}
                         </div>
                       )}
-                      <div className="min-w-0 text-left flex-1">
-                        <div className="font-bold text-heading text-sm truncate">{client.name || "Anonymous"}</div>
-                        <div className="text-xs text-muted truncate">
-                          {[client.position, client.company].filter(Boolean).join(", ") || "Valued Client"}
+                      {project.technologies?.length > 0 && (
+                        <div className="mt-2 flex flex-wrap gap-1.5">
+                          {project.technologies.slice(0, 3).map((t, i) => (
+                            <span key={i} className="text-xs px-2 py-0.5 rounded-full bg-surface border border-border text-muted">
+                              {typeof t === "object" ? t.name : t}
+                            </span>
+                          ))}
                         </div>
-                      </div>
+                      )}
+                      <Link
+                        to={`/projects/${project.slug}`}
+                        className="mt-4 inline-flex items-center gap-1.5 text-sm font-semibold text-primary hover:text-primary-hover transition">
+                        View Project <FontAwesomeIcon icon={faArrowRight} className="text-xs" />
+                      </Link>
                     </div>
                   </div>
                 </FadeIn>
@@ -307,26 +383,35 @@ export default function ServiceDetail() {
         </section>
       )}
 
-      {/* Related Services Section */}
+      {/* ─── 9. Frequently Asked Questions ──────────────────── */}
+      <FAQSection
+        items={faqs.map((f) => ({ q: f.question, a: f.answer }))}
+        eyebrow="Questions"
+        title="Frequently Asked Questions"
+        subtitle="Find answers to common questions about this service."
+        bg="bg-surface"
+      />
+
+      {/* ─── 12. Related Services ────────────────────────────── */}
       {relatedServices.length > 0 && (
-        <section className="py-14 bg-background">
+        <section className="py-14 md:py-16 bg-background">
           <div className="max-w-6xl mx-auto px-4">
             <FadeIn>
-              <SectionHeading eyebrow="Explore" title="Related Services" />
+              <SectionHeading eyebrow="Explore" title="Related Services" subtitle="Other services that might interest you." />
             </FadeIn>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="mt-10 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
               {relatedServices.map((rs) => (
                 <FadeIn key={rs._id}>
                   <Link
-                    to={`/services/${slugify(rs.service_name)}`}
+                    to={`/services/${rs.slug}`}
                     className="flex flex-col bg-surface border border-border rounded-lg h-full overflow-hidden cursor-pointer hover:-translate-y-1 transition-all duration-300">
                     <div className="h-40 overflow-hidden">
                       <img
-                        src={resolveImagePath(rs.image)}
+                        src={resolveImagePath(rs.hero_image)}
                         alt={rs.service_name}
                         loading="lazy"
                         decoding="async"
-                        className="w-full h-full object-cover bg-surface"
+                        className="w-full h-full object-cover bg-background"
                         onError={(e) => {
                           e.target.onerror = null;
                           e.target.src = "/undraw_mobile-marketing_7x7m.svg";
@@ -334,6 +419,14 @@ export default function ServiceDetail() {
                       />
                     </div>
                     <div className="flex flex-col items-center text-center p-5 flex-1">
+                      {rs.icon && (
+                        <img
+                          src={resolveImagePath(rs.icon)}
+                          alt=""
+                          className="w-10 h-10 mb-3 object-contain"
+                          onError={(e) => { e.target.style.display = "none"; }}
+                        />
+                      )}
                       <h3 className="text-lg font-extrabold text-heading">{rs.service_name}</h3>
                       <p className="mt-3 text-sm text-text leading-relaxed line-clamp-2">{rs.short_description}</p>
                       <span className="mt-4 mt-auto inline-flex items-center rounded-lg bg-primary text-white px-5 py-2.5 text-sm font-semibold hover:bg-primary-hover transition">
@@ -348,15 +441,17 @@ export default function ServiceDetail() {
         </section>
       )}
 
-      {/* CTA Section */}
+      {/* ─── 13. Final CTA ──────────────────────────────────── */}
       <FinalCTA
-        title={`Ready to Get Started with ${service.service_name}?`}
-        description="Let's discuss how we can help you achieve your goals. Contact us today for a free consultation."
-        primaryLabel="Contact Us"
+        title="Ready to Grow Your Business?"
+        description="Let's discuss how our digital marketing expertise can help you achieve your goals. Get in touch with us today for a free consultation."
+        primaryLabel="Start Project"
         primaryTo="/contact"
-        secondaryLabel="View All Services"
-        secondaryTo="/services"
+        secondaryLabel="Contact Us"
+        secondaryTo="/contact"
       />
     </div>
   );
 }
+
+

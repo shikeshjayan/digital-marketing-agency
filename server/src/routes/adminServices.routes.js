@@ -7,12 +7,8 @@ import upload, { processImage } from "../config/upload.js";
 const router = express.Router();
 
 const uploadFields = upload.fields([
-  { name: "image", maxCount: 1 },
-  { name: "clientAvatar_0", maxCount: 1 },
-  { name: "clientAvatar_1", maxCount: 1 },
-  { name: "clientAvatar_2", maxCount: 1 },
-  { name: "clientAvatar_3", maxCount: 1 },
-  { name: "clientAvatar_4", maxCount: 1 },
+  { name: "hero_image", maxCount: 1 },
+  { name: "icon", maxCount: 1 },
 ]);
 
 router.get("/", protect, getAllAdminServices);

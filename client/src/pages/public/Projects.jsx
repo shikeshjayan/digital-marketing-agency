@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faBullseye,
@@ -19,7 +20,6 @@ import AnimatedCounter from "../../components/ui/AnimatedCounter.jsx";
 import { ProjectCardSkeleton } from "../../components/ui/Skeleton.jsx";
 import FinalCTA from "../../components/public/FinalCTA.jsx";
 import TestimonialsSection from "../../components/public/TestimonialsSection.jsx";
-import ProjectDetailModal from "../../components/ui/ProjectDetailModal.jsx";
 import resolveImagePath from "../../utils/resolveImagePath.js";
 
 const categories = [
@@ -33,7 +33,7 @@ const categories = [
 ];
 
 /* ─── Project Card ────────────────────────────────────────── */
-const ProjectCard = ({ project, onDetail }) => {
+const ProjectCard = ({ project }) => {
   return (
     <div className="group block bg-background border border-border rounded-lg overflow-hidden hover:shadow-lg hover:border-primary transition-all duration-300 h-full flex flex-col">
       <div className="relative overflow-hidden aspect-[16/10] w-full bg-surface">
@@ -94,12 +94,11 @@ const ProjectCard = ({ project, onDetail }) => {
         </p>
 
         <div className="mt-auto pt-4 flex items-center gap-4 text-sm font-semibold">
-          <button
-            type="button"
-            onClick={() => onDetail(project)}
-            className="text-primary hover:text-primary-hover transition cursor-pointer">
+          <Link
+            to={`/projects/${project.slug}`}
+            className="text-primary hover:text-primary-hover transition">
             Read more
-          </button>
+          </Link>
           <a
             href={project.live_url}
             target="_blank"
@@ -160,7 +159,7 @@ function ProjectStatistics() {
 }
 
 /* ─── Section: Featured Case Study ────────────────────────── */
-function FeaturedCaseStudy({ projects, onDetail }) {
+function FeaturedCaseStudy({ projects }) {
   const featured = projects.find((p) => p.status === "Active") || projects[0];
 
   if (!featured) return null;
@@ -241,12 +240,11 @@ function FeaturedCaseStudy({ projects, onDetail }) {
 
                 {featured.short_description &&
                   featured.short_description.length > 120 && (
-                    <button
-                      type="button"
-                      onClick={() => onDetail(featured)}
-                      className="mt-1.5 self-start text-xs font-semibold text-primary hover:text-primary-hover transition cursor-pointer">
+                    <Link
+                      to={`/projects/${featured.slug}`}
+                      className="mt-1.5 self-start text-xs font-semibold text-primary hover:text-primary-hover transition">
                       Read more →
-                    </button>
+                    </Link>
                   )}
 
                 {featured.before_after && featured.before_after.length > 0 && (
@@ -461,8 +459,6 @@ function BeforeAfterResults() {
 /* ─── Main Projects Page ──────────────────────────────────── */
 const Projects = () => {
   const [active, setActive] = useState("All");
-  const [detail, setDetail] = useState(null);
-  const handleDetail = (project) => setDetail(project);
   const { projects, loading, error, fetchProjects } = useProjectStore();
   const { reviews, loading: reviewsLoading, fetchReviews } = useReviewStore();
 
@@ -563,7 +559,7 @@ const Projects = () => {
             <div className="mt-10 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
               {projects.map((p, i) => (
                 <FadeIn key={p.project_id || p._id} delay={i * 100} className="h-full">
-                  <ProjectCard project={p} onDetail={handleDetail} />
+                  <ProjectCard project={p} />
                 </FadeIn>
               ))}
             </div>
@@ -572,7 +568,7 @@ const Projects = () => {
       </section>
 
       {/* 4. Featured Case Study */}
-      <FeaturedCaseStudy projects={projects} onDetail={handleDetail} />
+      <FeaturedCaseStudy projects={projects} />
 
       {/* 5. Results & Analytics */}
       <ResultsAnalytics />
@@ -597,12 +593,6 @@ const Projects = () => {
         primaryLabel="Start a Project"
         secondaryLabel="View Services"
         secondaryTo="/services"
-      />
-
-      <ProjectDetailModal
-        open={!!detail}
-        onClose={() => setDetail(null)}
-        project={detail}
       />
     </div>
   );

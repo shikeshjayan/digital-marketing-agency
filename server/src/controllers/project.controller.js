@@ -1,60 +1,57 @@
-// Handles everything related to projects (CRUD + public listing by category)
+// Handles everything related to projects (CRUD + public listing)
 import Projects from "../models/projects.model.js";
+import CaseStudy from "../models/caseStudy.model.js";
 import asyncHandler from "../middleware/asyncHandler.js";
-
-// Allowed project categories
-const validCategories = [
-  "Static", "Dynamic", "Landing Pages",
-  "SEO", "Web Design", "Google Ads", "Meta Ads", "Branding", "E-commerce",
-];
-
-// Check if the category in the URL is valid
-const validateCategory = (req, res, next) => {
-  const { type } = req.params;
-  if (!validCategories.includes(type)) {
-    return res.status(404).json({ success: false, message: "Category not found" });
-  }
-  next();
-};
-
-export { validateCategory };
+import { parseJsonField, parseJsonObject, escapeRegex } from "../utils/helpers.js";
 
 // Create a new project (admin only)
 export const createProject = asyncHandler(async (req, res) => {
   const {
-    project_name, category, client_name, industry, technologies, duration,
-    before_after, short_description, description, live_url, status,
-    challenge, solution, client_testimonial,
+    project_name, short_description, description, status, featured,
+    project_url, github_url, completion_date,
   } = req.body;
-  const image = req.file ? req.file.url : req.body.image;
 
-  // Validate required fields
-  if (!project_name || !category || !short_description || !description || !image) {
+  const thumbnail = req.files?.thumbnail?.[0]?.url ?? req.body.thumbnail;
+  const galleryFiles = req.files?.gallery || [];
+  const galleryUrls = galleryFiles.map((f) => f.url).filter(Boolean);
+
+  const services = parseJsonField(req.body.services);
+  const technologies = parseJsonField(req.body.technologies);
+  const industries = parseJsonField(req.body.industries);
+  const team = parseJsonField(req.body.team);
+  const client = parseJsonObject(req.body.client);
+  const seo = parseJsonObject(req.body.seo);
+
+  if (!project_name || !short_description || !description || !thumbnail) {
     return res.status(400).json({ success: false, message: "Missing required fields" });
   }
 
-  // Prevent duplicate project names
+  if (!services || services.length === 0) {
+    return res.status(400).json({ success: false, message: "At least one service is required" });
+  }
+
   const existing = await Projects.findOne({ project_name });
   if (existing) {
     return res.status(409).json({ success: false, message: "Project already exists" });
   }
 
-  // Parse before_after if it arrives as a JSON string (from FormData)
-  let parsedBeforeAfter = before_after;
-  if (typeof before_after === "string") {
-    try { parsedBeforeAfter = JSON.parse(before_after); } catch { parsedBeforeAfter = []; }
-  }
-
-  // Parse technologies if it arrives as a JSON string
-  let parsedTech = technologies;
-  if (typeof technologies === "string") {
-    try { parsedTech = JSON.parse(technologies); } catch { parsedTech = []; }
-  }
-
   const project = await Projects.create({
-    project_name, category, client_name, industry, technologies: parsedTech,
-    duration, before_after: parsedBeforeAfter, short_description, description,
-    image, live_url, status, challenge, solution, client_testimonial,
+    project_name,
+    short_description,
+    description,
+    thumbnail,
+    gallery: galleryUrls,
+    services,
+    technologies,
+    industries,
+    team,
+    client,
+    project_url,
+    github_url,
+    completion_date: completion_date || undefined,
+    featured: featured === "true" || featured === true,
+    seo,
+    status,
   });
 
   res.status(201).json({
@@ -64,19 +61,25 @@ export const createProject = asyncHandler(async (req, res) => {
   });
 });
 
-// Get all active projects with optional category filter (public)
+// Get all published projects with optional service filter (public)
 export const getAllProjects = asyncHandler(async (req, res) => {
-  const { category, page = 1, limit = 10 } = req.query;
+  const { service, page = 1, limit = 10 } = req.query;
 
-  // Only show active projects to the public
-  const filter = { status: "Active" };
-  if (category && category !== "All") {
-    filter.category = category;
+  const filter = { status: "Published" };
+  if (service && service !== "All") {
+    filter.services = service;
   }
 
   const skip = (Number(page) - 1) * Number(limit);
   const total = await Projects.countDocuments(filter);
-  const projects = await Projects.find(filter).skip(skip).limit(Number(limit));
+  const projects = await Projects.find(filter)
+    .populate("services", "service_name slug")
+    .populate("technologies", "name slug")
+    .populate("industries", "name slug")
+    .populate("team", "name designation photo")
+    .sort({ createdAt: -1 })
+    .skip(skip)
+    .limit(Number(limit));
 
   res.status(200).json({
     success: true,
@@ -90,68 +93,81 @@ export const getAllProjects = asyncHandler(async (req, res) => {
   });
 });
 
-// Get a single project by its ID (public)
+// Get a single project by ID (public)
 export const getProjectById = asyncHandler(async (req, res) => {
-  const project = await Projects.findById(req.params.id);
+  const project = await Projects.findById(req.params.id)
+    .populate("services", "service_name slug short_description")
+    .populate("technologies", "name slug")
+    .populate("industries", "name slug icon description")
+    .populate("team", "name designation photo linkedin email");
+
   if (!project) {
     return res.status(404).json({ success: false, message: "Project not found" });
   }
-  res.status(200).json({ success: true, data: project });
+
+  const caseStudy = await CaseStudy.findOne({ project: project._id, status: "Published" })
+    .select("title slug hero_image overview challenge solution featured results");
+
+  res.status(200).json({ success: true, data: { ...project.toObject(), caseStudy: caseStudy || null } });
 });
 
-// Get all active projects in a specific category (public)
-export const getProjectsByCategory = asyncHandler(async (req, res) => {
-  const projects = await Projects.find({ category: req.params.type, status: "Active" });
+// Get a single project by slug (public)
+export const getProjectBySlug = asyncHandler(async (req, res) => {
+  const project = await Projects.findOne({ slug: req.params.slug, status: "Published" })
+    .populate("services", "service_name slug short_description")
+    .populate("technologies", "name slug")
+    .populate("industries", "name slug icon description")
+    .populate("team", "name designation photo linkedin email");
 
-  res.status(200).json({
-    success: true,
-    count: projects.length,
-    data: projects,
-  });
+  if (!project) {
+    return res.status(404).json({ success: false, message: "Project not found" });
+  }
+
+  const caseStudy = await CaseStudy.findOne({ project: project._id, status: "Published" })
+    .select("title slug hero_image overview challenge solution featured results");
+
+  res.status(200).json({ success: true, data: { ...project.toObject(), caseStudy: caseStudy || null } });
 });
 
 // Update an existing project (admin only)
 export const updateProject = asyncHandler(async (req, res) => {
   const {
-    project_name, category, client_name, industry, technologies, duration,
-    before_after, short_description, description, live_url, status,
-    challenge, solution, client_testimonial,
+    project_name, short_description, description, status, featured,
+    project_url, github_url, completion_date,
   } = req.body;
 
-  if (!project_name && !category && !short_description && !description && !live_url && !status
-    && !client_name && !industry && !technologies && !duration && !before_after
-    && !challenge && !solution && !client_testimonial) {
-    return res.status(400).json({ success: false, message: "No fields to update" });
-  }
-
   const update = {
-    project_name, category, client_name, industry, duration,
-    short_description, description, live_url, status,
-    challenge, solution, client_testimonial,
+    project_name,
+    short_description,
+    description,
+    project_url,
+    github_url,
+    completion_date: completion_date || undefined,
+    featured: featured === "true" || featured === true,
+    status,
   };
 
-  // Parse before_after if it arrives as a JSON string (from FormData)
-  if (before_after) {
-    if (typeof before_after === "string") {
-      try { update.before_after = JSON.parse(before_after); } catch { update.before_after = []; }
-    } else {
-      update.before_after = before_after;
-    }
+  // Parse array fields from FormData
+  if (req.body.services) update.services = parseJsonField(req.body.services);
+  if (req.body.technologies) update.technologies = parseJsonField(req.body.technologies);
+  if (req.body.industries) update.industries = parseJsonField(req.body.industries);
+  if (req.body.team) update.team = parseJsonField(req.body.team);
+  if (req.body.client) update.client = parseJsonObject(req.body.client);
+  if (req.body.seo) update.seo = parseJsonObject(req.body.seo);
+
+  // Handle thumbnail upload
+  if (req.files?.thumbnail?.[0]?.url) {
+    update.thumbnail = req.files.thumbnail[0].url;
+  } else if (req.body.thumbnail) {
+    update.thumbnail = req.body.thumbnail;
   }
 
-  // Parse technologies if it arrives as a JSON string
-  if (technologies) {
-    if (typeof technologies === "string") {
-      try { update.technologies = JSON.parse(technologies); } catch { update.technologies = []; }
-    } else {
-      update.technologies = technologies;
+  // Handle gallery upload
+  if (req.files?.gallery) {
+    const newGalleryUrls = req.files.gallery.map((f) => f.url).filter(Boolean);
+    if (newGalleryUrls.length > 0) {
+      update.gallery = newGalleryUrls;
     }
-  }
-
-  if (req.file) {
-    update.image = req.file.url;
-  } else if (req.body.image) {
-    update.image = req.body.image;
   }
 
   const project = await Projects.findByIdAndUpdate(
@@ -175,45 +191,56 @@ export const deleteProject = asyncHandler(async (req, res) => {
   if (!project) {
     return res.status(404).json({ success: false, message: "Project not found" });
   }
+
+  // Cascade delete the related case study
+  await CaseStudy.deleteOne({ project: req.params.id });
+
   res.status(200).json({ success: true, message: "Project deleted successfully" });
 });
 
 // Delete all projects (admin only)
 export const deleteAllProjects = asyncHandler(async (req, res) => {
   const result = await Projects.deleteMany({});
+
+  // Cascade delete all case studies
+  await CaseStudy.deleteMany({});
+
   res.status(200).json({
     success: true,
     message: `${result.deletedCount} project(s) deleted successfully.`,
   });
 });
 
-// Get unique categories from all projects (admin)
-export const getProjectCategories = asyncHandler(async (req, res) => {
-  const categories = await Projects.distinct("category");
-  res.status(200).json({
-    success: true,
-    data: categories.filter(Boolean).sort(),
-  });
-});
-
-// Get all projects (including inactive ones) with filters for admin panel
+// Get all projects including drafts with filters for admin panel
 export const getAllAdminProjects = asyncHandler(async (req, res) => {
-  const { search, category, status, page = 1, limit = 10 } = req.query;
+  const { search, status, featured, service, page = 1, limit = 10 } = req.query;
 
   const filter = {};
   if (search) {
-    filter.project_name = { $regex: search, $options: "i" };
-  }
-  if (category) {
-    filter.category = category;
+    filter.project_name = { $regex: escapeRegex(search), $options: "i" };
   }
   if (status) {
     filter.status = status;
   }
+  if (featured === "true") {
+    filter.featured = true;
+  } else if (featured === "false") {
+    filter.featured = false;
+  }
+  if (service) {
+    filter.services = service;
+  }
 
   const skip = (Number(page) - 1) * Number(limit);
   const total = await Projects.countDocuments(filter);
-  const projects = await Projects.find(filter).skip(skip).limit(Number(limit));
+  const projects = await Projects.find(filter)
+    .populate("services", "service_name")
+    .populate("technologies", "name")
+    .populate("industries", "name")
+    .populate("team", "name")
+    .sort({ createdAt: -1 })
+    .skip(skip)
+    .limit(Number(limit));
 
   res.status(200).json({
     success: true,

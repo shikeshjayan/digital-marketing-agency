@@ -4,15 +4,15 @@ import apiService from "../services/apiService";
 const useProjectStore = create((set) => ({
   projects: [],
   adminProjects: [],
-  categories: [],
   selectedProject: null,
+  relatedProjects: [],
   loading: false,
   error: null,
 
-  fetchProjects: async (category) => {
+  fetchProjects: async (service) => {
     set({ loading: true, error: null });
     try {
-      const params = category && category !== "All" ? { category } : {};
+      const params = service && service !== "All" ? { service } : {};
       const { data } = await apiService.get("/projects", { params });
       set({ projects: data.data ?? [], loading: false });
     } catch (error) {
@@ -23,13 +23,44 @@ const useProjectStore = create((set) => ({
     }
   },
 
-  fetchCategories: async () => {
+  fetchRelatedProjects: async (serviceId, limit = 3) => {
     try {
-      const { data } = await apiService.get("/admin/projects/categories");
-      set({ categories: data.data ?? [] });
-      return data.data ?? [];
+      const { data } = await apiService.get("/projects", { params: { service: serviceId, limit } });
+      set({ relatedProjects: data.data ?? [] });
+    } catch {
+      set({ relatedProjects: [] });
+    }
+  },
+
+  fetchProjectById: async (id) => {
+    set({ loading: true, error: null });
+    try {
+      const { data } = await apiService.get(`/projects/${id}`);
+      set({ selectedProject: data.data ?? null, loading: false });
+      return data.data;
     } catch (error) {
-      return [];
+      set({
+        error: error.response?.data?.message || error.message,
+        loading: false,
+        selectedProject: null,
+      });
+      return null;
+    }
+  },
+
+  fetchProjectBySlug: async (slug) => {
+    set({ loading: true, error: null });
+    try {
+      const { data } = await apiService.get(`/projects/slug/${slug}`);
+      set({ selectedProject: data.data ?? null, loading: false });
+      return data.data;
+    } catch (error) {
+      set({
+        error: error.response?.data?.message || error.message,
+        loading: false,
+        selectedProject: null,
+      });
+      return null;
     }
   },
 

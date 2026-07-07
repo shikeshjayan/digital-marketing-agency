@@ -1,11 +1,17 @@
 // Defines the Services collection structure
 import mongoose from "mongoose";
+import { generateSlug } from "../utils/helpers.js";
 
 const servicesSchema = new mongoose.Schema(
   {
     service_name: {
       type: String,
       required: [true, "Service name is required"],
+      trim: true,
+    },
+    slug: {
+      type: String,
+      unique: true,
       trim: true,
     },
     short_description: {
@@ -17,16 +23,15 @@ const servicesSchema = new mongoose.Schema(
       type: String,
       required: [true, "Description is required"],
     },
-    image: {
+    hero_image: {
       type: String,
-      required: [true, "Image is required"],
+      required: [true, "Hero image is required"],
     },
-    category: {
+    icon: {
       type: String,
-      trim: true,
       default: "",
     },
-    offerings: {
+    deliverables: {
       type: [String],
       default: [],
     },
@@ -34,36 +39,18 @@ const servicesSchema = new mongoose.Schema(
       type: [String],
       default: [],
     },
-    target_audience: {
-      type: [String],
-      default: [],
+    featured: {
+      type: Boolean,
+      default: false,
     },
-    faq: [
-      {
-        q: { type: String, trim: true },
-        a: { type: String, trim: true },
-      },
-    ],
-    case_study: {
-      title: { type: String, trim: true, default: "" },
-      description: { type: String, trim: true, default: "" },
-      stats: [
-        {
-          value: { type: String, trim: true },
-          suffix: { type: String, trim: true },
-          label: { type: String, trim: true },
-        },
-      ],
+    display_order: {
+      type: Number,
+      default: 0,
     },
-    clients: [
-      {
-        name: { type: String, trim: true },
-        position: { type: String, trim: true },
-        company: { type: String, trim: true },
-        quote: { type: String, trim: true },
-        avatar: { type: String, trim: true },
-      },
-    ],
+    seo: {
+      meta_title: { type: String, trim: true, default: "" },
+      meta_description: { type: String, trim: true, default: "" },
+    },
     status: {
       type: String,
       enum: ["Active", "Inactive"],
@@ -72,6 +59,43 @@ const servicesSchema = new mongoose.Schema(
   },
   { timestamps: true },
 );
+
+// Auto-generate slug from service_name before saving
+servicesSchema.pre("save", async function () {
+  if (!this.isModified("service_name")) return;
+
+  let base = generateSlug(this.service_name);
+  let slug = base;
+  let counter = 1;
+
+  // eslint-disable-next-line no-constant-condition
+  while (true) {
+    const existing = await mongoose.model("Services").findOne({ slug, _id: { $ne: this._id } });
+    if (!existing) break;
+    slug = `${base}-${counter}`;
+    counter++;
+  }
+
+  this.slug = slug;
+});
+
+// Also regenerate slug when updated via findOneAndUpdate
+servicesSchema.pre("findOneAndUpdate", async function () {
+  const update = this.getUpdate();
+  if (update.service_name) {
+    let base = generateSlug(update.service_name);
+    let slug = base;
+    let counter = 1;
+    while (true) {
+      const docId = this.getFilter()._id;
+      const existing = await mongoose.model("Services").findOne({ slug, _id: { $ne: docId } });
+      if (!existing) break;
+      slug = `${base}-${counter}`;
+      counter++;
+    }
+    update.slug = slug;
+  }
+});
 
 const Services = mongoose.model("Services", servicesSchema);
 export default Services;

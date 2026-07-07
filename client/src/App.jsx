@@ -9,6 +9,8 @@ import About from './pages/public/About.jsx'
 import Services from './pages/public/Services.jsx'
 import ServiceDetail from './pages/public/ServiceDetail.jsx'
 import Projects from './pages/public/Projects.jsx'
+import ProjectDetail from './pages/public/ProjectDetail.jsx'
+import CaseStudyDetail from './pages/public/CaseStudyDetail.jsx'
 
 import Team from './pages/public/Team.jsx'
 import Testimonials from './pages/public/Testimonials.jsx'
@@ -23,6 +25,9 @@ import ForgotPassword from './pages/admin/ForgotPassword.jsx'
 import AdminDashboard from './pages/admin/AdminDashboard.jsx'
 import AdminServices from './pages/admin/AdminServices.jsx'
 import AdminProjects from './pages/admin/AdminProjects.jsx'
+import AdminCaseStudies from './pages/admin/AdminCaseStudies.jsx'
+import AdminTechnologies from './pages/admin/AdminTechnologies.jsx'
+import AdminIndustries from './pages/admin/AdminIndustries.jsx'
 
 import AdminTeam from './pages/admin/AdminTeam.jsx'
 import AdminReviews from './pages/admin/AdminReviews.jsx'
@@ -42,6 +47,8 @@ export default function App() {
           <Route path="services" element={<Services />} />
           <Route path="services/:slug" element={<ServiceDetail />} />
           <Route path="projects" element={<Projects />} />
+          <Route path="projects/:slug" element={<ProjectDetail />} />
+          <Route path="case-studies/:slug" element={<CaseStudyDetail />} />
 
           <Route path="team" element={<Team />} />
           <Route path="testimonials" element={<Testimonials />} />
@@ -60,6 +67,9 @@ export default function App() {
             <Route index element={<AdminDashboard />} />
             <Route path="services" element={<AdminServices />} />
             <Route path="projects" element={<AdminProjects />} />
+            <Route path="case-studies" element={<AdminCaseStudies />} />
+            <Route path="technologies" element={<AdminTechnologies />} />
+            <Route path="industries" element={<AdminIndustries />} />
 
             <Route path="team" element={<AdminTeam />} />
             <Route path="reviews" element={<AdminReviews />} />

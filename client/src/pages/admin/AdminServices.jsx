@@ -5,7 +5,6 @@ import ConfirmModal from "../../components/ui/ConfirmModal.jsx";
 import Select from "../../components/ui/Select.jsx";
 import Pagination from "../../components/ui/Pagination.jsx";
 import { TableSkeleton } from "../../components/ui/Skeleton.jsx";
-import imageUrl from "../../utils/imageUrl.js";
 import AdminPageHeader from "../../components/ui/AdminPageHeader.jsx";
 import AdminListFooter from "../../components/ui/AdminListFooter.jsx";
 import SearchInput from "../../components/ui/SearchInput.jsx";
@@ -17,23 +16,6 @@ import ErrorBanner from "../../components/ui/ErrorBanner.jsx";
 
 const inputCls =
   "w-full rounded border border-border bg-surface px-4 py-2 text-sm text-text outline-none transition focus:border-primary focus:bg-background focus:ring-2 focus:ring-primary-light placeholder:text-muted";
-
-function TrashIcon() {
-  return (
-    <svg
-      className="w-4 h-4"
-      fill="none"
-      stroke="currentColor"
-      viewBox="0 0 24 24">
-      <path
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        strokeWidth={2}
-        d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
-      />
-    </svg>
-  );
-}
 
 export default function AdminServices() {
   const {
@@ -55,17 +37,17 @@ export default function AdminServices() {
     () => ({
       service_id: null,
       service_name: "",
+      slug: "",
       short_description: "",
       description: "",
       status: "Active",
-      image: "",
-      category: "",
-      offerings: [],
+      hero_image: "",
+      icon: "",
+      deliverables: [],
       benefits: [],
-      target_audience: [],
-      faq: [],
-      case_study: { title: "", description: "", stats: [] },
-      clients: [],
+      featured: false,
+      display_order: 0,
+      seo: { meta_title: "", meta_description: "" },
     }),
     [],
   );
@@ -78,8 +60,7 @@ export default function AdminServices() {
   const [deleteAllTarget, setDeleteAllTarget] = useState(false);
 
   const [tagInputs, setTagInputs] = useState({
-    offerings: "",
-    target_audience: "",
+    deliverables: "",
     benefits: "",
   });
 
@@ -93,103 +74,6 @@ export default function AdminServices() {
 
   function onRemoveTag(field, index) {
     setForm((f) => ({ ...f, [field]: f[field].filter((_, i) => i !== index) }));
-  }
-
-  function onAddClient() {
-    setForm((f) => ({
-      ...f,
-      clients: [
-        ...f.clients,
-        {
-          name: "",
-          position: "",
-          company: "",
-          quote: "",
-          avatar: "",
-          _avatarFile: null,
-        },
-      ],
-    }));
-  }
-
-  function onPickClientAvatar(index, file) {
-    if (!file) return;
-    setForm((f) => ({
-      ...f,
-      clients: f.clients.map((c, i) =>
-        i === index
-          ? { ...c, _avatarFile: file, avatar: URL.createObjectURL(file) }
-          : c,
-      ),
-    }));
-  }
-
-  function onRemoveClient(index) {
-    setForm((f) => ({
-      ...f,
-      clients: f.clients.filter((_, i) => i !== index),
-    }));
-  }
-
-  function onUpdateClient(index, key, value) {
-    setForm((f) => ({
-      ...f,
-      clients: f.clients.map((c, i) =>
-        i === index ? { ...c, [key]: value } : c,
-      ),
-    }));
-  }
-
-  function onAddFaq() {
-    setForm((f) => ({
-      ...f,
-      faq: [...f.faq, { q: "", a: "" }],
-    }));
-  }
-
-  function onRemoveFaq(index) {
-    setForm((f) => ({ ...f, faq: f.faq.filter((_, i) => i !== index) }));
-  }
-
-  function onUpdateFaq(index, key, value) {
-    setForm((f) => ({
-      ...f,
-      faq: f.faq.map((item, i) =>
-        i === index ? { ...item, [key]: value } : item,
-      ),
-    }));
-  }
-
-  function onAddCaseStudyStat() {
-    setForm((f) => ({
-      ...f,
-      case_study: {
-        ...f.case_study,
-        stats: [...f.case_study.stats, { value: "", suffix: "", label: "" }],
-      },
-    }));
-  }
-
-  function onRemoveCaseStudyStat(index) {
-    setForm((f) => ({
-      ...f,
-      case_study: {
-        ...f.case_study,
-        stats: f.case_study.stats.filter((_, i) => i !== index),
-      },
-    }));
-  }
-
-  function onUpdateCaseStudyStat(index, key, value) {
-    setForm((f) => ({
-      ...f,
-      case_study: {
-        ...f.case_study,
-        stats: f.case_study.stats.map((s, i) =>
-          i === index ? { ...s, [key]: value } : s,
-        ),
-      },
-    }));
   }
 
   const load = async () => {
@@ -224,8 +108,12 @@ export default function AdminServices() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [page, search, status]);
 
-  function onPickImage(file) {
-    setForm((f) => ({ ...f, image: file }));
+  function onPickHeroImage(file) {
+    setForm((f) => ({ ...f, hero_image: file }));
+  }
+
+  function onPickIcon(file) {
+    setForm((f) => ({ ...f, icon: file }));
   }
 
   async function onSubmit(e) {
@@ -243,57 +131,35 @@ export default function AdminServices() {
       return;
     }
 
-    if (!form.image && !form.service_id) {
-      setError("Please upload an image.");
+    if (!form.hero_image && !form.service_id) {
+      setError("Please upload a hero image.");
       setSubmitting(false);
       return;
-    }
-
-    if (form.clients.length === 0) {
-      setError("Please add at least one client testimonial.");
-      setSubmitting(false);
-      return;
-    }
-
-    for (let i = 0; i < form.clients.length; i++) {
-      const c = form.clients[i];
-      if (
-        !c.name.trim() ||
-        !c.position.trim() ||
-        !c.company.trim() ||
-        !c.quote.trim()
-      ) {
-        setError(`Please fill all fields for Client ${i + 1}.`);
-        setSubmitting(false);
-        return;
-      }
     }
 
     const payload = new FormData();
-    if (form.image instanceof File) {
-      payload.append("image", form.image);
-    } else if (form.service_id && !form.image) {
-      payload.append("removeImage", "true");
+
+    if (form.hero_image instanceof File) {
+      payload.append("hero_image", form.hero_image);
+    } else if (form.service_id && !form.hero_image) {
+      payload.append("removeHeroImage", "true");
     }
+
+    if (form.icon instanceof File) {
+      payload.append("icon", form.icon);
+    } else if (typeof form.icon === "string") {
+      payload.append("icon", form.icon);
+    }
+
     payload.append("service_name", form.service_name.trim());
     payload.append("short_description", form.short_description.trim());
     payload.append("description", form.description.trim());
     payload.append("status", form.status);
-    payload.append("category", form.category.trim());
-    payload.append("offerings", JSON.stringify(form.offerings));
+    payload.append("featured", String(form.featured));
+    payload.append("display_order", String(form.display_order));
+    payload.append("deliverables", JSON.stringify(form.deliverables));
     payload.append("benefits", JSON.stringify(form.benefits));
-    payload.append("target_audience", JSON.stringify(form.target_audience));
-    payload.append("faq", JSON.stringify(form.faq));
-    payload.append("case_study", JSON.stringify(form.case_study));
-
-    const clientsForJson = form.clients.map((c, i) => {
-      if (c._avatarFile instanceof File) {
-        payload.append(`clientAvatar_${i}`, c._avatarFile);
-      }
-      const { _avatarFile, avatar, ...rest } = c;
-      return { ...rest, avatar: c._avatarFile ? "" : (avatar ?? "") };
-    });
-    payload.append("clients", JSON.stringify(clientsForJson));
+    payload.append("seo", JSON.stringify(form.seo));
 
     try {
       if (form.service_id) {
@@ -305,7 +171,7 @@ export default function AdminServices() {
       }
 
       setForm(emptyForm);
-      setTagInputs({ offerings: "", target_audience: "", benefits: "" });
+      setTagInputs({ deliverables: "", benefits: "" });
       await load();
     } catch (err) {
       const msg =
@@ -398,6 +264,18 @@ export default function AdminServices() {
               }
               placeholder="e.g. SEO Optimization"
             />
+
+            {form.slug && (
+              <div>
+                <label className="text-sm font-semibold text-heading">Slug</label>
+                <input
+                  className={`${inputCls} bg-surface/50 cursor-not-allowed`}
+                  value={form.slug}
+                  readOnly
+                />
+              </div>
+            )}
+
             <FormField
               label="Short Description"
               value={form.short_description}
@@ -409,13 +287,14 @@ export default function AdminServices() {
             <FormField
               label="Description"
               textarea
-              rows={2}
+              rows={3}
               value={form.description}
               onChange={(e) =>
                 setForm((f) => ({ ...f, description: e.target.value }))
               }
               placeholder="Detailed description of the service"
             />
+
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <FormField
                 label="Status"
@@ -426,29 +305,68 @@ export default function AdminServices() {
                   { value: "Inactive", label: "Inactive" },
                 ]}
               />
+              <FormField
+                label="Display Order"
+                type="number"
+                value={form.display_order}
+                onChange={(e) =>
+                  setForm((f) => ({
+                    ...f,
+                    display_order: Number(e.target.value),
+                  }))
+                }
+                placeholder="0"
+              />
+            </div>
+
+            <div className="flex items-center gap-3">
+              <label className="relative inline-flex items-center cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={form.featured}
+                  onChange={(e) =>
+                    setForm((f) => ({ ...f, featured: e.target.checked }))
+                  }
+                  className="sr-only peer"
+                />
+                <div className="w-9 h-5 bg-border rounded-full peer peer-checked:bg-primary peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all" />
+              </label>
+              <span className="text-sm font-semibold text-heading">
+                Featured Service
+              </span>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <FileUploadField
-                label="Image"
+                label="Hero Image"
                 required
-                file={form.image instanceof File ? form.image : null}
-                existingUrl={typeof form.image === "string" ? form.image : ""}
-                onChange={onPickImage}
-                onRemove={() => setForm((f) => ({ ...f, image: "" }))}
+                file={form.hero_image instanceof File ? form.hero_image : null}
+                existingUrl={typeof form.hero_image === "string" ? form.hero_image : ""}
+                onChange={onPickHeroImage}
+                onRemove={() => setForm((f) => ({ ...f, hero_image: "" }))}
+              />
+              <FileUploadField
+                label="Icon"
+                file={form.icon instanceof File ? form.icon : null}
+                existingUrl={typeof form.icon === "string" ? form.icon : ""}
+                onChange={onPickIcon}
+                onRemove={() => setForm((f) => ({ ...f, icon: "" }))}
               />
             </div>
 
             <div>
               <label className="text-sm font-semibold text-heading">
-                Service Offerings
+                Deliverables
               </label>
               <div className="mt-2 flex flex-wrap gap-2">
-                {form.offerings.map((tag, i) => (
+                {form.deliverables.map((tag, i) => (
                   <span
                     key={i}
                     className="inline-flex items-center gap-1 bg-primary-light text-primary text-xs font-semibold px-3 py-1 rounded-full border border-primary/20">
                     {tag}
                     <button
                       type="button"
-                      onClick={() => onRemoveTag("offerings", i)}
+                      onClick={() => onRemoveTag("deliverables", i)}
                       className="ml-1 text-primary hover:text-primary-hover cursor-pointer">
                       &times;
                     </button>
@@ -457,66 +375,19 @@ export default function AdminServices() {
               </div>
               <input
                 className={`mt-2 ${inputCls}`}
-                value={tagInputs.offerings}
+                value={tagInputs.deliverables}
                 onChange={(e) =>
-                  setTagInputs((t) => ({ ...t, offerings: e.target.value }))
+                  setTagInputs((t) => ({ ...t, deliverables: e.target.value }))
                 }
                 onKeyDown={(e) => {
                   if (e.key === "Enter") {
                     e.preventDefault();
-                    onAddTag("offerings", tagInputs.offerings);
+                    onAddTag("deliverables", tagInputs.deliverables);
                   }
                 }}
-                placeholder="e.g. SEO, Content Marketing, PPC"
+                placeholder="e.g. Keyword Research, On-Page SEO, Link Building"
               />
             </div>
-
-            <div>
-              <label className="text-sm font-semibold text-heading">
-                Target Audience
-              </label>
-              <div className="mt-2 flex flex-wrap gap-2">
-                {form.target_audience.map((tag, i) => (
-                  <span
-                    key={i}
-                    className="inline-flex items-center gap-1 bg-surface text-text text-xs font-semibold px-3 py-1 rounded-full border border-border">
-                    {tag}
-                    <button
-                      type="button"
-                      onClick={() => onRemoveTag("target_audience", i)}
-                      className="ml-1 text-muted hover:text-heading cursor-pointer">
-                      &times;
-                    </button>
-                  </span>
-                ))}
-              </div>
-              <input
-                className={`mt-2 ${inputCls}`}
-                value={tagInputs.target_audience}
-                onChange={(e) =>
-                  setTagInputs((t) => ({
-                    ...t,
-                    target_audience: e.target.value,
-                  }))
-                }
-                onKeyDown={(e) => {
-                  if (e.key === "Enter") {
-                    e.preventDefault();
-                    onAddTag("target_audience", tagInputs.target_audience);
-                  }
-                }}
-                placeholder="e.g. Small Businesses, E-commerce, Startups"
-              />
-            </div>
-
-            <FormField
-              label="Category"
-              value={form.category}
-              onChange={(e) =>
-                setForm((f) => ({ ...f, category: e.target.value }))
-              }
-              placeholder="e.g. Digital Marketing, Web Development"
-            />
 
             <div>
               <label className="text-sm font-semibold text-heading">
@@ -553,275 +424,34 @@ export default function AdminServices() {
               />
             </div>
 
-            <div>
-              <div className="flex items-center justify-between">
-                <label className="text-sm font-semibold text-heading">
-                  FAQ
-                </label>
-                <button
-                  type="button"
-                  onClick={onAddFaq}
-                  className="text-sm font-semibold text-primary hover:text-primary-hover cursor-pointer">
-                  + Add
-                </button>
+            <div className="border border-border rounded-lg p-3 space-y-3">
+              <div className="text-sm font-semibold text-heading">
+                SEO Settings
               </div>
-              {form.faq.map((item, i) => (
-                <div
-                  key={i}
-                  className="mt-3 relative border border-border rounded-lg p-4 space-y-3 bg-surface/70">
-                  <div className="flex items-center justify-between">
-                    <span className="text-xs font-semibold text-muted uppercase tracking-wide">
-                      FAQ {i + 1}
-                    </span>
-                    <button
-                      type="button"
-                      onClick={() => onRemoveFaq(i)}
-                      className="text-muted hover:text-primary transition cursor-pointer"
-                      title="Remove FAQ">
-                      <TrashIcon />
-                    </button>
-                  </div>
-                  <input
-                    className={inputCls}
-                    placeholder="Question"
-                    value={item.q}
-                    onChange={(e) => onUpdateFaq(i, "q", e.target.value)}
-                  />
-                  <textarea
-                    rows={2}
-                    className={`${inputCls} resize-none`}
-                    placeholder="Answer"
-                    value={item.a}
-                    onChange={(e) => onUpdateFaq(i, "a", e.target.value)}
-                  />
-                </div>
-              ))}
-            </div>
-
-            <div>
-              <div className="flex items-center justify-between">
-                <label className="text-sm font-semibold text-heading">
-                  Case Study
-                </label>
-              </div>
-              <input
-                className={`mt-2 ${inputCls}`}
-                value={form.case_study.title}
+              <FormField
+                label="Meta Title"
+                value={form.seo.meta_title}
                 onChange={(e) =>
                   setForm((f) => ({
                     ...f,
-                    case_study: { ...f.case_study, title: e.target.value },
+                    seo: { ...f.seo, meta_title: e.target.value },
                   }))
                 }
-                placeholder="Case study title"
+                placeholder="SEO page title"
               />
-              <textarea
+              <FormField
+                label="Meta Description"
+                textarea
                 rows={2}
-                className={`mt-2 ${inputCls} resize-none`}
-                value={form.case_study.description}
+                value={form.seo.meta_description}
                 onChange={(e) =>
                   setForm((f) => ({
                     ...f,
-                    case_study: {
-                      ...f.case_study,
-                      description: e.target.value,
-                    },
+                    seo: { ...f.seo, meta_description: e.target.value },
                   }))
                 }
-                placeholder="Case study description"
+                placeholder="SEO page description"
               />
-              <div className="mt-2">
-                <div className="flex items-center justify-between">
-                  <span className="text-xs font-semibold text-text">Stats</span>
-                  <button
-                    type="button"
-                    onClick={onAddCaseStudyStat}
-                    className="text-xs font-semibold text-primary hover:text-primary-hover cursor-pointer">
-                    + Add Stat
-                  </button>
-                </div>
-                {form.case_study.stats.map((stat, i) => (
-                  <div key={i} className="mt-2 flex gap-2 items-center">
-                    <input
-                      className={inputCls}
-                      placeholder="Value"
-                      value={stat.value}
-                      onChange={(e) =>
-                        onUpdateCaseStudyStat(i, "value", e.target.value)
-                      }
-                    />
-                    <input
-                      className={`${inputCls} w-20`}
-                      placeholder="Suffix"
-                      value={stat.suffix}
-                      onChange={(e) =>
-                        onUpdateCaseStudyStat(i, "suffix", e.target.value)
-                      }
-                    />
-                    <input
-                      className={inputCls}
-                      placeholder="Label"
-                      value={stat.label}
-                      onChange={(e) =>
-                        onUpdateCaseStudyStat(i, "label", e.target.value)
-                      }
-                    />
-                    <button
-                      type="button"
-                      onClick={() => onRemoveCaseStudyStat(i)}
-                      className="text-muted hover:text-primary cursor-pointer shrink-0">
-                      <TrashIcon />
-                    </button>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            <div>
-              <div className="flex items-center justify-between">
-                <label className="text-sm font-semibold text-heading">
-                  Client Testimonials
-                </label>
-                <button
-                  type="button"
-                  onClick={onAddClient}
-                  className="text-sm font-semibold text-primary hover:text-primary-hover cursor-pointer">
-                  + Add
-                </button>
-              </div>
-              {form.clients.map((client, i) => (
-                <div
-                  key={i}
-                  className="mt-3 relative border border-border rounded-lg p-4 space-y-3 bg-surface/70">
-                  <div className="flex items-center justify-between">
-                    <span className="text-xs font-semibold text-muted uppercase tracking-wide">
-                      Client {i + 1}
-                    </span>
-                    <button
-                      type="button"
-                      onClick={() => onRemoveClient(i)}
-                      className="text-muted hover:text-primary transition cursor-pointer"
-                      title="Remove client">
-                      <TrashIcon />
-                    </button>
-                  </div>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    <input
-                      className={inputCls}
-                      placeholder="Name"
-                      value={client.name}
-                      onChange={(e) =>
-                        onUpdateClient(i, "name", e.target.value)
-                      }
-                    />
-                    <input
-                      className={inputCls}
-                      placeholder="Position"
-                      value={client.position}
-                      onChange={(e) =>
-                        onUpdateClient(i, "position", e.target.value)
-                      }
-                    />
-                  </div>
-                  <input
-                    className={inputCls}
-                    placeholder="Company"
-                    value={client.company}
-                    onChange={(e) =>
-                      onUpdateClient(i, "company", e.target.value)
-                    }
-                  />
-                  <textarea
-                    rows={2}
-                    className={`${inputCls} resize-none`}
-                    placeholder="Quote"
-                    value={client.quote}
-                    onChange={(e) => onUpdateClient(i, "quote", e.target.value)}
-                  />
-                  <div className="relative">
-                    <label className="text-xs font-semibold text-text">
-                      Avatar
-                    </label>
-                    <label className="mt-1.5 flex items-center gap-3 w-full border-2 border-dashed border-border rounded-lg px-3 py-2.5 cursor-pointer hover:border-primary hover:bg-primary-light transition group">
-                      {client._avatarFile || client.avatar ? (
-                        <img
-                          src={
-                            client._avatarFile
-                              ? client.avatar
-                              : imageUrl(client.avatar)
-                          }
-                          alt="avatar"
-                          className="w-9 h-9 rounded-full object-cover border border-border shrink-0"
-                        />
-                      ) : (
-                        <div className="w-9 h-9 rounded-full bg-surface border border-dashed border-border flex items-center justify-center shrink-0">
-                          <svg
-                            className="w-4 h-4 text-muted"
-                            fill="none"
-                            stroke="currentColor"
-                            viewBox="0 0 24 24">
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              strokeWidth={1.5}
-                              d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
-                            />
-                          </svg>
-                        </div>
-                      )}
-                      <div className="flex flex-col">
-                        <span className="text-sm font-medium text-text group-hover:text-primary transition">
-                          {client._avatarFile || client.avatar
-                            ? "Change Avatar"
-                            : "Upload Avatar"}
-                        </span>
-                        <span className="text-xs text-muted">
-                          JPG, PNG, WEBP · max 4MB
-                        </span>
-                      </div>
-                      <input
-                        type="file"
-                        accept="image/*"
-                        className="hidden"
-                        onChange={(e) =>
-                          onPickClientAvatar(i, e.target.files?.[0])
-                        }
-                      />
-                    </label>
-                    {(client._avatarFile || client.avatar) && (
-                      <button
-                        type="button"
-                        onClick={(e) => {
-                          e.preventDefault();
-                          e.stopPropagation();
-                          setForm((f) => ({
-                            ...f,
-                            clients: f.clients.map((c, ci) =>
-                              ci === i
-                                ? { ...c, _avatarFile: null, avatar: "" }
-                                : c,
-                            ),
-                          }));
-                        }}
-                        className="absolute top-5 right-1 p-1 bg-background/80 hover:bg-primary-light rounded-full shadow transition cursor-pointer"
-                        title="Remove avatar">
-                        <svg
-                          className="w-4 h-4 text-primary hover:text-primary-hover"
-                          fill="none"
-                          stroke="currentColor"
-                          viewBox="0 0 24 24">
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
-                          />
-                        </svg>
-                      </button>
-                    )}
-                  </div>
-                </div>
-              ))}
             </div>
 
             <ErrorBanner message={error} />
@@ -853,13 +483,14 @@ export default function AdminServices() {
                 <tr className="text-left text-text">
                   <th className="py-2 pr-3 hidden sm:table-cell">ID</th>
                   <th className="py-2 pr-3">Service</th>
+                  <th className="py-2 pr-3 hidden md:table-cell">Featured</th>
                   <th className="py-2 pr-3">Status</th>
                   <th className="py-2">Actions</th>
                 </tr>
               </thead>
               <tbody>
                 {loading && !items.length ? (
-                  <TableSkeleton rows={5} cols={4} />
+                  <TableSkeleton rows={5} cols={5} />
                 ) : (
                   items.map((s) => (
                     <tr
@@ -880,6 +511,13 @@ export default function AdminServices() {
                           {s.short_description}
                         </div>
                       </td>
+                      <td className="py-3 pr-3 hidden md:table-cell">
+                        {s.featured && (
+                          <span className="inline-flex items-center rounded-full px-3 py-1 text-xs font-semibold border bg-info/10 text-info border-info/20">
+                            Featured
+                          </span>
+                        )}
+                      </td>
                       <td className="py-3 pr-3">
                         <span
                           className={`inline-flex items-center rounded-full px-3 py-1 text-xs font-semibold border ${
@@ -899,21 +537,17 @@ export default function AdminServices() {
                               setForm({
                                 service_id: s._id,
                                 service_name: s.service_name,
+                                slug: s.slug ?? "",
                                 short_description: s.short_description,
                                 description: s.description,
                                 status: s.status,
-                                image: s.image ?? "",
-                                category: s.category ?? "",
-                                offerings: s.offerings ?? [],
+                                hero_image: s.hero_image ?? "",
+                                icon: s.icon ?? "",
+                                deliverables: s.deliverables ?? [],
                                 benefits: s.benefits ?? [],
-                                target_audience: s.target_audience ?? [],
-                                faq: s.faq ?? [],
-                                case_study: s.case_study ?? {
-                                  title: "",
-                                  description: "",
-                                  stats: [],
-                                },
-                                clients: s.clients ?? [],
+                                featured: s.featured ?? false,
+                                display_order: s.display_order ?? 0,
+                                seo: s.seo ?? { meta_title: "", meta_description: "" },
                               });
                               formRef.current?.scrollIntoView({
                                 behavior: "smooth",
@@ -935,7 +569,7 @@ export default function AdminServices() {
                 )}
                 {!items.length && !loading && (
                   <TableEmptyState
-                    colSpan={4}
+                    colSpan={5}
                     message="No services found"
                     submessage="Create a new service to get started."
                   />
