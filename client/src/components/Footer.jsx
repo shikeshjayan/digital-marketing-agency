@@ -56,7 +56,7 @@ export default function Footer() {
               {/* Company Brand Block */}
               <div>
                 <div className="flex items-center gap-3">
-                  <img src="/crown-96.png" alt="CrawlCrown Logo" className="w-9 h-9 rounded-lg object-contain" />
+                  <img src="/crown-99.png" alt="CrawlCrown Logo" className="w-9 h-9 rounded-lg object-contain" />
                   <div className="font-bold text-lg">CrawlCrown</div>
                 </div>
                 <p className="mt-4 text-sm text-white/80 leading-relaxed max-w-sm">
