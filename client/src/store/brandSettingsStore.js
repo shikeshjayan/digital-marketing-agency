@@ -1,15 +1,15 @@
 import { create } from "zustand";
 import apiService from "../services/apiService";
 
-const useSiteContentStore = create((set) => ({
-  content: null,
+const useBrandSettingsStore = create((set) => ({
+  brand: null,
   loading: false,
   error: null,
 
-  fetchSiteContent: async () => {
+  fetchBrandSettings: async () => {
     set({ loading: true, error: null });
     try {
-      const { data } = await apiService.get("/admin/site-content");
+      const { data } = await apiService.get("/brand-settings");
       set({ content: data.data ?? {}, loading: false });
       return data.data;
     } catch (error) {
@@ -20,10 +20,10 @@ const useSiteContentStore = create((set) => ({
     }
   },
 
-  fetchPublicSiteContent: async () => {
+  fetchAdminBrandSettings: async () => {
     set({ loading: true, error: null });
     try {
-      const { data } = await apiService.get("/site-content");
+      const { data } = await apiService.get("/admin/brand-settings");
       set({ content: data.data ?? {}, loading: false });
       return data.data;
     } catch (error) {
@@ -34,11 +34,11 @@ const useSiteContentStore = create((set) => ({
     }
   },
 
-  updateSiteContent: async (content) => {
+  updateBrandSettings: async (payload) => {
     set({ loading: true, error: null });
     try {
-      const { data } = await apiService.put("/admin/site-content", { content });
-      set({ content: data.data ?? content, loading: false });
+      const { data } = await apiService.put("/admin/brand-settings", payload);
+      set({ content: data.data ?? payload, loading: false });
       return data;
     } catch (error) {
       set({
@@ -49,10 +49,10 @@ const useSiteContentStore = create((set) => ({
     }
   },
 
-  seedSiteContent: async () => {
+  seedBrandSettings: async () => {
     set({ loading: true, error: null });
     try {
-      const { data } = await apiService.post("/admin/site-content/seed");
+      const { data } = await apiService.post("/admin/brand-settings/seed");
       set({ content: data.data ?? {}, loading: false });
       return data;
     } catch (error) {
@@ -65,4 +65,4 @@ const useSiteContentStore = create((set) => ({
   },
 }));
 
-export default useSiteContentStore;
+export default useBrandSettingsStore;

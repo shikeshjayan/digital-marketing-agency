@@ -19,7 +19,26 @@ import FAQ from "./models/faq.model.js";
 import CaseStudy from "./models/caseStudy.model.js";
 import Contact from "./models/contacts.model.js";
 
-const IMG = "/uploads/placeholder.webp";
+// External placeholder images (picsum.photos) — served directly, no local files needed.
+// `img(seed)` returns a stable real photo per seed. Frontend resolveImagePath passes
+// http(s) URLs through unchanged, so no frontend changes are required.
+const img = (seed, w = 1200, h = 800) =>
+  `https://picsum.photos/seed/${seed}/${w}/${h}`;
+
+const SEED_IMAGES = {
+  seo: img("crawlcrown-seo"),
+  ppc: img("crawlcrown-ppc"),
+  social: img("crawlcrown-social"),
+  web: img("crawlcrown-web"),
+  content: img("crawlcrown-content"),
+  branding: img("crawlcrown-branding"),
+  projectMedicare: img("crawlcrown-medicare"),
+  projectFintrack: img("crawlcrown-fintrack"),
+  projectUrbannest: img("crawlcrown-urbannest"),
+  projectCloudscale: img("crawlcrown-cloudscale"),
+  caseStudyMedicare: img("crawlcrown-cs-medicare"),
+  caseStudyFintrack: img("crawlcrown-cs-fintrack"),
+};
 
 const seedData = {
   admins: [
@@ -38,7 +57,7 @@ const seedData = {
       short_description: "Boost your organic visibility and drive qualified traffic with data-driven SEO strategies tailored to your business goals.",
       description:
         "Our Search Engine Optimization (SEO) service is designed to help your business rank higher on search engines like Google, Bing, and Yahoo. We combine technical SEO audits, in-depth keyword research, on-page optimization, and high-quality link building to create a comprehensive strategy that delivers sustainable organic growth. Whether you are a local business targeting nearby customers or a global brand competing in a crowded market, our team crafts a tailored approach that aligns with your unique objectives and industry dynamics.",
-      hero_image: IMG,
+      hero_image: SEED_IMAGES.seo,
       icon: "faSearch",
       deliverables: [
         "Comprehensive SEO audit and strategy report",
@@ -70,7 +89,7 @@ const seedData = {
       short_description: "Maximize your ad spend with targeted PPC campaigns on Google Ads, Meta, and LinkedIn that deliver measurable results.",
       description:
         "Our Pay-Per-Click (PPC) Advertising service helps businesses reach their ideal customers through highly targeted campaigns on Google Ads, Meta (Facebook and Instagram), and LinkedIn. We handle everything from keyword research and ad copywriting to bid management and A/B testing. Our data-driven approach ensures that every dollar you spend is optimized for maximum return, whether you are looking to generate leads, drive e-commerce sales, or increase brand awareness across multiple channels.",
-      hero_image: IMG,
+      hero_image: SEED_IMAGES.ppc,
       icon: "faAd",
       deliverables: [
         "PPC strategy and campaign architecture",
@@ -102,7 +121,7 @@ const seedData = {
       short_description: "Build an engaged community and grow your brand presence across all major social media platforms with strategic content and campaigns.",
       description:
         "Our Social Media Marketing service helps businesses build authentic relationships with their audience across platforms like Instagram, Facebook, LinkedIn, Twitter, and TikTok. We develop a tailored content strategy that includes branded graphics, engaging captions, community management, and paid social campaigns. From growing your follower count to driving meaningful engagement and conversions, our team ensures your social channels become a powerful engine for brand awareness and customer loyalty.",
-      hero_image: IMG,
+      hero_image: SEED_IMAGES.social,
       icon: "faBullhorn",
       deliverables: [
         "Social media audit and competitor analysis",
@@ -134,7 +153,7 @@ const seedData = {
       short_description: "Build fast, responsive, and conversion-optimized websites that look stunning and perform flawlessly across all devices.",
       description:
         "Our Web Development service delivers custom-built websites that combine beautiful design with powerful functionality. Whether you need a corporate site, an e-commerce platform, or a web application, our team builds with modern frameworks like React, Next.js, and Node.js to ensure blazing-fast performance and seamless user experiences. We follow a user-centered design approach, rigorous QA testing, and SEO best practices to create websites that not only look great but also convert visitors into customers.",
-      hero_image: IMG,
+      hero_image: SEED_IMAGES.web,
       icon: "faCode",
       deliverables: [
         "Custom UI/UX design and prototyping",
@@ -166,7 +185,7 @@ const seedData = {
       short_description: "Attract, engage, and convert your target audience with high-quality blogs, videos, and whitepapers that establish thought leadership.",
       description:
         "Our Content Marketing service helps your brand tell its story through compelling content that educates, entertains, and converts. We create a strategic content mix including blog articles, case studies, infographics, video scripts, email newsletters, and downloadable resources. Every piece of content is crafted with your audience in mind, optimized for search engines, and aligned with your business goals to drive traffic, generate leads, and position your brand as an industry authority.",
-      hero_image: IMG,
+      hero_image: SEED_IMAGES.content,
       icon: "faPenNib",
       deliverables: [
         "Content strategy and editorial calendar",
@@ -198,7 +217,7 @@ const seedData = {
       short_description: "Create a memorable brand identity that resonates with your audience and sets you apart from the competition.",
       description:
         "Our Branding and Identity service helps businesses define who they are and communicate it consistently across every touchpoint. From logo design and color palette selection to brand guidelines and messaging frameworks, we craft a cohesive brand identity that reflects your values, resonates with your target audience, and stands out in a crowded marketplace. Our process involves deep discovery, strategic thinking, and creative execution to build a brand that people remember, trust, and love.",
-      hero_image: IMG,
+      hero_image: SEED_IMAGES.branding,
       icon: "faPalette",
       deliverables: [
         "Brand discovery and strategy workshop",
@@ -484,8 +503,12 @@ async function seed() {
         short_description: "A comprehensive telemedicine platform connecting patients with healthcare providers through video consultations and secure messaging.",
         description:
           "MediCare Health Portal is a full-featured telemedicine platform built to bridge the gap between patients and healthcare providers. The platform supports real-time video consultations, secure patient messaging, electronic health record integration, appointment scheduling, and prescription management. Built with security and compliance in mind, the system adheres to HIPAA regulations and uses end-to-end encryption for all patient data. The intuitive interface makes it easy for patients of all ages to connect with their doctors from the comfort of their homes.",
-        thumbnail: IMG,
-        gallery: [IMG, IMG, IMG],
+        thumbnail: SEED_IMAGES.projectMedicare,
+        gallery: [
+          SEED_IMAGES.projectMedicare,
+          img("crawlcrown-medicare-g2"),
+          img("crawlcrown-medicare-g3"),
+        ],
         services: [webService._id, seoService._id],
         technologies: [reactTech._id, nodeTech._id, mongoTech._id, awsTech._id],
         industries: [healthIndustry._id],
@@ -510,8 +533,12 @@ async function seed() {
         short_description: "A real-time financial analytics dashboard for a fintech startup, featuring live market data, portfolio tracking, and AI-driven insights.",
         description:
           "FinTrack is a sophisticated financial analytics dashboard designed for a fast-growing fintech startup. The platform aggregates real-time market data from multiple sources, provides interactive portfolio tracking with customizable watchlists, and delivers AI-powered investment insights based on historical trends and market sentiment. The application handles over 10,000 concurrent users with sub-second response times, achieved through a combination of WebSocket connections for live data streaming and intelligent caching strategies. The clean, data-rich interface enables traders and investors to make informed decisions quickly.",
-        thumbnail: IMG,
-        gallery: [IMG, IMG, IMG],
+        thumbnail: SEED_IMAGES.projectFintrack,
+        gallery: [
+          SEED_IMAGES.projectFintrack,
+          img("crawlcrown-fintrack-g2"),
+          img("crawlcrown-fintrack-g3"),
+        ],
         services: [webService._id, ppcService._id],
         technologies: [reactTech._id, nodeTech._id, tsTech._id, awsTech._id],
         industries: [financeIndustry._id],
@@ -536,8 +563,12 @@ async function seed() {
         short_description: "A modern e-commerce platform for a home decor brand, featuring personalized recommendations and a seamless checkout experience.",
         description:
           "UrbanNest is a custom e-commerce platform built for a growing home decor brand looking to establish a strong online presence. The platform features a visually rich product catalog with 360-degree product views, AI-powered personalized recommendations, a streamlined multi-step checkout with multiple payment options, and an admin dashboard for inventory and order management. The mobile-first design ensures a flawless shopping experience on any device, while the backend handles thousands of orders per day during peak seasons without performance degradation.",
-        thumbnail: IMG,
-        gallery: [IMG, IMG, IMG],
+        thumbnail: SEED_IMAGES.projectUrbannest,
+        gallery: [
+          SEED_IMAGES.projectUrbannest,
+          img("crawlcrown-urbannest-g2"),
+          img("crawlcrown-urbannest-g3"),
+        ],
         services: [webService._id, brandingService._id],
         technologies: [nextTech._id, nodeTech._id, tailTech._id, mongoTech._id],
         industries: [ecommerceIndustry._id],
@@ -562,8 +593,12 @@ async function seed() {
         short_description: "An internal DevOps automation platform that streamlines CI/CD pipelines, infrastructure monitoring, and deployment workflows.",
         description:
           "CloudScale is an internal DevOps platform built for a technology company managing complex microservices architectures. The platform provides a unified dashboard for managing CI/CD pipelines across multiple repositories, real-time infrastructure monitoring with alerting, automated deployment workflows with rollback capabilities, and cost optimization recommendations for cloud resources. By consolidating dozens of disparate tools into a single pane of glass, the platform reduced deployment times by 60% and significantly improved developer productivity across the organization.",
-        thumbnail: IMG,
-        gallery: [IMG, IMG, IMG],
+        thumbnail: SEED_IMAGES.projectCloudscale,
+        gallery: [
+          SEED_IMAGES.projectCloudscale,
+          img("crawlcrown-cloudscale-g2"),
+          img("crawlcrown-cloudscale-g3"),
+        ],
         services: [webService._id, seoService._id, contentService._id],
         technologies: [reactTech._id, nodeTech._id, pythonTech._id, awsTech._id],
         industries: [techIndustry._id],
@@ -672,7 +707,7 @@ async function seed() {
       {
         title: "Building a HIPAA-Compliant Telemedicine Platform at Scale",
         project: medicareProject._id,
-        hero_image: IMG,
+        hero_image: SEED_IMAGES.caseStudyMedicare,
         overview:
           "MediCare Health Systems needed a modern telemedicine platform to serve patients across 12 states. The existing system was built on legacy technology, suffered from frequent downtime, and provided a poor user experience on mobile devices. We were tasked with rebuilding the platform from the ground up using modern web technologies while maintaining strict HIPAA compliance throughout the development process.",
         challenge:
@@ -730,7 +765,12 @@ async function seed() {
           { title: "Consultation Latency", value: "Average 140ms end-to-end (target was 200ms)" },
           { title: "Patient Satisfaction", value: "4.8 out of 5 average rating across 12,000+ consultations" },
         ],
-        gallery: [IMG, IMG, IMG, IMG],
+        gallery: [
+          SEED_IMAGES.caseStudyMedicare,
+          img("crawlcrown-cs-medicare-g2"),
+          img("crawlcrown-cs-medicare-g3"),
+          img("crawlcrown-cs-medicare-g4"),
+        ],
         client_testimonial: {
           quote: "This platform has fundamentally changed how we deliver healthcare. Our patients love the ease of use, and our providers can focus on what matters most — patient care. The team delivered a solution that exceeded every expectation we had.",
           client_name: "Dr. Amanda Lewis",
@@ -747,7 +787,7 @@ async function seed() {
       {
         title: "Real-Time Financial Analytics for a Growing Fintech Startup",
         project: fintrackProject._id,
-        hero_image: IMG,
+        hero_image: SEED_IMAGES.caseStudyFintrack,
         overview:
           "FinTrack Technologies approached us to build a financial analytics dashboard that could handle real-time market data, provide portfolio tracking with interactive visualizations, and deliver AI-driven investment insights. The platform needed to support thousands of concurrent users while maintaining sub-second response times for critical trading data.",
         challenge:
@@ -805,7 +845,12 @@ async function seed() {
           { title: "Data Latency", value: "Average 320ms market data update delivery" },
           { title: "User Retention", value: "78% monthly active user retention rate" },
         ],
-        gallery: [IMG, IMG, IMG, IMG],
+        gallery: [
+          SEED_IMAGES.caseStudyFintrack,
+          img("crawlcrown-cs-fintrack-g2"),
+          img("crawlcrown-cs-fintrack-g3"),
+          img("crawlcrown-cs-fintrack-g4"),
+        ],
         client_testimonial: {
           quote: "The platform handles real-time data better than solutions costing ten times more. Our users consistently praise the speed and clarity of the dashboard. The AI insights have become one of our most popular features and a key differentiator in the market.",
           client_name: "Marcus Webb",

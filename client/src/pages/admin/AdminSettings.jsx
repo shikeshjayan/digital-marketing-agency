@@ -105,6 +105,7 @@ export default function AdminSettings() {
                 setImageFile(null);
                 setPhotoRemoved(true);
               }}
+              confirmText="Remove photo?"
               className="mt-4"
             />
             {(imageFile || (form.photo && !photoRemoved)) && (

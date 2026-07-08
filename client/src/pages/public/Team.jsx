@@ -6,6 +6,7 @@ import FinalCTA from '../../components/public/FinalCTA.jsx'
 import TeamCard from '../../components/public/TeamCard.jsx'
 import { TeamCardSkeleton } from '../../components/ui/Skeleton.jsx'
 import useTeamStore from '../../store/teamStore.js'
+import useSiteContentStore from '../../store/siteContentStore.js'
 
 /* ─── Data ────────────────────────────────────────────────── */
 
@@ -75,13 +76,6 @@ const departments = [
   },
 ];
 
-const stats = [
-  { value: "25+", label: "Team Members" },
-  { value: "500+", label: "Projects Delivered" },
-  { value: "8+", label: "Years Experience" },
-  { value: "98%", label: "Client Retention" },
-];
-
 const cultureValues = [
   {
     title: "Collaboration",
@@ -147,7 +141,9 @@ function Departments() {
 
 /* ─── Section: Team Statistics ────────────────────────────── */
 
-function TeamStatistics() {
+function TeamStatistics({ stats = [] }) {
+  const displayStats = stats.slice(0, 4);
+  if (!displayStats.length) return null;
   return (
     <section className="py-12 md:py-16 bg-background">
       <FadeIn>
@@ -158,10 +154,10 @@ function TeamStatistics() {
             subtitle="Our collective expertise speaks through the results we deliver."
           />
           <div className="mt-10 grid grid-cols-2 md:grid-cols-4 gap-6">
-            {stats.map((stat, i) => (
-              <FadeIn key={stat.label} delay={i * 100}>
+            {displayStats.map((stat, i) => (
+              <FadeIn key={stat.key || i} delay={i * 100}>
                 <div className="bg-background border border-border rounded-lg p-6 text-center hover:shadow-sm transition">
-                  <div className="text-3xl md:text-4xl font-extrabold text-primary">{stat.value}</div>
+                  <div className="text-3xl md:text-4xl font-extrabold text-primary">{stat.target}{stat.suffix}</div>
                   <div className="mt-2 text-sm text-text">{stat.label}</div>
                 </div>
               </FadeIn>
@@ -238,10 +234,19 @@ function Certifications() {
 
 export default function Team() {
   const { team, loading, error, fetchTeam } = useTeamStore()
+  const { content, fetchPublicSiteContent } = useSiteContentStore()
+
+  const companyStats = content?.companyStats ?? [];
+
+  const getStat = (key) => {
+    const s = companyStats.find((st) => st.key === key);
+    return s ? `${s.target}${s.suffix}` : "";
+  };
 
   useEffect(() => {
     fetchTeam()
-  }, [fetchTeam])
+    fetchPublicSiteContent()
+  }, [fetchTeam, fetchPublicSiteContent])
 
   const sorted = useMemo(() => {
     return [...team].sort((a, b) => (a.display_order ?? 0) - (b.display_order ?? 0))
@@ -258,9 +263,9 @@ export default function Team() {
         imageSrc="/team.webp"
         imageAlt="Our Team"
         trustIndicators={[
-          { value: "25+", label: "Team Members" },
-          { value: "500+", label: "Projects Delivered" },
-          { value: "98%", label: "Client Retention" },
+          { value: getStat("teamMembers") || "25+", label: "Team Members" },
+          { value: getStat("projectsCompleted") || "500+", label: "Projects Delivered" },
+          { value: getStat("clientRetention") || "98%", label: "Client Retention" },
         ]}
       />
 
@@ -329,7 +334,7 @@ export default function Team() {
       </section>
 
       <Departments />
-      <TeamStatistics />
+      <TeamStatistics stats={companyStats} />
       <OurCulture />
       <Certifications />
       <FinalCTA

@@ -5,6 +5,7 @@ import AdminPageHeader from "../../components/ui/AdminPageHeader.jsx";
 import ErrorBanner from "../../components/ui/ErrorBanner.jsx";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTrash } from "@fortawesome/free-solid-svg-icons";
+import ConfirmModal from "../../components/ui/ConfirmModal.jsx";
 
 export default function AdminSiteContent() {
   const { content, loading, error, fetchSiteContent, updateSiteContent, seedSiteContent } = useSiteContentStore();
@@ -14,6 +15,9 @@ export default function AdminSiteContent() {
   const [companyStats, setCompanyStats] = useState([]);
   const [saving, setSaving] = useState(false);
   const [seeding, setSeeding] = useState(false);
+  const [confirmTechIdx, setConfirmTechIdx] = useState(null);
+  const [confirmMarqueeIdx, setConfirmMarqueeIdx] = useState(null);
+  const [confirmStatIdx, setConfirmStatIdx] = useState(null);
 
   useEffect(() => {
     fetchSiteContent();
@@ -68,10 +72,6 @@ export default function AdminSiteContent() {
     });
   }
 
-  function removeTechItem(i) {
-    setTechItems((prev) => prev.filter((_, idx) => idx !== i));
-  }
-
   function addMarqueeLogo() {
     setMarqueeLogos((prev) => [...prev, ""]);
   }
@@ -84,24 +84,62 @@ export default function AdminSiteContent() {
     });
   }
 
-  function removeMarqueeLogo(i) {
-    setMarqueeLogos((prev) => prev.filter((_, idx) => idx !== i));
+  const DEFAULT_STAT_KEYS = new Set([
+    "yearsExperience", "projectsCompleted", "satisfiedClients", "clientRetention",
+    "teamMembers", "averageRating", "averageRoi", "support247",
+    "onTimeDelivery", "countriesServed", "industryAwards", "uptimeGuaranteed",
+    "responseTime", "freeConsultation", "satisfactionGoal", "clientFocus",
+  ]);
+
+  function labelToKey(label) {
+    return String(label)
+      .trim()
+      .replace(/[^a-zA-Z0-9\s-]/g, "")
+      .split(/[\s-]+/)
+      .filter(Boolean)
+      .map((word, i) =>
+        i === 0
+          ? word.toLowerCase()
+          : word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()
+      )
+      .join("");
+  }
+
+  function getUniqueKey(baseKey, stats, excludeIndex) {
+    if (!baseKey) return "";
+    let key = baseKey;
+    let counter = 1;
+    while (stats.some((s, idx) => idx !== excludeIndex && s.key === key)) {
+      key = `${baseKey}${counter}`;
+      counter++;
+    }
+    return key;
   }
 
   function addCompanyStat() {
-    setCompanyStats((prev) => [...prev, { key: "", target: 0, suffix: "+", label: "" }]);
+    setCompanyStats((prev) => {
+      const baseKey = labelToKey("New Stat");
+      const key = getUniqueKey(baseKey, prev, -1);
+      return [...prev, { key, target: 0, suffix: "+", label: "New Stat" }];
+    });
   }
 
   function updateCompanyStat(i, field, value) {
     setCompanyStats((prev) => {
       const next = [...prev];
-      next[i] = { ...next[i], [field]: field === "target" ? Number(value) : value };
+      const stat = { ...next[i] };
+      if (field === "label" && !DEFAULT_STAT_KEYS.has(stat.key)) {
+        const baseKey = labelToKey(value);
+        stat.key = getUniqueKey(baseKey, next, i);
+        stat.label = value;
+      } else if (field === "target") {
+        stat.target = Number(value);
+      } else {
+        stat[field] = value;
+      }
+      next[i] = stat;
       return next;
     });
-  }
-
-  function removeCompanyStat(i) {
-    setCompanyStats((prev) => prev.filter((_, idx) => idx !== i));
   }
 
   if (loading && !content) {
@@ -166,7 +204,7 @@ export default function AdminSiteContent() {
               />
               <button
                 type="button"
-                onClick={() => removeTechItem(i)}
+                onClick={() => setConfirmTechIdx(i)}
                 className="p-2 text-primary hover:text-primary-hover hover:bg-primary-light rounded transition cursor-pointer">
                 <FontAwesomeIcon icon={faTrash} className="w-4 h-4" />
               </button>
@@ -180,6 +218,16 @@ export default function AdminSiteContent() {
           className="mt-3 text-sm font-semibold text-primary hover:text-primary-hover transition cursor-pointer">
           + Add Item
         </button>
+
+        <ConfirmModal
+          open={confirmTechIdx !== null}
+          onCancel={() => setConfirmTechIdx(null)}
+          onConfirm={() => {
+            setTechItems((prev) => prev.filter((_, idx) => idx !== confirmTechIdx));
+            setConfirmTechIdx(null);
+          }}
+          message="Remove this technology item?"
+        />
       </section>
 
       {/* ─── Trust Marquee Logos ─── */}
@@ -198,7 +246,7 @@ export default function AdminSiteContent() {
               />
               <button
                 type="button"
-                onClick={() => removeMarqueeLogo(i)}
+                onClick={() => setConfirmMarqueeIdx(i)}
                 className="p-2 text-primary hover:text-primary-hover hover:bg-primary-light rounded transition cursor-pointer">
                 <FontAwesomeIcon icon={faTrash} className="w-4 h-4" />
               </button>
@@ -212,19 +260,26 @@ export default function AdminSiteContent() {
           className="mt-3 text-sm font-semibold text-primary hover:text-primary-hover transition cursor-pointer">
           + Add Logo
         </button>
+
+        <ConfirmModal
+          open={confirmMarqueeIdx !== null}
+          onCancel={() => setConfirmMarqueeIdx(null)}
+          onConfirm={() => {
+            setMarqueeLogos((prev) => prev.filter((_, idx) => idx !== confirmMarqueeIdx));
+            setConfirmMarqueeIdx(null);
+          }}
+          message="Remove this marquee logo?"
+        />
       </section>
 
       {/* ─── Company Statistics ─── */}
       <section className="mt-6 bg-background border border-border rounded p-5">
         <h3 className="font-extrabold text-heading">Company Statistics</h3>
-        <p className="mt-1 text-xs text-muted">All 15 company stats used across the site. Each has a unique key that pages reference.</p>
+        <p className="mt-1 text-xs text-muted">Manage company stats shown across the site. Core stats are fixed; custom stats can be removed. Key is auto-generated from the label.</p>
 
         <div className="mt-4 space-y-4">
           {companyStats.map((stat, i) => (
              <div key={i} className="flex flex-wrap items-center gap-2">
-              <span className="w-full sm:w-24 shrink-0 text-xs font-mono text-muted truncate" title={stat.key}>
-                {stat.key || "—"}
-              </span>
               <input
                 className="flex-1 min-w-[80px] sm:w-24 sm:flex-none rounded border border-border bg-surface px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-primary-light"
                 placeholder="Target (e.g. 8)"
@@ -245,12 +300,14 @@ export default function AdminSiteContent() {
                 value={stat.label}
                 onChange={(e) => updateCompanyStat(i, "label", e.target.value)}
               />
-              <button
-                type="button"
-                onClick={() => removeCompanyStat(i)}
-                className="p-2 text-primary hover:text-primary-hover hover:bg-primary-light rounded transition cursor-pointer">
-                <FontAwesomeIcon icon={faTrash} className="w-4 h-4" />
-              </button>
+              {!DEFAULT_STAT_KEYS.has(stat.key) && (
+                <button
+                  type="button"
+                  onClick={() => setConfirmStatIdx(i)}
+                  className="p-2 text-primary hover:text-primary-hover hover:bg-primary-light rounded transition cursor-pointer">
+                  <FontAwesomeIcon icon={faTrash} className="w-4 h-4" />
+                </button>
+              )}
             </div>
           ))}
         </div>
@@ -261,6 +318,16 @@ export default function AdminSiteContent() {
           className="mt-3 text-sm font-semibold text-primary hover:text-primary-hover transition cursor-pointer">
           + Add Stat
         </button>
+
+        <ConfirmModal
+          open={confirmStatIdx !== null}
+          onCancel={() => setConfirmStatIdx(null)}
+          onConfirm={() => {
+            setCompanyStats((prev) => prev.filter((_, idx) => idx !== confirmStatIdx));
+            setConfirmStatIdx(null);
+          }}
+          message="Remove this company statistic?"
+        />
       </section>
 
       {/* ─── Save Button ─── */}

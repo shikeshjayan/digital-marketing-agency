@@ -1,0 +1,327 @@
+import { useEffect, useState } from "react";
+import { toast } from "sonner";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faTrash } from "@fortawesome/free-solid-svg-icons";
+import useBrandSettingsStore from "../../store/brandSettingsStore.js";
+import AdminPageHeader from "../../components/ui/AdminPageHeader.jsx";
+import ErrorBanner from "../../components/ui/ErrorBanner.jsx";
+import FileUploadField from "../../components/ui/FileUploadField.jsx";
+import ConfirmModal from "../../components/ui/ConfirmModal.jsx";
+
+export default function AdminBrandSettings() {
+  const { content, loading, error, fetchAdminBrandSettings, updateBrandSettings, seedBrandSettings } = useBrandSettingsStore();
+
+  const [brand, setBrand] = useState({ name: "", logo: "", tagline: "" });
+  const [socialLinks, setSocialLinks] = useState([]);
+  const [contact, setContact] = useState({ phone: "", email: "", address: "" });
+  const [companyLinks, setCompanyLinks] = useState([]);
+  const [saving, setSaving] = useState(false);
+  const [seeding, setSeeding] = useState(false);
+  const [confirmSocialIdx, setConfirmSocialIdx] = useState(null);
+  const [confirmCompanyLinkIdx, setConfirmCompanyLinkIdx] = useState(null);
+
+  useEffect(() => {
+    fetchAdminBrandSettings();
+  }, [fetchAdminBrandSettings]);
+
+  useEffect(() => {
+    if (content) {
+      setBrand(content.brand ?? { name: "", logo: "", tagline: "" });
+      setSocialLinks(content.socialLinks ?? []);
+      setContact(content.contact ?? { phone: "", email: "", address: "" });
+      setCompanyLinks(content.companyLinks ?? []);
+    }
+  }, [content]);
+
+  function onPickLogo(file) {
+    setBrand((prev) => ({ ...prev, logo: file }));
+  }
+
+  async function handleSave() {
+    setSaving(true);
+    try {
+      const payload = new FormData();
+
+      if (brand.logo instanceof File) {
+        payload.append("brand_logo", brand.logo);
+      } else if (typeof brand.logo === "string") {
+        payload.append("brand_logo", brand.logo);
+      }
+
+      payload.append("brand", JSON.stringify({ name: brand.name, tagline: brand.tagline }));
+      payload.append("socialLinks", JSON.stringify(socialLinks));
+      payload.append("contact", JSON.stringify(contact));
+      payload.append("companyLinks", JSON.stringify(companyLinks));
+
+      await updateBrandSettings(payload);
+      toast.success("Brand settings updated successfully.");
+    } catch {
+      toast.error("Failed to update brand settings.");
+    } finally {
+      setSaving(false);
+    }
+  }
+
+  async function handleSeed() {
+    if (!window.confirm("Reset brand settings to defaults? This cannot be undone.")) return;
+    setSeeding(true);
+    try {
+      await seedBrandSettings();
+      toast.success("Default brand settings seeded.");
+    } catch {
+      toast.error("Failed to seed default brand settings.");
+    } finally {
+      setSeeding(false);
+    }
+  }
+
+  if (loading && !content) {
+    return (
+      <div className="flex items-center justify-center py-20">
+        <div className="animate-spin w-8 h-8 border-4 border-primary border-t-transparent rounded-full" />
+      </div>
+    );
+  }
+
+  if (error && !content) {
+    return (
+      <div className="py-20 text-center">
+        <div className="text-primary font-medium mb-4">{error}</div>
+        <button
+          type="button"
+          onClick={() => fetchAdminBrandSettings()}
+          className="px-5 py-2.5 text-sm font-semibold text-white bg-primary rounded-lg hover:bg-primary-hover transition cursor-pointer">
+          Retry
+        </button>
+      </div>
+    );
+  }
+
+  return (
+    <div>
+      <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-3">
+        <AdminPageHeader
+          title="Brand Settings"
+          subtitle="Manage brand info, social links, contact details, and company links used across the site."
+        />
+        <button
+          type="button"
+          onClick={handleSeed}
+          disabled={seeding}
+          className="px-4 py-2 text-sm font-semibold text-primary border border-primary rounded-lg hover:bg-primary-light transition cursor-pointer disabled:opacity-50">
+          {seeding ? "Seeding..." : "Reset to Defaults"}
+        </button>
+      </div>
+
+      <ErrorBanner message={error} className="mt-4" />
+
+      {/* ─── Brand Info ─── */}
+      <section className="mt-6 bg-background border border-border rounded p-5">
+        <h3 className="font-extrabold text-heading">Brand Info</h3>
+        <p className="mt-1 text-xs text-muted">Company name, logo, and tagline shown site-wide.</p>
+
+        <div className="mt-4 space-y-4">
+          <div>
+            <label className="text-sm font-semibold text-heading">Company Name</label>
+            <input
+              className="mt-2 w-full rounded border border-border bg-surface px-4 py-2 text-sm text-heading outline-none transition focus:border-primary focus:bg-background focus:ring-2 focus:ring-primary-light placeholder:text-muted"
+              placeholder="CrawlCrown"
+              value={brand.name}
+              onChange={(e) => setBrand((prev) => ({ ...prev, name: e.target.value }))}
+            />
+          </div>
+          <div className="w-[100px]">
+            <FileUploadField
+              label="Logo"
+              containerHeight="h-[100px]"
+              file={brand.logo instanceof File ? brand.logo : null}
+              existingUrl={typeof brand.logo === "string" ? brand.logo : ""}
+              onChange={onPickLogo}
+              onRemove={() => setBrand((prev) => ({ ...prev, logo: "" }))}
+              confirmText="Remove logo?"
+            />
+          </div>
+          <div>
+            <label className="text-sm font-semibold text-heading">Tagline</label>
+            <textarea
+              rows={2}
+              className="mt-2 w-full rounded border border-border bg-surface px-4 py-2 text-sm text-heading outline-none transition focus:border-primary focus:bg-background focus:ring-2 focus:ring-primary-light placeholder:text-muted resize-none"
+              placeholder="Full-service digital marketing agency..."
+              value={brand.tagline}
+              onChange={(e) => setBrand((prev) => ({ ...prev, tagline: e.target.value }))}
+            />
+          </div>
+        </div>
+      </section>
+
+      {/* ─── Social Links ─── */}
+      <section className="mt-6 bg-background border border-border rounded p-5">
+        <h3 className="font-extrabold text-heading">Social Links</h3>
+        <p className="mt-1 text-xs text-muted">Social media links displayed in the footer. Each has a platform name, URL, and icon identifier.</p>
+
+        <div className="mt-4 space-y-3">
+          {socialLinks.map((link, i) => (
+            <div key={i} className="flex flex-wrap items-center gap-2">
+              <input
+                className="flex-1 min-w-[120px] rounded border border-border bg-surface px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-primary-light"
+                placeholder="Platform (e.g. Facebook)"
+                value={link.platform}
+                onChange={(e) => {
+                  const next = [...socialLinks];
+                  next[i] = { ...next[i], platform: e.target.value };
+                  setSocialLinks(next);
+                }}
+              />
+              <input
+                className="flex-[2] min-w-[200px] rounded border border-border bg-surface px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-primary-light"
+                placeholder="URL (e.g. https://facebook.com/crawlcrown)"
+                value={link.url}
+                onChange={(e) => {
+                  const next = [...socialLinks];
+                  next[i] = { ...next[i], url: e.target.value };
+                  setSocialLinks(next);
+                }}
+              />
+              <input
+                className="w-28 rounded border border-border bg-surface px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-primary-light"
+                placeholder="Icon (e.g. faFacebookF)"
+                value={link.icon}
+                onChange={(e) => {
+                  const next = [...socialLinks];
+                  next[i] = { ...next[i], icon: e.target.value };
+                  setSocialLinks(next);
+                }}
+              />
+              <button
+                type="button"
+                onClick={() => setConfirmSocialIdx(i)}
+                className="p-2 text-primary hover:text-primary-hover hover:bg-primary-light rounded transition cursor-pointer">
+                <FontAwesomeIcon icon={faTrash} className="w-4 h-4" />
+              </button>
+            </div>
+          ))}
+        </div>
+
+        <button
+          type="button"
+          onClick={() => setSocialLinks((prev) => [...prev, { platform: "", url: "", icon: "" }])}
+          className="mt-3 text-sm font-semibold text-primary hover:text-primary-hover transition cursor-pointer">
+          + Add Social Link
+        </button>
+
+        <ConfirmModal
+          open={confirmSocialIdx !== null}
+          onCancel={() => setConfirmSocialIdx(null)}
+          onConfirm={() => {
+            setSocialLinks((prev) => prev.filter((_, idx) => idx !== confirmSocialIdx));
+            setConfirmSocialIdx(null);
+          }}
+          message="Remove this social link?"
+        />
+      </section>
+
+      {/* ─── Contact Info ─── */}
+      <section className="mt-6 bg-background border border-border rounded p-5">
+        <h3 className="font-extrabold text-heading">Contact Info</h3>
+        <p className="mt-1 text-xs text-muted">Phone, email, and address displayed in the footer contact block.</p>
+
+        <div className="mt-4 space-y-4">
+          <div>
+            <label className="text-sm font-semibold text-heading">Phone</label>
+            <input
+              className="mt-2 w-full rounded border border-border bg-surface px-4 py-2 text-sm text-heading outline-none transition focus:border-primary focus:bg-background focus:ring-2 focus:ring-primary-light placeholder:text-muted"
+              placeholder="+91 8891212323"
+              value={contact.phone}
+              onChange={(e) => setContact((prev) => ({ ...prev, phone: e.target.value }))}
+            />
+          </div>
+          <div>
+            <label className="text-sm font-semibold text-heading">Email</label>
+            <input
+              className="mt-2 w-full rounded border border-border bg-surface px-4 py-2 text-sm text-heading outline-none transition focus:border-primary focus:bg-background focus:ring-2 focus:ring-primary-light placeholder:text-muted"
+              placeholder="crowlcrown@gmail.com"
+              value={contact.email}
+              onChange={(e) => setContact((prev) => ({ ...prev, email: e.target.value }))}
+            />
+          </div>
+          <div>
+            <label className="text-sm font-semibold text-heading">Address</label>
+            <input
+              className="mt-2 w-full rounded border border-border bg-surface px-4 py-2 text-sm text-heading outline-none transition focus:border-primary focus:bg-background focus:ring-2 focus:ring-primary-light placeholder:text-muted"
+              placeholder="Ernakulam, Kochi, Kerala, India"
+              value={contact.address}
+              onChange={(e) => setContact((prev) => ({ ...prev, address: e.target.value }))}
+            />
+          </div>
+        </div>
+      </section>
+
+      {/* ─── Company Links ─── */}
+      <section className="mt-6 bg-background border border-border rounded p-5">
+        <h3 className="font-extrabold text-heading">Company Links</h3>
+        <p className="mt-1 text-xs text-muted">Navigation links in the Company column of the footer.</p>
+
+        <div className="mt-4 space-y-3">
+          {companyLinks.map((link, i) => (
+            <div key={i} className="flex flex-wrap items-center gap-2">
+              <input
+                className="flex-1 min-w-[160px] rounded border border-border bg-surface px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-primary-light"
+                placeholder="Label (e.g. About)"
+                value={link.label}
+                onChange={(e) => {
+                  const next = [...companyLinks];
+                  next[i] = { ...next[i], label: e.target.value };
+                  setCompanyLinks(next);
+                }}
+              />
+              <input
+                className="flex-1 min-w-[160px] rounded border border-border bg-surface px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-primary-light"
+                placeholder="Path (e.g. /about)"
+                value={link.path}
+                onChange={(e) => {
+                  const next = [...companyLinks];
+                  next[i] = { ...next[i], path: e.target.value };
+                  setCompanyLinks(next);
+                }}
+              />
+              <button
+                type="button"
+                onClick={() => setConfirmCompanyLinkIdx(i)}
+                className="p-2 text-primary hover:text-primary-hover hover:bg-primary-light rounded transition cursor-pointer">
+                <FontAwesomeIcon icon={faTrash} className="w-4 h-4" />
+              </button>
+            </div>
+          ))}
+        </div>
+
+        <button
+          type="button"
+          onClick={() => setCompanyLinks((prev) => [...prev, { label: "", path: "" }])}
+          className="mt-3 text-sm font-semibold text-primary hover:text-primary-hover transition cursor-pointer">
+          + Add Link
+        </button>
+
+        <ConfirmModal
+          open={confirmCompanyLinkIdx !== null}
+          onCancel={() => setConfirmCompanyLinkIdx(null)}
+          onConfirm={() => {
+            setCompanyLinks((prev) => prev.filter((_, idx) => idx !== confirmCompanyLinkIdx));
+            setConfirmCompanyLinkIdx(null);
+          }}
+          message="Remove this company link?"
+        />
+      </section>
+
+      {/* ─── Save Button ─── */}
+      <div className="mt-8 flex items-center gap-4">
+        <button
+          type="button"
+          onClick={handleSave}
+          disabled={saving}
+          className="rounded bg-primary text-white px-6 py-2.5 font-extrabold hover:bg-primary-hover transition disabled:opacity-50 cursor-pointer">
+          {saving ? "Saving..." : "Save Changes"}
+        </button>
+      </div>
+    </div>
+  );
+}

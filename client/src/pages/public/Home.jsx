@@ -9,6 +9,7 @@ import LogoMarquee from "../../components/public/LogoMarquee.jsx";
 import TestimonialsSection from "../../components/public/TestimonialsSection.jsx";
 import useServiceStore from "../../store/serviceStore.js";
 import useReviewStore from "../../store/reviewStore.js";
+import useSiteContentStore from "../../store/siteContentStore.js";
 
 function HeroCarousel() {
   const slides = useMemo(
@@ -79,7 +80,7 @@ function HeroCarousel() {
       </div>
 
       <div className="relative mx-auto max-w-7xl px-6 py-16 md:py-20 lg:py-24">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-center">
+        <div className="grid cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-center">
           <div
             className={`relative transition-all duration-700 ease-out ${loaded ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"}`}>
             <img
@@ -143,18 +144,26 @@ function HeroCarousel() {
 }
 
 function ServicesCarousel({ services }) {
-  const displayServices = useMemo(() => services.slice(0, 3), [services]);
+  const displayServices = useMemo(() => services.slice(0, 9), [services]);
   const [index, setIndex] = useState(0);
   const [paused, setPaused] = useState(false);
   const touchRef = useRef(null);
 
+  const chunks = useMemo(() => {
+    const res = [];
+    for (let i = 0; i < displayServices.length; i += 3) {
+      res.push(displayServices.slice(i, i + 3));
+    }
+    return res;
+  }, [displayServices]);
+
   useEffect(() => {
-    if (displayServices.length === 0 || paused) return;
+    if (chunks.length <= 1 || paused) return;
     const t = setInterval(() => {
-      setIndex((v) => (v + 1) % displayServices.length);
-    }, 3500);
+      setIndex((v) => (v + 1) % chunks.length);
+    }, 4500);
     return () => clearInterval(t);
-  }, [displayServices.length, paused]);
+  }, [chunks.length, paused]);
 
   function go(next) {
     setIndex(next);
@@ -166,19 +175,19 @@ function ServicesCarousel({ services }) {
 
   const handleTouchEnd = useCallback(
     (e) => {
-      if (touchRef.current === null) return;
+      if (touchRef.current === null || chunks.length <= 1) return;
       const diff = touchRef.current - e.changedTouches[0].clientX;
       const threshold = 50;
       if (Math.abs(diff) > threshold) {
         if (diff > 0) {
-          go((index + 1) % displayServices.length);
+          go((index + 1) % chunks.length);
         } else {
-          go((index - 1 + displayServices.length) % displayServices.length);
+          go((index - 1 + chunks.length) % chunks.length);
         }
       }
       touchRef.current = null;
     },
-    [index, displayServices.length],
+    [index, chunks.length],
   );
 
   if (displayServices.length === 0) {
@@ -195,140 +204,102 @@ function ServicesCarousel({ services }) {
     );
   }
 
-  const current = displayServices[index];
+  const currentChunk = chunks[index] || [];
 
   return (
     <section className="py-12 bg-background-section">
       <div className="max-w-6xl mx-auto px-4">
+        {/* Section Heading with "Our Solutions" mini-heading removed completely */}
+        <div className="text-center mb-10">
+          <h2 className="section-heading text-heading">Featured Services</h2>
+        </div>
+
         <div className="relative">
           <div className="relative">
             <div
-              className="bg-background rounded-lg shadow-sm border border-border overflow-hidden touch-pan-y"
+              className="touch-pan-y"
               onMouseEnter={() => setPaused(true)}
               onMouseLeave={() => setPaused(false)}
               onTouchStart={handleTouchStart}
               onTouchEnd={handleTouchEnd}>
-              <div className="min-h-[280px] md:min-h-[260px] lg:min-h-[280px]">
-                <div className="px-6 py-10 md:px-10 h-full">
-                  <div className="flex items-stretch gap-6 h-full">
-                    <div className="hidden md:flex items-center justify-center">
-                      <div className="w-24 h-24 rounded-lg flex items-center justify-center">
-                        <div
-                          className="text-8xl font-extrabold text-muted select-none"
-                          aria-hidden="true">
-                          {index + 1}
-                        </div>
-                      </div>
-                    </div>
-
-                    <div className="flex-1 flex flex-col text-center md:text-left h-full">
-                      <div className="text-sm text-muted">Featured Service</div>
-                      <h3 className="mt-2 section-heading text-heading">
-                        {current.service_name.split(" ").slice(0, 2).join(" ")}{" "}
+              
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-stretch animate-page-fade">
+                {currentChunk.map((item) => (
+                  <div 
+                    key={item._id} 
+                    className="bg-background rounded-lg shadow-sm border border-border overflow-hidden flex flex-col justify-between p-6 h-full min-h-[250px]"
+                  >
+                    <div className="flex-1 flex flex-col">
+                      <h3 className="subheading text-heading line-clamp-1">
+                        {item.service_name.split(" ").slice(0, 2).join(" ")}{" "}
                         <span className="text-primary-hover">
-                          {current.service_name.split(" ").slice(2).join(" ")}
+                          {item.service_name.split(" ").slice(2).join(" ")}
                         </span>
                       </h3>
-                      <p className="mt-3 text-text body-text max-w-xl line-clamp-2 mx-auto md:mx-0 flex-1">
-                        {current.description}
+                      <p className="mt-3 text-text body-text text-sm line-clamp-4 flex-1">
+                        {item.short_description || item.description}
                       </p>
-                      <div className="mt-auto pt-6 flex items-center justify-center md:justify-start gap-3">
-                        <button
-                          type="button"
-                          className="md:hidden w-10 h-10 rounded-full bg-surface border border-border hover:bg-border flex items-center justify-center cursor-pointer"
-                          onClick={() =>
-                            go(
-                              (index - 1 + displayServices.length) %
-                                displayServices.length,
-                            )
-                          }
-                          aria-label="Previous service">
-                          <FontAwesomeIcon
-                            icon={faAngleLeft}
-                            className="text-sm"
-                          />
-                        </button>
-                        <Link
-                          to={`/services/${slugify(current.service_name)}`}
-                          className="inline-flex items-center rounded-lg bg-primary text-white px-5 py-2.5 text-sm font-semibold hover:bg-primary-hover transition cursor-pointer">
-                          Read More
-                        </Link>
-                        <button
-                          type="button"
-                          className="md:hidden w-10 h-10 rounded-full bg-surface border border-border hover:bg-border flex items-center justify-center cursor-pointer"
-                          onClick={() =>
-                            go((index + 1) % displayServices.length)
-                          }
-                          aria-label="Next service">
-                          <FontAwesomeIcon
-                            icon={faAngleRight}
-                            className="text-sm"
-                          />
-                        </button>
-                      </div>
+                    </div>
+
+                    <div className="mt-5 pt-4 border-t border-border/60 flex items-center justify-between">
+                      <Link
+                        to={`/services/${slugify(item.service_name)}`}
+                        className="inline-flex items-center rounded-lg bg-primary text-white px-4 py-2 text-xs font-semibold hover:bg-primary-hover transition cursor-pointer">
+                        Read More
+                      </Link>
                     </div>
                   </div>
-                </div>
+                ))}
               </div>
             </div>
 
-            <div className="hidden md:block absolute left-0 -translate-x-1/2 top-1/2 -translate-y-1/2 z-10">
-              <button
-                type="button"
-                className="w-12 h-12 rounded-full bg-background border border-border shadow-sm hover:bg-surface flex items-center justify-center cursor-pointer"
-                onClick={() =>
-                  go(
-                    (index - 1 + displayServices.length) %
-                      displayServices.length,
-                  )
-                }
-                aria-label="Previous service">
-                <FontAwesomeIcon icon={faAngleLeft} />
-              </button>
-            </div>
-            <div className="hidden md:block absolute right-0 translate-x-1/2 top-1/2 -translate-y-1/2 z-10">
-              <button
-                type="button"
-                className="w-12 h-12 rounded-full bg-background border border-border shadow-sm hover:bg-surface flex items-center justify-center cursor-pointer"
-                onClick={() => go((index + 1) % displayServices.length)}
-                aria-label="Next service">
-                <FontAwesomeIcon icon={faAngleRight} />
-              </button>
-            </div>
+            {chunks.length > 1 && (
+              <>
+                <div className="hidden md:block absolute left-0 -translate-x-1/2 top-1/2 -translate-y-1/2 z-10">
+                  <button
+                    type="button"
+                    className="w-12 h-12 rounded-full bg-background border border-border shadow-sm hover:bg-surface flex items-center justify-center cursor-pointer"
+                    onClick={() => go((index - 1 + chunks.length) % chunks.length)}
+                    aria-label="Previous slide layer">
+                    <FontAwesomeIcon icon={faAngleLeft} />
+                  </button>
+                </div>
+                <div className="hidden md:block absolute right-0 translate-x-1/2 top-1/2 -translate-y-1/2 z-10">
+                  <button
+                    type="button"
+                    className="w-12 h-12 rounded-full bg-background border border-border shadow-sm hover:bg-surface flex items-center justify-center cursor-pointer"
+                    onClick={() => go((index + 1) % chunks.length)}
+                    aria-label="Next slide layer">
+                    <FontAwesomeIcon icon={faAngleRight} />
+                  </button>
+                </div>
+              </>
+            )}
           </div>
 
-          <div className="flex items-center justify-center gap-2 mt-6">
-            {displayServices.map((s, i) => (
-              <button
-                key={s._id}
-                type="button"
-                className={`w-2.5 h-2.5 rounded-full transition cursor-pointer ${
-                  i === index
-                    ? "bg-primary"
-                    : "bg-primary-light hover:bg-primary-hover"
-                }`}
-                onClick={() => go(i)}
-                aria-label={`Go to service ${i + 1}`}
-              />
-            ))}
-          </div>
+          {chunks.length > 1 && (
+            <div className="flex items-center justify-center gap-2 mt-6">
+              {chunks.map((_, i) => (
+                <button
+                  key={i}
+                  type="button"
+                  className={`w-2.5 h-2.5 rounded-full transition cursor-pointer ${
+                    i === index ? "bg-primary" : "bg-primary-light hover:bg-primary-hover"
+                  }`}
+                  onClick={() => go(i)}
+                  aria-label={`Go to slide panel index ${i + 1}`}
+                />
+              ))}
+            </div>
+          )}
         </div>
       </div>
     </section>
   );
 }
 
-const techItems = [
-  { name: "WordPress", code: "WP" },
-  { name: "Angular", code: "AG" },
-  { name: "HTML5", code: "H5" },
-  { name: "CSS3", code: "C3" },
-  { name: "Bootstrap", code: "BS" },
-  { name: "jQuery", code: "JQ" },
-  { name: "PHP", code: "PH" },
-];
-
-function TechnologyStack() {
+function TechnologyStack({ items = [] }) {
+  if (!items.length) return null;
   return (
     <section className="bg-secondary py-14">
       <div className="max-w-6xl mx-auto px-4">
@@ -340,7 +311,7 @@ function TechnologyStack() {
         </FadeIn>
 
         <div className="mt-10 flex flex-wrap justify-center gap-6">
-          {techItems.map((it, i) => (
+          {items.map((it, i) => (
             <FadeIn key={it.name} delay={i * 80}>
               <div className="w-28 h-28 flex flex-col items-center justify-center text-white  rounded-lg hover:text-primary hover:scale-110 transition-all duration-300 cursor-default shadow-lg">
                 <div className="text-2xl font-extrabold">{it.code}</div>
@@ -358,7 +329,8 @@ function TechnologyStack() {
   );
 }
 
-function StatsSection() {
+function StatsSection({ stats = [] }) {
+  const displayStats = stats.slice(0, 3);
   return (
     <section className="bg-background py-12">
       <div className="max-w-6xl mx-auto px-4">
@@ -390,37 +362,19 @@ function StatsSection() {
             </div>
           </FadeIn>
 
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
-            <FadeIn delay={100}>
-              <div className="bg-background border border-border rounded-lg p-6 text-center shadow-sm flex flex-col items-center justify-center min-h-[120px]">
-                <div className="text-4xl font-extrabold text-heading">
-                  <AnimatedCounter target={8} suffix="+" />
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 items-stretch">
+            {displayStats.map((stat, i) => (
+              <FadeIn key={stat.key || i} delay={(i + 1) * 100} className="h-full">
+                <div className="bg-background border border-border rounded-lg p-6 text-center shadow-sm flex flex-col items-center justify-center h-full min-h-[120px]">
+                  <div className="text-4xl font-extrabold text-heading">
+                    <AnimatedCounter target={stat.target} suffix={stat.suffix || ""} />
+                  </div>
+                  <div className="mt-2 text-sm font-semibold text-text">
+                    {stat.label}
+                  </div>
                 </div>
-                <div className="mt-2 text-sm font-semibold text-text">
-                  Years of Experience
-                </div>
-              </div>
-            </FadeIn>
-            <FadeIn delay={200}>
-              <div className="bg-background border border-border rounded-lg p-6 text-center shadow-sm flex flex-col items-center justify-center min-h-[120px]">
-                <div className="text-4xl font-extrabold text-heading">
-                  <AnimatedCounter target={500} suffix="+" />
-                </div>
-                <div className="mt-2 text-sm font-semibold text-text">
-                  Projects Completed
-                </div>
-              </div>
-            </FadeIn>
-            <FadeIn delay={300}>
-              <div className="bg-background border border-border rounded-lg p-6 text-center shadow-sm flex flex-col items-center justify-center min-h-[120px]">
-                <div className="text-4xl font-extrabold text-heading">
-                  <AnimatedCounter target={500} suffix="+" />
-                </div>
-                <div className="mt-2 text-sm font-semibold text-text">
-                  Satisfied Clients
-                </div>
-              </div>
-            </FadeIn>
+              </FadeIn>
+            ))}
           </div>
         </div>
       </div>
@@ -431,20 +385,26 @@ function StatsSection() {
 export default function Home() {
   const { services, fetchServices } = useServiceStore();
   const { reviews, loading: reviewsLoading, fetchReviews } = useReviewStore();
+  const { content, fetchPublicSiteContent } = useSiteContentStore();
   const navigate = useNavigate();
 
   useEffect(() => {
     fetchServices();
     fetchReviews();
-  }, [fetchServices, fetchReviews]);
+    fetchPublicSiteContent();
+  }, [fetchServices, fetchReviews, fetchPublicSiteContent]);
+
+  const techItems = content?.technologyStackItems ?? [];
+  const companyStats = content?.companyStats ?? [];
+  const trustLogos = content?.trustMarqueeLogos ?? [];
 
   return (
     <div>
       <HeroCarousel />
-      <StatsSection />
+      <StatsSection stats={companyStats} />
       <ServicesCarousel services={services} />
-      <TechnologyStack />
-      <LogoMarquee bg="bg-background" />
+      <TechnologyStack items={techItems} />
+      <LogoMarquee logos={trustLogos} bg="bg-background" />
 
       {/* Team teaser */}
       <section className="bg-secondary py-16 text-white">

@@ -43,6 +43,7 @@ export default function AdminCaseStudies() {
   const [loading, setLoading] = useState(false);
   const [page, setPage] = useState(1);
   const [pagination, setPagination] = useState({ total: 0, page: 1, pages: 1 });
+  const galleryRef = useRef(null);
 
   const emptyForm = useMemo(
     () => ({
@@ -81,6 +82,7 @@ export default function AdminCaseStudies() {
   const formRef = useRef(null);
   const [deleteTarget, setDeleteTarget] = useState(null);
   const [deleteAllTarget, setDeleteAllTarget] = useState(false);
+  const [confirmItemDelete, setConfirmItemDelete] = useState(null);
 
   const load = async () => {
     setLoading(true);
@@ -126,6 +128,7 @@ export default function AdminCaseStudies() {
   }
 
   function removeGalleryImage(index) {
+    if (galleryRef.current) galleryRef.current.value = "";
     setForm((f) => ({ ...f, gallery: f.gallery.filter((_, i) => i !== index) }));
   }
 
@@ -442,11 +445,13 @@ export default function AdminCaseStudies() {
               existingUrl={typeof form.hero_image === "string" ? resolveUrl(form.hero_image) : ""}
               onChange={onPickHeroImage}
               onRemove={() => setForm((f) => ({ ...f, hero_image: "" }))}
+              confirmText="Remove hero image?"
             />
 
             <div>
               <label className="block text-sm font-medium text-heading mb-1">Gallery Images</label>
               <input
+                ref={galleryRef}
                 type="file"
                 multiple
                 accept="image/*"
@@ -464,7 +469,7 @@ export default function AdminCaseStudies() {
                       />
                       <button
                         type="button"
-                        onClick={() => removeGalleryImage(idx)}
+                        onClick={() => setConfirmItemDelete({ type: "gallery", index: idx })}
                         className="absolute top-0 right-0 bg-primary text-white w-4 h-4 flex items-center justify-center text-xs cursor-pointer">
                         <FontAwesomeIcon icon={faTrash} className="w-3 h-3" />
                       </button>
@@ -489,7 +494,7 @@ export default function AdminCaseStudies() {
                     className="flex-1 rounded-lg border border-border bg-background px-3 py-2 text-sm text-heading focus:border-primary focus:ring-1 focus:ring-primary-light outline-none"
                     placeholder="Objective"
                   />
-                  <button type="button" onClick={() => removeArrayItem("objectives", idx)} className="text-primary hover:text-primary-hover cursor-pointer"><FontAwesomeIcon icon={faTrash} className="w-3.5 h-3.5" /></button>
+                  <button type="button" onClick={() => setConfirmItemDelete({ type: "objectives", index: idx })} className="text-primary hover:text-primary-hover cursor-pointer"><FontAwesomeIcon icon={faTrash} className="w-3.5 h-3.5" /></button>
                 </div>
               ))}
             </div>
@@ -509,7 +514,7 @@ export default function AdminCaseStudies() {
                     className="flex-1 rounded-lg border border-border bg-background px-3 py-2 text-sm text-heading focus:border-primary focus:ring-1 focus:ring-primary-light outline-none"
                     placeholder="Deliverable"
                   />
-                  <button type="button" onClick={() => removeArrayItem("deliverables", idx)} className="text-primary hover:text-primary-hover cursor-pointer"><FontAwesomeIcon icon={faTrash} className="w-3.5 h-3.5" /></button>
+                  <button type="button" onClick={() => setConfirmItemDelete({ type: "deliverables", index: idx })} className="text-primary hover:text-primary-hover cursor-pointer"><FontAwesomeIcon icon={faTrash} className="w-3.5 h-3.5" /></button>
                 </div>
               ))}
             </div>
@@ -563,7 +568,7 @@ export default function AdminCaseStudies() {
                     className="w-full rounded border border-border bg-background px-3 py-2 text-sm text-heading focus:border-primary focus:ring-1 focus:ring-primary-light outline-none"
                     placeholder="Step description"
                   />
-                  <button type="button" onClick={() => removeObjectItem("development_process", idx)} className="text-primary hover:text-primary-hover cursor-pointer"><FontAwesomeIcon icon={faTrash} className="w-3.5 h-3.5" /></button>
+                  <button type="button" onClick={() => setConfirmItemDelete({ type: "development_process", index: idx })} className="text-primary hover:text-primary-hover cursor-pointer"><FontAwesomeIcon icon={faTrash} className="w-3.5 h-3.5" /></button>
                 </div>
               ))}
             </div>
@@ -590,7 +595,7 @@ export default function AdminCaseStudies() {
                     className="w-full rounded border border-border bg-background px-3 py-2 text-sm text-heading focus:border-primary focus:ring-1 focus:ring-primary-light outline-none"
                     placeholder="Solution"
                   />
-                  <button type="button" onClick={() => removeObjectItem("challenges_and_solutions", idx)} className="text-primary hover:text-primary-hover cursor-pointer"><FontAwesomeIcon icon={faTrash} className="w-3.5 h-3.5" /></button>
+                  <button type="button" onClick={() => setConfirmItemDelete({ type: "challenges_and_solutions", index: idx })} className="text-primary hover:text-primary-hover cursor-pointer"><FontAwesomeIcon icon={faTrash} className="w-3.5 h-3.5" /></button>
                 </div>
               ))}
             </div>
@@ -618,7 +623,7 @@ export default function AdminCaseStudies() {
                       className="flex-1 rounded border border-border bg-background px-3 py-2 text-sm text-heading focus:border-primary focus:ring-1 focus:ring-primary-light outline-none"
                       placeholder="Value"
                     />
-                    <button type="button" onClick={() => removeObjectItem("results", idx)} className="text-primary hover:text-primary-hover cursor-pointer"><FontAwesomeIcon icon={faTrash} className="w-3.5 h-3.5" /></button>
+                    <button type="button" onClick={() => setConfirmItemDelete({ type: "results", index: idx })} className="text-primary hover:text-primary-hover cursor-pointer"><FontAwesomeIcon icon={faTrash} className="w-3.5 h-3.5" /></button>
                   </div>
                 </div>
               ))}
@@ -812,6 +817,19 @@ export default function AdminCaseStudies() {
         onCancel={() => setDeleteAllTarget(false)}
         onConfirm={onConfirmDeleteAll}
         message="Are you sure you want to delete ALL case studies? This action cannot be undone."
+      />
+      <ConfirmModal
+        open={confirmItemDelete !== null}
+        onCancel={() => setConfirmItemDelete(null)}
+        onConfirm={() => {
+          if (!confirmItemDelete) return;
+          const { type, index } = confirmItemDelete;
+          if (type === "gallery") removeGalleryImage(index);
+          else if (type === "objectives" || type === "deliverables") removeArrayItem(type, index);
+          else removeObjectItem(type, index);
+          setConfirmItemDelete(null);
+        }}
+        message="Remove this item?"
       />
     </div>
   );

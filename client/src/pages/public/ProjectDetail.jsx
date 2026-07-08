@@ -217,7 +217,7 @@ export default function ProjectDetail() {
                   key={i}
                   src={resolveImagePath(img)}
                   alt={`Gallery ${i + 1}`}
-                  className="w-full aspect-video object-cover border border-border rounded-lg"
+                  className="w-full aspect-video object-cover border border-border rounded-img"
                   loading="lazy"
                 />
               ))}

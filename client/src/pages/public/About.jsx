@@ -20,9 +20,14 @@ import LogoMarquee from "../../components/public/LogoMarquee.jsx";
 import TestimonialsSection from "../../components/public/TestimonialsSection.jsx";
 import FinalCTA from "../../components/public/FinalCTA.jsx";
 import useReviewStore from "../../store/reviewStore.js";
+import useSiteContentStore from "../../store/siteContentStore.js";
 
 /* ─── Section: Who We Are ─────────────────────────────────── */
-function WhoWeAre() {
+function WhoWeAre({ stats = [] }) {
+  const icons = [faUsers, faChartLine, faRocket, faHandshake];
+  const displayStats = stats.slice(0, 4);
+  if (!displayStats.length) return null;
+
   return (
     <section className="py-12 md:py-16 bg-background-section">
       <div className="max-w-6xl mx-auto px-4">
@@ -55,48 +60,18 @@ function WhoWeAre() {
 
           <FadeIn direction="right">
             <div className="grid grid-cols-2 gap-4">
-              <div className="bg-primary-light rounded-lg p-6 text-center">
-                <FontAwesomeIcon
-                  icon={faUsers}
-                  className="text-3xl text-primary"
-                />
-                <div className="mt-3 text-2xl font-extrabold text-heading">
-                  25+
+              {displayStats.map((stat, i) => (
+                <div key={stat.key || i} className="bg-primary-light rounded-lg p-6 text-center">
+                  <FontAwesomeIcon
+                    icon={icons[i] || faChartLine}
+                    className="text-3xl text-primary"
+                  />
+                  <div className="mt-3 text-2xl font-extrabold text-heading">
+                    {stat.target}{stat.suffix || ""}
+                  </div>
+                  <div className="text-xs text-muted mt-1">{stat.label}</div>
                 </div>
-                <div className="text-xs text-muted mt-1">Team Members</div>
-              </div>
-              <div className="bg-primary-light rounded-lg p-6 text-center">
-                <FontAwesomeIcon
-                  icon={faChartLine}
-                  className="text-3xl text-primary"
-                />
-                <div className="mt-3 text-2xl font-extrabold text-heading">
-                  8+
-                </div>
-                <div className="text-xs text-muted mt-1">Years Experience</div>
-              </div>
-              <div className="bg-primary-light rounded-lg p-6 text-center">
-                <FontAwesomeIcon
-                  icon={faRocket}
-                  className="text-3xl text-primary"
-                />
-                <div className="mt-3 text-2xl font-extrabold text-heading">
-                  500+
-                </div>
-                <div className="text-xs text-muted mt-1">
-                  Projects Delivered
-                </div>
-              </div>
-              <div className="bg-primary-light rounded-lg p-6 text-center">
-                <FontAwesomeIcon
-                  icon={faHandshake}
-                  className="text-3xl text-primary"
-                />
-                <div className="mt-3 text-2xl font-extrabold text-heading">
-                  100%
-                </div>
-                <div className="text-xs text-muted mt-1">Client Focus</div>
-              </div>
+              ))}
             </div>
           </FadeIn>
         </div>
@@ -259,10 +234,29 @@ function MeetOurTeam() {
 /* ─── Main About Page ─────────────────────────────────────── */
 export default function About() {
   const { reviews, loading: reviewsLoading, fetchReviews } = useReviewStore();
+  const { content, fetchPublicSiteContent } = useSiteContentStore();
 
   useEffect(() => {
     fetchReviews();
-  }, [fetchReviews]);
+    fetchPublicSiteContent();
+  }, [fetchReviews, fetchPublicSiteContent]);
+
+  const companyStats = content?.companyStats ?? [];
+  const trustMarqueeLogos = content?.trustMarqueeLogos ?? [];
+
+  const getStat = (key) => {
+    const s = companyStats.find((st) => st.key === key);
+    return s ? `${s.target}${s.suffix}` : "";
+  };
+
+  const aboutStats = ['teamMembers', 'yearsExperience', 'projectsCompleted', 'satisfactionGoal']
+    .map(key => companyStats.find(s => s.key === key))
+    .filter(Boolean);
+
+  const whyChooseUsStats = ['clientRetention', 'support247', 'averageRoi', 'satisfactionGoal']
+    .map(key => companyStats.find(s => s.key === key))
+    .filter(Boolean)
+    .map(s => ({ value: `${s.target}${s.suffix}`, label: s.label }));
 
   return (
     <div>
@@ -276,9 +270,9 @@ export default function About() {
         imageSrc="/aboutus.webp"
         imageAlt="About Us"
         trustIndicators={[
-          { value: "25+", label: "Team\nMembers" },
-          { value: "500+", label: "Projects\nDelivered" },
-          { value: "98%", label: "Client\nRetention" },
+          { value: getStat("teamMembers") || "25+", label: "Team\nMembers" },
+          { value: getStat("projectsCompleted") || "500+", label: "Projects\nDelivered" },
+          { value: getStat("clientRetention") || "98%", label: "Client\nRetention" },
         ]}
       />
 
@@ -315,7 +309,7 @@ export default function About() {
       </section>
 
       {/* 3. Who We Are */}
-      <WhoWeAre />
+      <WhoWeAre stats={aboutStats} />
 
       {/* 4. Mission | Vision */}
       <MissionVision />
@@ -324,7 +318,7 @@ export default function About() {
       <OurValues />
 
       {/* 6. Why Choose Us */}
-      <WhyChooseUs bg="bg-background" />
+      <WhyChooseUs stats={whyChooseUsStats} bg="bg-background" />
 
       {/* 7. Our Process (Timeline) */}
       <OurProcess bg="bg-background-section" />
@@ -336,7 +330,7 @@ export default function About() {
       <TestimonialsSection reviews={reviews} loading={reviewsLoading} bg="bg-background" />
 
       {/* 10. Trusted By */}
-      <LogoMarquee bg="bg-background-section" />
+      <LogoMarquee logos={trustMarqueeLogos} bg="bg-background-section" />
 
       {/* 11. Final CTA */}
       <FinalCTA />

@@ -4,6 +4,7 @@ import { toast, Toaster } from "sonner";
 import { setAdminProfile } from "../../auth/adminAuth.js";
 import useAuthStore from "../../store/authStore.js";
 import apiService from "../../services/apiService.js";
+import useBrandSettingsStore from "../../store/brandSettingsStore.js";
 
 export default function AdminRegister() {
   const navigate = useNavigate();
@@ -13,8 +14,10 @@ export default function AdminRegister() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState(null);
   const [blocked, setBlocked] = useState(false);
+  const { content, fetchBrandSettings } = useBrandSettingsStore();
 
   useEffect(() => {
+    fetchBrandSettings();
     apiService
       .get("/admin/check")
       .then((res) => {
@@ -24,7 +27,7 @@ export default function AdminRegister() {
         }
       })
       .catch(() => {});
-  }, [navigate]);
+  }, [navigate, fetchBrandSettings]);
 
   const isValid = useMemo(
     () =>
@@ -70,10 +73,13 @@ export default function AdminRegister() {
   return (
     <div className="py-10 max-w-md mx-auto">
       <Toaster position="top-right" richColors closeButton />
-      <div className="text-center">
-        <div className="w-14 h-14 rounded bg-primary mx-auto text-white flex items-center justify-center font-bold">
-          A
-        </div>
+      <div className="flex flex-col items-center">
+        <img
+          src={content?.brand?.logo || "/crown-99.png"}
+          alt={`${content?.brand?.name || "CrawlCrown"} Logo`}
+          className="h-14 w-14 rounded-xl object-contain bg-background p-1 shadow-sm border border-border"
+        />
+        <p className="mt-3 text-lg font-semibold tracking-tight text-heading">{content?.brand?.name || "CrawlCrown"}</p>
         <h2 className="mt-4 text-xl font-bold text-heading">
           Admin Registration
         </h2>

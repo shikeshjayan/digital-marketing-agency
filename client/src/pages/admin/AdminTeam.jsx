@@ -231,6 +231,7 @@ export default function AdminTeam() {
               }
               onChange={onPickImage}
               onRemove={() => setForm((f) => ({ ...f, photo: "" }))}
+              confirmText="Remove photo?"
             />
             <FormField
               label="Name"

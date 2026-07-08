@@ -12,6 +12,8 @@ import {
   faCogs,
 } from "@fortawesome/free-solid-svg-icons";
 import useProjectStore from "../../store/projectStore.js";
+import useSiteContentStore from "../../store/siteContentStore.js";
+import useServiceStore from "../../store/serviceStore.js";
 import useReviewStore from "../../store/reviewStore.js";
 import HeroSplit from "../../components/public/HeroSplit.jsx";
 import FadeIn from "../../components/ui/FadeIn.jsx";
@@ -20,34 +22,18 @@ import AnimatedCounter from "../../components/ui/AnimatedCounter.jsx";
 import { ProjectCardSkeleton } from "../../components/ui/Skeleton.jsx";
 import FinalCTA from "../../components/public/FinalCTA.jsx";
 import TestimonialsSection from "../../components/public/TestimonialsSection.jsx";
-import resolveImagePath from "../../utils/resolveImagePath.js";
-
-const categories = [
-  "All",
-  "SEO",
-  "Web Design",
-  "Google Ads",
-  "Meta Ads",
-  "Branding",
-  "E-commerce",
-];
+import ImageLoader from "../../components/ui/ImageLoader.jsx";
 
 /* ─── Project Card ────────────────────────────────────────── */
 const ProjectCard = ({ project }) => {
   return (
     <div className="group block bg-background border border-border rounded-lg overflow-hidden hover:shadow-lg hover:border-primary transition-all duration-300 h-full flex flex-col">
       <div className="relative overflow-hidden aspect-[16/10] w-full bg-surface">
-        <img
-          src={resolveImagePath(project.image)}
+        <ImageLoader
+          src={project.thumbnail || project.image}
           alt={project.project_name}
-          loading="lazy"
-          decoding="async"
-          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-          onError={(e) => {
-            e.target.onerror = null;
-            e.target.src =
-              "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='250' viewBox='0 0 400 250'%3E%3Crect fill='%23F8FAFC' width='400' height='250'/%3E%3Ctext x='200' y='130' text-anchor='middle' fill='%236B7280' font-size='16' font-family='sans-serif'%3ENo Image%3C/text%3E%3C/svg%3E";
-          }}
+          type="project"
+          className="w-full h-full group-hover:scale-105 transition-transform duration-500"
         />
       </div>
 
@@ -57,27 +43,29 @@ const ProjectCard = ({ project }) => {
         </h3>
 
         <div className="mt-2 flex items-center gap-2 text-xs flex-wrap">
-          <span className="inline-block px-2.5 py-0.5 rounded-full bg-primary-light text-primary font-semibold">
-            {project.category}
-          </span>
-          {project.industry && (
+          {project.services?.length > 0 && (
+            <span className="inline-block px-2.5 py-0.5 rounded-full bg-primary-light text-primary font-semibold">
+              {typeof project.services[0] === "object" ? project.services[0].service_name : "Service"}
+            </span>
+          )}
+          {project.industries?.length > 0 && (
             <span className="inline-block px-2.5 py-0.5 rounded-full bg-surface text-text font-semibold border border-border">
-              {project.industry}
+              {typeof project.industries[0] === "object" ? project.industries[0].name : "Industry"}
             </span>
           )}
         </div>
 
         <div className="mt-3 flex flex-wrap gap-x-4 gap-y-1 text-xs text-muted">
-          {project.client_name && (
+          {project.client?.name && (
             <span className="flex items-center gap-1">
               <FontAwesomeIcon icon={faBuilding} className="text-[10px]" />
-              {project.client_name}
+              {project.client.name}
             </span>
           )}
-          {project.duration && (
+          {project.completion_date && (
             <span className="flex items-center gap-1">
               <FontAwesomeIcon icon={faClock} className="text-[10px]" />
-              {project.duration}
+              {new Date(project.completion_date).toLocaleDateString("en-US", { year: "numeric", month: "short" })}
             </span>
           )}
         </div>
@@ -85,7 +73,7 @@ const ProjectCard = ({ project }) => {
         {project.technologies && project.technologies.length > 0 && (
           <div className="mt-2 flex items-center gap-1 text-xs text-muted">
             <FontAwesomeIcon icon={faCogs} className="text-[10px]" />
-            <span className="truncate">{project.technologies.join(", ")}</span>
+            <span className="truncate">{project.technologies.map(t => typeof t === "object" ? t.name : t).join(", ")}</span>
           </div>
         )}
 
@@ -100,7 +88,7 @@ const ProjectCard = ({ project }) => {
             Read more
           </Link>
           <a
-            href={project.live_url}
+            href={project.project_url}
             target="_blank"
             rel="noreferrer"
             className="inline-flex items-center gap-2 text-primary hover:text-primary-hover hover:gap-3 transition-all duration-300">
@@ -114,13 +102,9 @@ const ProjectCard = ({ project }) => {
 };
 
 /* ─── Section: Project Statistics ─────────────────────────── */
-function ProjectStatistics() {
-  const stats = [
-    { target: 150, suffix: "+", label: "Projects Delivered" },
-    { target: 50, suffix: "+", label: "Happy Clients" },
-    { target: 10, suffix: "+", label: "Countries Served" },
-    { target: 15, suffix: "+", label: "Industry Awards" },
-  ];
+function ProjectStatistics({ stats = [] }) {
+  const displayStats = stats.slice(0, 4);
+  if (!displayStats.length) return null;
 
   return (
     <section className="py-12 md:py-16 bg-background-section">
@@ -140,8 +124,8 @@ function ProjectStatistics() {
         </FadeIn>
 
         <div className="mt-10 grid grid-cols-2 md:grid-cols-4 gap-6">
-          {stats.map((s, i) => (
-            <FadeIn key={s.label} delay={i * 100}>
+          {displayStats.map((s, i) => (
+            <FadeIn key={s.key || i} delay={i * 100}>
               <div className="bg-white/5 border border-white/10 rounded-lg p-6 text-center hover:bg-white/10 transition">
                 <div className="text-3xl md:text-4xl font-extrabold text-primary">
                   <AnimatedCounter target={s.target} suffix={s.suffix} />
@@ -160,7 +144,7 @@ function ProjectStatistics() {
 
 /* ─── Section: Featured Case Study ────────────────────────── */
 function FeaturedCaseStudy({ projects }) {
-  const featured = projects.find((p) => p.status === "Active") || projects[0];
+  const featured = projects.find((p) => p.status === "Published") || projects[0];
 
   if (!featured) return null;
 
@@ -179,28 +163,24 @@ function FeaturedCaseStudy({ projects }) {
           <div className="mt-8 bg-background border border-border rounded-lg overflow-hidden hover:shadow-lg transition-shadow duration-300">
             <div className="grid grid-cols-1 lg:grid-cols-2">
               <div className="relative overflow-hidden aspect-[16/10] sm:aspect-[16/9] lg:aspect-auto lg:min-h-[320px] bg-surface">
-                <img
-                  src={resolveImagePath(featured.image)}
+                <ImageLoader
+                  src={featured.thumbnail || featured.image}
                   alt={featured.project_name}
-                  loading="lazy"
-                  decoding="async"
-                  className="w-full h-full object-cover"
-                  onError={(e) => {
-                    e.target.onerror = null;
-                    e.target.src =
-                      "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='250' viewBox='0 0 400 250'%3E%3Crect fill='%23F8FAFC' width='400' height='250'/%3E%3Ctext x='200' y='130' text-anchor='middle' fill='%236B7280' font-size='16' font-family='sans-serif'%3ENo Image%3C/text%3E%3C/svg%3E";
-                  }}
+                  type="project"
+                  className="w-full h-full"
                 />
               </div>
 
               <div className="p-5 sm:p-6 lg:p-8 flex flex-col">
                 <div className="flex items-center gap-2 text-xs flex-wrap">
-                  <span className="inline-block px-2.5 py-0.5 rounded-full bg-primary-light text-primary font-semibold">
-                    {featured.category}
-                  </span>
-                  {featured.industry && (
+                  {featured.services?.length > 0 && (
+                    <span className="inline-block px-2.5 py-0.5 rounded-full bg-primary-light text-primary font-semibold">
+                      {typeof featured.services[0] === "object" ? featured.services[0].service_name : "Service"}
+                    </span>
+                  )}
+                  {featured.industries?.length > 0 && (
                     <span className="inline-block px-2.5 py-0.5 rounded-full bg-surface text-text font-semibold border border-border">
-                      {featured.industry}
+                      {typeof featured.industries[0] === "object" ? featured.industries[0].name : "Industry"}
                     </span>
                   )}
                 </div>
@@ -210,19 +190,19 @@ function FeaturedCaseStudy({ projects }) {
                 </h3>
 
                 <div className="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-xs text-muted">
-                  {featured.client_name && (
+                  {featured.client?.name && (
                     <span className="flex items-center gap-1.5">
                       <FontAwesomeIcon
                         icon={faBuilding}
                         className="text-[10px]"
                       />
-                      {featured.client_name}
+                      {featured.client.name}
                     </span>
                   )}
-                  {featured.duration && (
+                  {featured.completion_date && (
                     <span className="flex items-center gap-1.5">
                       <FontAwesomeIcon icon={faClock} className="text-[10px]" />
-                      {featured.duration}
+                      {new Date(featured.completion_date).toLocaleDateString("en-US", { year: "numeric", month: "short" })}
                     </span>
                   )}
                 </div>
@@ -230,7 +210,7 @@ function FeaturedCaseStudy({ projects }) {
                 {featured.technologies && featured.technologies.length > 0 && (
                   <div className="mt-2 flex items-center gap-1.5 text-xs text-muted">
                     <FontAwesomeIcon icon={faCogs} className="text-[10px]" />
-                    <span>{featured.technologies.join(", ")}</span>
+                    <span>{featured.technologies.map(t => typeof t === "object" ? t.name : t).join(", ")}</span>
                   </div>
                 )}
 
@@ -247,35 +227,9 @@ function FeaturedCaseStudy({ projects }) {
                     </Link>
                   )}
 
-                {featured.before_after && featured.before_after.length > 0 && (
-                  <div className="mt-5 grid grid-cols-2 gap-3">
-                    {featured.before_after.slice(0, 2).map((item, idx) => (
-                      <div
-                        key={idx}
-                        className="text-center bg-surface rounded-lg p-3 border border-border">
-                        <div className="text-[10px] font-bold text-muted uppercase tracking-wider">
-                          {item.metric}
-                        </div>
-                        <div className="mt-2 flex items-center justify-center gap-2 text-xs">
-                          <span className="text-muted font-medium">
-                            {item.before}
-                          </span>
-                          <FontAwesomeIcon
-                            icon={faArrowRight}
-                            className="text-primary text-[8px]"
-                          />
-                          <span className="text-primary font-bold">
-                            {item.after}
-                          </span>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                )}
-
                 <div className="mt-auto pt-5">
                   <a
-                    href={featured.live_url}
+                    href={featured.project_url}
                     target="_blank"
                     rel="noreferrer"
                     className="inline-flex items-center gap-2 rounded-lg bg-primary text-white px-5 py-2.5 text-sm font-semibold hover:bg-primary-hover transition cursor-pointer">
@@ -293,29 +247,34 @@ function FeaturedCaseStudy({ projects }) {
 }
 
 /* ─── Section: Results & Analytics ────────────────────────── */
-function ResultsAnalytics() {
+function ResultsAnalytics({ stats = [] }) {
+  const getStatValue = (key) => {
+    const s = stats.find((st) => st.key === key);
+    return s ? `${s.target}${s.suffix}` : "";
+  };
+
   const metrics = [
     {
       icon: faChartLine,
-      value: "3x",
+      value: getStatValue("averageRoi") || "3x",
       label: "Average ROI",
       desc: "Return on investment for our clients",
     },
     {
       icon: faBullseye,
-      value: "95%",
+      value: getStatValue("onTimeDelivery") || "95%",
       label: "On-Time Delivery",
       desc: "Projects delivered within deadline",
     },
     {
       icon: faGlobe,
-      value: "10+",
+      value: getStatValue("countriesServed") || "10+",
       label: "Countries Served",
       desc: "Global client reach",
     },
     {
       icon: faCheckCircle,
-      value: "99%",
+      value: getStatValue("uptimeGuaranteed") || "99%",
       label: "Uptime Guaranteed",
       desc: "Reliable hosted solutions",
     },
@@ -359,18 +318,9 @@ function ResultsAnalytics() {
 }
 
 /* ─── Section: Client Logos (Trusted By) ──────────────────── */
-const clientLogos = [
-  { name: "Google Partner" },
-  { name: "TechVista Solutions" },
-  { name: "GreenLeaf Organics" },
-  { name: "NovaTech Systems" },
-  { name: "BrightPath Education" },
-  { name: "UrbanEdge Realty" },
-  { name: "FreshBite Foods" },
-  { name: "MedCore Health" },
-];
+function ClientLogos({ logos = [] }) {
+  if (!logos.length) return null;
 
-function ClientLogos() {
   return (
     <section className="py-12 md:py-16 bg-background-section">
       <div className="max-w-6xl mx-auto px-4">
@@ -383,11 +333,11 @@ function ClientLogos() {
         </FadeIn>
 
         <div className="mt-10 grid grid-cols-2 sm:grid-cols-4 gap-4">
-          {clientLogos.map((logo, i) => (
-            <FadeIn key={logo.name} delay={i * 60}>
+          {logos.map((logo, i) => (
+            <FadeIn key={i} delay={i * 60}>
               <div className="flex items-center justify-center bg-background border border-border rounded-lg px-4 py-5 hover:shadow-sm hover:border-primary/30 transition-all duration-200 cursor-default">
                 <span className="text-sm font-semibold text-muted text-center">
-                  {logo.name}
+                  {logo}
                 </span>
               </div>
             </FadeIn>
@@ -461,6 +411,20 @@ const Projects = () => {
   const [active, setActive] = useState("All");
   const { projects, loading, error, fetchProjects } = useProjectStore();
   const { reviews, loading: reviewsLoading, fetchReviews } = useReviewStore();
+  const { content, fetchPublicSiteContent } = useSiteContentStore();
+  const { services, fetchServices } = useServiceStore();
+
+  const categoryFilters = [
+    { id: "All", label: "All" },
+    ...services.map((s) => ({ id: s._id, label: s.service_name })),
+  ];
+
+  const companyStats = content?.companyStats ?? [];
+
+  const getStat = (key) => {
+    const s = companyStats.find((st) => st.key === key);
+    return s ? `${s.target}${s.suffix}` : "";
+  };
 
   useEffect(() => {
     fetchProjects(active);
@@ -468,7 +432,9 @@ const Projects = () => {
 
   useEffect(() => {
     fetchReviews();
-  }, [fetchReviews]);
+    fetchPublicSiteContent();
+    fetchServices();
+  }, [fetchReviews, fetchPublicSiteContent, fetchServices]);
 
   return (
     <div className="bg-background min-h-screen">
@@ -482,14 +448,14 @@ const Projects = () => {
         imageSrc="/projects.webp"
         imageAlt="Our Projects"
         trustIndicators={[
-          { value: "150+", label: "Projects\nCompleted" },
-          { value: "50+", label: "Happy\nClients" },
-          { value: "98%", label: "Client\nRetention" },
+          { value: getStat("projectsCompleted") || "500+", label: "Projects\nCompleted" },
+          { value: getStat("satisfiedClients") || "100+", label: "Happy\nClients" },
+          { value: getStat("clientRetention") || "98%", label: "Client\nRetention" },
         ]}
       />
 
       {/* 2. Project Statistics */}
-      <ProjectStatistics />
+      <ProjectStatistics stats={companyStats} />
 
       {/* 3. Category Filter + Projects Grid */}
       <section className="py-14 bg-background">
@@ -503,17 +469,17 @@ const Projects = () => {
           </FadeIn>
 
           <div className="mt-8 flex flex-wrap gap-3 justify-center">
-            {categories.map((c) => (
+            {categoryFilters.map((cat) => (
               <button
-                key={c}
+                key={cat.id}
                 type="button"
-                onClick={() => setActive(c)}
+                onClick={() => setActive(cat.id)}
                 className={`px-4 py-2 rounded-lg text-sm font-semibold border transition cursor-pointer ${
-                  active === c
+                  active === cat.id
                     ? "bg-primary text-white border-primary"
                     : "bg-background text-text border-border hover:border-primary/50 hover:text-primary"
                 }`}>
-                {c}
+                {cat.label}
               </button>
             ))}
           </div>
@@ -558,7 +524,7 @@ const Projects = () => {
           ) : (
             <div className="mt-10 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
               {projects.map((p, i) => (
-                <FadeIn key={p.project_id || p._id} delay={i * 100} className="h-full">
+                <FadeIn key={p._id} delay={i * 100} className="h-full">
                   <ProjectCard project={p} />
                 </FadeIn>
               ))}
@@ -571,10 +537,10 @@ const Projects = () => {
       <FeaturedCaseStudy projects={projects} />
 
       {/* 5. Results & Analytics */}
-      <ResultsAnalytics />
+      <ResultsAnalytics stats={companyStats} />
 
       {/* 6. Client Logos */}
-      <ClientLogos />
+      <ClientLogos logos={content?.trustMarqueeLogos} />
 
       {/* 7. Before & After Results */}
       <BeforeAfterResults />

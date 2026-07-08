@@ -346,6 +346,7 @@ export default function AdminServices() {
                 existingUrl={typeof form.hero_image === "string" ? form.hero_image : ""}
                 onChange={onPickHeroImage}
                 onRemove={() => setForm((f) => ({ ...f, hero_image: "" }))}
+                confirmText="Remove hero image?"
               />
               <FileUploadField
                 label="Icon"
@@ -353,6 +354,7 @@ export default function AdminServices() {
                 existingUrl={typeof form.icon === "string" ? form.icon : ""}
                 onChange={onPickIcon}
                 onRemove={() => setForm((f) => ({ ...f, icon: "" }))}
+                confirmText="Remove icon?"
               />
             </div>
 

@@ -1,6 +1,7 @@
-import { useMemo, useRef } from "react";
+import { useMemo, useRef, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTrash } from "@fortawesome/free-solid-svg-icons";
+import ConfirmModal from "./ConfirmModal.jsx";
 
 export default function FileUploadField({
   label,
@@ -11,8 +12,11 @@ export default function FileUploadField({
   onRemove,
   accept = "image/*",
   className = "",
+  containerHeight = "h-16",
+  confirmText = "",
 }) {
   const inputRef = useRef(null);
+  const [confirmingRemove, setConfirmingRemove] = useState(false);
   const previewUrl = useMemo(() => {
     if (file instanceof File) return URL.createObjectURL(file);
     return "";
@@ -25,13 +29,13 @@ export default function FileUploadField({
       <label className="text-sm font-semibold text-heading">
         {label} {required && <span className="text-primary">*</span>}
       </label>
-      <div className="mt-2 relative w-full h-16">
-        <label className="flex flex-col items-center justify-center w-full h-16 border-2 border-dashed border-border rounded cursor-pointer hover:border-primary hover:bg-primary-light transition">
+      <div className={`mt-2 relative w-full ${containerHeight}`}>
+        <label className={`flex flex-col items-center justify-center w-full ${containerHeight} border-2 border-dashed border-border rounded cursor-pointer hover:border-primary hover:bg-primary-light transition`}>
           {displayUrl ? (
             <img
               src={displayUrl}
               alt="Preview"
-              className="h-16 w-full object-cover rounded"
+              className={`${containerHeight} w-full object-cover rounded`}
             />
           ) : (
             <>
@@ -74,6 +78,10 @@ export default function FileUploadField({
             onClick={(e) => {
               e.preventDefault();
               e.stopPropagation();
+              if (confirmText) {
+                setConfirmingRemove(true);
+                return;
+              }
               if (inputRef.current) inputRef.current.value = "";
               onRemove?.();
             }}
@@ -83,6 +91,17 @@ export default function FileUploadField({
           </button>
         )}
       </div>
+
+      <ConfirmModal
+        open={confirmingRemove}
+        onCancel={() => setConfirmingRemove(false)}
+        onConfirm={() => {
+          setConfirmingRemove(false);
+          if (inputRef.current) inputRef.current.value = "";
+          onRemove?.();
+        }}
+        message={confirmText}
+      />
     </div>
   );
 }

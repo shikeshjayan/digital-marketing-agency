@@ -49,6 +49,7 @@ export default function AdminProjects() {
   const [loading, setLoading] = useState(false);
   const [page, setPage] = useState(1);
   const [pagination, setPagination] = useState({ total: 0, page: 1, pages: 1 });
+  const galleryRef = useRef(null);
 
   const emptyForm = useMemo(
     () => ({
@@ -83,6 +84,7 @@ export default function AdminProjects() {
   const formRef = useRef(null);
   const [deleteTarget, setDeleteTarget] = useState(null);
   const [deleteAllTarget, setDeleteAllTarget] = useState(false);
+  const [confirmGalleryIdx, setConfirmGalleryIdx] = useState(null);
 
   const load = async () => {
     setLoading(true);
@@ -128,10 +130,6 @@ export default function AdminProjects() {
 
   function onPickGallery(files) {
     setForm((f) => ({ ...f, gallery: [...f.gallery, ...files] }));
-  }
-
-  function removeGalleryImage(index) {
-    setForm((f) => ({ ...f, gallery: f.gallery.filter((_, i) => i !== index) }));
   }
 
   function toggleMultiSelect(field, value) {
@@ -371,11 +369,13 @@ export default function AdminProjects() {
               existingUrl={typeof form.thumbnail === "string" ? resolveUrl(form.thumbnail) : ""}
               onChange={onPickThumbnail}
               onRemove={() => setForm((f) => ({ ...f, thumbnail: "" }))}
+              confirmText="Remove thumbnail?"
             />
 
             <div>
               <label className="block text-sm font-medium text-heading mb-1">Gallery Images</label>
               <input
+                ref={galleryRef}
                 type="file"
                 multiple
                 accept="image/*"
@@ -393,7 +393,7 @@ export default function AdminProjects() {
                       />
                       <button
                         type="button"
-                        onClick={() => removeGalleryImage(idx)}
+                        onClick={() => setConfirmGalleryIdx(idx)}
                         className="absolute top-0 right-0 bg-primary text-white w-4 h-4 flex items-center justify-center text-xs cursor-pointer">
                         <FontAwesomeIcon icon={faTrash} className="w-3 h-3" />
                       </button>
@@ -695,6 +695,16 @@ export default function AdminProjects() {
         onCancel={() => setDeleteAllTarget(false)}
         onConfirm={onConfirmDeleteAll}
         message="Are you sure you want to delete ALL projects? This action cannot be undone."
+      />
+      <ConfirmModal
+        open={confirmGalleryIdx !== null}
+        onCancel={() => setConfirmGalleryIdx(null)}
+        onConfirm={() => {
+          if (galleryRef.current) galleryRef.current.value = "";
+          setForm((f) => ({ ...f, gallery: f.gallery.filter((_, i) => i !== confirmGalleryIdx) }));
+          setConfirmGalleryIdx(null);
+        }}
+        message="Remove this gallery image?"
       />
     </div>
   );

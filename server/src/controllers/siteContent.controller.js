@@ -18,9 +18,9 @@ const DEFAULT_CONTENT = {
     "SwiftWave", "BlueVista", "IronPeak", "GreenLeaf", "SkyPulse",
   ],
   companyStats: [
-    { key: "yearsExperience", target: 8, suffix: "+", label: "Years of Experience" },
+     { key: "yearsExperience", target: 10, suffix: "+", label: "Years of Experience" },
     { key: "projectsCompleted", target: 500, suffix: "+", label: "Projects Completed" },
-    { key: "satisfiedClients", target: 500, suffix: "+", label: "Satisfied Clients" },
+     { key: "satisfiedClients", target: 100, suffix: "+", label: "Satisfied Clients" },
     { key: "clientRetention", target: 98, suffix: "%", label: "Client Retention" },
     { key: "teamMembers", target: 25, suffix: "+", label: "Team Members" },
     { key: "averageRating", target: 4.9, suffix: "", label: "Average Rating" },
@@ -32,7 +32,8 @@ const DEFAULT_CONTENT = {
     { key: "uptimeGuaranteed", target: 99, suffix: "%", label: "Uptime Guaranteed" },
     { key: "responseTime", target: 24, suffix: "h", label: "Response Time" },
     { key: "freeConsultation", target: 0, suffix: "Free", label: "Consultation" },
-    { key: "satisfactionGoal", target: 100, suffix: "%", label: "Satisfaction Goal" },
+     { key: "satisfactionGoal", target: 100, suffix: "%", label: "Satisfaction Goal" },
+     { key: "clientFocus", target: 100, suffix: "%", label: "Client Focus" },
   ],
 };
 
