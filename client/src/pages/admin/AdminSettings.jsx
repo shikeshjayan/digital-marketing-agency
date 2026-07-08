@@ -3,7 +3,11 @@ import { toast } from "sonner";
 import useSettingsStore from "../../store/settingsStore.js";
 import { setAdminProfile } from "../../auth/adminAuth.js";
 import FileUploadField from "../../components/ui/FileUploadField.jsx";
+import AdminPageHeader from "../../components/ui/AdminPageHeader.jsx";
+import ErrorBanner from "../../components/ui/ErrorBanner.jsx";
 import resolveImagePath from "../../utils/resolveImagePath.js";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faTrash } from "@fortawesome/free-solid-svg-icons";
 
 export default function AdminSettings() {
   const { profile, loading, fetchProfile, updateProfile } = useSettingsStore();
@@ -78,16 +82,10 @@ export default function AdminSettings() {
 
   return (
     <div>
-      <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-3">
-        <div>
-          <h2 className="text-xl font-extrabold text-heading">
-            Admin Settings
-          </h2>
-          <p className="mt-1 text-sm text-text">
-            Update your profile and password.
-          </p>
-        </div>
-      </div>
+      <AdminPageHeader
+        title="Admin Settings"
+        subtitle="Update your profile and password."
+      />
 
       <div className="mt-6 bg-background border border-border rounded p-5 shadow-xs">
         <form
@@ -128,18 +126,7 @@ export default function AdminSettings() {
                   }}
                   className="absolute top-1 right-1 p-1 bg-background/80 hover:bg-primary-light rounded-full shadow transition cursor-pointer"
                   title="Remove image">
-                  <svg
-                    className="w-4 h-4 text-primary hover:text-primary-hover"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24">
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
-                    />
-                  </svg>
+                  <FontAwesomeIcon icon={faTrash} className="w-4 h-4 text-primary hover:text-primary-hover" />
                 </button>
               </div>
             )}
@@ -193,23 +180,7 @@ export default function AdminSettings() {
                 />
               </div>
 
-              {error && (
-                <div className="flex items-center gap-2 text-sm text-primary bg-primary-light rounded px-4 py-2">
-                  <svg
-                    className="w-4 h-4 shrink-0"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24">
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-                    />
-                  </svg>
-                  {error}
-                </div>
-              )}
+              <ErrorBanner message={error} />
 
               <div className="pt-2">
                 <button

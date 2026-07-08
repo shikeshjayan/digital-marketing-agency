@@ -13,6 +13,8 @@ import FormField from "../../components/ui/FormField.jsx";
 import FileUploadField from "../../components/ui/FileUploadField.jsx";
 import FormActions from "../../components/ui/FormActions.jsx";
 import ErrorBanner from "../../components/ui/ErrorBanner.jsx";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faTrash, faPen } from "@fortawesome/free-solid-svg-icons";
 
 const inputCls =
   "w-full rounded border border-border bg-surface px-4 py-2 text-sm text-text outline-none transition focus:border-primary focus:bg-background focus:ring-2 focus:ring-primary-light placeholder:text-muted";
@@ -250,7 +252,7 @@ export default function AdminServices() {
       <div className="mt-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
         <div
           ref={formRef}
-          className="lg:col-span-2 bg-background border border-border rounded p-4 shadow-xs">
+          className="lg:col-span-2 bg-background border border-border rounded p-4 shadow-xs lg:h-[80vh] lg:overflow-y-auto">
           <div className="font-extrabold text-heading">
             {form.service_id ? "Edit Service" : "Add New Service"}
           </div>
@@ -368,7 +370,7 @@ export default function AdminServices() {
                       type="button"
                       onClick={() => onRemoveTag("deliverables", i)}
                       className="ml-1 text-primary hover:text-primary-hover cursor-pointer">
-                      &times;
+                      <FontAwesomeIcon icon={faTrash} className="w-3 h-3" />
                     </button>
                   </span>
                 ))}
@@ -403,7 +405,7 @@ export default function AdminServices() {
                       type="button"
                       onClick={() => onRemoveTag("benefits", i)}
                       className="ml-1 text-success hover:text-success/80 cursor-pointer">
-                      &times;
+                      <FontAwesomeIcon icon={faTrash} className="w-3 h-3" />
                     </button>
                   </span>
                 ))}
@@ -468,7 +470,7 @@ export default function AdminServices() {
           </form>
         </div>
 
-        <div className="lg:col-span-3 bg-background border border-border rounded p-5 shadow-xs flex flex-col">
+        <div className="lg:col-span-3 bg-background border border-border rounded p-5 shadow-xs flex flex-col lg:h-[80vh]">
           <AdminListFooter
             loading={loading}
             total={pagination.total}
@@ -553,14 +555,16 @@ export default function AdminServices() {
                                 behavior: "smooth",
                                 block: "start",
                               });
-                            }}>
-                            Edit
+                            }}
+                            title="Edit">
+                            <FontAwesomeIcon icon={faPen} className="w-4 h-4" />
                           </button>
                           <button
                             type="button"
                             className="px-3 py-2 text-xs sm:px-4 sm:py-2 sm:text-sm min-h-[44px] text-primary hover:text-primary-hover rounded transition cursor-pointer"
+                            title="Delete"
                             onClick={() => onDelete(s._id)}>
-                            Delete
+                            <FontAwesomeIcon icon={faTrash} className="w-4 h-4" />
                           </button>
                         </div>
                       </td>

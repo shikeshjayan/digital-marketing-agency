@@ -32,6 +32,7 @@ import TestimonialsSection from "../../components/public/TestimonialsSection.jsx
 import LogoMarquee from "../../components/public/LogoMarquee.jsx";
 import useServiceStore from "../../store/serviceStore";
 import useReviewStore from "../../store/reviewStore.js";
+import useCaseStudyStore from "../../store/caseStudyStore";
 import { slugify } from "../../utils/slugify";
 import resolveImagePath from "../../utils/resolveImagePath";
 
@@ -133,28 +134,7 @@ function IndustriesWeServe() {
 }
 
 /* ─── Featured Case Studies ──────────────────────────────── */
-const featuredCases = [
-  {
-    client: "NovaTech Solutions",
-    industry: "Technology",
-    metric: "+312% Organic Traffic",
-    result: "Top-3 rankings for 15 target keywords in 6 months.",
-  },
-  {
-    client: "GreenLeaf Retail",
-    industry: "Retail / E-Commerce",
-    metric: "+47% Conversion Rate",
-    result: "2.8x increase in monthly revenue after UX redesign.",
-  },
-  {
-    client: "BrightPath Academy",
-    industry: "Education",
-    metric: "+180% Enrollment Inquiries",
-    result: "65% reduction in cost-per-lead via Google Ads.",
-  },
-];
-
-function FeaturedCaseStudies() {
+function FeaturedCaseStudies({ caseStudies, loading }) {
   return (
     <section className="py-16 md:py-20 bg-background">
       <div className="max-w-6xl mx-auto px-4">
@@ -166,27 +146,56 @@ function FeaturedCaseStudies() {
           />
         </FadeIn>
 
-        <div className="mt-10 grid grid-cols-1 md:grid-cols-3 gap-6">
-          {featuredCases.map((cs, i) => (
-            <FadeIn key={i} delay={i * 100}>
-              <div className="bg-background border border-border rounded-lg p-6 h-full flex flex-col hover:shadow-md transition group">
-                <span className="text-xs font-semibold text-primary bg-primary-light px-2.5 py-1 rounded w-fit">
-                  {cs.industry}
-                </span>
-                <h3 className="mt-3 body-text font-bold text-heading">{cs.client}</h3>
-                <div className="mt-3 text-2xl font-extrabold text-primary">
-                  {cs.metric}
-                </div>
-                <p className="mt-2 small-text text-text body-text flex-1">{cs.result}</p>
-                <Link
-                  to="/projects"
-                  className="mt-4 inline-flex items-center gap-2 text-sm font-semibold text-primary group-hover:gap-3 transition-all">
-                  Read Case Study <FontAwesomeIcon icon={faArrowRight} />
-                </Link>
+        {loading ? (
+          <div className="mt-10 grid grid-cols-1 md:grid-cols-3 gap-6">
+            {[...Array(3)].map((_, i) => (
+              <div key={i} className="bg-background border border-border rounded-lg p-6 h-full animate-pulse">
+                <div className="h-4 w-20 bg-surface rounded" />
+                <div className="h-5 w-40 bg-surface rounded mt-4" />
+                <div className="h-8 w-32 bg-surface rounded mt-3" />
+                <div className="h-4 w-full bg-surface rounded mt-3" />
+                <div className="h-4 w-2/3 bg-surface rounded mt-2" />
               </div>
-            </FadeIn>
-          ))}
-        </div>
+            ))}
+          </div>
+        ) : caseStudies.length === 0 ? (
+          <div className="mt-10 text-center py-12">
+            <p className="text-muted">No featured case studies available yet.</p>
+          </div>
+        ) : (
+          <div className="mt-10 grid grid-cols-1 md:grid-cols-3 gap-6">
+            {caseStudies.map((cs, i) => (
+              <FadeIn key={cs._id} delay={i * 100}>
+                <div className="bg-background border border-border rounded-lg p-6 h-full flex flex-col hover:shadow-md transition group">
+                  {cs.hero_image && (
+                    <div className="-mx-6 -mt-6 mb-4 overflow-hidden rounded-t-lg">
+                      <img
+                        src={resolveImagePath(cs.hero_image)}
+                        alt={cs.title}
+                        className="w-full h-40 object-cover"
+                      />
+                    </div>
+                  )}
+                  <span className="text-xs font-semibold text-primary bg-primary-light px-2.5 py-1 rounded w-fit">
+                    {cs.results?.[0]?.title || "Case Study"}
+                  </span>
+                  <h3 className="mt-3 body-text font-bold text-heading">{cs.title}</h3>
+                  {cs.results?.[0] && (
+                    <div className="mt-3 text-2xl font-extrabold text-primary">
+                      {cs.results[0].value}
+                    </div>
+                  )}
+                  <p className="mt-2 small-text text-text body-text flex-1 line-clamp-3">{cs.overview}</p>
+                  <Link
+                    to={`/case-studies/${cs.slug}`}
+                    className="mt-4 inline-flex items-center gap-2 text-sm font-semibold text-primary group-hover:gap-3 transition-all">
+                    Read Case Study <FontAwesomeIcon icon={faArrowRight} />
+                  </Link>
+                </div>
+              </FadeIn>
+            ))}
+          </div>
+        )}
       </div>
     </section>
   );
@@ -316,11 +325,13 @@ const faqItems = [
 const Services = () => {
   const { services, loading, error, fetchServices } = useServiceStore();
   const { reviews, loading: reviewsLoading, fetchReviews } = useReviewStore();
+  const { caseStudies, loading: caseStudiesLoading, fetchCaseStudies } = useCaseStudyStore();
 
   useEffect(() => {
     fetchServices();
     fetchReviews();
-  }, [fetchServices, fetchReviews]);
+    fetchCaseStudies({ featured: true, limit: 3 });
+  }, [fetchServices, fetchReviews, fetchCaseStudies]);
 
   if (loading)
     return (
@@ -442,7 +453,7 @@ const Services = () => {
       <TechnologiesPlatforms />
 
       {/* 8. Featured Case Studies */}
-      <FeaturedCaseStudies />
+      <FeaturedCaseStudies caseStudies={caseStudies} loading={caseStudiesLoading} />
 
       {/* 9. Results & Statistics */}
       <ResultsStatistics />

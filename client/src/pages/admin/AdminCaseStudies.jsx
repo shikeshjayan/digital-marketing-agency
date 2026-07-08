@@ -14,6 +14,8 @@ import FormField from "../../components/ui/FormField.jsx";
 import FileUploadField from "../../components/ui/FileUploadField.jsx";
 import FormActions from "../../components/ui/FormActions.jsx";
 import ErrorBanner from "../../components/ui/ErrorBanner.jsx";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faTrash, faPen } from "@fortawesome/free-solid-svg-icons";
 
 const resolveUrl = (path) => {
   if (!path || path.startsWith("blob:") || path.startsWith("http")) return path;
@@ -344,7 +346,7 @@ export default function AdminCaseStudies() {
       <div className="mt-6 grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div
           ref={formRef}
-          className="lg:col-span-1 bg-background border border-border rounded p-4 shadow-xs max-h-[80vh] overflow-y-auto">
+          className="lg:col-span-1 bg-background border border-border rounded p-4 shadow-xs lg:h-[80vh] lg:overflow-y-auto">
           <div className="font-extrabold text-heading">
             {form.case_study_id ? "Edit Case Study" : "Add New Case Study"}
           </div>
@@ -418,15 +420,18 @@ export default function AdminCaseStudies() {
                 ]}
               />
               <div className="flex items-end pb-1">
-                <label className="flex items-center gap-2 cursor-pointer">
-                  <input
-                    type="checkbox"
-                    checked={form.featured}
-                    onChange={(e) => setForm((f) => ({ ...f, featured: e.target.checked }))}
-                    className="w-4 h-4 rounded border-border text-primary focus:ring-primary-light"
-                  />
-                  <span className="text-sm font-medium text-heading">Featured</span>
-                </label>
+                <div className="flex items-center gap-3">
+                  <label className="relative inline-flex items-center cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={form.featured}
+                      onChange={(e) => setForm((f) => ({ ...f, featured: e.target.checked }))}
+                      className="sr-only peer"
+                    />
+                    <div className="w-9 h-5 bg-border rounded-full peer peer-checked:bg-primary peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all" />
+                  </label>
+                  <span className="text-sm font-semibold text-heading">Featured</span>
+                </div>
               </div>
             </div>
 
@@ -461,7 +466,7 @@ export default function AdminCaseStudies() {
                         type="button"
                         onClick={() => removeGalleryImage(idx)}
                         className="absolute top-0 right-0 bg-primary text-white w-4 h-4 flex items-center justify-center text-xs cursor-pointer">
-                        x
+                        <FontAwesomeIcon icon={faTrash} className="w-3 h-3" />
                       </button>
                     </div>
                   ))}
@@ -484,7 +489,7 @@ export default function AdminCaseStudies() {
                     className="flex-1 rounded-lg border border-border bg-background px-3 py-2 text-sm text-heading focus:border-primary focus:ring-1 focus:ring-primary-light outline-none"
                     placeholder="Objective"
                   />
-                  <button type="button" onClick={() => removeArrayItem("objectives", idx)} className="text-primary hover:text-primary-hover text-sm cursor-pointer">Remove</button>
+                  <button type="button" onClick={() => removeArrayItem("objectives", idx)} className="text-primary hover:text-primary-hover cursor-pointer"><FontAwesomeIcon icon={faTrash} className="w-3.5 h-3.5" /></button>
                 </div>
               ))}
             </div>
@@ -504,7 +509,7 @@ export default function AdminCaseStudies() {
                     className="flex-1 rounded-lg border border-border bg-background px-3 py-2 text-sm text-heading focus:border-primary focus:ring-1 focus:ring-primary-light outline-none"
                     placeholder="Deliverable"
                   />
-                  <button type="button" onClick={() => removeArrayItem("deliverables", idx)} className="text-primary hover:text-primary-hover text-sm cursor-pointer">Remove</button>
+                  <button type="button" onClick={() => removeArrayItem("deliverables", idx)} className="text-primary hover:text-primary-hover cursor-pointer"><FontAwesomeIcon icon={faTrash} className="w-3.5 h-3.5" /></button>
                 </div>
               ))}
             </div>
@@ -558,7 +563,7 @@ export default function AdminCaseStudies() {
                     className="w-full rounded border border-border bg-background px-3 py-2 text-sm text-heading focus:border-primary focus:ring-1 focus:ring-primary-light outline-none"
                     placeholder="Step description"
                   />
-                  <button type="button" onClick={() => removeObjectItem("development_process", idx)} className="text-primary hover:text-primary-hover text-xs cursor-pointer">Remove</button>
+                  <button type="button" onClick={() => removeObjectItem("development_process", idx)} className="text-primary hover:text-primary-hover cursor-pointer"><FontAwesomeIcon icon={faTrash} className="w-3.5 h-3.5" /></button>
                 </div>
               ))}
             </div>
@@ -585,7 +590,7 @@ export default function AdminCaseStudies() {
                     className="w-full rounded border border-border bg-background px-3 py-2 text-sm text-heading focus:border-primary focus:ring-1 focus:ring-primary-light outline-none"
                     placeholder="Solution"
                   />
-                  <button type="button" onClick={() => removeObjectItem("challenges_and_solutions", idx)} className="text-primary hover:text-primary-hover text-xs cursor-pointer">Remove</button>
+                  <button type="button" onClick={() => removeObjectItem("challenges_and_solutions", idx)} className="text-primary hover:text-primary-hover cursor-pointer"><FontAwesomeIcon icon={faTrash} className="w-3.5 h-3.5" /></button>
                 </div>
               ))}
             </div>
@@ -597,7 +602,7 @@ export default function AdminCaseStudies() {
                 <button type="button" onClick={() => addObjectItem("results")} className="text-xs text-primary hover:text-primary-hover cursor-pointer">+ Add</button>
               </div>
               {form.results.map((item, idx) => (
-                <div key={idx} className="grid grid-cols-2 gap-2 mb-2">
+                <div key={idx} className="flex flex-col gap-2 mb-2">
                   <input
                     type="text"
                     value={item.title}
@@ -613,7 +618,7 @@ export default function AdminCaseStudies() {
                       className="flex-1 rounded border border-border bg-background px-3 py-2 text-sm text-heading focus:border-primary focus:ring-1 focus:ring-primary-light outline-none"
                       placeholder="Value"
                     />
-                    <button type="button" onClick={() => removeObjectItem("results", idx)} className="text-primary hover:text-primary-hover text-xs cursor-pointer">x</button>
+                    <button type="button" onClick={() => removeObjectItem("results", idx)} className="text-primary hover:text-primary-hover cursor-pointer"><FontAwesomeIcon icon={faTrash} className="w-3.5 h-3.5" /></button>
                   </div>
                 </div>
               ))}
@@ -687,7 +692,7 @@ export default function AdminCaseStudies() {
           </form>
         </div>
 
-        <div className="lg:col-span-2 bg-background border border-border rounded p-5 shadow-xs flex flex-col">
+        <div className="lg:col-span-2 bg-background border border-border rounded p-5 shadow-xs flex flex-col lg:h-[80vh]">
           <AdminListFooter
             loading={loading}
             total={pagination.total}
@@ -762,14 +767,16 @@ export default function AdminCaseStudies() {
                           <button
                             type="button"
                             className="px-3 py-2 text-xs sm:px-4 sm:py-2 sm:text-sm min-h-[44px] text-text hover:text-heading rounded transition cursor-pointer"
+                            title="Edit"
                             onClick={() => onEdit(cs)}>
-                            Edit
+                            <FontAwesomeIcon icon={faPen} className="w-4 h-4" />
                           </button>
                           <button
                             type="button"
                             className="px-3 py-2 text-xs sm:px-4 sm:py-2 sm:text-sm min-h-[44px] text-primary hover:text-primary-hover rounded transition cursor-pointer"
+                            title="Delete"
                             onClick={() => setDeleteTarget(cs._id)}>
-                            Delete
+                            <FontAwesomeIcon icon={faTrash} className="w-4 h-4" />
                           </button>
                         </div>
                       </td>

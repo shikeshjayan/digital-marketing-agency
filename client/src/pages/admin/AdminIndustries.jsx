@@ -12,6 +12,8 @@ import TableEmptyState from "../../components/ui/TableEmptyState.jsx";
 import FormField from "../../components/ui/FormField.jsx";
 import FormActions from "../../components/ui/FormActions.jsx";
 import ErrorBanner from "../../components/ui/ErrorBanner.jsx";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faTrash, faPen } from "@fortawesome/free-solid-svg-icons";
 
 export default function AdminIndustries() {
   const {
@@ -44,6 +46,7 @@ export default function AdminIndustries() {
   const [form, setForm] = useState(emptyForm);
   const [error, setError] = useState("");
   const [submitting, setSubmitting] = useState(false);
+  const [leftHeight, setLeftHeight] = useState(null);
   const formRef = useRef(null);
   const [deleteTarget, setDeleteTarget] = useState(null);
   const [deleteAllTarget, setDeleteAllTarget] = useState(false);
@@ -55,7 +58,7 @@ export default function AdminIndustries() {
         search: search || undefined,
         status: status || undefined,
         page,
-        limit: 10,
+        limit: 4,
       });
       setItems(result?.items ?? []);
       setPagination(result?.pagination ?? { total: 0, page: 1, pages: 1 });
@@ -79,6 +82,17 @@ export default function AdminIndustries() {
     return () => clearTimeout(t);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [page, search, status]);
+
+  useEffect(() => {
+    const el = formRef.current;
+    if (!el) return;
+    const ro = new ResizeObserver(([entry]) => {
+      setLeftHeight(entry.target.offsetHeight);
+    });
+    ro.observe(el);
+    setLeftHeight(el.offsetHeight);
+    return () => ro.disconnect();
+  }, []);
 
   async function onSubmit(e) {
     e.preventDefault();
@@ -188,10 +202,10 @@ export default function AdminIndustries() {
         </div>
       </div>
 
-      <div className="mt-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
+      <div className="mt-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6 lg:items-start">
         <div
           ref={formRef}
-          className="lg:col-span-2 bg-background border border-border rounded p-4 shadow-xs">
+          className="lg:col-span-2 bg-background border border-border rounded p-4 shadow-xs lg:h-fit">
           <div className="font-extrabold text-heading">
             {form._id ? "Edit Industry" : "Add New Industry"}
           </div>
@@ -249,7 +263,8 @@ export default function AdminIndustries() {
           </form>
         </div>
 
-        <div className="lg:col-span-3 bg-background border border-border rounded p-5 shadow-xs flex flex-col">
+        <div className="lg:col-span-3 bg-background border border-border rounded p-5 shadow-xs flex flex-col lg:overflow-y-auto"
+          style={leftHeight ? { height: leftHeight } : undefined}>
           <AdminListFooter
             loading={loading}
             total={pagination.total}
@@ -306,14 +321,16 @@ export default function AdminIndustries() {
                           <button
                             type="button"
                             className="px-3 py-2 text-xs sm:px-4 sm:py-2 sm:text-sm min-h-[44px] text-text hover:text-heading rounded transition cursor-pointer"
+                            title="Edit"
                             onClick={() => onEdit(ind)}>
-                            Edit
+                            <FontAwesomeIcon icon={faPen} className="w-4 h-4" />
                           </button>
                           <button
                             type="button"
                             className="px-3 py-2 text-xs sm:px-4 sm:py-2 sm:text-sm min-h-[44px] text-primary hover:text-primary-hover rounded transition cursor-pointer"
+                            title="Delete"
                             onClick={() => setDeleteTarget(ind._id)}>
-                            Delete
+                            <FontAwesomeIcon icon={faTrash} className="w-4 h-4" />
                           </button>
                         </div>
                       </td>
