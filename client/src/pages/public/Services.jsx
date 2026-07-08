@@ -1,24 +1,7 @@
 import { useEffect } from "react";
 import { Link } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  faHeartPulse,
-  faCartShopping,
-  faGraduationCap,
-  faBuilding,
-  faMoneyBillTrendUp,
-  faMicrochip,
-  faConciergeBell,
-  faStore,
-  faArrowRight,
-  faSearch,
-  faAd,
-  faEnvelope,
-  faChartLine,
-  faGlobe,
-  faPalette,
-  faShoppingBag,
-} from "@fortawesome/free-solid-svg-icons";
+import { faBuilding, faMicrochip, faArrowRight } from "@fortawesome/free-solid-svg-icons";
 import HeroSplit from "../../components/public/HeroSplit";
 import FadeIn from "../../components/ui/FadeIn.jsx";
 import SectionHeading from "../../components/ui/SectionHeading.jsx";
@@ -32,8 +15,14 @@ import TestimonialsSection from "../../components/public/TestimonialsSection.jsx
 import LogoMarquee from "../../components/public/LogoMarquee.jsx";
 import useServiceStore from "../../store/serviceStore";
 import useReviewStore from "../../store/reviewStore.js";
+import useCaseStudyStore from "../../store/caseStudyStore";
+import useIndustryStore from "../../store/industryStore.js";
+import useTechnologyStore from "../../store/technologyStore.js";
+import useFaqStore from "../../store/faqStore.js";
+import useSiteContentStore from "../../store/siteContentStore.js";
 import { slugify } from "../../utils/slugify";
 import resolveImagePath from "../../utils/resolveImagePath";
+import ImageLoader from "../../components/ui/ImageLoader.jsx";
 
 /* ─── Service Card ────────────────────────────────────────── */
 const ServiceCard = ({ service }) => (
@@ -41,17 +30,11 @@ const ServiceCard = ({ service }) => (
     to={`/services/${slugify(service.service_name)}`}
     className="flex flex-col bg-background border border-border rounded-lg h-full overflow-hidden group hover:-translate-y-1 hover:shadow-lg transition-all duration-300">
     <div className="h-48 overflow-hidden">
-      <img
-        src={resolveImagePath(service.image)}
+      <ImageLoader
+        src={service.hero_image}
         alt={service.service_name}
-        loading="lazy"
-        decoding="async"
-        className="w-full h-full object-cover bg-surface transition-transform duration-500 group-hover:scale-110"
-        onError={(e) => {
-          e.target.onerror = null;
-          e.target.src =
-            "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='200' viewBox='0 0 400 200'%3E%3Crect fill='%23F8FAFC' width='400' height='200'/%3E%3Ctext x='200' y='105' text-anchor='middle' fill='%236B7280' font-size='16' font-family='sans-serif'%3ENo Image%3C/text%3E%3C/svg%3E";
-        }}
+        type="service"
+        className="w-full h-full transition-transform duration-500 group-hover:scale-110"
       />
     </div>
     <div className="flex flex-col items-center text-center p-6 flex-1">
@@ -88,18 +71,8 @@ function Introduction() {
 }
 
 /* ─── Industries We Serve ────────────────────────────────── */
-const industries = [
-  { name: "Healthcare", icon: faHeartPulse, desc: "Digital solutions for clinics, hospitals, and health tech startups." },
-  { name: "E-Commerce", icon: faCartShopping, desc: "Conversion-focused stores and marketplace strategies." },
-  { name: "Education", icon: faGraduationCap, desc: "Engaging platforms for schools, courses, and ed-tech." },
-  { name: "Real Estate", icon: faBuilding, desc: "Listings, virtual tours, and lead generation systems." },
-  { name: "Finance", icon: faMoneyBillTrendUp, desc: "Trust-building websites for fintech and advisory firms." },
-  { name: "Technology", icon: faMicrochip, desc: "SaaS, apps, and tech product marketing." },
-  { name: "Hospitality", icon: faConciergeBell, desc: "Booking-driven designs for hotels and restaurants." },
-  { name: "Retail", icon: faStore, desc: "Omnichannel strategies for physical and online stores." },
-];
-
-function IndustriesWeServe() {
+function IndustriesWeServe({ industries = [] }) {
+  if (!industries.length) return null;
   return (
     <section className="py-16 md:py-20 bg-background">
       <div className="max-w-6xl mx-auto px-4">
@@ -113,16 +86,17 @@ function IndustriesWeServe() {
 
         <div className="mt-10 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
           {industries.map((ind, i) => (
-            <FadeIn key={ind.name} delay={i * 80}>
+            <FadeIn key={ind._id || i} delay={i * 80}>
               <div className="bg-surface border border-border rounded-lg p-5 text-center hover:shadow-md hover:-translate-y-0.5 transition-all duration-300 group cursor-default h-full">
                 <div className="w-12 h-12 mx-auto rounded-lg bg-primary-light flex items-center justify-center group-hover:bg-primary transition-colors">
-                  <FontAwesomeIcon
-                    icon={ind.icon}
-                    className="text-primary text-xl group-hover:text-white transition-colors"
-                  />
+                  {ind.icon && typeof ind.icon === "string" ? (
+                    <img src={resolveImagePath(ind.icon)} alt={ind.name} className="w-6 h-6 object-contain group-hover:brightness-0 group-hover:invert transition-all" />
+                  ) : (
+                    <FontAwesomeIcon icon={faBuilding} className="text-primary text-xl group-hover:text-white transition-colors" />
+                  )}
                 </div>
                 <h3 className="mt-3 small-text font-bold text-heading">{ind.name}</h3>
-                <p className="mt-1.5 text-xs text-text leading-relaxed">{ind.desc}</p>
+                <p className="mt-1.5 text-xs text-text leading-relaxed">{ind.description}</p>
               </div>
             </FadeIn>
           ))}
@@ -133,28 +107,7 @@ function IndustriesWeServe() {
 }
 
 /* ─── Featured Case Studies ──────────────────────────────── */
-const featuredCases = [
-  {
-    client: "NovaTech Solutions",
-    industry: "Technology",
-    metric: "+312% Organic Traffic",
-    result: "Top-3 rankings for 15 target keywords in 6 months.",
-  },
-  {
-    client: "GreenLeaf Retail",
-    industry: "Retail / E-Commerce",
-    metric: "+47% Conversion Rate",
-    result: "2.8x increase in monthly revenue after UX redesign.",
-  },
-  {
-    client: "BrightPath Academy",
-    industry: "Education",
-    metric: "+180% Enrollment Inquiries",
-    result: "65% reduction in cost-per-lead via Google Ads.",
-  },
-];
-
-function FeaturedCaseStudies() {
+function FeaturedCaseStudies({ caseStudies, loading }) {
   return (
     <section className="py-16 md:py-20 bg-background">
       <div className="max-w-6xl mx-auto px-4">
@@ -166,49 +119,64 @@ function FeaturedCaseStudies() {
           />
         </FadeIn>
 
-        <div className="mt-10 grid grid-cols-1 md:grid-cols-3 gap-6">
-          {featuredCases.map((cs, i) => (
-            <FadeIn key={i} delay={i * 100}>
-              <div className="bg-background border border-border rounded-lg p-6 h-full flex flex-col hover:shadow-md transition group">
-                <span className="text-xs font-semibold text-primary bg-primary-light px-2.5 py-1 rounded w-fit">
-                  {cs.industry}
-                </span>
-                <h3 className="mt-3 body-text font-bold text-heading">{cs.client}</h3>
-                <div className="mt-3 text-2xl font-extrabold text-primary">
-                  {cs.metric}
-                </div>
-                <p className="mt-2 small-text text-text body-text flex-1">{cs.result}</p>
-                <Link
-                  to="/projects"
-                  className="mt-4 inline-flex items-center gap-2 text-sm font-semibold text-primary group-hover:gap-3 transition-all">
-                  Read Case Study <FontAwesomeIcon icon={faArrowRight} />
-                </Link>
+        {loading ? (
+          <div className="mt-10 grid grid-cols-1 md:grid-cols-3 gap-6">
+            {[...Array(3)].map((_, i) => (
+              <div key={i} className="bg-background border border-border rounded-lg p-6 h-full animate-pulse">
+                <div className="h-4 w-20 bg-surface rounded" />
+                <div className="h-5 w-40 bg-surface rounded mt-4" />
+                <div className="h-8 w-32 bg-surface rounded mt-3" />
+                <div className="h-4 w-full bg-surface rounded mt-3" />
+                <div className="h-4 w-2/3 bg-surface rounded mt-2" />
               </div>
-            </FadeIn>
-          ))}
-        </div>
+            ))}
+          </div>
+        ) : caseStudies.length === 0 ? (
+          <div className="mt-10 text-center py-12">
+            <p className="text-muted">No featured case studies available yet.</p>
+          </div>
+        ) : (
+          <div className="mt-10 grid grid-cols-1 md:grid-cols-3 gap-6">
+            {caseStudies.map((cs, i) => (
+              <FadeIn key={cs._id} delay={i * 100}>
+                <div className="bg-background border border-border rounded-lg p-6 h-full flex flex-col hover:shadow-md transition group">
+                  {cs.hero_image && (
+                    <div className="-mx-6 -mt-6 mb-4 overflow-hidden rounded-t-lg">
+                      <img
+                        src={resolveImagePath(cs.hero_image)}
+                        alt={cs.title}
+                        className="w-full h-40 object-cover"
+                      />
+                    </div>
+                  )}
+                  <span className="text-xs font-semibold text-primary bg-primary-light px-2.5 py-1 rounded w-fit">
+                    {cs.results?.[0]?.title || "Case Study"}
+                  </span>
+                  <h3 className="mt-3 body-text font-bold text-heading">{cs.title}</h3>
+                  {cs.results?.[0] && (
+                    <div className="mt-3 text-2xl font-extrabold text-primary">
+                      {cs.results[0].value}
+                    </div>
+                  )}
+                  <p className="mt-2 small-text text-text body-text flex-1 line-clamp-3">{cs.overview}</p>
+                  <Link
+                    to={`/case-studies/${cs.slug}`}
+                    className="mt-4 inline-flex items-center gap-2 text-sm font-semibold text-primary group-hover:gap-3 transition-all">
+                    Read Case Study <FontAwesomeIcon icon={faArrowRight} />
+                  </Link>
+                </div>
+              </FadeIn>
+            ))}
+          </div>
+        )}
       </div>
     </section>
   );
 }
 
 /* ─── Technologies & Platforms ──────────────────────────── */
-const technologies = [
-  { name: "Google Ads", icon: faAd },
-  { name: "Meta Ads", icon: faGlobe },
-  { name: "SEO", icon: faSearch },
-  { name: "WordPress", icon: faGlobe },
-  { name: "Shopify", icon: faShoppingBag },
-  { name: "WooCommerce", icon: faCartShopping },
-  { name: "Google Analytics", icon: faChartLine },
-  { name: "Search Console", icon: faSearch },
-  { name: "HubSpot", icon: faChartLine },
-  { name: "Mailchimp", icon: faEnvelope },
-  { name: "Brand Strategy", icon: faPalette },
-  { name: "Custom Development", icon: faMicrochip },
-];
-
-function TechnologiesPlatforms() {
+function TechnologiesPlatforms({ technologies = [] }) {
+  if (!technologies.length) return null;
   return (
     <section className="py-16 md:py-20 bg-background-section">
       <div className="max-w-6xl mx-auto px-4">
@@ -222,10 +190,14 @@ function TechnologiesPlatforms() {
 
         <div className="mt-10 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
           {technologies.map((tech, i) => (
-            <FadeIn key={tech.name} delay={i * 60}>
+            <FadeIn key={tech._id || i} delay={i * 60}>
               <div className="flex items-center gap-3 bg-surface border border-border rounded-lg px-4 py-3 hover:shadow-sm hover:border-primary/30 transition-all duration-200 cursor-default">
                 <div className="w-9 h-9 rounded-md bg-primary-light flex items-center justify-center shrink-0">
-                  <FontAwesomeIcon icon={tech.icon} className="text-primary text-sm" />
+                  {tech.icon && typeof tech.icon === "string" ? (
+                    <img src={resolveImagePath(tech.icon)} alt={tech.name} className="w-5 h-5 object-contain" />
+                  ) : (
+                    <FontAwesomeIcon icon={faMicrochip} className="text-primary text-sm" />
+                  )}
                 </div>
                 <span className="small-text font-semibold text-heading">{tech.name}</span>
               </div>
@@ -238,14 +210,9 @@ function TechnologiesPlatforms() {
 }
 
 /* ─── Case Studies Stats ─────────────────────────────────── */
-const caseStudyStats = [
-  { target: 98, suffix: "%", label: "Client Retention" },
-  { target: 3, suffix: "x", label: "Average ROI" },
-  { target: 500, suffix: "+", label: "Projects Delivered" },
-  { target: 24, suffix: "/7", label: "Support Available" },
-];
-
-function ResultsStatistics() {
+function ResultsStatistics({ stats = [] }) {
+  const displayStats = stats.slice(0, 4);
+  if (!displayStats.length) return null;
   return (
     <section className="py-16 md:py-20 bg-background-section">
       <div className="max-w-6xl mx-auto px-4">
@@ -258,11 +225,11 @@ function ResultsStatistics() {
         </FadeIn>
 
         <div className="mt-10 grid grid-cols-2 sm:grid-cols-4 gap-6">
-          {caseStudyStats.map((stat, i) => (
-            <FadeIn key={stat.label} delay={i * 100}>
+          {displayStats.map((stat, i) => (
+            <FadeIn key={stat.key || i} delay={i * 100}>
               <div className="bg-surface border border-border rounded-lg p-6 text-center hover:shadow-sm transition">
                 <div className="text-4xl font-extrabold text-primary">
-                  <AnimatedCounter target={stat.target} suffix={stat.suffix} />
+                  <AnimatedCounter target={stat.target} suffix={stat.suffix || ""} />
                 </div>
                 <div className="mt-2 text-sm font-semibold text-text">
                   {stat.label}
@@ -276,51 +243,39 @@ function ResultsStatistics() {
   );
 }
 
-/* ─── FAQ Data ────────────────────────────────────────────── */
-const faqItems = [
-  {
-    q: "How long does a typical project take?",
-    a: "Project timelines vary based on scope and complexity. A standard website takes 4-8 weeks, while larger digital marketing campaigns may run 3-6 months. We provide a detailed timeline during our discovery phase.",
-  },
-  {
-    q: "What is your pricing structure?",
-    a: "We offer flexible pricing models including project-based, retainer, and hourly rates. Each engagement is scoped individually to ensure you only pay for what you need. Contact us for a custom quote.",
-  },
-  {
-    q: "Do you work with small businesses?",
-    a: "Absolutely. We partner with businesses of all sizes — from startups and small businesses to large enterprises. Our solutions are scalable and tailored to fit your budget and goals.",
-  },
-  {
-    q: "What results can I expect?",
-    a: "While results vary by industry and goals, our clients typically see improved website traffic, higher conversion rates, and stronger brand visibility within the first few months of engagement.",
-  },
-  {
-    q: "Do you provide ongoing support after launch?",
-    a: "Yes. We offer ongoing maintenance, optimization, and support packages to ensure your digital presence continues to perform. Our team is available for updates, troubleshooting, and growth strategies.",
-  },
-  {
-    q: "How do you handle communication during a project?",
-    a: "We assign a dedicated project manager to every engagement. You'll receive regular progress updates, have access to a shared dashboard, and can reach us via email, phone, or Slack during business hours.",
-  },
-  {
-    q: "What if I need revisions after the project is delivered?",
-    a: "We include a revision round in every project scope. If additional changes are needed beyond the initial agreement, we offer flexible revision packages at transparent rates so you're never caught off guard.",
-  },
-  {
-    q: "Can you help with post-launch marketing and growth?",
-    a: "Yes. Our services extend well beyond launch. We offer SEO, paid advertising, social media management, content marketing, and analytics reporting to keep your business growing long after the site goes live.",
-  },
-];
+
 
 /* ─── Main Services Page ──────────────────────────────────── */
 const Services = () => {
   const { services, loading, error, fetchServices } = useServiceStore();
   const { reviews, loading: reviewsLoading, fetchReviews } = useReviewStore();
+  const { caseStudies, loading: caseStudiesLoading, fetchCaseStudies } = useCaseStudyStore();
+  const { industries, fetchIndustries } = useIndustryStore();
+  const { technologies, fetchTechnologies } = useTechnologyStore();
+  const { faqs, fetchFAQs } = useFaqStore();
+  const { content, fetchPublicSiteContent } = useSiteContentStore();
+
+  const companyStats = content?.companyStats ?? [];
+
+  const getStat = (key) => {
+    const s = companyStats.find((st) => st.key === key);
+    return s ? `${s.target}${s.suffix}` : "";
+  };
+
+  const whyChooseUsStats = ['clientRetention', 'support247', 'averageRoi', 'satisfactionGoal']
+    .map(key => companyStats.find(s => s.key === key))
+    .filter(Boolean)
+    .map(s => ({ value: `${s.target}${s.suffix}`, label: s.label }));
 
   useEffect(() => {
     fetchServices();
     fetchReviews();
-  }, [fetchServices, fetchReviews]);
+    fetchCaseStudies({ featured: true, limit: 3 });
+    fetchIndustries();
+    fetchTechnologies();
+    fetchFAQs();
+    fetchPublicSiteContent();
+  }, [fetchServices, fetchReviews, fetchCaseStudies, fetchIndustries, fetchTechnologies, fetchFAQs, fetchPublicSiteContent]);
 
   if (loading)
     return (
@@ -376,9 +331,9 @@ const Services = () => {
         imageSrc="/services.webp"
         imageAlt="Our Services"
         trustIndicators={[
-          { value: "500+", label: "Projects\nCompleted" },
-          { value: "98%", label: "Client\nSatisfaction" },
-          { value: "10+", label: "Years\nExperience" },
+          { value: getStat("projectsCompleted") || "500+", label: "Projects\nCompleted" },
+          { value: getStat("clientRetention") || "98%", label: "Client\nSatisfaction" },
+          { value: getStat("yearsExperience") || "10+", label: "Years\nExperience" },
         ]}
       />
 
@@ -430,34 +385,34 @@ const Services = () => {
       </section>
 
       {/* 4. Why Choose Us (moved above Our Process) */}
-      <WhyChooseUs bg="bg-background" />
+      <WhyChooseUs stats={whyChooseUsStats} bg="bg-background" />
 
       {/* 5. Our Process */}
       <OurProcess bg="bg-background-section" />
 
       {/* 6. Industries We Serve */}
-      <IndustriesWeServe />
+      <IndustriesWeServe industries={industries} />
 
       {/* 7. Technologies & Platforms */}
-      <TechnologiesPlatforms />
+      <TechnologiesPlatforms technologies={technologies} />
 
       {/* 8. Featured Case Studies */}
-      <FeaturedCaseStudies />
+      <FeaturedCaseStudies caseStudies={caseStudies} loading={caseStudiesLoading} />
 
       {/* 9. Results & Statistics */}
-      <ResultsStatistics />
+      <ResultsStatistics stats={content?.companyStats} />
 
       {/* 10. Client Testimonials */}
       <TestimonialsSection reviews={reviews} loading={reviewsLoading} bg="bg-background" />
 
       {/* 11. FAQ */}
-      <FAQSection items={faqItems} bg="bg-background-section" />
+      <FAQSection items={faqs.map((f) => ({ q: f.question, a: f.answer }))} bg="bg-background-section" />
 
       {/* 12. Final CTA */}
       <FinalCTA />
 
       {/* 13. Trust Section */}
-      <LogoMarquee bg="bg-background" />
+      <LogoMarquee logos={content?.trustMarqueeLogos} bg="bg-background" />
     </div>
   );
 };

@@ -4,6 +4,7 @@ import AdminSidebar from "../components/admin/AdminSidebar.jsx";
 import NotificationDropdown from "../components/admin/NotificationDropdown.jsx";
 import { getAdminProfile } from "../auth/adminAuth.js";
 import { useState, useEffect } from "react";
+import useBrandSettingsStore from "../store/brandSettingsStore.js";
 
 const resolveUrl = (path) => {
   if (!path || path.startsWith("blob:") || path.startsWith("http")) return path;
@@ -19,6 +20,11 @@ export default function AdminLayout() {
   const [profile, setProfile] = useState(() => getAdminProfile());
   const [imgFailed, setImgFailed] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const { content, fetchBrandSettings } = useBrandSettingsStore();
+
+  useEffect(() => {
+    fetchBrandSettings();
+  }, [fetchBrandSettings]);
 
   useEffect(() => {
     function handleProfileChange() {
@@ -69,11 +75,11 @@ export default function AdminLayout() {
               to="/"
               className="flex items-center gap-3 cursor-pointer shrink-0">
               <img
-                src="/crown-99.png"
-                alt="CrawlCrown Logo"
+                src={content?.brand?.logo || "/crown-99.png"}
+                alt={`${content?.brand?.name || "CrawlCrown"} Logo`}
                 className="w-9 h-9 rounded-xl object-contain"
               />
-              <span className="font-bold text-heading text-lg">CrawlCrown</span>
+              <span className="font-bold text-heading text-lg">{content?.brand?.name || "CrawlCrown"}</span>
             </Link>
           </div>
 

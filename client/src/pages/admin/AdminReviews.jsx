@@ -7,6 +7,7 @@ import { relativeTime } from "../../utils/time.js";
 import AdminPageHeader from "../../components/ui/AdminPageHeader.jsx";
 import AdminListFooter from "../../components/ui/AdminListFooter.jsx";
 import ErrorBanner from "../../components/ui/ErrorBanner.jsx";
+import SearchInput from "../../components/ui/SearchInput.jsx";
 
 function Stars({ rating }) {
   const full = Math.round(rating);
@@ -204,27 +205,12 @@ export default function AdminReviews() {
             ))}
           </div>
 
-          <div className="relative">
-            <svg
-              className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24">
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-              />
-            </svg>
-            <input
-              ref={searchRef}
-              className="w-full md:w-64 rounded border border-border bg-surface pl-10 pr-4 py-2 outline-none focus:ring-2 focus:ring-primary-light text-sm"
-              placeholder="Search by name..."
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-            />
-          </div>
+          <SearchInput
+            value={search}
+            onChange={setSearch}
+            placeholder="Search by name..."
+            className="md:w-64"
+          />
         </div>
       </div>
 

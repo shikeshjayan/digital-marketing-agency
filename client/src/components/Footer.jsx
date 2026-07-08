@@ -5,15 +5,24 @@ import { faAngleUp, faPhone, faEnvelope, faMapMarkerAlt } from '@fortawesome/fre
 import { faFacebookF, faInstagram, faLinkedinIn, faYoutube } from '@fortawesome/free-brands-svg-icons'
 import FadeIn from '../components/ui/FadeIn.jsx'
 import useServiceStore from '../store/serviceStore.js'
+import useBrandSettingsStore from '../store/brandSettingsStore.js'
+
+const iconMap = {
+  faFacebookF,
+  faInstagram,
+  faLinkedinIn,
+  faYoutube,
+}
 
 export default function Footer() {
   const { services, fetchServices } = useServiceStore()
+  const { content, fetchBrandSettings } = useBrandSettingsStore()
   const [isVisible, setIsVisible] = useState(false)
 
   useEffect(() => {
     fetchServices()
+    fetchBrandSettings()
 
-    // Monitor scroll behavior to show the button once scrolled past the initial screen sections
     const toggleVisibility = () => {
       if (window.scrollY > 300) {
         setIsVisible(true)
@@ -24,11 +33,16 @@ export default function Footer() {
 
     window.addEventListener('scroll', toggleVisibility)
     return () => window.removeEventListener('scroll', toggleVisibility)
-  }, [fetchServices])
+  }, [fetchServices, fetchBrandSettings])
 
   const activeServices = (services ?? [])
     .filter((s) => s.status === 'Active')
     .slice(0, 4)
+
+  const brand = content?.brand ?? {}
+  const socialLinks = content?.socialLinks ?? []
+  const contact = content?.contact ?? {}
+  const companyLinks = content?.companyLinks ?? []
 
   const scrollToTop = () => {
     window.scrollTo({
@@ -37,16 +51,8 @@ export default function Footer() {
     })
   }
 
-  // Social handles structural data mapping directly onto corresponding brand icons
-  const socialMedias = [
-    { icon: faFacebookF, label: 'Facebook', url: 'https://facebook.com/crawlcrown' },
-    { icon: faInstagram, label: 'Instagram', url: 'https://instagram.com/crawlcrown' },
-    { icon: faLinkedinIn, label: 'LinkedIn', url: 'https://linkedin.com/company/crawlcrown' },
-    { icon: faYoutube, label: 'YouTube', url: 'https://youtube.com/@crawlcrown' },
-  ]
-
   return (
-    <footer className="text-white mt-14 relative flex flex-col items-center" style={{ backgroundColor: "var(--color-footer)" }}>
+    <footer className="text-white mt-14 relative flex flex-col items-center bg-footer">
       <div className="w-full max-w-7xl">
         <FadeIn>
           <div className="px-4 py-12">
@@ -55,24 +61,23 @@ export default function Footer() {
               {/* Company Brand Block */}
               <div>
                 <div className="flex items-center gap-3">
-                  <img src="/crown-99.png" alt="CrawlCrown Logo" className="w-9 h-9 rounded-lg object-contain" />
-                  <div className="font-bold text-lg">CrawlCrown</div>
+                  <img src={brand.logo || "/crown-99.png"} alt={`${brand.name || "CrawlCrown"} Logo`} className="w-9 h-9 rounded-lg object-contain" />
+                  <div className="font-bold text-lg">{brand.name || "CrawlCrown"}</div>
                 </div>
                 <p className="mt-4 text-sm text-white/80 leading-relaxed max-w-sm">
-                  Full-service digital marketing agency with design, development, and performance growth.
+                  {brand.tagline || "Full-service digital marketing agency with design, development, and performance growth."}
                 </p>
-                {/* Renders social links as cleanly structured brand icons */}
                 <div className="mt-5 flex gap-3 text-base text-white/70">
-                  {socialMedias.map((social) => (
+                  {socialLinks.map((social) => (
                     <a 
-                      key={social.label} 
+                      key={social.platform} 
                       href={social.url} 
                       target="_blank" 
                       rel="noopener noreferrer"
                       className="w-8 h-8 rounded-lg bg-white/10 flex items-center justify-center hover:bg-primary hover:text-white transition-all duration-200 cursor-pointer" 
-                      aria-label={social.label}
+                      aria-label={social.platform}
                     >
-                      <FontAwesomeIcon icon={social.icon} className="text-sm" />
+                      <FontAwesomeIcon icon={iconMap[social.icon]} className="text-sm" />
                     </a>
                   ))}
                 </div>
@@ -103,18 +108,15 @@ export default function Footer() {
                 <div>
                   <div className="text-sm font-semibold mb-4 text-white">Company</div>
                   <ul className="space-y-2.5 text-sm text-white/70">
-                    <li>
-                      <Link to="/about" className="cursor-pointer hover:text-primary transition-colors">About</Link>
-                    </li>
-                    <li>
-                      <Link to="/projects" className="cursor-pointer hover:text-primary transition-colors">Projects</Link>
-                    </li>
-                    <li>
-                      <Link to="/terms" className="cursor-pointer hover:text-primary transition-colors">Terms & Conditions</Link>
-                    </li>
-                    <li>
-                      <Link to="/privacy" className="cursor-pointer hover:text-primary transition-colors">Privacy Policy</Link>
-                    </li>
+                    {companyLinks.length > 0 ? (
+                      companyLinks.map((link) => (
+                        <li key={link.path}>
+                          <Link to={link.path} className="cursor-pointer hover:text-primary transition-colors">{link.label}</Link>
+                        </li>
+                      ))
+                    ) : (
+                      <div className="text-xs text-white/40 italic">No links</div>
+                    )}
                   </ul>
                 </div>
               </div>
@@ -127,24 +129,24 @@ export default function Footer() {
                     <span className="w-8 h-8 rounded-lg flex items-center justify-center small-text text-white/70">
                       <FontAwesomeIcon icon={faPhone} />
                     </span>
-                    <a href="tel:+91 8891212323" className="text-white/80 hover:text-primary transition-colors">
-                      +91 8891212323
+                    <a href={`tel:${contact.phone || "+91 8891212323"}`} className="text-white/80 hover:text-primary transition-colors">
+                      {contact.phone || "+91 8891212323"}
                     </a>
                   </div>
                   <div className="flex items-center gap-3">
                     <span className="w-8 h-8 rounded-lg flex items-center justify-center small-text text-white/70">
                       <FontAwesomeIcon icon={faEnvelope} />
                     </span>
-                    <a href="mailto:crowlcrown@gmail.com" className="text-white/80 hover:text-primary transition-colors">
-                      crowlcrown@gmail.com
+                    <a href={`mailto:${contact.email || "crowlcrown@gmail.com"}`} className="text-white/80 hover:text-primary transition-colors">
+                      {contact.email || "crowlcrown@gmail.com"}
                     </a>
                   </div>
                   <div className="flex items-center gap-3">
                     <span className="w-8 h-8 rounded-lg flex items-center justify-center small-text text-white/70">
                       <FontAwesomeIcon icon={faMapMarkerAlt} />
                     </span>
-                     <a href="https://www.google.com/maps/search/Ernakulam+Kochi+Kerala+India" target="_blank" rel="noopener noreferrer" className="text-white/80 hover:text-primary transition-colors">
-                      Ernakulam, Kochi, Kerala, India
+                     <a href={`https://www.google.com/maps/search/${encodeURIComponent(contact.address || "Ernakulam Kochi Kerala India")}`} target="_blank" rel="noopener noreferrer" className="text-white/80 hover:text-primary transition-colors">
+                      {contact.address || "Ernakulam, Kochi, Kerala, India"}
                     </a>
                   </div>
                 </div>
@@ -153,7 +155,7 @@ export default function Footer() {
 
             {/* Legal Copyright Line */}
             <div className="border-t border-white/10 mt-12 pt-6 text-center text-sm text-white/50">
-              © {new Date().getFullYear()} <span className="text-primary font-semibold">CrawlCrown</span>. All rights reserved.
+              © {new Date().getFullYear()} <span className="text-primary font-semibold">{brand.name || "CrawlCrown"}</span>. All rights reserved.
             </div>
           </div>
         </FadeIn>

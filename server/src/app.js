@@ -28,6 +28,10 @@ import faqRoutes from "./routes/faq.routes.js";
 import adminFaqRoutes from "./routes/adminFaq.routes.js";
 import contactRoutes from "./routes/contact.routes.js";
 import adminContactRoutes from "./routes/adminContact.routes.js";
+import siteContentRoutes from "./routes/siteContent.routes.js";
+import adminSiteContentRoutes from "./routes/adminSiteContent.routes.js";
+import brandSettingsRoutes from "./routes/brandSettings.routes.js";
+import adminBrandSettingsRoutes from "./routes/adminBrandSettings.routes.js";
 import errorHandler from "./middleware/errorHandler.js";
 
 const app = express();
@@ -98,6 +102,10 @@ app.use("/api/v1/contact", contactRoutes);
 app.use("/api/v1/admin/contact", adminContactRoutes);
 app.use("/api/v1/faqs", faqRoutes);
 app.use("/api/v1/admin/faqs", adminFaqRoutes);
+app.use("/api/v1/site-content", siteContentRoutes);
+app.use("/api/v1/admin/site-content", adminSiteContentRoutes);
+app.use("/api/v1/brand-settings", brandSettingsRoutes);
+app.use("/api/v1/admin/brand-settings", adminBrandSettingsRoutes);
 
 app.use(errorHandler);
 

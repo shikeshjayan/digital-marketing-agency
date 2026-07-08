@@ -10,6 +10,8 @@ import AdminListFooter from "../../components/ui/AdminListFooter.jsx";
 import SearchInput from "../../components/ui/SearchInput.jsx";
 import TableEmptyState from "../../components/ui/TableEmptyState.jsx";
 import ErrorBanner from "../../components/ui/ErrorBanner.jsx";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faTrash } from "@fortawesome/free-solid-svg-icons";
 
 function statusChip(status) {
   const map = {
@@ -281,8 +283,9 @@ export default function AdminMessages() {
                         <button
                           type="button"
                           className="px-3 py-2 text-xs sm:px-4 sm:py-2 sm:text-sm min-h-[44px] text-primary hover:text-primary-hover rounded transition cursor-pointer"
+                          title="Delete"
                           onClick={() => onDelete(e.enquiry_id)}>
-                          Delete
+                          <FontAwesomeIcon icon={faTrash} className="w-4 h-4" />
                         </button>
                       </div>
                     </td>

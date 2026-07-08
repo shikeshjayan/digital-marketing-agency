@@ -4,6 +4,7 @@ import HeroSplit from "../../components/public/HeroSplit.jsx";
 import FadeIn from "../../components/ui/FadeIn.jsx";
 import useServiceStore from "../../store/serviceStore.js";
 import useContactStore from "../../store/contactStore.js";
+import useBrandSettingsStore from "../../store/brandSettingsStore.js";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faPhone,
@@ -36,6 +37,7 @@ export default function Contact() {
     loading,
     reset,
   } = useContactStore();
+  const { content: brandContent, fetchBrandSettings } = useBrandSettingsStore();
 
   const [form, setForm] = useState({
     name: "",
@@ -64,8 +66,11 @@ export default function Contact() {
 
   useEffect(() => {
     fetchServices();
-    return () => reset(); // Reset submission messages when leaving the page
-  }, [fetchServices, reset]);
+    fetchBrandSettings();
+    return () => reset();
+  }, [fetchServices, fetchBrandSettings, reset]);
+
+  const contact = brandContent?.contact ?? {};
 
   // Close dropdowns on outside click
   useEffect(() => {
@@ -153,7 +158,7 @@ export default function Contact() {
         titleHighlight="Let's"
         subtitle="Ready to grow your business? Get in touch with us today for a free consultation and let's discuss how we can help you achieve your goals."
         primaryCTA={{ label: "Get a Free Quote", to: "#contact-form" }}
-        secondaryCTA={{ label: "Call Us Now", to: "tel:+918891212323" }}
+        secondaryCTA={{ label: "Call Us Now", to: `tel:${contact.phone || "+918891212323"}` }}
         imageSrc="/contact.webp"
         imageAlt="Contact Us"
         trustIndicators={[
@@ -169,21 +174,21 @@ export default function Contact() {
             <FadeIn delay={0}>
               <ContactCard
                 title="Phone"
-                value="+91 8891212323"
+                value={contact.phone || "+91 8891212323"}
                 icon={faPhone}
               />
             </FadeIn>
             <FadeIn delay={100}>
               <ContactCard
                 title="Mail"
-                value="crowlcrown@gmail.com"
+                value={contact.email || "crowlcrown@gmail.com"}
                 icon={faEnvelope}
               />
             </FadeIn>
             <FadeIn delay={200}>
               <ContactCard
                 title="Address"
-                value="Ernakulam, Kochi, Kerala, India"
+                value={contact.address || "Ernakulam, Kochi, Kerala, India"}
                 icon={faLocation}
               />
             </FadeIn>
@@ -208,8 +213,8 @@ export default function Contact() {
                       <span className="w-10 h-8 rounded-lg bg-secondary/10 flex items-center justify-center small-text text-white/70">
                         <FontAwesomeIcon icon={faPhone} />
                       </span>
-                      <a href="tel:+91 8891212323" className="text-white/80">
-                        +91 8891212323
+                      <a href={`tel:${contact.phone || "+91 8891212323"}`} className="text-white/80">
+                        {contact.phone || "+91 8891212323"}
                       </a>
                     </div>
                     <div className="flex items-center gap-3">
@@ -217,9 +222,9 @@ export default function Contact() {
                         <FontAwesomeIcon icon={faEnvelope} />
                       </span>
                       <a
-                        href="mailto:crowlcrown@gmail.com"
+                        href={`mailto:${contact.email || "crowlcrown@gmail.com"}`}
                         className="text-white/80">
-                        crowlcrown@gmail.com
+                        {contact.email || "crowlcrown@gmail.com"}
                       </a>
                     </div>
                     <div className="flex items-center gap-3">
@@ -227,11 +232,11 @@ export default function Contact() {
                         <FontAwesomeIcon icon={faLocation} />
                       </span>
                       <a
-                        href="https://www.google.com/maps/search/Ernakulam+Kochi+Kerala+India"
+                        href={`https://www.google.com/maps/search/${encodeURIComponent(contact.address || "Ernakulam Kochi Kerala India")}`}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="text-white/80">
-                        Ernakulam, Kochi, Kerala, India
+                        {contact.address || "Ernakulam, Kochi, Kerala, India"}
                       </a>
                     </div>
                   </div>
@@ -256,7 +261,7 @@ export default function Contact() {
                       onChange={(e) =>
                         setForm((f) => ({ ...f, name: e.target.value }))
                       }
-                      className="mt-2 w-full rounded-lg border border-border px-4 py-2 outline-none focus:ring-2 focus:ring-primary-light"
+                      className="mt-2 w-full rounded-ip border border-border px-4 py-2 outline-none focus:ring-2 focus:ring-primary-light"
                       placeholder="Your name"
                       disabled={loading}
                     />

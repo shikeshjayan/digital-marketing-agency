@@ -4,6 +4,7 @@ import { toast, Toaster } from "sonner";
 import { setAdminProfile } from "../../auth/adminAuth.js";
 import useAuthStore from "../../store/authStore.js";
 import apiService from "../../services/apiService.js";
+import useBrandSettingsStore from "../../store/brandSettingsStore.js";
 
 export default function AdminLogin() {
   const navigate = useNavigate();
@@ -13,8 +14,10 @@ export default function AdminLogin() {
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState(null);
   const [adminExists, setAdminExists] = useState(null);
+  const { content, fetchBrandSettings } = useBrandSettingsStore();
 
   useEffect(() => {
+    fetchBrandSettings();
     apiService
       .get("/admin/check")
       .then((res) => {
@@ -24,7 +27,7 @@ export default function AdminLogin() {
         console.error("Failed to check admin:", err);
         setAdminExists(true);
       });
-  }, []);
+  }, [fetchBrandSettings]);
 
   const isValid = useMemo(
     () => email.trim().length > 0 && password.trim().length > 0,
@@ -58,19 +61,19 @@ export default function AdminLogin() {
   }
 
   return (
-    <div className="min-h-screen bg-[radial-gradient(circle_at_top,rgba(220,38,38,0.08),transparent_60%)] px-4 py-6 sm:px-6 lg:px-8 flex items-center justify-center">
+    <div className="min-h-screen bg-[radial-gradient(circle_at_top,color-mix(in_srgb,var(--color-primary)_8%,transparent),transparent_60%)] px-4 py-6 sm:px-6 lg:px-8 flex items-center justify-center">
       <Toaster position="top-right" richColors closeButton />
       <div className="w-full max-w-5xl overflow-hidden rounded-lg border border-border bg-background shadow-sm lg:grid lg:grid-cols-[1.05fr_0.95fr]">
         {/* Form — first in DOM so it appears first on mobile */}
         <div className="p-5 sm:p-6 lg:p-10">
           <div className="flex items-center gap-3 lg:hidden">
             <img
-              src="/crown-99.png"
-              alt="CrawlCrown Logo"
+              src={content?.brand?.logo || "/crown-99.png"}
+              alt={`${content?.brand?.name || "CrawlCrown"} Logo`}
               className="h-9 w-9 rounded-lg object-contain bg-background p-0.5 shadow-sm"
             />
             <div className="min-w-0">
-              <p className="text-sm font-semibold tracking-tight">CrawlCrown</p>
+              <p className="text-sm font-semibold tracking-tight">{content?.brand?.name || "CrawlCrown"}</p>
               <p className="text-xs text-muted">Admin Portal</p>
             </div>
           </div>
@@ -150,19 +153,19 @@ export default function AdminLogin() {
 
         {/* Branded panel — second in DOM, moved left on desktop via order */}
         <div className="hidden lg:order-first lg:flex lg:flex-col lg:justify-between relative overflow-hidden bg-primary px-10 py-10 text-white">
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(255,255,255,0.2),transparent_45%)]" />
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,color-mix(in_srgb,white_20%,transparent),transparent_45%)]" />
           <div className="absolute bottom-0 right-0 h-32 w-32 rounded-full bg-white/10 blur-3xl" />
           <div className="relative">
             <div>
               <div className="flex flex-wrap items-center gap-3">
                 <img
-                  src="/crown-99.png"
-                  alt="CrawlCrown Logo"
+                  src={content?.brand?.logo || "/crown-99.png"}
+                  alt={`${content?.brand?.name || "CrawlCrown"} Logo`}
                   className="h-10 w-10 sm:h-12 sm:w-12 rounded-xl object-contain bg-background p-1 shadow-sm"
                 />
                 <div className="min-w-0">
                   <p className="text-base font-semibold tracking-tight sm:text-lg">
-                    CrawlCrown
+                    {content?.brand?.name || "CrawlCrown"}
                   </p>
                   <p className="small-text text-white/70 sm:text-sm">Admin Portal</p>
                 </div>

@@ -33,6 +33,8 @@ import AdminTeam from './pages/admin/AdminTeam.jsx'
 import AdminReviews from './pages/admin/AdminReviews.jsx'
 import AdminMessages from './pages/admin/AdminMessages.jsx'
 import AdminSettings from './pages/admin/AdminSettings.jsx'
+import AdminSiteContent from './pages/admin/AdminSiteContent.jsx'
+import AdminBrandSettings from './pages/admin/AdminBrandSettings.jsx'
 import NotFound from './pages/NotFound.jsx'
 
 export default function App() {
@@ -75,6 +77,8 @@ export default function App() {
             <Route path="reviews" element={<AdminReviews />} />
             <Route path="messages" element={<AdminMessages />} />
             <Route path="settings" element={<AdminSettings />} />
+            <Route path="site-content" element={<AdminSiteContent />} />
+            <Route path="brand-settings" element={<AdminBrandSettings />} />
           </Route>
         </Route>
 

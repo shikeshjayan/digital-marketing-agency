@@ -76,7 +76,7 @@ export default function WhyChooseUs({
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 h-full">
               {reasons.map((r, i) => (
                 <FadeIn key={i} delay={i * 80} direction="up" className="h-full">
-                  <div className="h-full bg-background border border-border rounded-lg p-5 hover:shadow-md hover:-translate-y-0.5 transition-all duration-300 group">
+                  <div className="h-full bg-background border border-border rounded-c p-5 hover:shadow-md hover:-translate-y-0.5 transition-all duration-300 group">
                     <div className="w-10 h-10 rounded-lg bg-primary-light flex items-center justify-center shrink-0 group-hover:bg-primary transition-colors">
                       <FontAwesomeIcon
                         icon={r.icon}

@@ -56,37 +56,40 @@ export default function TestimonialsSection({
   return (
     <section className={`py-12 ${bg}`}>
       <div className="max-w-6xl mx-auto px-4">
-        <FadeIn>
-          <div className="text-center">
-            <SectionHeading
-              eyebrow={eyebrow}
-              title={title}
-              subtitle={subtitle}
-            />
-          </div>
-        </FadeIn>
         
-        {totalPages > 1 && (
-          <div className="flex items-center justify-center gap-2 mt-6">
-            <button
-              type="button"
-              onClick={prev}
-              className="w-9 h-9 rounded-lg bg-surface border border-border flex items-center justify-center text-primary hover:bg-primary hover:text-white transition cursor-pointer"
-              aria-label="Previous reviews">
-              <FontAwesomeIcon icon={faAngleLeft} className="text-sm" />
-            </button>
-            <span className="text-xs text-muted">
-              {page + 1} / {totalPages}
-            </span>
-            <button
-              type="button"
-              onClick={next}
-              className="w-9 h-9 rounded-lg bg-surface border border-border flex items-center justify-center text-primary hover:bg-primary hover:text-white transition cursor-pointer"
-              aria-label="Next reviews">
-              <FontAwesomeIcon icon={faAngleRight} className="text-sm" />
-            </button>
-          </div>
-        )}
+        {/* Responsive flex row placing heading on left and navigation action buttons on top-right side */}
+        <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-6">
+          <FadeIn className="flex-1">
+            <div className="text-center sm:text-left">
+              <SectionHeading
+                eyebrow={eyebrow}
+                title={title}
+                subtitle={subtitle}
+              />
+            </div>
+          </FadeIn>
+
+          {totalPages > 1 && (
+            <FadeIn>
+              <div className="flex items-center justify-center sm:justify-end gap-2 shrink-0 pb-1">
+                <button
+                  type="button"
+                  onClick={prev}
+                  className="w-10 h-10 rounded-lg bg-surface border border-border flex items-center justify-center text-primary hover:bg-primary hover:text-white transition cursor-pointer shadow-sm"
+                  aria-label="Previous reviews">
+                  <FontAwesomeIcon icon={faAngleLeft} className="text-sm" />
+                </button>
+                <button
+                  type="button"
+                  onClick={next}
+                  className="w-10 h-10 rounded-lg bg-surface border border-border flex items-center justify-center text-primary hover:bg-primary hover:text-white transition cursor-pointer shadow-sm"
+                  aria-label="Next reviews">
+                  <FontAwesomeIcon icon={faAngleRight} className="text-sm" />
+                </button>
+              </div>
+            </FadeIn>
+          )}
+        </div>
 
         <div className="mt-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {visible.map((review, i) => {

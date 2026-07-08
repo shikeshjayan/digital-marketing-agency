@@ -46,8 +46,10 @@ export default function DetailModal({
       aria-modal="true"
       aria-label={title}>
       <div className="absolute inset-0 bg-black/60 backdrop-blur-md transition-opacity duration-300" onClick={onClose} />
+      
+      {/* Pop-up container radius updated to rounded-lg */}
       <div
-        className="relative z-10 bg-background rounded-2xl shadow-2xl w-full max-w-lg max-h-[90vh] overflow-y-auto flex flex-col border border-border/50 transform scale-100 transition-all duration-300"
+        className="relative z-10 bg-background rounded-lg shadow-2xl w-full max-w-lg max-h-[90vh] overflow-y-auto flex flex-col border border-border/50 transform scale-100 transition-all duration-300"
         onClick={(e) => e.stopPropagation()}>
 
         <button
@@ -60,7 +62,6 @@ export default function DetailModal({
 
         {isAvatar ? (
           <div className="flex flex-col items-center pt-10 pb-6 border-b border-border/60 bg-background-section px-6 text-center">
-            {/* Renders initials bubble exclusively */}
             <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-full overflow-hidden ring-4 ring-primary/10 shadow-md flex items-center justify-center bg-surface border border-border">
               {image ? (
                 <img
@@ -99,7 +100,7 @@ export default function DetailModal({
             )}
           </div>
         ) : image ? (
-          <div className="w-full max-h-48 sm:max-h-64 overflow-hidden rounded-t-2xl">
+          <div className="w-full max-h-48 sm:max-h-64 overflow-hidden rounded-t-lg">
             <img
               src={image}
               alt={title}
@@ -142,7 +143,7 @@ export default function DetailModal({
               </div>
             )}
 
-            <div className={`text-text text-sm sm:text-base leading-relaxed whitespace-pre-line bg-surface rounded-xl p-4 border border-border/40 ${isAvatar ? "italic text-center text-text/90" : ""}`}>
+            <div className={`text-text text-sm sm:text-base leading-relaxed whitespace-pre-line bg-surface rounded-lg p-4 border border-border/40 ${isAvatar ? "italic text-center text-text/90" : ""}`}>
               {isAvatar && <span className="text-primary font-headings text-2xl block -mb-2 text-left leading-none">"</span>}
               {description}
               {isAvatar && <span className="text-primary font-headings text-2xl block text-right leading-none -mt-2">"</span>}
@@ -155,7 +156,7 @@ export default function DetailModal({
                 href={cta.href}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center justify-center gap-2 w-full rounded-xl bg-primary text-white px-6 py-3 text-sm font-semibold hover:bg-primary-hover shadow-sm hover:shadow transition duration-200 cursor-pointer">
+                className="inline-flex items-center justify-center gap-2 w-full rounded-lg bg-primary text-white px-6 py-3 text-sm font-semibold hover:bg-primary-hover shadow-sm hover:shadow transition duration-200 cursor-pointer">
                 {cta.label}
                 <FontAwesomeIcon icon={faArrowRight} className="text-xs" />
               </a>

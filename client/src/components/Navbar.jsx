@@ -5,6 +5,7 @@ import { faBars, faTimes } from "@fortawesome/free-solid-svg-icons";
 
 // Stores
 import useServiceStore from "../store/serviceStore.js";
+import useBrandSettingsStore from "../store/brandSettingsStore.js";
 
 const navItems = [
   { to: "/", label: "Home" },
@@ -20,11 +21,13 @@ export default function Navbar() {
 
   // Connect directly to backend dynamic state layers
   const { fetchServices } = useServiceStore();
+  const { content, fetchBrandSettings } = useBrandSettingsStore();
 
   // Trigger automated repository fetches when header initializes
   useEffect(() => {
     fetchServices();
-  }, [fetchServices]);
+    fetchBrandSettings();
+  }, [fetchServices, fetchBrandSettings]);
 
   return (
     <header className="sticky top-0 z-50 bg-background/90 backdrop-blur border-b border-border">
@@ -32,11 +35,11 @@ export default function Navbar() {
         <div className="flex items-center justify-between h-20">
           <Link to="/" className="flex items-center gap-3 cursor-pointer">
             <img
-              src="/crown-99.png"
-              alt="CrawlCrown Logo"
+              src={content?.brand?.logo || "/crown-99.png"}
+              alt={`${content?.brand?.name || "CrawlCrown"} Logo`}
               className="w-9 h-9 rounded-lg object-contain"
             />
-            <span className="font-bold text-heading">CrawlCrown</span>
+            <span className="font-bold text-heading">{content?.brand?.name || "CrawlCrown"}</span>
           </Link>
 
           <nav className="hidden md:flex items-center gap-2">
@@ -57,7 +60,7 @@ export default function Navbar() {
           <div className="hidden lg:flex items-center gap-3">
             <NavLink
               to="/contact"
-              className="px-4 py-2 rounded-lg bg-primary text-white text-sm font-semibold transition cursor-pointer hover:bg-primary-hover">
+              className="px-4 py-2 rounded-b bg-primary text-white text-sm font-semibold transition cursor-pointer hover:bg-primary-hover">
               Book an Appointment
             </NavLink>
           </div>

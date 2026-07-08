@@ -17,6 +17,8 @@ import FormField from "../../components/ui/FormField.jsx";
 import FileUploadField from "../../components/ui/FileUploadField.jsx";
 import FormActions from "../../components/ui/FormActions.jsx";
 import ErrorBanner from "../../components/ui/ErrorBanner.jsx";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faTrash, faPen } from "@fortawesome/free-solid-svg-icons";
 
 const resolveUrl = (path) => {
   if (!path || path.startsWith("blob:") || path.startsWith("http")) return path;
@@ -47,6 +49,7 @@ export default function AdminProjects() {
   const [loading, setLoading] = useState(false);
   const [page, setPage] = useState(1);
   const [pagination, setPagination] = useState({ total: 0, page: 1, pages: 1 });
+  const galleryRef = useRef(null);
 
   const emptyForm = useMemo(
     () => ({
@@ -81,6 +84,7 @@ export default function AdminProjects() {
   const formRef = useRef(null);
   const [deleteTarget, setDeleteTarget] = useState(null);
   const [deleteAllTarget, setDeleteAllTarget] = useState(false);
+  const [confirmGalleryIdx, setConfirmGalleryIdx] = useState(null);
 
   const load = async () => {
     setLoading(true);
@@ -126,10 +130,6 @@ export default function AdminProjects() {
 
   function onPickGallery(files) {
     setForm((f) => ({ ...f, gallery: [...f.gallery, ...files] }));
-  }
-
-  function removeGalleryImage(index) {
-    setForm((f) => ({ ...f, gallery: f.gallery.filter((_, i) => i !== index) }));
   }
 
   function toggleMultiSelect(field, value) {
@@ -309,7 +309,7 @@ export default function AdminProjects() {
       <div className="mt-6 grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div
           ref={formRef}
-          className="lg:col-span-1 bg-background border border-border rounded p-4 shadow-xs max-h-[80vh] overflow-y-auto">
+          className="lg:col-span-1 bg-background border border-border rounded p-4 shadow-xs lg:h-[80vh] lg:overflow-y-auto">
           <div className="font-extrabold text-heading">
             {form.project_id ? "Edit Project" : "Add New Project"}
           </div>
@@ -347,15 +347,18 @@ export default function AdminProjects() {
                 ]}
               />
               <div className="flex items-end pb-1">
-                <label className="flex items-center gap-2 cursor-pointer">
-                  <input
-                    type="checkbox"
-                    checked={form.featured}
-                    onChange={(e) => setForm((f) => ({ ...f, featured: e.target.checked }))}
-                    className="w-4 h-4 rounded border-border text-primary focus:ring-primary-light"
-                  />
-                  <span className="text-sm font-medium text-heading">Featured Project</span>
-                </label>
+                <div className="flex items-center gap-3">
+                  <label className="relative inline-flex items-center cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={form.featured}
+                      onChange={(e) => setForm((f) => ({ ...f, featured: e.target.checked }))}
+                      className="sr-only peer"
+                    />
+                    <div className="w-9 h-5 bg-border rounded-full peer peer-checked:bg-primary peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all" />
+                  </label>
+                  <span className="text-sm font-semibold text-heading">Featured Project</span>
+                </div>
               </div>
             </div>
 
@@ -366,11 +369,13 @@ export default function AdminProjects() {
               existingUrl={typeof form.thumbnail === "string" ? resolveUrl(form.thumbnail) : ""}
               onChange={onPickThumbnail}
               onRemove={() => setForm((f) => ({ ...f, thumbnail: "" }))}
+              confirmText="Remove thumbnail?"
             />
 
             <div>
               <label className="block text-sm font-medium text-heading mb-1">Gallery Images</label>
               <input
+                ref={galleryRef}
                 type="file"
                 multiple
                 accept="image/*"
@@ -388,9 +393,9 @@ export default function AdminProjects() {
                       />
                       <button
                         type="button"
-                        onClick={() => removeGalleryImage(idx)}
+                        onClick={() => setConfirmGalleryIdx(idx)}
                         className="absolute top-0 right-0 bg-primary text-white w-4 h-4 flex items-center justify-center text-xs cursor-pointer">
-                        x
+                        <FontAwesomeIcon icon={faTrash} className="w-3 h-3" />
                       </button>
                     </div>
                   ))}
@@ -408,7 +413,7 @@ export default function AdminProjects() {
                       type="checkbox"
                       checked={form.services.includes(s._id)}
                       onChange={() => toggleMultiSelect("services", s._id)}
-                      className="w-3 h-3 rounded border-border text-primary focus:ring-primary-light"
+                      className="w-3 h-3 rounded border-border accent-primary"
                     />
                     <span className="text-xs text-text">{s.service_name}</span>
                   </label>
@@ -427,7 +432,7 @@ export default function AdminProjects() {
                       type="checkbox"
                       checked={form.technologies.includes(t._id)}
                       onChange={() => toggleMultiSelect("technologies", t._id)}
-                      className="w-3 h-3 rounded border-border text-primary focus:ring-primary-light"
+                      className="w-3 h-3 rounded border-border accent-primary"
                     />
                     <span className="text-xs text-text">{t.name}</span>
                   </label>
@@ -446,7 +451,7 @@ export default function AdminProjects() {
                       type="checkbox"
                       checked={form.industries.includes(ind._id)}
                       onChange={() => toggleMultiSelect("industries", ind._id)}
-                      className="w-3 h-3 rounded border-border text-primary focus:ring-primary-light"
+                      className="w-3 h-3 rounded border-border accent-primary"
                     />
                     <span className="text-xs text-text">{ind.name}</span>
                   </label>
@@ -465,7 +470,7 @@ export default function AdminProjects() {
                       type="checkbox"
                       checked={form.team.includes(m._id)}
                       onChange={() => toggleMultiSelect("team", m._id)}
-                      className="w-3 h-3 rounded border-border text-primary focus:ring-primary-light"
+                      className="w-3 h-3 rounded border-border accent-primary"
                     />
                     <span className="text-xs text-text">{m.name}</span>
                   </label>
@@ -563,7 +568,7 @@ export default function AdminProjects() {
           </form>
         </div>
 
-        <div className="lg:col-span-2 bg-background border border-border rounded p-5 shadow-xs flex flex-col">
+        <div className="lg:col-span-2 bg-background border border-border rounded p-5 shadow-xs flex flex-col lg:h-[80vh]">
           <AdminListFooter
             loading={loading}
             total={pagination.total}
@@ -645,14 +650,16 @@ export default function AdminProjects() {
                           <button
                             type="button"
                             className="px-3 py-2 text-xs sm:px-4 sm:py-2 sm:text-sm min-h-[44px] text-text hover:text-heading rounded transition cursor-pointer"
+                            title="Edit"
                             onClick={() => onEdit(p)}>
-                            Edit
+                            <FontAwesomeIcon icon={faPen} className="w-4 h-4" />
                           </button>
                           <button
                             type="button"
                             className="px-3 py-2 text-xs sm:px-4 sm:py-2 sm:text-sm min-h-[44px] text-primary hover:text-primary-hover rounded transition cursor-pointer"
+                            title="Delete"
                             onClick={() => setDeleteTarget(p._id)}>
-                            Delete
+                            <FontAwesomeIcon icon={faTrash} className="w-4 h-4" />
                           </button>
                         </div>
                       </td>
@@ -688,6 +695,16 @@ export default function AdminProjects() {
         onCancel={() => setDeleteAllTarget(false)}
         onConfirm={onConfirmDeleteAll}
         message="Are you sure you want to delete ALL projects? This action cannot be undone."
+      />
+      <ConfirmModal
+        open={confirmGalleryIdx !== null}
+        onCancel={() => setConfirmGalleryIdx(null)}
+        onConfirm={() => {
+          if (galleryRef.current) galleryRef.current.value = "";
+          setForm((f) => ({ ...f, gallery: f.gallery.filter((_, i) => i !== confirmGalleryIdx) }));
+          setConfirmGalleryIdx(null);
+        }}
+        message="Remove this gallery image?"
       />
     </div>
   );

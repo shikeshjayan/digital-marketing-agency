@@ -11,6 +11,8 @@ import FinalCTA from "../../components/public/FinalCTA.jsx";
 import DetailModal from "../../components/ui/DetailModal.jsx";
 import apiService from "../../services/apiService.js";
 import { Link } from "react-router-dom";
+import useBrandSettingsStore from "../../store/brandSettingsStore.js";
+import useSiteContentStore from "../../store/siteContentStore.js";
 
 function StarPicker({ value, onChange }) {
   return (
@@ -34,12 +36,9 @@ function StarPicker({ value, onChange }) {
   );
 }
 
-function TrustStatistics() {
-  const stats = [
-    { target: 8, suffix: "+", label: "Years of Experience" },
-    { target: 500, suffix: "+", label: "Projects Completed" },
-    { target: 500, suffix: "+", label: "Satisfied Clients" },
-  ];
+function TrustStatistics({ stats = [] }) {
+  const displayStats = stats.slice(0, 3);
+  if (!displayStats.length) return null;
 
   return (
     <section className="bg-background-section py-12">
@@ -47,9 +46,10 @@ function TrustStatistics() {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 items-center">
           <FadeIn direction="left">
             <div className="flex flex-col items-center lg:items-start">
-              <div className="w-full max-w-md">
-                <div className="inline-flex items-center gap-3 px-4 py-2 rounded-full bg-background border border-border">
-                  <div className="w-2.5 h-2.5 rounded-full bg-primary animate-pulse" />
+                <div className="w-full max-w-md">
+                  <div className="w-12 h-1 bg-dark rounded-sb mb-4" />
+                  <div className="inline-flex items-center gap-3 px-4 py-2 rounded-full bg-background border border-border">
+                  <div className="w-2.5 h-2.5 rounded-sm bg-primary animate-pulse" />
                   <span className="text-sm font-semibold text-heading">
                     Innovation meets execution
                   </span>
@@ -73,11 +73,11 @@ function TrustStatistics() {
           </FadeIn>
 
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
-            {stats.map((s, i) => (
-              <FadeIn key={s.label} delay={(i + 1) * 100}>
+            {displayStats.map((s, i) => (
+              <FadeIn key={s.key || i} delay={(i + 1) * 100}>
                 <div className="bg-background border border-border rounded-lg p-6 text-center shadow-sm flex flex-col items-center justify-center min-h-[120px]">
                   <div className="text-4xl font-extrabold text-heading">
-                    <AnimatedCounter target={s.target} suffix={s.suffix} />
+                    <AnimatedCounter target={s.target} suffix={s.suffix || ""} />
                   </div>
                   <div className="mt-2 text-sm font-semibold text-text">
                     {s.label}
@@ -107,6 +107,18 @@ export default function Testimonials() {
   const [detail, setDetail] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  const { content: brandContent, fetchBrandSettings } = useBrandSettingsStore();
+  const { content: siteContent, fetchPublicSiteContent } = useSiteContentStore();
+
+  const companyStats = siteContent?.companyStats ?? [];
+  const contact = brandContent?.contact ?? {};
+  const trustMarqueeLogos = siteContent?.trustMarqueeLogos ?? [];
+
+  const getStat = (key) => {
+    const s = companyStats.find((st) => st.key === key);
+    return s ? `${s.target}${s.suffix}` : "";
+  };
+
   useEffect(() => {
     let isMounted = true;
     setLoading(true);
@@ -123,8 +135,10 @@ export default function Testimonials() {
           setLoading(false);
         }
       });
+    fetchBrandSettings();
+    fetchPublicSiteContent();
     return () => { isMounted = false; };
-  }, []);
+  }, [fetchBrandSettings, fetchPublicSiteContent]);
 
   async function onSubmit(e) {
     e.preventDefault();
@@ -173,9 +187,9 @@ export default function Testimonials() {
         imageSrc="/testimonials.webp"
         imageAlt="Client Testimonials"
         trustIndicators={[
-          { value: "500+", label: "Satisfied\nClients" },
-          { value: "4.9", label: "Average\nRating" },
-          { value: "8+", label: "Years\nExperience" },
+          { value: getStat("satisfiedClients") || "500+", label: "Satisfied\nClients" },
+          { value: getStat("averageRating") || "4.9", label: "Average\nRating" },
+          { value: getStat("yearsExperience") || "8+", label: "Years\nExperience" },
         ]}
       />
 
@@ -202,24 +216,24 @@ export default function Testimonials() {
                     <span className="w-10 h-8 rounded-lg bg-secondary/10 flex items-center justify-center small-text text-white/70">
                       <FontAwesomeIcon icon={faPhone} />
                     </span>
-                    <a href="tel:+91 8891212323" className="text-white/80 hover:text-primary transition-colors">
-                      +91 8891212323
+                    <a href={`tel:${contact.phone || "+91 8891212323"}`} className="text-white/80 hover:text-primary transition-colors">
+                      {contact.phone || "+91 8891212323"}
                     </a>
                   </div>
                   <div className="flex items-center gap-3">
                     <span className="w-10 h-8 rounded-lg bg-secondary/10 flex items-center justify-center small-text text-white/70">
                       <FontAwesomeIcon icon={faEnvelope} />
                     </span>
-                    <a href="mailto:crowlcrown@gmail.com" className="text-white/80 hover:text-primary transition-colors">
-                      crowlcrown@gmail.com
+                    <a href={`mailto:${contact.email || "crowlcrown@gmail.com"}`} className="text-white/80 hover:text-primary transition-colors">
+                      {contact.email || "crowlcrown@gmail.com"}
                     </a>
                   </div>
                   <div className="flex items-center gap-3">
                     <span className="w-10 h-8 rounded-lg bg-secondary/10 flex items-center justify-center small-text text-white/70">
                       <FontAwesomeIcon icon={faEnvelope} />
                     </span>
-                    <a href="https://www.google.com/maps/search/Ernakulam+Kochi+Kerala+India" target="_blank" rel="noopener noreferrer" className="text-white/80 hover:text-primary transition-colors">
-                      Ernakulam, Kochi, Kerala, India
+                    <a href={`https://www.google.com/maps/search/${encodeURIComponent(contact.address || "Ernakulam Kochi Kerala India")}`} target="_blank" rel="noopener noreferrer" className="text-white/80 hover:text-primary transition-colors">
+                      {contact.address || "Ernakulam, Kochi, Kerala, India"}
                     </a>
                   </div>
                 </div>
@@ -387,8 +401,8 @@ export default function Testimonials() {
         </div>
       </section>
 
-      <TrustStatistics />
-      <LogoMarquee bg="bg-background" />
+      <TrustStatistics stats={companyStats} />
+      <LogoMarquee logos={trustMarqueeLogos} bg="bg-background" />
       <FinalCTA />
 
       <DetailModal
