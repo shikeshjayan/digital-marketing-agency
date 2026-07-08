@@ -1,16 +1,15 @@
-// Public routes - visitors can view active projects
+// Public routes - visitors can view published projects
 import express from "express";
 import {
   getAllProjects,
   getProjectById,
-  getProjectsByCategory,
-  validateCategory,
+  getProjectBySlug,
 } from "../controllers/project.controller.js";
 
 const router = express.Router();
 
 router.get("/", getAllProjects);
-router.get("/category/:type", validateCategory, getProjectsByCategory);
+router.get("/slug/:slug", getProjectBySlug);
 router.get("/:id", getProjectById);
 
 export default router;

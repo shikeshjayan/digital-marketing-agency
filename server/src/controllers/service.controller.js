@@ -1,46 +1,30 @@
 // Handles everything related to services (CRUD + public listing)
 import Services from "../models/services.model.js";
+import Projects from "../models/projects.model.js";
 import asyncHandler from "../middleware/asyncHandler.js";
-
-const parseJsonField = (value, fallback = []) => {
-  if (!value) return fallback;
-  try {
-    const parsed = typeof value === "string" ? JSON.parse(value) : value;
-    return Array.isArray(parsed) ? parsed : fallback;
-  } catch {
-    return fallback;
-  }
-};
-
-const parseJsonObject = (value, fallback = {}) => {
-  if (!value) return fallback;
-  try {
-    return typeof value === "string" ? JSON.parse(value) : value;
-  } catch {
-    return fallback;
-  }
-};
+import { parseJsonField, parseJsonObject, escapeRegex } from "../utils/helpers.js";
 
 // Create a new service (admin only)
 export const createService = asyncHandler(async (req, res) => {
-  const { service_name, short_description, description, status, category } = req.body;
-  const image = req.files?.image?.[0]?.url ?? req.body.image;
-  const offerings = parseJsonField(req.body.offerings);
-  const benefits = parseJsonField(req.body.benefits);
-  const target_audience = parseJsonField(req.body.target_audience);
-  const faq = parseJsonField(req.body.faq);
-  const case_study = parseJsonObject(req.body.case_study);
-  const clients = parseJsonField(req.body.clients).map((c, i) => ({
-    ...c,
-    avatar: req.clientAvatarUrls?.[String(i)] ?? c.avatar ?? "",
-  }));
+  const {
+    service_name,
+    short_description,
+    description,
+    status,
+    featured,
+    display_order,
+  } = req.body;
 
-  // Validate required fields
-  if (!service_name || !short_description || !description || !image) {
+  const hero_image = req.files?.hero_image?.[0]?.url ?? req.body.hero_image;
+  const icon = req.files?.icon?.[0]?.url ?? req.body.icon ?? "";
+  const deliverables = parseJsonField(req.body.deliverables);
+  const benefits = parseJsonField(req.body.benefits);
+  const seo = parseJsonObject(req.body.seo);
+
+  if (!service_name || !short_description || !description || !hero_image) {
     return res.status(400).json({ success: false, message: "Missing required fields" });
   }
 
-  // Prevent duplicate service names
   const existing = await Services.findOne({ service_name });
   if (existing) {
     return res.status(409).json({ success: false, message: "Service already exists" });
@@ -50,14 +34,13 @@ export const createService = asyncHandler(async (req, res) => {
     service_name,
     short_description,
     description,
-    image,
-    category,
-    offerings,
+    hero_image,
+    icon,
+    deliverables,
     benefits,
-    target_audience,
-    faq,
-    case_study,
-    clients,
+    featured: featured === "true" || featured === true,
+    display_order: display_order ? Number(display_order) : 0,
+    seo,
     status,
   });
 
@@ -68,18 +51,24 @@ export const createService = asyncHandler(async (req, res) => {
   });
 });
 
-// Get active services with search and pagination (public)
+// Get active services with search, filtering, and pagination (public)
 export const getAllServices = asyncHandler(async (req, res) => {
-  const { search, page = 1, limit = 10 } = req.query;
+  const { search, featured, page = 1, limit = 10 } = req.query;
 
   const filter = { status: "Active" };
   if (search) {
-    filter.service_name = { $regex: search, $options: "i" };
+    filter.service_name = { $regex: escapeRegex(search), $options: "i" };
+  }
+  if (featured === "true") {
+    filter.featured = true;
   }
 
   const skip = (Number(page) - 1) * Number(limit);
   const total = await Services.countDocuments(filter);
-  const services = await Services.find(filter).skip(skip).limit(Number(limit));
+  const services = await Services.find(filter)
+    .sort({ display_order: 1, createdAt: -1 })
+    .skip(skip)
+    .limit(Number(limit));
 
   res.status(200).json({
     success: true,
@@ -93,37 +82,73 @@ export const getAllServices = asyncHandler(async (req, res) => {
   });
 });
 
-// Get a single service by its ID (public)
+// Get a single service by slug (public)
+export const getServiceBySlug = asyncHandler(async (req, res) => {
+  const service = await Services.findOne({ slug: req.params.slug, status: "Active" });
+  if (!service) {
+    return res.status(404).json({ success: false, message: "Service not found" });
+  }
+
+  const projects = await Projects.find({ services: service._id, status: "Published" })
+    .populate("technologies", "name slug")
+    .populate("industries", "name slug")
+    .select("project_name slug thumbnail short_description featured");
+
+  res.status(200).json({ success: true, data: { ...service.toObject(), projects } });
+});
+
+// Get a single service by ID (public — used for related services)
 export const getServiceById = asyncHandler(async (req, res) => {
   const service = await Services.findById(req.params.id);
   if (!service) {
     return res.status(404).json({ success: false, message: "Service not found" });
   }
-  res.status(200).json({ success: true, data: service });
+
+  const projects = await Projects.find({ services: service._id, status: "Published" })
+    .populate("technologies", "name slug")
+    .populate("industries", "name slug")
+    .select("project_name slug thumbnail short_description featured");
+
+  res.status(200).json({ success: true, data: { ...service.toObject(), projects } });
 });
 
 // Update an existing service (admin only)
 export const updateService = asyncHandler(async (req, res) => {
-  const { service_name, short_description, description, status, category } = req.body;
-  const offerings = parseJsonField(req.body.offerings);
-  const benefits = parseJsonField(req.body.benefits);
-  const target_audience = parseJsonField(req.body.target_audience);
-  const faq = parseJsonField(req.body.faq);
-  const case_study = parseJsonObject(req.body.case_study);
-  const clients = parseJsonField(req.body.clients).map((c, i) => ({
-    ...c,
-    avatar: req.clientAvatarUrls?.[String(i)] ?? c.avatar ?? "",
-  }));
+  const {
+    service_name,
+    short_description,
+    description,
+    status,
+    featured,
+    display_order,
+  } = req.body;
 
-  if (!service_name && !short_description && !description && !status && !category && !offerings.length && !benefits.length && !target_audience.length && !faq.length && !clients.length) {
-    return res.status(400).json({ success: false, message: "No fields to update" });
+  const deliverables = parseJsonField(req.body.deliverables);
+  const benefits = parseJsonField(req.body.benefits);
+  const seo = parseJsonObject(req.body.seo);
+
+  const update = {
+    service_name,
+    short_description,
+    description,
+    status,
+    deliverables,
+    benefits,
+    seo,
+    featured: featured === "true" || featured === true,
+    display_order: display_order ? Number(display_order) : 0,
+  };
+
+  if (req.files?.hero_image?.[0]?.url) {
+    update.hero_image = req.files.hero_image[0].url;
+  } else if (req.body.hero_image) {
+    update.hero_image = req.body.hero_image;
   }
 
-  const update = { service_name, short_description, description, status, category, offerings, benefits, target_audience, faq, case_study, clients };
-  if (req.files?.image?.[0]?.url) {
-    update.image = req.files.image[0].url;
-  } else if (req.body.image) {
-    update.image = req.body.image;
+  if (req.files?.icon?.[0]?.url) {
+    update.icon = req.files.icon[0].url;
+  } else if (req.body.icon !== undefined) {
+    update.icon = req.body.icon;
   }
 
   const service = await Services.findByIdAndUpdate(
@@ -147,19 +172,30 @@ export const deleteService = asyncHandler(async (req, res) => {
   if (!service) {
     return res.status(404).json({ success: false, message: "Service not found" });
   }
+
+  // Clean orphaned references from projects
+  await Projects.updateMany(
+    { services: req.params.id },
+    { $pull: { services: req.params.id } },
+  );
+
   res.status(200).json({ success: true, message: "Service deleted successfully" });
 });
 
 // Delete all services (admin only)
 export const deleteAllServices = asyncHandler(async (req, res) => {
   const result = await Services.deleteMany({});
+
+  // Clean all service references from projects
+  await Projects.updateMany({}, { $set: { services: [] } });
+
   res.status(200).json({
     success: true,
     message: `${result.deletedCount} service(s) deleted successfully.`,
   });
 });
 
-// Get related services by category (public)
+// Get related services (public — random active services excluding current)
 export const getRelatedServices = asyncHandler(async (req, res) => {
   const { id } = req.params;
   const { limit = 3 } = req.query;
@@ -169,26 +205,12 @@ export const getRelatedServices = asyncHandler(async (req, res) => {
     return res.status(404).json({ success: false, message: "Service not found" });
   }
 
-  const filter = {
+  const related = await Services.find({
     status: "Active",
     _id: { $ne: id },
-  };
-
-  if (currentService.category) {
-    filter.category = currentService.category;
-  }
-
-  let related = await Services.find(filter).limit(Number(limit));
-
-  // If not enough same-category services, fill with random active services
-  if (related.length < Number(limit)) {
-    const existingIds = [id, ...related.map((s) => s._id.toString())];
-    const moreServices = await Services.find({
-      status: "Active",
-      _id: { $nin: existingIds },
-    }).limit(Number(limit) - related.length);
-    related = [...related, ...moreServices];
-  }
+  })
+    .sort({ display_order: 1 })
+    .limit(Number(limit));
 
   res.status(200).json({
     success: true,
@@ -199,19 +221,27 @@ export const getRelatedServices = asyncHandler(async (req, res) => {
 
 // Get all services (including inactive ones) with filters for admin panel
 export const getAllAdminServices = asyncHandler(async (req, res) => {
-  const { search, status, page = 1, limit = 10 } = req.query;
+  const { search, status, featured, page = 1, limit = 10 } = req.query;
 
   const filter = {};
   if (search) {
-    filter.service_name = { $regex: search, $options: "i" };
+    filter.service_name = { $regex: escapeRegex(search), $options: "i" };
   }
   if (status) {
     filter.status = status;
   }
+  if (featured === "true") {
+    filter.featured = true;
+  } else if (featured === "false") {
+    filter.featured = false;
+  }
 
   const skip = (Number(page) - 1) * Number(limit);
   const total = await Services.countDocuments(filter);
-  const services = await Services.find(filter).skip(skip).limit(Number(limit));
+  const services = await Services.find(filter)
+    .sort({ display_order: 1, createdAt: -1 })
+    .skip(skip)
+    .limit(Number(limit));
 
   res.status(200).json({
     success: true,

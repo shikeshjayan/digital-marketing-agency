@@ -488,7 +488,7 @@ export default function AdminDashboard() {
                     <div className="font-bold text-heading truncate">
                       {p.project_name}
                     </div>
-                    <div className="text-sm text-text">{p.category}</div>
+                    <div className="text-sm text-text">{p.status}</div>
                     <div className="mt-1 text-xs text-muted">
                       {relativeTime(p.updated_at ?? p.created_at)}
                     </div>

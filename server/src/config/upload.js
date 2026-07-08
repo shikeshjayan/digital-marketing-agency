@@ -36,9 +36,6 @@ const upload = multer({
 
 // Middleware: compress, resize, and upload image
 async function processBuffer(buffer, originalname) {
-  const ext = path.extname(originalname).toLowerCase();
-  const isPng = ext === ".png";
-
   let pipeline = sharp(buffer).resize({
     width: 1200,
     height: 1200,
@@ -46,19 +43,14 @@ async function processBuffer(buffer, originalname) {
     withoutEnlargement: true,
   });
 
-  if (isPng) {
-    pipeline = pipeline.png({ quality: 80, compressionLevel: 8 });
-  } else {
-    pipeline = pipeline.jpeg({ quality: 80, mozjpeg: true });
-  }
+  pipeline = pipeline.webp({ quality: 80 });
 
   const processedBuffer = await pipeline.toBuffer();
-  const filename = `${Date.now()}-${Math.round(Math.random() * 1e9)}${ext}`;
+  const filename = `${Date.now()}-${Math.round(Math.random() * 1e9)}.webp`;
 
   if (isProduction) {
     const { uploadToBlob } = await import("./blob.js");
-    const contentType = isPng ? "image/png" : "image/jpeg";
-    return await uploadToBlob(processedBuffer, filename, contentType);
+    return await uploadToBlob(processedBuffer, filename, "image/webp");
   } else {
     const filePath = path.join(uploadsDir, filename);
     fs.writeFileSync(filePath, processedBuffer);
@@ -75,18 +67,9 @@ export const processImage = async (req, res, next) => {
 
     // Handle upload.fields() / upload.array() — files are on req.files (plural)
     if (req.files) {
-      // Process main image
-      if (req.files.image?.[0]) {
-        const f = req.files.image[0];
-        f.url = await processBuffer(f.buffer, f.originalname);
-      }
-
-      // Process client avatar files (clientAvatar_0, clientAvatar_1, ...)
-      req.clientAvatarUrls = {};
       for (const [fieldname, fileArr] of Object.entries(req.files)) {
-        if (fieldname.startsWith("clientAvatar_")) {
-          const index = fieldname.split("_")[1];
-          req.clientAvatarUrls[index] = await processBuffer(fileArr[0].buffer, fileArr[0].originalname);
+        for (const file of fileArr) {
+          file.url = await processBuffer(file.buffer, file.originalname);
         }
       }
     }

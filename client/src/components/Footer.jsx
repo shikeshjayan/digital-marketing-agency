@@ -5,7 +5,6 @@ import { faAngleUp, faPhone, faEnvelope, faMapMarkerAlt } from '@fortawesome/fre
 import { faFacebookF, faInstagram, faLinkedinIn, faYoutube } from '@fortawesome/free-brands-svg-icons'
 import FadeIn from '../components/ui/FadeIn.jsx'
 import useServiceStore from '../store/serviceStore.js'
-import { slugify } from '../utils/slugify.js'
 
 export default function Footer() {
   const { services, fetchServices } = useServiceStore()
@@ -88,7 +87,7 @@ export default function Footer() {
                       activeServices.map((service) => (
                         <li key={service._id}>
                           <Link 
-                            to={`/services/${slugify(service.service_name)}`} 
+                            to={`/services/${service.slug}`} 
                             className="cursor-pointer hover:text-primary transition-colors"
                           >
                             {service.service_name}

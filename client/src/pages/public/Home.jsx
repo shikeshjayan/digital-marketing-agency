@@ -186,13 +186,8 @@ function ServicesCarousel({ services }) {
       <section className="py-12 bg-background-section">
         <div className="max-w-6xl mx-auto px-4">
           <div className="bg-background rounded-lg shadow-sm border border-border overflow-hidden">
-            <div className="px-6 py-10 md:px-10">
-              <div className="animate-pulse space-y-4">
-                <div className="h-4 w-24 bg-surface rounded" />
-                <div className="h-6 w-64 bg-surface rounded" />
-                <div className="h-16 w-full max-w-xl bg-surface rounded" />
-                <div className="h-10 w-28 bg-surface rounded-full" />
-              </div>
+            <div className="px-6 py-12 md:px-10 text-center">
+              <p className="text-muted body-text">No featured services available at the moment.</p>
             </div>
           </div>
         </div>
