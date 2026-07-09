@@ -64,7 +64,7 @@ export default function OurProcess({ steps = defaultSteps, bg = "bg-background-s
 
           <div className="space-y-8 md:space-y-0">
             {steps.map((step, i) => {
-              const isLeft = i % 2 === 0;
+              const isLeft = i % 2 === 0; // Alternates box side of the center line
               return (
                 <FadeIn
                   key={step.title}
@@ -78,18 +78,20 @@ export default function OurProcess({ steps = defaultSteps, bg = "bg-background-s
                       </div>
                     </div>
 
+                    {/* Cleaned layout: Removed "md:text-right md:pr-12" for left-side boxes so text stays left-aligned internally */}
                     <div
-                      className={`${isLeft ? "md:text-right md:pr-12" : "md:col-start-2 md:pl-12"}`}>
+                      className={`text-left ${isLeft ? "md:pr-12" : "md:col-start-2 md:pl-12"}`}>
                       <div className="bg-surface border border-border rounded-lg p-6 hover:shadow-sm transition">
-                        <div
-                          className={`flex items-center gap-3 ${isLeft ? "md:justify-end" : ""}`}>
+                        
+                        {/* Cleaned wrapper: Removed "md:justify-end" condition so icon and title are always cleanly on the left side of the card */}
+                        <div className="flex items-center gap-3">
                           <div className="w-10 h-10 rounded-lg bg-primary-light flex items-center justify-center shrink-0">
                             <FontAwesomeIcon
                               icon={step.icon}
                               className="text-primary"
                             />
                           </div>
-                          <div>
+                          <div className="text-left">
                             <div className="text-xs font-semibold text-primary uppercase tracking-wider">
                               Step {i + 1}
                             </div>
@@ -98,7 +100,8 @@ export default function OurProcess({ steps = defaultSteps, bg = "bg-background-s
                             </h3>
                           </div>
                         </div>
-                        <p className="mt-3 small-text text-text body-text">
+                        
+                        <p className="mt-3 small-text text-text body-text text-left">
                           {step.desc}
                         </p>
                       </div>
