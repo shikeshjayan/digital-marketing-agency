@@ -27,7 +27,7 @@ import ImageLoader from "../../components/ui/ImageLoader.jsx";
 /* ─── Project Card ────────────────────────────────────────── */
 const ProjectCard = ({ project }) => {
   return (
-    <div className="group block bg-background border border-border rounded-lg overflow-hidden hover:shadow-lg hover:border-primary transition-all duration-300 h-full flex flex-col w-full">
+    <div className="group block bg-background border border-border rounded-lg overflow-hidden hover:shadow-lg hover:border-primary transition-all duration-300 h-full flex flex-col">
       <div className="relative overflow-hidden aspect-[16/10] w-full bg-surface">
         <ImageLoader
           src={project.thumbnail || project.image}
@@ -36,10 +36,12 @@ const ProjectCard = ({ project }) => {
           className="w-full h-full group-hover:scale-105 transition-transform duration-500"
         />
       </div>
-      <div className="p-5 flex-1 flex flex-col">
+
+      <div className="p-5">
         <h3 className="subheading text-heading group-hover:text-primary transition-colors duration-300 line-clamp-1">
           {project.project_name}
         </h3>
+
         <div className="mt-2 flex items-center gap-2 text-xs flex-wrap">
           {project.services?.length > 0 && (
             <span className="inline-block px-2.5 py-0.5 rounded-full bg-primary-light text-primary font-semibold">
@@ -52,6 +54,7 @@ const ProjectCard = ({ project }) => {
             </span>
           )}
         </div>
+
         <div className="mt-3 flex flex-wrap gap-x-4 gap-y-1 text-xs text-muted">
           {project.client?.name && (
             <span className="flex items-center gap-1">
@@ -66,15 +69,18 @@ const ProjectCard = ({ project }) => {
             </span>
           )}
         </div>
+
         {project.technologies && project.technologies.length > 0 && (
           <div className="mt-2 flex items-center gap-1 text-xs text-muted">
             <FontAwesomeIcon icon={faCogs} className="text-[10px]" />
             <span className="truncate">{project.technologies.map(t => typeof t === "object" ? t.name : t).join(", ")}</span>
           </div>
         )}
+
         <p className="mt-3 small-text text-text body-text line-clamp-2">
           {project.short_description}
         </p>
+
         <div className="mt-auto pt-4 flex items-center gap-4 text-sm font-semibold">
           <Link
             to={`/projects/${project.slug}`}
@@ -99,6 +105,7 @@ const ProjectCard = ({ project }) => {
 function ProjectStatistics({ stats = [] }) {
   const displayStats = stats.slice(0, 4);
   if (!displayStats.length) return null;
+
   return (
     <section className="py-12 md:py-16 bg-background-section">
       <div className="max-w-6xl mx-auto px-4">
@@ -115,6 +122,7 @@ function ProjectStatistics({ stats = [] }) {
             </p>
           </div>
         </FadeIn>
+
         <div className="mt-10 grid grid-cols-2 md:grid-cols-4 gap-6">
           {displayStats.map((s, i) => (
             <FadeIn key={s.key || i} delay={i * 100}>
@@ -137,7 +145,9 @@ function ProjectStatistics({ stats = [] }) {
 /* ─── Section: Featured Case Study ────────────────────────── */
 function FeaturedCaseStudy({ projects }) {
   const featured = projects.find((p) => p.status === "Published") || projects[0];
+
   if (!featured) return null;
+
   return (
     <section className="py-12 md:py-16 bg-background-section">
       <div className="max-w-6xl mx-auto px-4">
@@ -148,6 +158,7 @@ function FeaturedCaseStudy({ projects }) {
             subtitle="A closer look at one of our most impactful projects."
           />
         </FadeIn>
+
         <FadeIn delay={100}>
           <div className="mt-8 bg-background border border-border rounded-lg overflow-hidden hover:shadow-lg transition-shadow duration-300">
             <div className="grid grid-cols-1 lg:grid-cols-2">
@@ -159,6 +170,7 @@ function FeaturedCaseStudy({ projects }) {
                   className="w-full h-full"
                 />
               </div>
+
               <div className="p-5 sm:p-6 lg:p-8 flex flex-col">
                 <div className="flex items-center gap-2 text-xs flex-wrap">
                   {featured.services?.length > 0 && (
@@ -172,9 +184,11 @@ function FeaturedCaseStudy({ projects }) {
                     </span>
                   )}
                 </div>
+
                 <h3 className="mt-3 subheading text-heading">
                   {featured.project_name}
                 </h3>
+
                 <div className="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-xs text-muted">
                   {featured.client?.name && (
                     <span className="flex items-center gap-1.5">
@@ -192,23 +206,27 @@ function FeaturedCaseStudy({ projects }) {
                     </span>
                   )}
                 </div>
+
                 {featured.technologies && featured.technologies.length > 0 && (
                   <div className="mt-2 flex items-center gap-1.5 text-xs text-muted">
                     <FontAwesomeIcon icon={faCogs} className="text-[10px]" />
                     <span>{featured.technologies.map(t => typeof t === "object" ? t.name : t).join(", ")}</span>
                   </div>
                 )}
+
                 <p className="mt-4 text-text small-text leading-relaxed">
                   {featured.short_description}
                 </p>
+
                 {featured.short_description &&
                   featured.short_description.length > 120 && (
                     <Link
                       to={`/projects/${featured.slug}`}
                       className="mt-1.5 self-start text-xs font-semibold text-primary hover:text-primary-hover transition">
-                      Read more
+                      Read more →
                     </Link>
                   )}
+
                 <div className="mt-auto pt-5">
                   <a
                     href={featured.project_url}
@@ -234,6 +252,7 @@ function ResultsAnalytics({ stats = [] }) {
     const s = stats.find((st) => st.key === key);
     return s ? `${s.target}${s.suffix}` : "";
   };
+
   const metrics = [
     {
       icon: faChartLine,
@@ -242,7 +261,6 @@ function ResultsAnalytics({ stats = [] }) {
       desc: "Return on investment for our clients",
     },
     {
-      /* Fixed: Replaced unimported faBallseye typo with correctly imported faBullseye icon variable */
       icon: faBullseye,
       value: getStatValue("onTimeDelivery") || "95%",
       label: "On-Time Delivery",
@@ -261,6 +279,7 @@ function ResultsAnalytics({ stats = [] }) {
       desc: "Reliable hosted solutions",
     },
   ];
+
   return (
     <section className="py-12 md:py-16 bg-background">
       <div className="max-w-6xl mx-auto px-4">
@@ -271,6 +290,7 @@ function ResultsAnalytics({ stats = [] }) {
             subtitle="Data-driven outcomes that demonstrate our impact."
           />
         </FadeIn>
+
         <div className="mt-10 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
           {metrics.map((m, i) => (
             <FadeIn key={m.label} delay={i * 100}>
@@ -297,9 +317,10 @@ function ResultsAnalytics({ stats = [] }) {
   );
 }
 
-/* ─── Section: Client Logos (Trusted By) ───────────────────── */
+/* ─── Section: Client Logos (Trusted By) ──────────────────── */
 function ClientLogos({ logos = [] }) {
   if (!logos.length) return null;
+
   return (
     <section className="py-12 md:py-16 bg-background-section">
       <div className="max-w-6xl mx-auto px-4">
@@ -310,10 +331,11 @@ function ClientLogos({ logos = [] }) {
             subtitle="We've had the privilege of working with amazing brands across industries."
           />
         </FadeIn>
-        <div className="mt-10 flex flex-wrap justify-center gap-4">
+
+        <div className="mt-10 grid grid-cols-2 sm:grid-cols-4 gap-4">
           {logos.map((logo, i) => (
-            <FadeIn key={i} delay={i * 60} className="w-[calc(50%-8px)] sm:w-[calc(33.33%-11px)] md:w-[calc(25%-12px)] lg:w-[calc(20%-12px)] min-w-[140px]">
-              <div className="flex items-center justify-center bg-background border border-border rounded-lg px-4 py-5 hover:shadow-sm hover:border-primary/30 transition-all duration-200 cursor-default h-full w-full">
+            <FadeIn key={i} delay={i * 60}>
+              <div className="flex items-center justify-center bg-background border border-border rounded-lg px-4 py-5 hover:shadow-sm hover:border-primary/30 transition-all duration-200 cursor-default">
                 <span className="text-sm font-semibold text-muted text-center">
                   {logo}
                 </span>
@@ -326,7 +348,7 @@ function ClientLogos({ logos = [] }) {
   );
 }
 
-/* ─── Before / After Results ──────────────────────────────── */
+/* ─── Section: Before / After Results ────────────────────── */
 const beforeAfterData = [
   { metric: "Organic Traffic", before: "4,200/mo", after: "12,100/mo" },
   { metric: "Lead Generation", before: "20/mo", after: "68/mo" },
@@ -345,6 +367,7 @@ function BeforeAfterResults() {
             subtitle="Real transformations that speak for our work."
           />
         </FadeIn>
+
         <div className="mt-10 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
           {beforeAfterData.map((item, i) => (
             <FadeIn key={item.metric} delay={i * 100}>
@@ -397,6 +420,7 @@ const Projects = () => {
   ];
 
   const companyStats = content?.companyStats ?? [];
+
   const getStat = (key) => {
     const s = companyStats.find((st) => st.key === key);
     return s ? `${s.target}${s.suffix}` : "";
@@ -443,6 +467,7 @@ const Projects = () => {
               subtitle="Browse through our work filtered by category."
             />
           </FadeIn>
+
           <div className="mt-8 flex flex-wrap gap-3 justify-center">
             {categoryFilters.map((cat) => (
               <button
@@ -497,9 +522,9 @@ const Projects = () => {
               </div>
             </div>
           ) : (
-            <div className="mt-10 flex flex-wrap justify-center gap-6">
+            <div className="mt-10 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
               {projects.map((p, i) => (
-                <FadeIn key={p._id} delay={i * 100} className="w-full sm:w-[calc(50%-12px)] lg:w-[calc(33.33%-16px)]">
+                <FadeIn key={p._id} delay={i * 100} className="h-full">
                   <ProjectCard project={p} />
                 </FadeIn>
               ))}
