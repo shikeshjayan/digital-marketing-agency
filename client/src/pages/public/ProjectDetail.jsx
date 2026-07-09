@@ -95,27 +95,23 @@ export default function ProjectDetail() {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
             <FadeIn>
               <div>
-                {project.featured && (
-                  <span className="inline-block px-3 py-1 text-xs font-semibold bg-primary text-white rounded-full mb-4">
-                    Featured Project
-                  </span>
-                )}
+                {/* Featured Project banner removed cleanly from here */}
                 <h1 className="hero-heading text-white">{project.project_name}</h1>
                 <p className="mt-4 text-white/70 text-lg leading-relaxed">{project.short_description}</p>
 
                 <div className="flex flex-wrap gap-3 mt-6">
                   {project.services?.slice(0, 2).map((s, i) => (
-                    <span key={i} className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-white/10 text-white/80 text-xs rounded-full">
+                    <span key={i} className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-white/10 text-white/80 text-xs rounded-sm">
                       {typeof s === "object" ? s.service_name : "Service"}
                     </span>
                   ))}
                   {project.industries?.[0] && (
-                    <span className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-white/10 text-white/80 text-xs rounded-full">
+                    <span key="ind-hero" className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-white/10 text-white/80 text-xs rounded-sm">
                       {typeof project.industries[0] === "object" ? project.industries[0].name : project.industries[0]}
                     </span>
                   )}
                   {project.completion_date && (
-                    <span className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-white/10 text-white/80 text-xs rounded-full">
+                    <span className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-white/10 text-white/80 text-xs rounded-sm">
                       <FontAwesomeIcon icon={faCalendar} className="text-[10px]" />
                       {formatDate(project.completion_date)}
                     </span>
@@ -130,14 +126,14 @@ export default function ProjectDetail() {
                   <img
                     src={resolveImagePath(project.thumbnail)}
                     alt={project.project_name}
-                    className="w-full aspect-[16/9] object-cover"
+                    className="w-full aspect-[16/9] object-cover rounded-sm"
                     width="800"
                     height="450"
                     loading="eager"
                     decoding="async"
                   />
                 ) : (
-                  <div className="w-full aspect-[16/9] bg-surface flex items-center justify-center text-muted text-sm">
+                  <div className="w-full aspect-[16/9] bg-surface flex items-center justify-center text-muted text-sm rounded-sm">
                     No image available
                   </div>
                 )}
@@ -198,7 +194,9 @@ export default function ProjectDetail() {
               <SectionHeading eyebrow="About" title="Project Overview" />
             </FadeIn>
             <FadeIn delay={100}>
-              <div className="mt-8 text-text leading-relaxed body-text whitespace-pre-line">{project.description}</div>
+              <div className="mt-8 text-text leading-relaxed body-text whitespace-pre-line text-justify md:text-left">
+                {project.description}
+              </div>
             </FadeIn>
           </div>
         </section>
@@ -217,7 +215,7 @@ export default function ProjectDetail() {
                   key={i}
                   src={resolveImagePath(img)}
                   alt={`Gallery ${i + 1}`}
-                  className="w-full aspect-video object-cover border border-border rounded-img"
+                  className="w-full aspect-video object-cover border border-border rounded-sm"
                   loading="lazy"
                 />
               ))}
@@ -235,7 +233,7 @@ export default function ProjectDetail() {
             </FadeIn>
             <div className="mt-10 flex flex-wrap justify-center gap-3">
               {project.services.map((s, i) => (
-                <span key={i} className="px-4 py-2 bg-background border border-border text-text text-sm rounded-full">
+                <span key={i} className="px-4 py-2 bg-background border border-border text-text text-sm rounded-sm">
                   {typeof s === "object" ? s.service_name : "Service"}
                 </span>
               ))}
@@ -244,19 +242,28 @@ export default function ProjectDetail() {
         </section>
       )}
 
-      {/* Technologies */}
+      {/* Technologies Section (Styled exactly like the Service Detail Page layer layout) */}
       {project.technologies?.length > 0 && (
         <section className="py-14 md:py-16 bg-background">
           <div className="max-w-6xl mx-auto px-4">
             <FadeIn>
-              <SectionHeading eyebrow="Tech Stack" title="Technologies" />
+              <SectionHeading 
+                eyebrow="Tech Stack" 
+                title="Technologies" 
+                subtitle="The tools and technologies we use to build your solutions." 
+              />
             </FadeIn>
             <div className="mt-10 flex flex-wrap justify-center gap-3">
-              {project.technologies.map((tech, i) => (
-                <span key={i} className="px-4 py-2 bg-background-section border border-border text-text text-sm rounded-full">
-                  {typeof tech === "object" ? tech.name : tech}
-                </span>
-              ))}
+              {project.technologies.map((tech, i) => {
+                const name = typeof tech === "object" ? tech.name : tech;
+                return (
+                  <FadeIn key={i} delay={i * 30}>
+                    <span className="inline-flex items-center gap-2 px-4 py-2 rounded-sm bg-background-section border border-border text-heading text-sm font-semibold hover:border-primary/40 transition">
+                      {name}
+                    </span>
+                  </FadeIn>
+                );
+              })}
             </div>
           </div>
         </section>
@@ -269,15 +276,15 @@ export default function ProjectDetail() {
             <FadeIn>
               <SectionHeading eyebrow="Sectors" title="Industries" subtitle="The industries this project was built for." />
             </FadeIn>
-            <div className="mt-10 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
+            <div className="mt-10 flex flex-wrap justify-center gap-4">
               {project.industries.map((ind, i) => (
-                <FadeIn key={ind._id || i} delay={i * 50}>
-                  <div className="bg-background border border-border rounded-lg p-5 flex flex-col items-center text-center hover:shadow-sm transition h-full">
+                <FadeIn key={ind._id || i} delay={i * 50} className="w-[calc(50%-8px)] sm:w-[calc(33.33%-11px)] lg:w-[calc(25%-12px)] min-w-[140px]">
+                  <div className="bg-background border border-border rounded-lg p-5 flex flex-col items-center text-center hover:shadow-sm transition h-full w-full">
                     {ind.icon ? (
                       <img
                         src={resolveImagePath(ind.icon)}
                         alt=""
-                        className="w-12 h-12 mb-3 object-contain"
+                        className="w-12 h-12 mb-3 object-contain rounded-sm"
                         onError={(e) => { e.target.style.display = "none"; }}
                       />
                     ) : (
@@ -371,17 +378,15 @@ export default function ProjectDetail() {
             <FadeIn>
               <SectionHeading eyebrow="Read More" title="Featured Case Study" />
             </FadeIn>
-            <FadeIn delay={100}>
-              <div className="mt-8 bg-background p-6 border border-border rounded-lg">
-                <p className="text-text leading-relaxed body-text mb-4">{caseStudy.overview || caseStudy.challenge}</p>
-                <Link
-                  to={`/case-studies/${caseStudy.slug}`}
-                  className="inline-flex items-center gap-2 text-primary hover:text-primary-hover font-semibold transition-colors">
-                  Read Full Case Study
-                  <FontAwesomeIcon icon={faExternalLinkAlt} className="text-xs" />
-                </Link>
-              </div>
-            </FadeIn>
+            <div className="mt-8 bg-background p-6 border border-border rounded-lg">
+              <p className="text-text leading-relaxed body-text mb-4">{caseStudy.overview || caseStudy.challenge}</p>
+              <Link
+                to={`/case-studies/${caseStudy.slug}`}
+                className="inline-flex items-center gap-2 text-primary hover:text-primary-hover font-semibold transition-colors">
+                Read Full Case Study
+                <FontAwesomeIcon icon={faExternalLinkAlt} className="text-xs" />
+              </Link>
+            </div>
           </div>
         </section>
       )}
@@ -402,10 +407,10 @@ export default function ProjectDetail() {
                     <div className="h-44 overflow-hidden">
                       <img
                         src={resolveImagePath(rp.thumbnail)}
-                        alt={rp.project_name}
+                        alt={project.project_name}
                         loading="lazy"
                         decoding="async"
-                        className="w-full h-full object-cover"
+                        className="w-full h-full object-cover rounded-sm"
                         onError={(e) => {
                           e.target.onerror = null;
                           e.target.src = "/undraw_mobile-marketing_7x7m.svg";
@@ -418,7 +423,7 @@ export default function ProjectDetail() {
                       {rp.industries?.length > 0 && (
                         <div className="mt-3 flex flex-wrap gap-2">
                           {rp.industries.slice(0, 2).map((ind, i) => (
-                            <span key={i} className="text-xs px-2 py-0.5 rounded-full bg-primary-light/40 text-primary font-medium">
+                            <span key={i} className="text-xs px-2 py-0.5 bg-primary-light/40 text-primary font-medium rounded-sm">
                               {typeof ind === "object" ? ind.name : ind}
                             </span>
                           ))}
@@ -435,42 +440,6 @@ export default function ProjectDetail() {
           </div>
         </section>
       )}
-
-      {/* CTA */}
-      <section className="py-14 md:py-16 bg-background-section">
-        <div className="max-w-4xl mx-auto px-4">
-          <FadeIn>
-            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 pt-4 border-t border-border/60">
-              <Link
-                to="/contact"
-                className="inline-flex items-center justify-center gap-2 rounded-lg bg-primary text-white px-6 py-3 text-sm font-semibold hover:bg-primary-hover shadow-sm hover:shadow transition duration-200">
-                <span>Start Your Project</span>
-                <FontAwesomeIcon icon={faArrowRight} className="text-xs" />
-              </Link>
-              {project.project_url && (
-                <a
-                  href={project.project_url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center justify-center gap-2 rounded-lg border border-border bg-background text-text px-6 py-3 text-sm font-semibold hover:border-primary/50 hover:text-primary transition duration-200">
-                  <FontAwesomeIcon icon={faExternalLinkAlt} className="text-xs" />
-                  <span>View Live Project</span>
-                </a>
-              )}
-              {project.github_url && (
-                <a
-                  href={project.github_url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center justify-center gap-2 rounded-lg border border-border bg-background text-text px-6 py-3 text-sm font-semibold hover:border-primary/50 hover:text-primary transition duration-200">
-                  <FontAwesomeIcon icon={faGlobe} className="text-xs" />
-                  <span>View Code</span>
-                </a>
-              )}
-            </div>
-          </FadeIn>
-        </div>
-      </section>
 
       <FinalCTA />
     </div>
