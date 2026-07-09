@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useMemo } from "react";
 import { Link } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBuilding, faMicrochip, faArrowRight } from "@fortawesome/free-solid-svg-icons";
@@ -70,7 +70,7 @@ function Introduction() {
   );
 }
 
-/* ─── Industries We Serve ────────────────────────────────── */
+/* ─── Industries We Serve ─────────────────────────────────── */
 function IndustriesWeServe({ industries = [] }) {
   if (!industries.length) return null;
   return (
@@ -83,20 +83,23 @@ function IndustriesWeServe({ industries = [] }) {
             subtitle="We partner with businesses across a wide range of industries to deliver tailored digital solutions that drive growth."
           />
         </FadeIn>
-
-        <div className="mt-10 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
+        
+        {/* Fixed: Converted to dynamic flex layout wrapping rules with explicit basis mapping to support Tailwind CSS v4 compiler metrics flawlessly */}
+        <div className="mt-10 flex flex-wrap justify-center gap-6">
           {industries.map((ind, i) => (
-            <FadeIn key={ind._id || i} delay={i * 80}>
-              <div className="bg-surface border border-border rounded-lg p-5 text-center hover:shadow-md hover:-translate-y-0.5 transition-all duration-300 group cursor-default h-full">
-                <div className="w-12 h-12 mx-auto rounded-lg bg-primary-light flex items-center justify-center group-hover:bg-primary transition-colors">
-                  {ind.icon && typeof ind.icon === "string" ? (
-                    <img src={resolveImagePath(ind.icon)} alt={ind.name} className="w-6 h-6 object-contain group-hover:brightness-0 group-hover:invert transition-all" />
-                  ) : (
-                    <FontAwesomeIcon icon={faBuilding} className="text-primary text-xl group-hover:text-white transition-colors" />
-                  )}
+            <FadeIn key={ind._id || i} delay={i * 80} className="w-full sm:basis-[calc(50%-12px)] lg:basis-[calc(25%-18px)] max-w-sm">
+              <div className="bg-surface border border-border rounded-lg p-5 text-center hover:shadow-md hover:-translate-y-0.5 transition-all duration-300 group cursor-default h-full flex flex-col justify-between">
+                <div>
+                  <div className="w-12 h-12 mx-auto rounded-lg bg-primary-light flex items-center justify-center group-hover:bg-primary transition-colors">
+                    {ind.icon && typeof ind.icon === "string" ? (
+                      <img src={resolveImagePath(ind.icon)} alt={ind.name} className="w-6 h-6 object-contain group-hover:brightness-0 group-hover:invert transition-all" />
+                    ) : (
+                      <FontAwesomeIcon icon={faBuilding} className="text-primary text-xl group-hover:text-white transition-colors" />
+                    )}
+                  </div>
+                  <h3 className="mt-3 small-text font-bold text-heading">{ind.name}</h3>
+                  <p className="mt-1.5 text-xs text-text leading-relaxed">{ind.description}</p>
                 </div>
-                <h3 className="mt-3 small-text font-bold text-heading">{ind.name}</h3>
-                <p className="mt-1.5 text-xs text-text leading-relaxed">{ind.description}</p>
               </div>
             </FadeIn>
           ))}
@@ -106,7 +109,7 @@ function IndustriesWeServe({ industries = [] }) {
   );
 }
 
-/* ─── Featured Case Studies ──────────────────────────────── */
+/* ─── Featured Case Studies ───────────────────────────────── */
 function FeaturedCaseStudies({ caseStudies, loading }) {
   return (
     <section className="py-16 md:py-20 bg-background">
@@ -118,11 +121,10 @@ function FeaturedCaseStudies({ caseStudies, loading }) {
             subtitle="Real challenges. Strategic solutions. Measurable outcomes."
           />
         </FadeIn>
-
         {loading ? (
-          <div className="mt-10 grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="mt-10 flex flex-wrap justify-center gap-6">
             {[...Array(3)].map((_, i) => (
-              <div key={i} className="bg-background border border-border rounded-lg p-6 h-full animate-pulse">
+              <div key={i} className="bg-background border border-border rounded-lg p-6 h-64 w-full md:w-[calc(33.33%-16px)] animate-pulse">
                 <div className="h-4 w-20 bg-surface rounded" />
                 <div className="h-5 w-40 bg-surface rounded mt-4" />
                 <div className="h-8 w-32 bg-surface rounded mt-3" />
@@ -136,9 +138,9 @@ function FeaturedCaseStudies({ caseStudies, loading }) {
             <p className="text-muted">No featured case studies available yet.</p>
           </div>
         ) : (
-          <div className="mt-10 grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="mt-10 flex flex-wrap justify-center gap-6">
             {caseStudies.map((cs, i) => (
-              <FadeIn key={cs._id} delay={i * 100}>
+              <FadeIn key={cs._id} delay={i * 100} className="w-full md:basis-[calc(50%-12px)] lg:basis-[calc(33.33%-16px)] max-w-sm lg:max-w-none">
                 <div className="bg-background border border-border rounded-lg p-6 h-full flex flex-col hover:shadow-md transition group">
                   {cs.hero_image && (
                     <div className="-mx-6 -mt-6 mb-4 overflow-hidden rounded-t-lg">
@@ -155,7 +157,7 @@ function FeaturedCaseStudies({ caseStudies, loading }) {
                   <h3 className="mt-3 body-text font-bold text-heading">{cs.title}</h3>
                   {cs.results?.[0] && (
                     <div className="mt-3 text-2xl font-extrabold text-primary">
-                      {cs.results[0].value}
+                       {cs.results[0].value}
                     </div>
                   )}
                   <p className="mt-2 small-text text-text body-text flex-1 line-clamp-3">{cs.overview}</p>
@@ -174,7 +176,7 @@ function FeaturedCaseStudies({ caseStudies, loading }) {
   );
 }
 
-/* ─── Technologies & Platforms ──────────────────────────── */
+/* ─── Technologies & Platforms ────────────────────────────── */
 function TechnologiesPlatforms({ technologies = [] }) {
   if (!technologies.length) return null;
   return (
@@ -187,7 +189,6 @@ function TechnologiesPlatforms({ technologies = [] }) {
             subtitle="We work with the tools and platforms that power modern digital businesses."
           />
         </FadeIn>
-
         <div className="mt-10 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
           {technologies.map((tech, i) => (
             <FadeIn key={tech._id || i} delay={i * 60}>
@@ -209,7 +210,7 @@ function TechnologiesPlatforms({ technologies = [] }) {
   );
 }
 
-/* ─── Case Studies Stats ─────────────────────────────────── */
+/* ─── Case Studies Stats ──────────────────────────────────── */
 function ResultsStatistics({ stats = [] }) {
   const displayStats = stats.slice(0, 4);
   if (!displayStats.length) return null;
@@ -223,7 +224,6 @@ function ResultsStatistics({ stats = [] }) {
             subtitle="Numbers that speak louder than words. Our track record of delivering measurable outcomes."
           />
         </FadeIn>
-
         <div className="mt-10 grid grid-cols-2 sm:grid-cols-4 gap-6">
           {displayStats.map((stat, i) => (
             <FadeIn key={stat.key || i} delay={i * 100}>
@@ -243,10 +243,8 @@ function ResultsStatistics({ stats = [] }) {
   );
 }
 
-
-
 /* ─── Main Services Page ──────────────────────────────────── */
-const Services = () => {
+export default function Services() {
   const { services, loading, error, fetchServices } = useServiceStore();
   const { reviews, loading: reviewsLoading, fetchReviews } = useReviewStore();
   const { caseStudies, loading: caseStudiesLoading, fetchCaseStudies } = useCaseStudyStore();
@@ -350,7 +348,6 @@ const Services = () => {
               subtitle="Comprehensive digital solutions tailored to your business goals."
             />
           </FadeIn>
-
           {services.length === 0 ? (
             <div className="text-center py-20">
               <svg
@@ -384,7 +381,7 @@ const Services = () => {
         </div>
       </section>
 
-      {/* 4. Why Choose Us (moved above Our Process) */}
+      {/* 4. Why Choose Us */}
       <WhyChooseUs stats={whyChooseUsStats} bg="bg-background" />
 
       {/* 5. Our Process */}
@@ -415,6 +412,4 @@ const Services = () => {
       <LogoMarquee logos={content?.trustMarqueeLogos} bg="bg-background" />
     </div>
   );
-};
-
-export default Services;
+}
