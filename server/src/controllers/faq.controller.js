@@ -53,9 +53,15 @@ export const createFAQ = asyncHandler(async (req, res) => {
 
 export const updateFAQ = asyncHandler(async (req, res) => {
   const { question, answer, service, display_order, status } = req.body;
+  const update = {};
+  if (question !== undefined) update.question = question;
+  if (answer !== undefined) update.answer = answer;
+  if (service !== undefined) update.service = service;
+  if (display_order !== undefined) update.display_order = display_order;
+  if (status !== undefined) update.status = status;
   const faq = await FAQ.findByIdAndUpdate(
     req.params.id,
-    { question, answer, service, display_order, status },
+    update,
     { new: true, runValidators: true },
   );
   if (!faq) {

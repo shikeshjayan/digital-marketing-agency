@@ -1,13 +1,6 @@
 // Defines the Industry collection structure
 import mongoose from "mongoose";
-
-function generateSlug(name) {
-  return String(name ?? "")
-    .toLowerCase()
-    .trim()
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/(^-|-$)/g, "");
-}
+import { generateSlug } from "../utils/helpers.js";
 
 const industrySchema = new mongoose.Schema(
   {
@@ -31,9 +24,15 @@ const industrySchema = new mongoose.Schema(
       type: String,
       default: "",
     },
+    iconType: {
+      type: String,
+      enum: ["fontawesome", "image"],
+      default: "fontawesome",
+    },
     display_order: {
       type: Number,
       default: 0,
+      min: 0,
     },
     status: {
       type: String,
@@ -62,5 +61,23 @@ industrySchema.pre("save", async function () {
   this.slug = slug;
 });
 
+industrySchema.pre("findOneAndUpdate", async function () {
+  const update = this.getUpdate();
+  if (update.name) {
+    let base = generateSlug(update.name);
+    let slug = base;
+    let counter = 1;
+    while (true) {
+      const docId = this.getFilter()._id;
+      const existing = await mongoose.model("Industry").findOne({ slug, _id: { $ne: docId } });
+      if (!existing) break;
+      slug = `${base}-${counter}`;
+      counter++;
+    }
+    update.slug = slug;
+  }
+});
+
+industrySchema.index({ display_order: 1, createdAt: -1 });
 const Industry = mongoose.model("Industry", industrySchema);
 export default Industry;

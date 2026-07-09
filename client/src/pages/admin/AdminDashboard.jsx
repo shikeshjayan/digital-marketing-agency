@@ -185,8 +185,8 @@ export default function AdminDashboard() {
       setRecentProjects(
         [...projects].sort(
           (a, b) =>
-            new Date(b.updated_at ?? b.created_at).getTime() -
-            new Date(a.updated_at ?? a.created_at).getTime(),
+            new Date(b.updatedAt ?? b.createdAt).getTime() -
+            new Date(a.updatedAt ?? a.createdAt).getTime(),
         ),
       );
     } catch (err) {
@@ -336,7 +336,7 @@ export default function AdminDashboard() {
           }>
           {recentEnquiries.length ? (
             <div className="space-y-3">
-              {recentEnquiries.slice(0, 5).map((e) => (
+              {recentEnquiries.slice(0, 3).map((e) => (
                 <div
                   key={e.enquiry_id}
                   className="flex items-start gap-3 border border-border rounded p-3 hover:bg-surface transition">
@@ -388,7 +388,7 @@ export default function AdminDashboard() {
           }>
           {recentProjects.length ? (
             <div className="space-y-3">
-              {recentProjects.slice(0, 5).map((p) => (
+              {recentProjects.slice(0, 3).map((p) => (
                 <div
                   key={p._id}
                   className="flex items-start gap-3 border border-border rounded p-3 hover:bg-surface transition">
@@ -401,7 +401,7 @@ export default function AdminDashboard() {
                     </div>
                     <div className="text-sm text-text">{p.status}</div>
                     <div className="mt-1 text-xs text-muted">
-                      {relativeTime(p.updated_at ?? p.created_at)}
+                      {relativeTime(p.updatedAt ?? p.createdAt)}
                     </div>
                   </div>
                 </div>

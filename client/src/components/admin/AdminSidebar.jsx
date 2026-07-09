@@ -1,6 +1,5 @@
 import { NavLink, useNavigate } from "react-router-dom";
 import { useState, useEffect, useCallback, memo } from "react";
-import { clearAdminProfile } from "../../auth/adminAuth.js";
 import useAuthStore from "../../store/authStore.js";
 import apiService from "../../services/apiService.js";
 
@@ -383,7 +382,7 @@ export default function AdminSidebar() {
     setIsLoggingOut(true);
     try {
       await logout();
-      clearAdminProfile();
+      localStorage.removeItem("adminProfile");
       setLogoutOpen(false);
       setMobileOpen(false);
       navigate("/admin/login", { replace: true });

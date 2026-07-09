@@ -237,7 +237,7 @@ export default function AdminMessages() {
                     className="border-t border-border align-top">
                     <td className="py-3 pr-3 text-text hidden sm:table-cell">
                       <span
-                        className="block max-w-[80px] truncate"
+                        className="block max-w-20 truncate"
                         title={e.enquiry_id}>
                         {e.enquiry_id}
                       </span>
@@ -282,7 +282,7 @@ export default function AdminMessages() {
                         )}
                         <button
                           type="button"
-                          className="px-3 py-2 text-xs sm:px-4 sm:py-2 sm:text-sm min-h-[44px] text-primary hover:text-primary-hover rounded transition cursor-pointer"
+                          className="px-3 py-2 text-xs sm:px-4 sm:py-2 sm:text-sm min-h-[44px] text-danger hover:text-red-700 rounded transition cursor-pointer"
                           title="Delete"
                           onClick={() => onDelete(e.enquiry_id)}>
                           <FontAwesomeIcon icon={faTrash} className="w-4 h-4" />
@@ -324,12 +324,14 @@ export default function AdminMessages() {
       </div>
 
       <ConfirmModal
+        danger
         open={!!deleteTarget}
         onCancel={() => setDeleteTarget(null)}
         onConfirm={onConfirmDelete}
         message="Are you sure you want to delete this enquiry? This action cannot be undone."
       />
       <ConfirmModal
+        danger
         open={deleteAllTarget}
         onCancel={() => setDeleteAllTarget(false)}
         onConfirm={onConfirmDeleteAll}

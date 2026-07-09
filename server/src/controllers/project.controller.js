@@ -136,16 +136,15 @@ export const updateProject = asyncHandler(async (req, res) => {
     project_url, github_url, completion_date,
   } = req.body;
 
-  const update = {
-    project_name,
-    short_description,
-    description,
-    project_url,
-    github_url,
-    completion_date: completion_date || undefined,
-    featured: featured === "true" || featured === true,
-    status,
-  };
+  const update = {};
+  if (project_name !== undefined) update.project_name = project_name;
+  if (short_description !== undefined) update.short_description = short_description;
+  if (description !== undefined) update.description = description;
+  if (project_url !== undefined) update.project_url = project_url;
+  if (github_url !== undefined) update.github_url = github_url;
+  if (completion_date !== undefined) update.completion_date = completion_date;
+  if (featured !== undefined) update.featured = featured === "true" || featured === true;
+  if (status !== undefined) update.status = status;
 
   // Parse array fields from FormData
   if (req.body.services) update.services = parseJsonField(req.body.services);

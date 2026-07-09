@@ -1,6 +1,7 @@
 // Handles customer reviews - public submission/display and admin moderation
 import Review from "../models/reviews.model.js";
 import asyncHandler from "../middleware/asyncHandler.js";
+import { escapeRegex } from "../utils/helpers.js";
 
 // Get all reviews with filters for admin panel (admin only)
 export const getAdminReviews = asyncHandler(async (req, res) => {
@@ -11,7 +12,7 @@ export const getAdminReviews = asyncHandler(async (req, res) => {
     filter.status = status;
   }
   if (search) {
-    filter.name = { $regex: search, $options: "i" };
+    filter.name = { $regex: escapeRegex(search), $options: "i" };
   }
 
   const skip = (Number(page) - 1) * Number(limit);
@@ -27,7 +28,7 @@ export const getAdminReviews = asyncHandler(async (req, res) => {
 
   const data = reviews.map((r) => ({
     review_id: r._id,
-    user_avatar: r.user_avatar,
+    user_avatar: r.user_avatar && !r.user_avatar.includes("data:image/svg+xml") ? r.user_avatar : null,
     name: r.name,
     location: r.location,
     rating: r.rating,
@@ -55,7 +56,7 @@ export const getAdminReviews = asyncHandler(async (req, res) => {
 
 // Approve a review so it shows up on the public site (admin only)
 export const approveReview = asyncHandler(async (req, res) => {
-  const review = await Review.findById(req.params.review_id);
+  const review = await Review.findById(req.params.id);
 
   if (!review) {
     return res.status(404).json({ success: false, message: "Review ID Not Found" });
@@ -117,7 +118,7 @@ export const getPublicReviews = asyncHandler(async (req, res) => {
   const reviews = await Review.find({ status: "Approved" }).sort({ createdAt: -1 });
 
   const data = reviews.map((r) => ({
-    user_avatar: r.user_avatar,
+    user_avatar: r.user_avatar && !r.user_avatar.includes("data:image/svg+xml") ? r.user_avatar : null,
     name: r.name,
     location: r.location,
     rating: r.rating,

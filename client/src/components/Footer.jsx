@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faAngleUp, faPhone, faEnvelope, faMapMarkerAlt } from '@fortawesome/free-solid-svg-icons'
-import { faFacebookF, faInstagram, faLinkedinIn, faYoutube } from '@fortawesome/free-brands-svg-icons'
+import { faAngleUp, faPhone, faEnvelope, faMapMarkerAlt, faClock } from '@fortawesome/free-solid-svg-icons'
+import { faFacebookF, faInstagram, faLinkedinIn, faYoutube, faWhatsapp } from '@fortawesome/free-brands-svg-icons'
 import FadeIn from '../components/ui/FadeIn.jsx'
 import useServiceStore from '../store/serviceStore.js'
 import useBrandSettingsStore from '../store/brandSettingsStore.js'
@@ -121,7 +121,7 @@ export default function Footer() {
                 </div>
               </div>
 
-              {/* Synchronized Contact Block using explicit icon parameters matching Testimonials sidebars */}
+              {/* Synchronized Contact Block */}
               <div>
                 <div className="text-sm font-semibold mb-4 text-white">Contact</div>
                 <div className="space-y-3 text-sm text-white/80">
@@ -137,16 +137,32 @@ export default function Footer() {
                     <span className="w-8 h-8 rounded-lg flex items-center justify-center small-text text-white/70">
                       <FontAwesomeIcon icon={faEnvelope} />
                     </span>
-                    <a href={`mailto:${contact.email || "crowlcrown@gmail.com"}`} className="text-white/80 hover:text-primary transition-colors">
-                      {contact.email || "crowlcrown@gmail.com"}
+                    <a href={`mailto:${contact.email || "crawlcrown@gmail.com"}`} className="text-white/80 hover:text-primary transition-colors">
+                      {contact.email || "crawlcrown@gmail.com"}
                     </a>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <span className="w-8 h-8 rounded-lg flex items-center justify-center small-text text-white/70">
+                      <FontAwesomeIcon icon={faWhatsapp} />
+                    </span>
+                    <a href={`https://wa.me/${contact.whatsapp?.replace(/[^0-9]/g, "") || "918891212323"}`} target="_blank" rel="noopener noreferrer" className="text-white/80 hover:text-primary transition-colors">
+                      {contact.whatsapp || "+91 8891212323"}
+                    </a>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <span className="w-8 h-8 rounded-lg flex items-center justify-center small-text text-white/70">
+                      <FontAwesomeIcon icon={faClock} />
+                    </span>
+                    <span className="text-white/80">
+                      {contact.working_hours || "Mon – Sat: 10:00 AM – 6:00 PM"}
+                    </span>
                   </div>
                   <div className="flex items-center gap-3">
                     <span className="w-8 h-8 rounded-lg flex items-center justify-center small-text text-white/70">
                       <FontAwesomeIcon icon={faMapMarkerAlt} />
                     </span>
-                     <a href={`https://www.google.com/maps/search/${encodeURIComponent(contact.address || "Ernakulam Kochi Kerala India")}`} target="_blank" rel="noopener noreferrer" className="text-white/80 hover:text-primary transition-colors">
-                      {contact.address || "Ernakulam, Kochi, Kerala, India"}
+                     <a href={`https://www.google.com/maps/search/${encodeURIComponent(contact.location || contact.address || "Ernakulam Kochi Kerala India")}`} target="_blank" rel="noopener noreferrer" className="text-white/80 hover:text-primary transition-colors">
+                      {contact.location || contact.address || "Ernakulam, Kochi, Kerala, India"}
                     </a>
                   </div>
                 </div>

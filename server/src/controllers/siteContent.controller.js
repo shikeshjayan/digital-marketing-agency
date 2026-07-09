@@ -57,6 +57,7 @@ export const updateSiteContent = asyncHandler(async (req, res) => {
     doc = await SiteContent.create({ content });
   } else {
     doc.content = content;
+    doc.markModified("content");
     await doc.save();
   }
 

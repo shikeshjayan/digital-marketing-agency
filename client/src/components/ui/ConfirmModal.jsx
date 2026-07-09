@@ -3,6 +3,7 @@ export default function ConfirmModal({
   onCancel,
   onConfirm,
   message = "Are you sure? This action cannot be undone.",
+  danger = false,
 }) {
   if (!open) return null;
 
@@ -11,9 +12,9 @@ export default function ConfirmModal({
       <div className="absolute inset-0 bg-black/50" onClick={onCancel} />
       <div className="relative bg-white rounded-m shadow-xl w-full max-w-sm p-6">
         <div className="flex flex-col items-center text-center">
-          <div className="w-12 h-12 rounded-full bg-primary-light flex items-center justify-center mb-4">
+          <div className={`w-12 h-12 rounded-full flex items-center justify-center mb-4 ${danger ? "bg-red-100" : "bg-primary-light"}`}>
             <svg
-              className="w-6 h-6 text-primary"
+              className={`w-6 h-6 ${danger ? "text-red-600" : "text-primary"}`}
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24">
@@ -34,8 +35,8 @@ export default function ConfirmModal({
             </button>
             <button
               onClick={onConfirm}
-              className="flex-1 rounded-lg bg-primary py-2.5 small-text font-semibold text-white hover:bg-primary-hover transition cursor-pointer button-text">
-              Confirm
+              className={`flex-1 rounded-lg py-2.5 small-text font-semibold text-white transition cursor-pointer button-text ${danger ? "bg-red-600 hover:bg-red-700" : "bg-primary hover:bg-primary-hover"}`}>
+              {danger ? "Delete" : "Confirm"}
             </button>
           </div>
         </div>

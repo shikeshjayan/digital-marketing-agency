@@ -15,7 +15,7 @@ export default function AdminListFooter({
         {itemsLength > 0 && (
           <button
             type="button"
-            className="inline-flex items-center gap-1.5 text-sm font-semibold text-primary hover:text-primary-hover transition cursor-pointer"
+            className="inline-flex items-center gap-1.5 text-sm font-semibold text-danger hover:text-red-700 transition cursor-pointer"
             onClick={onDeleteAll}>
             <FontAwesomeIcon icon={faTrash} className="w-3.5 h-3.5" />
             <span className="hidden sm:inline">Delete All</span>

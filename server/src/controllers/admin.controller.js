@@ -11,6 +11,16 @@ export const checkAdminExists = asyncHandler(async (req, res) => {
   res.status(200).json({ success: true, data: { exists: count > 0 } });
 });
 
+// Check if a specific admin email exists (public - no auth needed)
+export const checkEmailExists = asyncHandler(async (req, res) => {
+  const { email } = req.body;
+  if (!email) {
+    return res.status(400).json({ success: false, message: "Email is required" });
+  }
+  const admin = await Admin.findOne({ email });
+  res.status(200).json({ success: true, data: { exists: !!admin } });
+});
+
 // Create a JWT token for a given admin ID that expires in 7 days
 const generateToken = (id) => {
   return jwt.sign({ id }, process.env.JWT_SECRET, { expiresIn: "7d" });
@@ -169,10 +179,6 @@ const generateOTP = () => {
 export const forgotPassword = asyncHandler(async (req, res) => {
   const { email } = req.body;
 
-  if (!email) {
-    return res.status(400).json({ success: false, message: "Email is required" });
-  }
-
   const admin = await Admin.findOne({ email });
   if (!admin) {
     // Don't reveal whether the email exists
@@ -215,20 +221,6 @@ export const forgotPassword = asyncHandler(async (req, res) => {
 export const verifyOTP = asyncHandler(async (req, res) => {
   const { otpToken, otp, newPassword } = req.body;
 
-  if (!otpToken || !otp || !newPassword) {
-    return res.status(400).json({
-      success: false,
-      message: "OTP token, OTP, and new password are required",
-    });
-  }
-
-  if (newPassword.length < 6) {
-    return res.status(400).json({
-      success: false,
-      message: "Password must be at least 6 characters",
-    });
-  }
-
   // Verify JWT token and extract OTP data
   let decoded;
   try {
@@ -249,6 +241,15 @@ export const verifyOTP = asyncHandler(async (req, res) => {
   const admin = await Admin.findOne({ email: decoded.email }).select("+password");
   if (!admin) {
     return res.status(400).json({ success: false, message: "Admin not found" });
+  }
+
+  // Reject if new password matches the old one
+  const isSamePassword = await admin.matchPassword(newPassword);
+  if (isSamePassword) {
+    return res.status(400).json({
+      success: false,
+      message: "New password must be different from your current password. Please choose a different one.",
+    });
   }
 
   admin.password = newPassword;

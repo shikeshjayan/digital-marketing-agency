@@ -18,6 +18,7 @@ export default function AdminSiteContent() {
   const [confirmTechIdx, setConfirmTechIdx] = useState(null);
   const [confirmMarqueeIdx, setConfirmMarqueeIdx] = useState(null);
   const [confirmStatIdx, setConfirmStatIdx] = useState(null);
+  const [confirmReset, setConfirmReset] = useState(false);
 
   useEffect(() => {
     fetchSiteContent();
@@ -47,8 +48,8 @@ export default function AdminSiteContent() {
     }
   }
 
-  async function handleSeed() {
-    if (!window.confirm("Reset all site content to defaults? This cannot be undone.")) return;
+  async function onConfirmReset() {
+    setConfirmReset(false);
     setSeeding(true);
     try {
       await seedSiteContent();
@@ -173,9 +174,9 @@ export default function AdminSiteContent() {
         />
         <button
           type="button"
-          onClick={handleSeed}
+          onClick={() => setConfirmReset(true)}
           disabled={seeding}
-          className="px-4 py-2 text-sm font-semibold text-primary border border-primary rounded-lg hover:bg-primary-light transition cursor-pointer disabled:opacity-50">
+          className="px-4 py-2 text-sm font-semibold text-danger border border-red-300 rounded-lg hover:bg-red-50 transition cursor-pointer disabled:opacity-50">
           {seeding ? "Seeding..." : "Reset to Defaults"}
         </button>
       </div>
@@ -205,7 +206,7 @@ export default function AdminSiteContent() {
               <button
                 type="button"
                 onClick={() => setConfirmTechIdx(i)}
-                className="p-2 text-primary hover:text-primary-hover hover:bg-primary-light rounded transition cursor-pointer">
+                className="p-2 text-danger hover:text-red-700 hover:bg-red-50 rounded transition cursor-pointer">
                 <FontAwesomeIcon icon={faTrash} className="w-4 h-4" />
               </button>
             </div>
@@ -220,6 +221,7 @@ export default function AdminSiteContent() {
         </button>
 
         <ConfirmModal
+          danger
           open={confirmTechIdx !== null}
           onCancel={() => setConfirmTechIdx(null)}
           onConfirm={() => {
@@ -247,7 +249,7 @@ export default function AdminSiteContent() {
               <button
                 type="button"
                 onClick={() => setConfirmMarqueeIdx(i)}
-                className="p-2 text-primary hover:text-primary-hover hover:bg-primary-light rounded transition cursor-pointer">
+                className="p-2 text-danger hover:text-red-700 hover:bg-red-50 rounded transition cursor-pointer">
                 <FontAwesomeIcon icon={faTrash} className="w-4 h-4" />
               </button>
             </div>
@@ -262,6 +264,7 @@ export default function AdminSiteContent() {
         </button>
 
         <ConfirmModal
+          danger
           open={confirmMarqueeIdx !== null}
           onCancel={() => setConfirmMarqueeIdx(null)}
           onConfirm={() => {
@@ -304,7 +307,7 @@ export default function AdminSiteContent() {
                 <button
                   type="button"
                   onClick={() => setConfirmStatIdx(i)}
-                  className="p-2 text-primary hover:text-primary-hover hover:bg-primary-light rounded transition cursor-pointer">
+                  className="p-2 text-danger hover:text-red-700 hover:bg-red-50 rounded transition cursor-pointer">
                   <FontAwesomeIcon icon={faTrash} className="w-4 h-4" />
                 </button>
               )}
@@ -320,6 +323,7 @@ export default function AdminSiteContent() {
         </button>
 
         <ConfirmModal
+          danger
           open={confirmStatIdx !== null}
           onCancel={() => setConfirmStatIdx(null)}
           onConfirm={() => {
@@ -327,6 +331,14 @@ export default function AdminSiteContent() {
             setConfirmStatIdx(null);
           }}
           message="Remove this company statistic?"
+        />
+
+        <ConfirmModal
+          danger
+          open={confirmReset}
+          onCancel={() => setConfirmReset(false)}
+          onConfirm={onConfirmReset}
+          message="Reset all site content to defaults? This cannot be undone."
         />
       </section>
 

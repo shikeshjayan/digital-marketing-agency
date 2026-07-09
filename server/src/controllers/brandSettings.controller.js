@@ -16,8 +16,11 @@ const DEFAULT_BRAND = {
   ],
   contact: {
     phone: "+91 8891212323",
-    email: "crowlcrown@gmail.com",
+    email: "crawlcrown@gmail.com",
     address: "Ernakulam, Kochi, Kerala, India",
+    whatsapp: "",
+    working_hours: "Mon – Fri: 10:00 AM – 6:00 PM",
+    location: "Ernakulam, Kochi, Kerala, India",
   },
   companyLinks: [
     { label: "About", path: "/about" },
@@ -41,7 +44,9 @@ export const updateBrandSettings = asyncHandler(async (req, res) => {
   const contact = parseJsonObject(req.body.contact);
   const companyLinks = parseJsonField(req.body.companyLinks);
 
-  if (!brand && !socialLinks && !contact && !companyLinks) {
+  const hasBrandKeys = brand && Object.keys(brand).length > 0;
+  const hasContactKeys = contact && Object.keys(contact).length > 0;
+  if (!hasBrandKeys && !socialLinks?.length && !hasContactKeys && !companyLinks?.length) {
     return res.status(400).json({ success: false, message: "At least one brand field is required" });
   }
 
@@ -55,7 +60,10 @@ export const updateBrandSettings = asyncHandler(async (req, res) => {
 
   if (brand) doc.brand = { ...(doc.brand.toObject?.() ?? doc.brand), ...brand, logo };
   if (socialLinks) doc.socialLinks = socialLinks;
-  if (contact) doc.contact = { ...(doc.contact.toObject?.() ?? doc.contact), ...contact };
+  if (contact) {
+    doc.contact = { ...(doc.contact.toObject?.() ?? doc.contact), ...contact };
+    doc.markModified("contact");
+  }
   if (companyLinks) doc.companyLinks = companyLinks;
 
   await doc.save();

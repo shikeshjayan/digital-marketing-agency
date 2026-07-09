@@ -23,7 +23,7 @@ const useContactStore = create((set) => ({
   fetchAdminEnquiries: async (params) => {
     set({ loading: true, error: null });
     try {
-      const { data } = await apiService.get("/admin/contact/enquiries", { params });
+      const { data } = await apiService.get("/admin/contact", { params });
       const enquiries = data.data ?? [];
       set({ adminEnquiries: enquiries, loading: false });
       return { enquiries, counters: data.counters ?? null, pagination: data.pagination ?? { total: enquiries.length, page: 1, pages: 1 } };
@@ -39,7 +39,7 @@ const useContactStore = create((set) => ({
   updateEnquiryStatus: async (id, status) => {
     set({ loading: true, error: null });
     try {
-      const { data } = await apiService.patch(`/admin/contact/enquiries/status/${id}`, { status });
+      const { data } = await apiService.patch(`/admin/contact/${id}/status`, { status });
       set((state) => ({
         adminEnquiries: state.adminEnquiries.map((e) =>
           e.enquiry_id === id ? { ...e, status: data.data.status } : e
@@ -59,7 +59,7 @@ const useContactStore = create((set) => ({
   deleteEnquiry: async (id) => {
     set({ loading: true, error: null });
     try {
-      await apiService.delete(`/admin/contact/enquiries/remove/${id}`);
+      await apiService.delete(`/admin/contact/${id}`);
       set((state) => ({
         adminEnquiries: state.adminEnquiries.filter((e) => e.enquiry_id !== id),
         loading: false,
@@ -76,7 +76,7 @@ const useContactStore = create((set) => ({
   deleteAllEnquiries: async () => {
     set({ loading: true, error: null });
     try {
-      await apiService.delete("/admin/contact/enquiries");
+      await apiService.delete("/admin/contact");
       set({ adminEnquiries: [], loading: false });
     } catch (error) {
       set({

@@ -89,7 +89,7 @@ function IndustriesWeServe({ industries = [] }) {
             <FadeIn key={ind._id || i} delay={i * 80}>
               <div className="bg-surface border border-border rounded-lg p-5 text-center hover:shadow-md hover:-translate-y-0.5 transition-all duration-300 group cursor-default h-full">
                 <div className="w-12 h-12 mx-auto rounded-lg bg-primary-light flex items-center justify-center group-hover:bg-primary transition-colors">
-                  {ind.icon && typeof ind.icon === "string" ? (
+                  {ind.iconType === "image" && ind.icon ? (
                     <img src={resolveImagePath(ind.icon)} alt={ind.name} className="w-6 h-6 object-contain group-hover:brightness-0 group-hover:invert transition-all" />
                   ) : (
                     <FontAwesomeIcon icon={faBuilding} className="text-primary text-xl group-hover:text-white transition-colors" />
@@ -193,7 +193,7 @@ function TechnologiesPlatforms({ technologies = [] }) {
             <FadeIn key={tech._id || i} delay={i * 60}>
               <div className="flex items-center gap-3 bg-surface border border-border rounded-lg px-4 py-3 hover:shadow-sm hover:border-primary/30 transition-all duration-200 cursor-default">
                 <div className="w-9 h-9 rounded-md bg-primary-light flex items-center justify-center shrink-0">
-                  {tech.icon && typeof tech.icon === "string" ? (
+                  {tech.iconType === "image" && tech.icon ? (
                     <img src={resolveImagePath(tech.icon)} alt={tech.name} className="w-5 h-5 object-contain" />
                   ) : (
                     <FontAwesomeIcon icon={faMicrochip} className="text-primary text-sm" />

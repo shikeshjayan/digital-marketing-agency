@@ -20,6 +20,7 @@ const faqSchema = new mongoose.Schema(
     display_order: {
       type: Number,
       default: 0,
+      min: 0,
     },
     status: {
       type: String,
@@ -30,5 +31,6 @@ const faqSchema = new mongoose.Schema(
   { timestamps: true },
 );
 
+faqSchema.index({ display_order: 1, createdAt: -1 });
 const FAQ = mongoose.model("FAQ", faqSchema);
 export default FAQ;
