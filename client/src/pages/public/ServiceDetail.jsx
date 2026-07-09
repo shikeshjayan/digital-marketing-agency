@@ -41,12 +41,12 @@ function getIndustryIcon(name) {
 }
 
 const processSteps = [
-  { icon: "🔍", title: "Discovery", desc: "We dive deep into your business, audience, and goals to build a strategic foundation." },
-  { icon: "🎯", title: "Strategy", desc: "We craft a tailored roadmap with clear timelines, milestones, and deliverables." },
-  { icon: "🎨", title: "Design", desc: "Our designers create wireframes and visual mockups that align with your brand identity." },
-  { icon: "💻", title: "Development", desc: "Our engineers build robust, scalable solutions with rigorous quality assurance." },
-  { icon: "🧪", title: "Testing", desc: "Comprehensive testing ensures everything works flawlessly across all devices." },
-  { icon: "🚀", title: "Launch", desc: "We handle the full launch process, ensuring everything runs smoothly from day one." },
+  { icon: " ", title: "Discovery", desc: "We dive deep into your business, audience, and goals to build a strategic foundation." },
+  { icon: " ", title: "Strategy", desc: "We craft a tailored roadmap with clear timelines, milestones, and deliverables." },
+  { icon: " ", title: "Design", desc: "Our designers create wireframes and visual mockups that align with your brand identity." },
+  { icon: " ", title: "Development", desc: "Our engineers build robust, scalable solutions with rigorous quality assurance." },
+  { icon: " ", title: "Testing", desc: "Comprehensive testing ensures everything works flawlessly across all devices." },
+  { icon: " ", title: "Launch", desc: "We handle the full launch process, ensuring everything runs smoothly from day one." },
 ];
 
 export default function ServiceDetail() {
@@ -144,8 +144,7 @@ export default function ServiceDetail() {
 
   return (
     <div className="bg-background animate-page-fade">
-
-      {/* ─── 1. Hero Section ─────────────────────────────────── */}
+      {/*   1. Hero Section   */}
       <section className="bg-secondary text-white relative overflow-hidden py-16">
         <div className="absolute inset-0 pointer-events-none">
           <div className="absolute -top-10 -left-10 w-32 h-32 bg-white/10 rounded-lg rotate-12" />
@@ -161,6 +160,7 @@ export default function ServiceDetail() {
               {service.service_name}
             </span>
           </nav>
+
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
             <div className="text-center md:text-left">
               {service.featured && (
@@ -195,6 +195,7 @@ export default function ServiceDetail() {
                 </Link>
               </div>
             </div>
+
             <div className="w-full max-w-md mx-auto md:mx-0 aspect-4/3 flex items-center justify-center relative">
               <div className="absolute inset-0 bg-white/5 rounded-lg blur-xl pointer-events-none" />
               <img
@@ -213,7 +214,7 @@ export default function ServiceDetail() {
         </div>
       </section>
 
-      {/* ─── 2. Service Overview ──────────────────────────────── */}
+      {/*   2. Service Overview   */}
       <section className="py-14 md:py-16 bg-background">
         <div className="max-w-4xl mx-auto px-4">
           <FadeIn>
@@ -227,17 +228,18 @@ export default function ServiceDetail() {
         </div>
       </section>
 
-      {/* ─── 3. What We Deliver ──────────────────────────────── */}
+      {/*   3. What We Deliver   */}
       {service.deliverables?.length > 0 && (
         <section className="py-14 md:py-16 bg-surface">
           <div className="max-w-6xl mx-auto px-4">
             <FadeIn>
               <SectionHeading eyebrow="Deliverables" title="What We Deliver" subtitle="Everything you get when you choose this service." />
             </FadeIn>
-            <div className="mt-10 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            {/* Changed from grid to flex-wrap with calculated widths for centering */}
+            <div className="mt-10 flex flex-wrap justify-center gap-4">
               {service.deliverables.map((item, i) => (
-                <FadeIn key={i} delay={i * 50}>
-                  <div className="bg-background border border-border rounded-lg p-5 flex items-start gap-3 hover:shadow-sm transition h-full">
+                <FadeIn key={i} delay={i * 50} className="w-full sm:w-[calc(50%-8px)] lg:w-[calc(33.33%-11px)]">
+                  <div className="bg-background border border-border rounded-lg p-5 flex items-start gap-3 hover:shadow-sm transition h-full w-full">
                     <div className="flex items-center justify-center h-9 w-9 rounded-lg bg-primary-light text-primary font-extrabold text-sm shrink-0">
                       {i + 1}
                     </div>
@@ -250,7 +252,7 @@ export default function ServiceDetail() {
         </section>
       )}
 
-      {/* ─── 4. Why Choose This Service ──────────────────────── */}
+      {/*   4. Why Choose This Service   */}
       {service.benefits?.length > 0 && (
         <section className="py-14 md:py-16 bg-background">
           <div className="max-w-6xl mx-auto px-4">
@@ -271,7 +273,7 @@ export default function ServiceDetail() {
         </section>
       )}
 
-      {/* ─── 5. Our Process (Static) ─────────────────────────── */}
+      {/*   5. Our Process (Static)   */}
       <OurProcess
         steps={processSteps.map((s) => ({
           icon: faArrowRight,
@@ -281,7 +283,7 @@ export default function ServiceDetail() {
         bg="bg-surface"
       />
 
-      {/* ─── 6. Technologies & Platforms ──────────────────────── */}
+      {/*   6. Technologies & Platforms   */}
       {uniqueTechnologies.length > 0 && (
         <section className="py-14 md:py-16 bg-background">
           <div className="max-w-6xl mx-auto px-4">
@@ -301,17 +303,18 @@ export default function ServiceDetail() {
         </section>
       )}
 
-      {/* ─── 7. Industries We Serve ──────────────────────────── */}
+      {/*   7. Industries We Serve   */}
       {uniqueIndustries.length > 0 && (
         <section className="py-14 md:py-16 bg-surface">
           <div className="max-w-6xl mx-auto px-4">
             <FadeIn>
               <SectionHeading eyebrow="Industries" title="Industries We Serve" subtitle="We partner with businesses across a wide range of industries." />
             </FadeIn>
-            <div className="mt-10 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
+            {/* Changed from grid to flex-wrap with calculated widths for centering */}
+            <div className="mt-10 flex flex-wrap justify-center gap-4">
               {uniqueIndustries.map((ind, i) => (
-                <FadeIn key={ind.id} delay={i * 50}>
-                  <div className="bg-background border border-border rounded-lg p-5 flex flex-col items-center text-center hover:shadow-sm transition h-full">
+                <FadeIn key={ind.id} delay={i * 50} className="w-[calc(50%-8px)] sm:w-[calc(33.33%-11px)] lg:w-[calc(25%-12px)] min-w-[140px]">
+                  <div className="bg-background border border-border rounded-lg p-5 flex flex-col items-center text-center hover:shadow-sm transition h-full w-full">
                     <div className="w-12 h-12 rounded-lg bg-primary-light flex items-center justify-center mb-3">
                       <FontAwesomeIcon icon={getIndustryIcon(ind.name)} className="text-primary text-lg" />
                     </div>
@@ -324,17 +327,18 @@ export default function ServiceDetail() {
         </section>
       )}
 
-      {/* ─── 8. Projects We've Delivered ─────────────────────── */}
+      {/*   8. Projects We've Delivered   */}
       {projects.length > 0 && (
         <section className="py-14 md:py-16 bg-background">
           <div className="max-w-6xl mx-auto px-4">
             <FadeIn>
               <SectionHeading eyebrow="Our Work" title="Projects We've Delivered" subtitle="Real results from real projects." />
             </FadeIn>
-            <div className="mt-10 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {/* Changed from grid to flex-wrap with calculated widths for centering */}
+            <div className="mt-10 flex flex-wrap justify-center gap-6">
               {projects.map((project) => (
-                <FadeIn key={project._id}>
-                  <div className="flex flex-col bg-surface border border-border rounded-lg h-full overflow-hidden hover:-translate-y-1 transition-all duration-300">
+                <FadeIn key={project._id} className="w-full sm:w-[calc(50%-12px)] lg:w-[calc(33.33%-16px)]">
+                  <div className="flex flex-col bg-surface border border-border rounded-lg h-full w-full overflow-hidden hover:-translate-y-1 transition-all duration-300">
                     <div className="h-44 overflow-hidden">
                       <img
                         src={resolveImagePath(project.thumbnail)}
@@ -351,6 +355,7 @@ export default function ServiceDetail() {
                     <div className="flex flex-col p-5 flex-1">
                       <h3 className="text-lg font-extrabold text-heading">{project.project_name}</h3>
                       <p className="mt-2 text-sm text-text leading-relaxed line-clamp-2">{project.short_description}</p>
+                      
                       {project.industries?.length > 0 && (
                         <div className="mt-3 flex flex-wrap gap-2">
                           {project.industries.slice(0, 2).map((ind, i) => (
@@ -360,6 +365,7 @@ export default function ServiceDetail() {
                           ))}
                         </div>
                       )}
+                      
                       {project.technologies?.length > 0 && (
                         <div className="mt-2 flex flex-wrap gap-1.5">
                           {project.technologies.slice(0, 3).map((t, i) => (
@@ -383,7 +389,7 @@ export default function ServiceDetail() {
         </section>
       )}
 
-      {/* ─── 9. Frequently Asked Questions ──────────────────── */}
+      {/*   9. Frequently Asked Questions   */}
       <FAQSection
         items={faqs.map((f) => ({ q: f.question, a: f.answer }))}
         eyebrow="Questions"
@@ -392,7 +398,7 @@ export default function ServiceDetail() {
         bg="bg-surface"
       />
 
-      {/* ─── 12. Related Services ────────────────────────────── */}
+      {/*   12. Related Services   */}
       {relatedServices.length > 0 && (
         <section className="py-14 md:py-16 bg-background">
           <div className="max-w-6xl mx-auto px-4">
@@ -441,7 +447,7 @@ export default function ServiceDetail() {
         </section>
       )}
 
-      {/* ─── 13. Final CTA ──────────────────────────────────── */}
+      {/*   13. Final CTA   */}
       <FinalCTA
         title="Ready to Grow Your Business?"
         description="Let's discuss how our digital marketing expertise can help you achieve your goals. Get in touch with us today for a free consultation."
@@ -453,5 +459,3 @@ export default function ServiceDetail() {
     </div>
   );
 }
-
-
