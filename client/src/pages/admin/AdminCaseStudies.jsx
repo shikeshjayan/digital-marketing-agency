@@ -724,7 +724,7 @@ export default function AdminCaseStudies() {
                   items.map((cs) => (
                     <tr key={cs._id} className="border-t border-border align-top">
                       <td className="py-3 pr-3 text-text hidden sm:table-cell">
-                        <span className="block max-w-[80px] truncate" title={cs._id}>
+                        <span className="block max-w-20 truncate" title={cs._id}>
                           {cs._id}
                         </span>
                       </td>
@@ -738,10 +738,10 @@ export default function AdminCaseStudies() {
                             />
                           )}
                           <div>
-                            <div className="font-bold text-heading truncate max-w-[200px]">
+                            <div className="font-bold text-heading truncate max-w-50">
                               {cs.title}
                             </div>
-                            <div className="text-muted text-xs truncate max-w-[200px]">
+                            <div className="text-muted text-xs truncate max-w-50">
                               {cs.overview}
                             </div>
                             {cs.featured && (

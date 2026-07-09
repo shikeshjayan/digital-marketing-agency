@@ -19,8 +19,11 @@ const brandSchema = new mongoose.Schema({
 
 const contactSchema = new mongoose.Schema({
   phone: { type: String, default: "+91 8891212323" },
-  email: { type: String, default: "crowlcrown@gmail.com" },
+  email: { type: String, default: "crawlcrown@gmail.com" },
   address: { type: String, default: "Ernakulam, Kochi, Kerala, India" },
+  whatsapp: { type: String, default: "" },
+  working_hours: { type: String, default: "Mon – Sat: 10:00 AM – 6:00 PM" },
+  location: { type: String, default: "Ernakulam, Kochi, Kerala, India" },
 }, { _id: false });
 
 const brandSettingsSchema = new mongoose.Schema({

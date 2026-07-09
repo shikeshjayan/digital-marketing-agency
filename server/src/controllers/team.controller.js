@@ -1,6 +1,7 @@
 // Handles team member profiles (CRUD + public listing)
 import Team from "../models/team.model.js";
 import asyncHandler from "../middleware/asyncHandler.js";
+import { escapeRegex } from "../utils/helpers.js";
 
 // Add a new team member (admin only, supports photo upload)
 export const createMember = asyncHandler(async (req, res) => {
@@ -28,7 +29,7 @@ export const getAllTeamMembers = asyncHandler(async (req, res) => {
 
   const filter = {};
   if (search) {
-    filter.name = { $regex: search, $options: "i" };
+    filter.name = { $regex: escapeRegex(search), $options: "i" };
   }
   if (status) {
     filter.status = status;
@@ -67,7 +68,7 @@ export const updateMember = asyncHandler(async (req, res) => {
   }
 
   const member = await Team.findByIdAndUpdate(
-    req.params.team_id,
+    req.params.id,
     update,
     { new: true, runValidators: true },
   );

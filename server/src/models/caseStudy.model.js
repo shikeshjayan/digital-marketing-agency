@@ -17,8 +17,7 @@ const caseStudySchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: "Projects",
       required: [true, "Project is required"],
-      unique: true,
-    },
+      },
     hero_image: {
       type: String,
       required: [true, "Hero image is required"],

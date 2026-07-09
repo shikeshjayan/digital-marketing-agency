@@ -6,7 +6,7 @@ import { protect } from "../middleware/auth.js";
 const router = express.Router();
 
 router.get("/", protect, getAdminReviews);
-router.patch("/approve/:review_id", protect, approveReview);
+router.patch("/approve/:id", protect, approveReview);
 router.patch("/reject/:id", protect, rejectReview);
 router.delete("/", protect, deleteAllReviews);
 

@@ -10,9 +10,9 @@ import { protect } from "../middleware/auth.js";
 
 const router = express.Router();
 
-router.get("/enquiries", protect, getAdminEnquiries);
-router.patch("/enquiries/status/:id", protect, updateEnquiryStatus);
-router.delete("/enquiries/remove/:id", protect, deleteEnquiry);
-router.delete("/enquiries", protect, deleteAllEnquiries);
+router.get("/", protect, getAdminEnquiries);
+router.patch("/:id/status", protect, updateEnquiryStatus);
+router.delete("/:id", protect, deleteEnquiry);
+router.delete("/", protect, deleteAllEnquiries);
 
 export default router;

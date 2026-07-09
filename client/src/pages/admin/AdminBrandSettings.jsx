@@ -13,7 +13,7 @@ export default function AdminBrandSettings() {
 
   const [brand, setBrand] = useState({ name: "", logo: "", tagline: "" });
   const [socialLinks, setSocialLinks] = useState([]);
-  const [contact, setContact] = useState({ phone: "", email: "", address: "" });
+  const [contact, setContact] = useState({ phone: "", email: "", address: "", whatsapp: "", working_hours: "", location: "" });
   const [companyLinks, setCompanyLinks] = useState([]);
   const [saving, setSaving] = useState(false);
   const [seeding, setSeeding] = useState(false);
@@ -28,7 +28,7 @@ export default function AdminBrandSettings() {
     if (content) {
       setBrand(content.brand ?? { name: "", logo: "", tagline: "" });
       setSocialLinks(content.socialLinks ?? []);
-      setContact(content.contact ?? { phone: "", email: "", address: "" });
+      setContact(content.contact ?? { phone: "", email: "", address: "", whatsapp: "", working_hours: "", location: "" });
       setCompanyLinks(content.companyLinks ?? []);
     }
   }, [content]);
@@ -223,7 +223,7 @@ export default function AdminBrandSettings() {
       {/* ─── Contact Info ─── */}
       <section className="mt-6 bg-background border border-border rounded p-5">
         <h3 className="font-extrabold text-heading">Contact Info</h3>
-        <p className="mt-1 text-xs text-muted">Phone, email, and address displayed in the footer contact block.</p>
+        <p className="mt-1 text-xs text-muted">Phone, email, address, WhatsApp, working hours, and location displayed in the footer contact block.</p>
 
         <div className="mt-4 space-y-4">
           <div>
@@ -239,7 +239,7 @@ export default function AdminBrandSettings() {
             <label className="text-sm font-semibold text-heading">Email</label>
             <input
               className="mt-2 w-full rounded border border-border bg-surface px-4 py-2 text-sm text-heading outline-none transition focus:border-primary focus:bg-background focus:ring-2 focus:ring-primary-light placeholder:text-muted"
-              placeholder="crowlcrown@gmail.com"
+              placeholder="crawlcrown@gmail.com"
               value={contact.email}
               onChange={(e) => setContact((prev) => ({ ...prev, email: e.target.value }))}
             />
@@ -251,6 +251,33 @@ export default function AdminBrandSettings() {
               placeholder="Ernakulam, Kochi, Kerala, India"
               value={contact.address}
               onChange={(e) => setContact((prev) => ({ ...prev, address: e.target.value }))}
+            />
+          </div>
+          <div>
+            <label className="text-sm font-semibold text-heading">WhatsApp</label>
+            <input
+              className="mt-2 w-full rounded border border-border bg-surface px-4 py-2 text-sm text-heading outline-none transition focus:border-primary focus:bg-background focus:ring-2 focus:ring-primary-light placeholder:text-muted"
+              placeholder="WhatsApp number or link"
+              value={contact.whatsapp}
+              onChange={(e) => setContact((prev) => ({ ...prev, whatsapp: e.target.value }))}
+            />
+          </div>
+          <div>
+            <label className="text-sm font-semibold text-heading">Working Hours</label>
+            <input
+              className="mt-2 w-full rounded border border-border bg-surface px-4 py-2 text-sm text-heading outline-none transition focus:border-primary focus:bg-background focus:ring-2 focus:ring-primary-light placeholder:text-muted"
+              placeholder="Mon – Sat: 10:00 AM – 6:00 PM"
+              value={contact.working_hours}
+              onChange={(e) => setContact((prev) => ({ ...prev, working_hours: e.target.value }))}
+            />
+          </div>
+          <div>
+            <label className="text-sm font-semibold text-heading">Location</label>
+            <input
+              className="mt-2 w-full rounded border border-border bg-surface px-4 py-2 text-sm text-heading outline-none transition focus:border-primary focus:bg-background focus:ring-2 focus:ring-primary-light placeholder:text-muted"
+              placeholder="Ernakulam, Kochi, Kerala, India"
+              value={contact.location}
+              onChange={(e) => setContact((prev) => ({ ...prev, location: e.target.value }))}
             />
           </div>
         </div>

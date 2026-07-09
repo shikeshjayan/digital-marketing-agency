@@ -14,13 +14,16 @@
     "@fortawesome/free-brands-svg-icons": "^7.3.0",
     "@fortawesome/free-solid-svg-icons": "^7.3.0",
     "@fortawesome/react-fontawesome": "^3.3.1",
+    "@hookform/resolvers": "^5.4.0",
     "@tailwindcss/vite": "^4.3.1",
     "axios": "^1.18.1",
     "react": "^19.2.6",
     "react-dom": "^19.2.6",
+    "react-hook-form": "^7.81.0",
     "react-router-dom": "^7.18.0",
     "sonner": "^2.0.7",
     "tailwindcss": "^4.3.1",
+    "yup": "^1.7.1",
     "zustand": "^5.0.14"
   },
   "devDependencies": {

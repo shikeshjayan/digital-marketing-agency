@@ -1,10 +1,12 @@
 // Handles everything related to industries (CRUD + public listing)
 import Industry from "../models/industry.model.js";
 import asyncHandler from "../middleware/asyncHandler.js";
+import { escapeRegex } from "../utils/helpers.js";
 
 // Create a new industry (admin only)
 export const createIndustry = asyncHandler(async (req, res) => {
-  const { name, description, icon, display_order, status } = req.body;
+  const { name, description, iconType, display_order, status } = req.body;
+  const icon = req.file ? req.file.url : req.body.icon;
 
   if (!name) {
     return res.status(400).json({ success: false, message: "Industry name is required" });
@@ -19,6 +21,7 @@ export const createIndustry = asyncHandler(async (req, res) => {
     name,
     description,
     icon,
+    iconType: iconType || "fontawesome",
     display_order: display_order ? Number(display_order) : 0,
     status,
   });
@@ -36,7 +39,7 @@ export const getAllIndustries = asyncHandler(async (req, res) => {
 
   const filter = { status: "Active" };
   if (search) {
-    filter.name = { $regex: search, $options: "i" };
+    filter.name = { $regex: escapeRegex(search), $options: "i" };
   }
 
   const skip = (Number(page) - 1) * Number(limit);
@@ -69,15 +72,23 @@ export const getIndustryById = asyncHandler(async (req, res) => {
 
 // Update an existing industry (admin only)
 export const updateIndustry = asyncHandler(async (req, res) => {
-  const { name, description, icon, display_order, status } = req.body;
+  const { name, description, icon, iconType, display_order, status, removeIcon } = req.body;
 
-  const update = {
-    name,
-    description,
-    icon,
-    display_order: display_order ? Number(display_order) : 0,
-    status,
-  };
+  const update = {};
+  if (name !== undefined) update.name = name;
+  if (description !== undefined) update.description = description;
+  if (iconType !== undefined) update.iconType = iconType;
+  if (display_order !== undefined) update.display_order = Number(display_order);
+  if (status !== undefined) update.status = status;
+
+  if (req.file) {
+    update.icon = req.file.url;
+    update.iconType = "image";
+  } else if (removeIcon === "true") {
+    update.icon = "";
+  } else if (icon !== undefined) {
+    update.icon = icon;
+  }
 
   const industry = await Industry.findByIdAndUpdate(
     req.params.id,
@@ -118,7 +129,7 @@ export const getAllAdminIndustries = asyncHandler(async (req, res) => {
 
   const filter = {};
   if (search) {
-    filter.name = { $regex: search, $options: "i" };
+    filter.name = { $regex: escapeRegex(search), $options: "i" };
   }
   if (status) {
     filter.status = status;

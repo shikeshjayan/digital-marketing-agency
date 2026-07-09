@@ -237,7 +237,7 @@ export default function AdminMessages() {
                     className="border-t border-border align-top">
                     <td className="py-3 pr-3 text-text hidden sm:table-cell">
                       <span
-                        className="block max-w-[80px] truncate"
+                        className="block max-w-20 truncate"
                         title={e.enquiry_id}>
                         {e.enquiry_id}
                       </span>

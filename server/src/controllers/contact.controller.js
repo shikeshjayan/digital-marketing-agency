@@ -1,6 +1,7 @@
 // Handles enquiries submitted through the contact form
 import Contact from "../models/contacts.model.js";
 import asyncHandler from "../middleware/asyncHandler.js";
+import { escapeRegex } from "../utils/helpers.js";
 
 // Submit a new contact enquiry (public)
 export const submitEnquiry = asyncHandler(async (req, res) => {
@@ -38,9 +39,9 @@ export const getAdminEnquiries = asyncHandler(async (req, res) => {
   if (search) {
     // Search across name, email, and message fields
     filter.$or = [
-      { name: { $regex: search, $options: "i" } },
-      { email: { $regex: search, $options: "i" } },
-      { message: { $regex: search, $options: "i" } },
+      { name: { $regex: escapeRegex(search), $options: "i" } },
+      { email: { $regex: escapeRegex(search), $options: "i" } },
+      { message: { $regex: escapeRegex(search), $options: "i" } },
     ];
   }
   if (date) {

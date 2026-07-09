@@ -1,4 +1,4 @@
-import { Router } from "express";
+import express from "express";
 import {
   getAllAdminFAQs,
   createFAQ,
@@ -8,14 +8,12 @@ import {
 } from "../controllers/faq.controller.js";
 import { protect } from "../middleware/auth.js";
 
-const router = Router();
+const router = express.Router();
 
-router.use(protect);
-
-router.get("/", getAllAdminFAQs);
-router.post("/create", createFAQ);
-router.put("/:id", updateFAQ);
-router.delete("/:id", deleteFAQ);
-router.delete("/", deleteAllFAQs);
+router.get("/", protect, getAllAdminFAQs);
+router.post("/create", protect, createFAQ);
+router.put("/:id", protect, updateFAQ);
+router.delete("/:id", protect, deleteFAQ);
+router.delete("/", protect, deleteAllFAQs);
 
 export default router;

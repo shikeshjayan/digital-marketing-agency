@@ -10,10 +10,12 @@ import AdminListFooter from "../../components/ui/AdminListFooter.jsx";
 import SearchInput from "../../components/ui/SearchInput.jsx";
 import TableEmptyState from "../../components/ui/TableEmptyState.jsx";
 import FormField from "../../components/ui/FormField.jsx";
+import FileUploadField from "../../components/ui/FileUploadField.jsx";
 import FormActions from "../../components/ui/FormActions.jsx";
 import ErrorBanner from "../../components/ui/ErrorBanner.jsx";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faTrash, faPen } from "@fortawesome/free-solid-svg-icons";
+import { faTrash, faPen, faBuilding } from "@fortawesome/free-solid-svg-icons";
+import resolveImagePath from "../../utils/resolveImagePath.js";
 
 export default function AdminIndustries() {
   const {
@@ -37,6 +39,7 @@ export default function AdminIndustries() {
       name: "",
       description: "",
       icon: "",
+      iconType: "fontawesome",
       display_order: 0,
       status: "Active",
     }),
@@ -44,6 +47,7 @@ export default function AdminIndustries() {
   );
 
   const [form, setForm] = useState(emptyForm);
+  const [iconFile, setIconFile] = useState(null);
   const [error, setError] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [leftHeight, setLeftHeight] = useState(null);
@@ -106,13 +110,25 @@ export default function AdminIndustries() {
     }
 
     try {
-      const payload = {
-        name: form.name.trim(),
-        description: form.description.trim(),
-        icon: form.icon.trim(),
-        display_order: form.display_order,
-        status: form.status,
-      };
+      const isFile = iconFile instanceof File;
+      const payload = isFile ? new FormData() : {};
+
+      if (isFile) {
+        payload.append("name", form.name.trim());
+        payload.append("description", form.description.trim());
+        payload.append("iconType", form.iconType);
+        payload.append("display_order", String(form.display_order));
+        payload.append("status", form.status);
+        payload.append("icon", iconFile);
+      } else {
+        payload.name = form.name.trim();
+        payload.description = form.description.trim();
+        payload.icon = form.icon.trim();
+        payload.iconType = form.iconType;
+        payload.display_order = form.display_order;
+        payload.status = form.status;
+        if (!form.icon && form._id) payload.removeIcon = "true";
+      }
 
       if (form._id) {
         await updateIndustry(form._id, payload);
@@ -122,6 +138,7 @@ export default function AdminIndustries() {
         toast.success("Industry created successfully.");
       }
       setForm(emptyForm);
+      setIconFile(null);
       await load();
     } catch (err) {
       const msg = err?.response?.data?.message || err?.message || "Operation failed.";
@@ -138,9 +155,11 @@ export default function AdminIndustries() {
       name: item.name,
       description: item.description ?? "",
       icon: item.icon ?? "",
+      iconType: item.iconType ?? "fontawesome",
       display_order: item.display_order ?? 0,
       status: item.status,
     });
+    setIconFile(null);
     formRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
   }
 
@@ -225,12 +244,66 @@ export default function AdminIndustries() {
               onChange={(e) => setForm((f) => ({ ...f, description: e.target.value }))}
               placeholder="Brief description of this industry"
             />
-            <FormField
-              label="Icon"
-              value={form.icon}
-              onChange={(e) => setForm((f) => ({ ...f, icon: e.target.value }))}
-              placeholder="FontAwesome class or icon name (optional)"
-            />
+            <div>
+              <label className="text-sm font-semibold text-heading">Icon</label>
+              <div className="mt-2 flex gap-4">
+                <label className="flex items-center gap-2 cursor-pointer">
+                  <input
+                    type="radio"
+                    name="iconType"
+                    value="fontawesome"
+                    checked={form.iconType === "fontawesome"}
+                    onChange={() => setForm((f) => ({ ...f, iconType: "fontawesome" }))}
+                    className="accent-primary"
+                  />
+                  <span className="text-sm text-text">FontAwesome Class</span>
+                </label>
+                <label className="flex items-center gap-2 cursor-pointer">
+                  <input
+                    type="radio"
+                    name="iconType"
+                    value="image"
+                    checked={form.iconType === "image"}
+                    onChange={() => setForm((f) => ({ ...f, iconType: "image" }))}
+                    className="accent-primary"
+                  />
+                  <span className="text-sm text-text">Upload Image</span>
+                </label>
+              </div>
+            </div>
+
+            {form.iconType === "fontawesome" ? (
+              <FormField
+                label="FontAwesome Class"
+                value={form.icon}
+                onChange={(e) => setForm((f) => ({ ...f, icon: e.target.value }))}
+                placeholder="e.g. fa-building (optional)"
+              />
+            ) : (
+              <FileUploadField
+                label="Icon Image"
+                file={iconFile}
+                existingUrl={form._id && typeof form.icon === "string" && !iconFile ? resolveImagePath(form.icon) : ""}
+                onChange={(f) => setIconFile(f)}
+                onRemove={() => {
+                  setIconFile(null);
+                  setForm((f) => ({ ...f, icon: "" }));
+                }}
+                confirmText="Remove icon image?"
+              />
+            )}
+
+            {form.icon && !iconFile && (
+              <div className="flex items-center gap-2 text-xs text-muted">
+                <span>Current:</span>
+                {form.iconType === "image" ? (
+                  <img src={resolveImagePath(form.icon)} alt="" className="w-6 h-6 object-contain rounded" />
+                ) : (
+                  <FontAwesomeIcon icon={faBuilding} className="text-primary" />
+                )}
+              </div>
+            )}
+
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <FormField
                 label="Display Order"
@@ -257,7 +330,7 @@ export default function AdminIndustries() {
               submitting={submitting}
               editId={form._id}
               onSubmit={onSubmit}
-              onReset={() => setForm(emptyForm)}
+              onReset={() => { setForm(emptyForm); setIconFile(null); }}
               submitLabel={form._id ? "Update Industry" : "Create Industry"}
             />
           </form>

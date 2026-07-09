@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import useReviewStore from "../../store/reviewStore.js";
 import ConfirmModal from "../../components/ui/ConfirmModal.jsx";
@@ -8,11 +8,14 @@ import AdminPageHeader from "../../components/ui/AdminPageHeader.jsx";
 import AdminListFooter from "../../components/ui/AdminListFooter.jsx";
 import ErrorBanner from "../../components/ui/ErrorBanner.jsx";
 import SearchInput from "../../components/ui/SearchInput.jsx";
+import { TableSkeleton } from "../../components/ui/Skeleton.jsx";
+import TableEmptyState from "../../components/ui/TableEmptyState.jsx";
+import ReviewDetailModal from "../../components/ui/ReviewDetailModal.jsx";
 
 function Stars({ rating }) {
   const full = Math.round(rating);
   return (
-    <div className="text-warning text-sm">
+    <div className="text-warning text-sm whitespace-nowrap">
       {Array.from({ length: 5 }).map((_, i) => (
         <span key={i} aria-hidden="true">
           {i < full ? "\u2605" : "\u2606"}
@@ -31,26 +34,6 @@ function statusChip(status) {
   return map[status] ?? "bg-surface text-text border-border";
 }
 
-function ReviewText({ text }) {
-  const [expanded, setExpanded] = useState(false);
-  const isLong = text.length > 150;
-  const display = expanded || !isLong ? text : text.slice(0, 150) + "...";
-
-  return (
-    <div className="mt-2 text-sm text-text leading-relaxed">
-      &ldquo;{display}&rdquo;
-      {isLong && (
-        <button
-          type="button"
-          className="ml-1 text-primary hover:text-primary-hover font-medium cursor-pointer"
-          onClick={() => setExpanded(!expanded)}>
-          {expanded ? "Show less" : "Read more"}
-        </button>
-      )}
-    </div>
-  );
-}
-
 export default function AdminReviews() {
   const [tab, setTab] = useState("Pending");
   const [search, setSearch] = useState("");
@@ -62,9 +45,8 @@ export default function AdminReviews() {
   const [error, setError] = useState("");
   const [actionLoading, setActionLoading] = useState(null);
   const [deleteTarget, setDeleteTarget] = useState(null);
-  const [deleteType, setDeleteType] = useState(null);
   const [deleteAllTarget, setDeleteAllTarget] = useState(false);
-  const searchRef = useRef(null);
+  const [selectedReview, setSelectedReview] = useState(null);
 
   const fetchAdminReviews = useReviewStore((s) => s.fetchAdminReviews);
   const approveReview = useReviewStore((s) => s.approveReview);
@@ -101,6 +83,7 @@ export default function AdminReviews() {
   }, [tab]);
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setPage(1);
   }, [tab, search]);
 
@@ -225,181 +208,199 @@ export default function AdminReviews() {
           label="Reviews"
         />
 
-        {loading && !items.length ? (
-          <div className="mt-4 space-y-3">
-            {[...Array(3)].map((_, i) => (
-              <div key={i} className="border border-border rounded p-4">
-                <div className="flex gap-4 animate-pulse">
-                  <div className="w-10 h-10 rounded-lg bg-surface shrink-0" />
-                  <div className="flex-1 space-y-2">
-                    <div className="h-4 w-32 bg-surface rounded" />
-                    <div className="h-3 w-48 bg-surface rounded" />
-                    <div className="h-3 w-full bg-surface rounded" />
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        ) : items.length ? (
-          <div className="mt-4 space-y-3">
-            {items.map((r) => (
-              <div
-                key={r.review_id}
-                className="border border-border rounded p-4 hover:bg-surface transition">
-                <div className="flex items-start gap-3 sm:gap-4">
-                  <img
-                    src={r.user_avatar}
-                    alt={r.name}
-                    className="w-10 h-10 rounded-full object-cover shrink-0 bg-surface"
-                    onError={(e) => {
-                      e.target.src = `data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'><rect fill='%23e5e7eb' width='40' height='40'/><text x='50%' y='55%' dominant-baseline='middle' text-anchor='middle' fill='%236b7280' font-size='16' font-family='sans-serif'>${r.name?.charAt(0)?.toUpperCase() ?? "?"}</text></svg>`;
-                    }}
-                  />
-                  <div className="min-w-0 flex-1">
-                    <div className="flex items-center gap-2 flex-wrap">
-                      <div className="font-bold text-heading truncate">
-                        {r.name}
+        <div className="mt-4 overflow-auto">
+          <table className="w-full text-sm">
+            <thead>
+              <tr className="text-left text-text">
+                <th className="py-2 pr-3 whitespace-nowrap">Name / User</th>
+                <th className="py-2 pr-3 whitespace-nowrap hidden sm:table-cell">Rating</th>
+                <th className="py-2 pr-3 whitespace-nowrap">Review Comment</th>
+                <th className="py-2 pr-3 whitespace-nowrap hidden md:table-cell">Date / Time</th>
+                <th className="py-2 pr-3 whitespace-nowrap hidden sm:table-cell">Status</th>
+                <th className="py-2 whitespace-nowrap">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {loading && !items.length ? (
+                <TableSkeleton rows={5} cols={6} />
+              ) : (
+                items.map((r) => (
+                  <tr
+                    key={r.review_id}
+                    className="border-t border-border align-top">
+                    <td className="py-3 pr-3">
+                      <div className="flex items-center gap-2">
+                        {(() => {
+                          const isDefault = !r.user_avatar || (r.user_avatar.includes("data:image/svg+xml") && r.user_avatar.includes("%3F"));
+                          const initial = r.name?.charAt(0)?.toUpperCase() ?? "?";
+                          return isDefault ? (
+                            <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center text-background text-sm font-medium shrink-0">
+                              {initial}
+                            </div>
+                          ) : (
+                            <img
+                              src={r.user_avatar}
+                              alt={r.name}
+                              className="w-8 h-8 rounded-full object-cover shrink-0 bg-surface"
+                            />
+                          );
+                        })()}
+                        <div className="min-w-0">
+                          <div className="font-bold text-heading truncate max-w-[130px]">
+                            {r.name}
+                          </div>
+                          {r.location && (
+                            <div className="text-xs text-muted truncate max-w-[130px]">
+                              {r.location}
+                            </div>
+                          )}
+                        </div>
                       </div>
-                      <span className="text-xs text-muted truncate">
-                        {r.location}
-                      </span>
+                    </td>
+                    <td className="py-3 pr-3 hidden sm:table-cell">
+                      <Stars rating={r.rating} />
+                    </td>
+                    <td className="py-3 pr-3 max-w-[240px] min-w-[160px]">
+                      <div className="flex items-start gap-1">
+                        <span className="truncate text-sm text-text" title={r.review_text}>
+                          {r.review_text}
+                        </span>
+                        {r.review_text.length > 150 && (
+                          <button
+                            type="button"
+                            className="text-primary hover:text-primary-hover text-xs font-medium whitespace-nowrap flex-shrink-0 cursor-pointer"
+                            onClick={() => setSelectedReview(r)}>
+                            Read more
+                          </button>
+                        )}
+                      </div>
+                    </td>
+                    <td className="py-3 pr-3 text-xs text-muted hidden md:table-cell whitespace-nowrap">
+                      {relativeTime(r.date)}
+                    </td>
+                    <td className="py-3 pr-3 hidden sm:table-cell">
                       <span
-                        className={`inline-flex items-center px-2 py-0.5 rounded-lg text-xs font-medium border ${statusChip(r.status)}`}>
+                        className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium border ${statusChip(r.status)}`}>
                         {r.status}
                       </span>
-                    </div>
-                    <div className="mt-1 flex items-center gap-2">
-                      <Stars rating={r.rating} />
-                      <span className="text-xs text-muted">
-                        {relativeTime(r.date)}
-                      </span>
-                    </div>
-                    <ReviewText text={r.review_text} />
-                    <div className="mt-3 flex gap-2 flex-wrap">
-                      {r.status !== "Approved" && (
-                        <button
-                          type="button"
-                          className="inline-flex items-center gap-1.5 px-3 py-2 min-h-[44px] text-xs font-semibold text-success bg-success/10 border border-success/20 rounded hover:bg-success/20 transition cursor-pointer disabled:opacity-50"
-                          onClick={() =>
-                            setDeleteTarget({
-                              type: "approve",
-                              id: r.review_id,
-                            })
-                          }
-                          disabled={actionLoading === r.review_id}>
-                          {actionLoading === r.review_id ? (
-                            <svg
-                              className="animate-spin w-3.5 h-3.5"
-                              viewBox="0 0 24 24"
-                              fill="none">
-                              <circle
-                                className="opacity-25"
-                                cx="12"
-                                cy="12"
-                                r="10"
+                    </td>
+                    <td className="py-3">
+                      <div className="flex gap-1.5 items-center">
+                        {r.status !== "Approved" && (
+                          <button
+                            type="button"
+                            aria-label="Approve"
+                            title="Approve"
+                            className="inline-flex items-center justify-center w-9 h-9 min-w-[44px] min-h-[44px] text-success bg-success/10 border border-success/20 rounded hover:bg-success/20 transition cursor-pointer disabled:opacity-50"
+                            onClick={() =>
+                              setDeleteTarget({
+                                type: "approve",
+                                id: r.review_id,
+                              })
+                            }
+                            disabled={actionLoading === r.review_id}>
+                            {actionLoading === r.review_id ? (
+                              <svg
+                                className="animate-spin w-4 h-4"
+                                viewBox="0 0 24 24"
+                                fill="none">
+                                <circle
+                                  className="opacity-25"
+                                  cx="12"
+                                  cy="12"
+                                  r="10"
+                                  stroke="currentColor"
+                                  strokeWidth="4"
+                                />
+                                <path
+                                  className="opacity-75"
+                                  fill="currentColor"
+                                  d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
+                                />
+                              </svg>
+                            ) : (
+                              <svg
+                                className="w-4 h-4"
+                                fill="none"
                                 stroke="currentColor"
-                                strokeWidth="4"
-                              />
-                              <path
-                                className="opacity-75"
-                                fill="currentColor"
-                                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
-                              />
-                            </svg>
-                          ) : (
-                            <svg
-                              className="w-3.5 h-3.5"
-                              fill="none"
-                              stroke="currentColor"
-                              viewBox="0 0 24 24">
-                              <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                strokeWidth={2}
-                                d="M5 13l4 4L19 7"
-                              />
-                            </svg>
-                          )}
-                          Approve
-                        </button>
-                      )}
-                      {r.status !== "Rejected" && (
-                        <button
-                          type="button"
-                          className="inline-flex items-center gap-1.5 px-3 py-2 min-h-[44px] text-xs font-semibold text-primary bg-primary-light border border-primary/20 rounded hover:bg-primary/10 transition cursor-pointer disabled:opacity-50"
-                          onClick={() =>
-                            setDeleteTarget({
-                              type: "reject",
-                              id: r.review_id,
-                            })
-                          }
-                          disabled={actionLoading === r.review_id}>
-                          {actionLoading === r.review_id ? (
-                            <svg
-                              className="animate-spin w-3.5 h-3.5"
-                              viewBox="0 0 24 24"
-                              fill="none">
-                              <circle
-                                className="opacity-25"
-                                cx="12"
-                                cy="12"
-                                r="10"
+                                viewBox="0 0 24 24">
+                                <path
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  strokeWidth={2}
+                                  d="M5 13l4 4L19 7"
+                                />
+                              </svg>
+                            )}
+                          </button>
+                        )}
+                        {r.status !== "Rejected" && (
+                          <button
+                            type="button"
+                            aria-label="Reject"
+                            title="Reject"
+                            className="inline-flex items-center justify-center w-9 h-9 min-w-[44px] min-h-[44px] text-primary bg-primary-light border border-primary/20 rounded hover:bg-primary/10 transition cursor-pointer disabled:opacity-50"
+                            onClick={() =>
+                              setDeleteTarget({
+                                type: "reject",
+                                id: r.review_id,
+                              })
+                            }
+                            disabled={actionLoading === r.review_id}>
+                            {actionLoading === r.review_id ? (
+                              <svg
+                                className="animate-spin w-4 h-4"
+                                viewBox="0 0 24 24"
+                                fill="none">
+                                <circle
+                                  className="opacity-25"
+                                  cx="12"
+                                  cy="12"
+                                  r="10"
+                                  stroke="currentColor"
+                                  strokeWidth="4"
+                                />
+                                <path
+                                  className="opacity-75"
+                                  fill="currentColor"
+                                  d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
+                                />
+                              </svg>
+                            ) : (
+                              <svg
+                                className="w-4 h-4"
+                                fill="none"
                                 stroke="currentColor"
-                                strokeWidth="4"
-                              />
-                              <path
-                                className="opacity-75"
-                                fill="currentColor"
-                                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
-                              />
-                            </svg>
-                          ) : (
-                            <svg
-                              className="w-3.5 h-3.5"
-                              fill="none"
-                              stroke="currentColor"
-                              viewBox="0 0 24 24">
-                              <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                strokeWidth={2}
-                                d="M6 18L18 6M6 6l12 12"
-                              />
-                            </svg>
-                          )}
-                          Reject
-                        </button>
-                      )}
-                    </div>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        ) : (
-          <div className="flex flex-col items-center justify-center py-12 text-center">
-            <svg
-              className="w-12 h-12 text-muted"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24">
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={1.5}
-                d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"
-              />
-            </svg>
-            <div className="mt-3 text-sm font-medium text-muted">
-              No reviews found
-            </div>
-            <div className="mt-1 text-xs text-muted">
-              {tab === "All"
-                ? "No reviews have been submitted yet"
-                : `No ${tab.toLowerCase()} reviews`}
-            </div>
-          </div>
-        )}
+                                viewBox="0 0 24 24">
+                                <path
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  strokeWidth={2}
+                                  d="M6 18L18 6M6 6l12 12"
+                                />
+                              </svg>
+                            )}
+                          </button>
+                        )}
+                      </div>
+                    </td>
+                  </tr>
+                ))
+              )}
+              {!items.length && !loading && (
+                <TableEmptyState
+                  colSpan={6}
+                  message="No reviews found"
+                  submessage={
+                    tab === "All"
+                      ? "No reviews have been submitted yet"
+                      : `No ${tab.toLowerCase()} reviews`
+                  }
+                />
+              )}
+            </tbody>
+          </table>
+        </div>
         <Pagination
           page={pagination.page}
           pages={pagination.pages}
@@ -428,6 +429,14 @@ export default function AdminReviews() {
         onCancel={() => setDeleteAllTarget(false)}
         onConfirm={onConfirmDeleteAll}
         message="Are you sure you want to delete ALL reviews? This action cannot be undone."
+      />
+      <ReviewDetailModal
+        open={!!selectedReview}
+        onClose={() => setSelectedReview(null)}
+        review={selectedReview}
+        onApprove={handleApprove}
+        onReject={handleReject}
+        actionLoading={actionLoading}
       />
     </div>
   );

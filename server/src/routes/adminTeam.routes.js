@@ -14,8 +14,8 @@ const router = express.Router();
 
 router.get("/", protect, getAllTeamMembers);
 router.post("/create", protect, upload.single("photo"), processImage, createMember);
-router.put("/:team_id", protect, upload.single("photo"), processImage, updateMember);
-router.delete("/:team_id", protect, deleteMember);
+router.put("/:id", protect, upload.single("photo"), processImage, updateMember);
+router.delete("/:id", protect, deleteMember);
 router.delete("/", protect, deleteAllMembers);
 
 export default router;
