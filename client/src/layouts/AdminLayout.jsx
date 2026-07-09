@@ -1,9 +1,9 @@
-import { Outlet, Link, useLocation } from "react-router-dom";
+import { Outlet, Link, useLocation, useNavigate } from "react-router-dom";
 import { Toaster } from "sonner";
 import AdminSidebar from "../components/admin/AdminSidebar.jsx";
 import NotificationDropdown from "../components/admin/NotificationDropdown.jsx";
-import { getAdminProfile } from "../auth/adminAuth.js";
 import { useState, useEffect } from "react";
+import useSettingsStore from "../store/settingsStore.js";
 import useBrandSettingsStore from "../store/brandSettingsStore.js";
 
 const resolveUrl = (path) => {
@@ -17,7 +17,8 @@ const resolveUrl = (path) => {
 
 export default function AdminLayout() {
   const location = useLocation();
-  const [profile, setProfile] = useState(() => getAdminProfile());
+  const navigate = useNavigate();
+  const { profile, fetchProfile } = useSettingsStore();
   const [imgFailed, setImgFailed] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const { content, fetchBrandSettings } = useBrandSettingsStore();
@@ -27,14 +28,8 @@ export default function AdminLayout() {
   }, [fetchBrandSettings]);
 
   useEffect(() => {
-    function handleProfileChange() {
-      setProfile(getAdminProfile());
-      setImgFailed(false);
-    }
-    window.addEventListener("admin-profile-updated", handleProfileChange);
-    return () =>
-      window.removeEventListener("admin-profile-updated", handleProfileChange);
-  }, []);
+    fetchProfile();
+  }, [fetchProfile]);
 
   useEffect(() => {
     function handleSidebarState(e) {
@@ -79,7 +74,9 @@ export default function AdminLayout() {
                 alt={`${content?.brand?.name || "CrawlCrown"} Logo`}
                 className="w-9 h-9 rounded-xl object-contain"
               />
-              <span className="font-bold text-heading text-lg">{content?.brand?.name || "CrawlCrown"}</span>
+              <span className="font-bold text-heading text-lg">
+                {content?.brand?.name || "CrawlCrown"}
+              </span>
             </Link>
           </div>
 
@@ -113,7 +110,10 @@ export default function AdminLayout() {
 
             <div className="h-6 w-px bg-border" />
 
-            <div className="flex items-center gap-2">
+            <button
+              type="button"
+              onClick={() => navigate("/admin/settings")}
+              className="flex items-center gap-2 cursor-pointer">
               {profile?.photo && !imgFailed ? (
                 <img
                   src={resolveUrl(profile.photo)}
@@ -123,18 +123,12 @@ export default function AdminLayout() {
                 />
               ) : (
                 <div className="w-8 h-8 rounded-full bg-primary text-white flex items-center justify-center small-text font-bold shrink-0">
-                  {profile?.name?.charAt(0)?.toUpperCase() || "A"}
+                  {(profile?.name || profile?.email || "A")
+                    .charAt(0)
+                    .toUpperCase()}
                 </div>
               )}
-              <div className="hidden sm:block">
-                <div className="small-text font-semibold text-heading leading-tight">
-                  {profile?.name || "Admin"}
-                </div>
-                <div className="small-text text-muted">
-                  {profile?.role || "Administrator"}
-                </div>
-              </div>
-            </div>
+            </button>
           </div>
         </div>
       </header>

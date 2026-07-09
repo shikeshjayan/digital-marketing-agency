@@ -1,7 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { toast, Toaster } from "sonner";
-import { setAdminProfile } from "../../auth/adminAuth.js";
 import useAuthStore from "../../store/authStore.js";
 import apiService from "../../services/apiService.js";
 import useBrandSettingsStore from "../../store/brandSettingsStore.js";
@@ -11,7 +10,7 @@ import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
 
 export default function AdminRegister() {
   const navigate = useNavigate();
-  const { register, loading, error: authError } = useAuthStore();
+  const { register, loading } = useAuthStore();
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -20,7 +19,6 @@ export default function AdminRegister() {
   const [confirmShowPassword, setConfirmShowPassword] = useState(false);
   const [fieldErrors, setFieldErrors] = useState({});
   const [consent, setConsent] = useState(false);
-  const [serverError, setServerError] = useState(null);
   const { content, fetchBrandSettings } = useBrandSettingsStore();
 
   useEffect(() => {
@@ -51,7 +49,6 @@ export default function AdminRegister() {
   async function onSubmit(e) {
     e.preventDefault();
     setFieldErrors({});
-    setServerError(null);
 
     try {
       registerSchema.validateSync(
@@ -69,18 +66,11 @@ export default function AdminRegister() {
 
     try {
       const userData = await register({ name, email, password });
-      setAdminProfile({
-        name: userData?.name || name,
-        email: userData?.email || email,
-        photo: userData?.photo || "",
-        role: userData?.role || "Administrator",
-      });
       toast.success("Registration successful!");
       navigate("/admin/login", { replace: true });
     } catch (err) {
       const msg =
         err.response?.data?.message || err.message || "Registration failed";
-      setServerError(msg);
       toast.error(msg);
     }
   }
@@ -91,7 +81,7 @@ export default function AdminRegister() {
       <div className="w-full max-w-5xl overflow-hidden rounded-lg border border-border bg-background shadow-sm lg:grid lg:grid-cols-[1.05fr_0.95fr]">
         {/* Form — first in DOM so it appears first on mobile */}
         <div className="p-5 sm:p-6 lg:p-10">
-          <div className="flex items-center gap-3 lg:hidden">
+          <Link to="/" className="flex items-center gap-3 lg:hidden cursor-pointer">
             <img
               src={content?.brand?.logo || "/crown-99.png"}
               alt={`${content?.brand?.name || "CrawlCrown"} Logo`}
@@ -101,7 +91,7 @@ export default function AdminRegister() {
               <p className="text-sm font-semibold tracking-tight">{content?.brand?.name || "CrawlCrown"}</p>
               <p className="text-xs text-muted">Admin Portal</p>
             </div>
-          </div>
+          </Link>
 
           <div className="mt-6 flex flex-col items-start text-left lg:mt-0">
             <h3 className="text-xl font-semibold text-heading sm:text-2xl">Admin Registration</h3>
@@ -217,7 +207,7 @@ export default function AdminRegister() {
                   checked={consent}
                   onChange={(e) => setConsent(e.target.checked)}
                   disabled={loading}
-                  className="mt-1 h-4 w-4 rounded border-border text-primary focus:ring-primary cursor-pointer"
+                  className="mt-1 h-4 w-4 rounded border-border accent-primary-hover focus:ring-primary-hover cursor-pointer"
                 />
                 <label
                   htmlFor="consent"
@@ -238,13 +228,6 @@ export default function AdminRegister() {
                 </span>
               )}
             </div>
-
-            {/* Server / API Error Banner */}
-            {(serverError || authError) && (
-              <div className="mt-4 rounded border border-primary/20 bg-primary-light px-3 py-2 text-sm text-primary">
-                {serverError || authError}
-              </div>
-            )}
 
             <button
               type="submit"
@@ -268,7 +251,7 @@ export default function AdminRegister() {
           <div className="absolute bottom-0 right-0 h-32 w-32 rounded-full bg-white/10 blur-3xl" />
 
           <div className="flex-1">
-            <div className="flex flex-wrap items-center gap-3">
+            <Link to="/" className="flex flex-wrap items-center gap-3 cursor-pointer">
               <img
                 src={content?.brand?.logo || "/crown-99.png"}
                 alt={`${content?.brand?.name || "CrawlCrown"} Logo`}
@@ -280,7 +263,7 @@ export default function AdminRegister() {
                 </p>
                 <p className="small-text text-white/70 sm:text-sm">Admin Portal</p>
               </div>
-            </div>
+            </Link>
             <h2 className="mt-6 text-xl font-semibold leading-tight sm:text-2xl lg:text-3xl">
               Create your admin account
             </h2>

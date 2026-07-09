@@ -19,6 +19,7 @@ export default function AdminBrandSettings() {
   const [seeding, setSeeding] = useState(false);
   const [confirmSocialIdx, setConfirmSocialIdx] = useState(null);
   const [confirmCompanyLinkIdx, setConfirmCompanyLinkIdx] = useState(null);
+  const [confirmReset, setConfirmReset] = useState(false);
 
   useEffect(() => {
     fetchAdminBrandSettings();
@@ -62,8 +63,8 @@ export default function AdminBrandSettings() {
     }
   }
 
-  async function handleSeed() {
-    if (!window.confirm("Reset brand settings to defaults? This cannot be undone.")) return;
+  async function onConfirmReset() {
+    setConfirmReset(false);
     setSeeding(true);
     try {
       await seedBrandSettings();
@@ -106,9 +107,9 @@ export default function AdminBrandSettings() {
         />
         <button
           type="button"
-          onClick={handleSeed}
+          onClick={() => setConfirmReset(true)}
           disabled={seeding}
-          className="px-4 py-2 text-sm font-semibold text-primary border border-primary rounded-lg hover:bg-primary-light transition cursor-pointer disabled:opacity-50">
+          className="px-4 py-2 text-sm font-semibold text-danger border border-red-300 rounded-lg hover:bg-red-50 transition cursor-pointer disabled:opacity-50">
           {seeding ? "Seeding..." : "Reset to Defaults"}
         </button>
       </div>
@@ -195,7 +196,7 @@ export default function AdminBrandSettings() {
               <button
                 type="button"
                 onClick={() => setConfirmSocialIdx(i)}
-                className="p-2 text-primary hover:text-primary-hover hover:bg-primary-light rounded transition cursor-pointer">
+                className="p-2 text-danger hover:text-red-700 hover:bg-red-50 rounded transition cursor-pointer">
                 <FontAwesomeIcon icon={faTrash} className="w-4 h-4" />
               </button>
             </div>
@@ -210,6 +211,7 @@ export default function AdminBrandSettings() {
         </button>
 
         <ConfirmModal
+          danger
           open={confirmSocialIdx !== null}
           onCancel={() => setConfirmSocialIdx(null)}
           onConfirm={() => {
@@ -314,7 +316,7 @@ export default function AdminBrandSettings() {
               <button
                 type="button"
                 onClick={() => setConfirmCompanyLinkIdx(i)}
-                className="p-2 text-primary hover:text-primary-hover hover:bg-primary-light rounded transition cursor-pointer">
+                className="p-2 text-danger hover:text-red-700 hover:bg-red-50 rounded transition cursor-pointer">
                 <FontAwesomeIcon icon={faTrash} className="w-4 h-4" />
               </button>
             </div>
@@ -329,6 +331,7 @@ export default function AdminBrandSettings() {
         </button>
 
         <ConfirmModal
+          danger
           open={confirmCompanyLinkIdx !== null}
           onCancel={() => setConfirmCompanyLinkIdx(null)}
           onConfirm={() => {
@@ -336,6 +339,14 @@ export default function AdminBrandSettings() {
             setConfirmCompanyLinkIdx(null);
           }}
           message="Remove this company link?"
+        />
+
+        <ConfirmModal
+          danger
+          open={confirmReset}
+          onCancel={() => setConfirmReset(false)}
+          onConfirm={onConfirmReset}
+          message="Reset brand settings to defaults? This cannot be undone."
         />
       </section>
 

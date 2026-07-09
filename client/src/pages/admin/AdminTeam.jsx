@@ -411,7 +411,7 @@ export default function AdminTeam() {
                           </button>
                           <button
                             type="button"
-                            className="px-3 py-2 text-xs sm:px-4 sm:py-2 sm:text-sm min-h-[44px] text-primary hover:text-primary-hover rounded transition cursor-pointer"
+                            className="px-3 py-2 text-xs sm:px-4 sm:py-2 sm:text-sm min-h-[44px] text-danger hover:text-red-700 rounded transition cursor-pointer"
                             title="Delete"
                             onClick={() => onDelete(m._id)}>
                             <FontAwesomeIcon icon={faTrash} className="w-4 h-4" />
@@ -454,12 +454,14 @@ export default function AdminTeam() {
       </div>
 
       <ConfirmModal
+        danger
         open={!!deleteTarget}
         onCancel={() => setDeleteTarget(null)}
         onConfirm={onConfirmDelete}
         message="Are you sure you want to delete this team member? This action cannot be undone."
       />
       <ConfirmModal
+        danger
         open={deleteAllTarget}
         onCancel={() => setDeleteAllTarget(false)}
         onConfirm={onConfirmDeleteAll}

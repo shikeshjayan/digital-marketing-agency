@@ -339,7 +339,7 @@ export default function AdminReviews() {
                             type="button"
                             aria-label="Reject"
                             title="Reject"
-                            className="inline-flex items-center justify-center w-9 h-9 min-w-[44px] min-h-[44px] text-primary bg-primary-light border border-primary/20 rounded hover:bg-primary/10 transition cursor-pointer disabled:opacity-50"
+                            className="inline-flex items-center justify-center w-9 h-9 min-w-[44px] min-h-[44px] text-danger bg-red-50 border border-red-200 rounded hover:bg-red-100 transition cursor-pointer disabled:opacity-50"
                             onClick={() =>
                               setDeleteTarget({
                                 type: "reject",
@@ -410,6 +410,7 @@ export default function AdminReviews() {
 
       <ConfirmModal
         open={!!deleteTarget}
+        danger={deleteTarget?.type !== "approve"}
         onCancel={() => setDeleteTarget(null)}
         onConfirm={() => {
           if (deleteTarget?.type === "approve") {
@@ -425,6 +426,7 @@ export default function AdminReviews() {
         }
       />
       <ConfirmModal
+        danger
         open={deleteAllTarget}
         onCancel={() => setDeleteAllTarget(false)}
         onConfirm={onConfirmDeleteAll}

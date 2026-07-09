@@ -470,7 +470,7 @@ export default function AdminCaseStudies() {
                       <button
                         type="button"
                         onClick={() => setConfirmItemDelete({ type: "gallery", index: idx })}
-                        className="absolute top-0 right-0 bg-primary text-white w-4 h-4 flex items-center justify-center text-xs cursor-pointer">
+                        className="absolute top-0 right-0 bg-danger text-white w-4 h-4 flex items-center justify-center text-xs cursor-pointer">
                         <FontAwesomeIcon icon={faTrash} className="w-3 h-3" />
                       </button>
                     </div>
@@ -494,7 +494,7 @@ export default function AdminCaseStudies() {
                     className="flex-1 rounded-lg border border-border bg-background px-3 py-2 text-sm text-heading focus:border-primary focus:ring-1 focus:ring-primary-light outline-none"
                     placeholder="Objective"
                   />
-                  <button type="button" onClick={() => setConfirmItemDelete({ type: "objectives", index: idx })} className="text-primary hover:text-primary-hover cursor-pointer"><FontAwesomeIcon icon={faTrash} className="w-3.5 h-3.5" /></button>
+                  <button type="button" onClick={() => setConfirmItemDelete({ type: "objectives", index: idx })} className="text-danger hover:text-red-700 cursor-pointer"><FontAwesomeIcon icon={faTrash} className="w-3.5 h-3.5" /></button>
                 </div>
               ))}
             </div>
@@ -514,7 +514,7 @@ export default function AdminCaseStudies() {
                     className="flex-1 rounded-lg border border-border bg-background px-3 py-2 text-sm text-heading focus:border-primary focus:ring-1 focus:ring-primary-light outline-none"
                     placeholder="Deliverable"
                   />
-                  <button type="button" onClick={() => setConfirmItemDelete({ type: "deliverables", index: idx })} className="text-primary hover:text-primary-hover cursor-pointer"><FontAwesomeIcon icon={faTrash} className="w-3.5 h-3.5" /></button>
+                  <button type="button" onClick={() => setConfirmItemDelete({ type: "deliverables", index: idx })} className="text-danger hover:text-red-700 cursor-pointer"><FontAwesomeIcon icon={faTrash} className="w-3.5 h-3.5" /></button>
                 </div>
               ))}
             </div>
@@ -568,7 +568,7 @@ export default function AdminCaseStudies() {
                     className="w-full rounded border border-border bg-background px-3 py-2 text-sm text-heading focus:border-primary focus:ring-1 focus:ring-primary-light outline-none"
                     placeholder="Step description"
                   />
-                  <button type="button" onClick={() => setConfirmItemDelete({ type: "development_process", index: idx })} className="text-primary hover:text-primary-hover cursor-pointer"><FontAwesomeIcon icon={faTrash} className="w-3.5 h-3.5" /></button>
+                  <button type="button" onClick={() => setConfirmItemDelete({ type: "development_process", index: idx })} className="text-danger hover:text-red-700 cursor-pointer"><FontAwesomeIcon icon={faTrash} className="w-3.5 h-3.5" /></button>
                 </div>
               ))}
             </div>
@@ -595,7 +595,7 @@ export default function AdminCaseStudies() {
                     className="w-full rounded border border-border bg-background px-3 py-2 text-sm text-heading focus:border-primary focus:ring-1 focus:ring-primary-light outline-none"
                     placeholder="Solution"
                   />
-                  <button type="button" onClick={() => setConfirmItemDelete({ type: "challenges_and_solutions", index: idx })} className="text-primary hover:text-primary-hover cursor-pointer"><FontAwesomeIcon icon={faTrash} className="w-3.5 h-3.5" /></button>
+                  <button type="button" onClick={() => setConfirmItemDelete({ type: "challenges_and_solutions", index: idx })} className="text-danger hover:text-red-700 cursor-pointer"><FontAwesomeIcon icon={faTrash} className="w-3.5 h-3.5" /></button>
                 </div>
               ))}
             </div>
@@ -623,7 +623,7 @@ export default function AdminCaseStudies() {
                       className="flex-1 rounded border border-border bg-background px-3 py-2 text-sm text-heading focus:border-primary focus:ring-1 focus:ring-primary-light outline-none"
                       placeholder="Value"
                     />
-                    <button type="button" onClick={() => setConfirmItemDelete({ type: "results", index: idx })} className="text-primary hover:text-primary-hover cursor-pointer"><FontAwesomeIcon icon={faTrash} className="w-3.5 h-3.5" /></button>
+                    <button type="button" onClick={() => setConfirmItemDelete({ type: "results", index: idx })} className="text-danger hover:text-red-700 cursor-pointer"><FontAwesomeIcon icon={faTrash} className="w-3.5 h-3.5" /></button>
                   </div>
                 </div>
               ))}
@@ -778,7 +778,7 @@ export default function AdminCaseStudies() {
                           </button>
                           <button
                             type="button"
-                            className="px-3 py-2 text-xs sm:px-4 sm:py-2 sm:text-sm min-h-[44px] text-primary hover:text-primary-hover rounded transition cursor-pointer"
+                            className="px-3 py-2 text-xs sm:px-4 sm:py-2 sm:text-sm min-h-[44px] text-danger hover:text-red-700 rounded transition cursor-pointer"
                             title="Delete"
                             onClick={() => setDeleteTarget(cs._id)}>
                             <FontAwesomeIcon icon={faTrash} className="w-4 h-4" />
@@ -807,18 +807,21 @@ export default function AdminCaseStudies() {
       </div>
 
       <ConfirmModal
+        danger
         open={!!deleteTarget}
         onCancel={() => setDeleteTarget(null)}
         onConfirm={onConfirmDelete}
         message="Are you sure you want to delete this case study? This action cannot be undone."
       />
       <ConfirmModal
+        danger
         open={deleteAllTarget}
         onCancel={() => setDeleteAllTarget(false)}
         onConfirm={onConfirmDeleteAll}
         message="Are you sure you want to delete ALL case studies? This action cannot be undone."
       />
       <ConfirmModal
+        danger
         open={confirmItemDelete !== null}
         onCancel={() => setConfirmItemDelete(null)}
         onConfirm={() => {

@@ -371,7 +371,7 @@ export default function AdminServices() {
                     <button
                       type="button"
                       onClick={() => onRemoveTag("deliverables", i)}
-                      className="ml-1 text-primary hover:text-primary-hover cursor-pointer">
+                      className="ml-1 text-danger hover:text-red-700 cursor-pointer">
                       <FontAwesomeIcon icon={faTrash} className="w-3 h-3" />
                     </button>
                   </span>
@@ -563,7 +563,7 @@ export default function AdminServices() {
                           </button>
                           <button
                             type="button"
-                            className="px-3 py-2 text-xs sm:px-4 sm:py-2 sm:text-sm min-h-[44px] text-primary hover:text-primary-hover rounded transition cursor-pointer"
+                            className="px-3 py-2 text-xs sm:px-4 sm:py-2 sm:text-sm min-h-[44px] text-danger hover:text-primary-hover rounded transition cursor-pointer"
                             title="Delete"
                             onClick={() => onDelete(s._id)}>
                             <FontAwesomeIcon icon={faTrash} className="w-4 h-4" />
@@ -592,12 +592,14 @@ export default function AdminServices() {
       </div>
 
       <ConfirmModal
+        danger
         open={!!deleteTarget}
         onCancel={() => setDeleteTarget(null)}
         onConfirm={onConfirmDelete}
         message="Are you sure you want to delete this service? This action cannot be undone."
       />
       <ConfirmModal
+        danger
         open={deleteAllTarget}
         onCancel={() => setDeleteAllTarget(false)}
         onConfirm={onConfirmDeleteAll}
