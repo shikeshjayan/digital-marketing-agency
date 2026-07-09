@@ -12,6 +12,9 @@ async function connectToDatabase() {
   }
 
   if (!cached.promise) {
+    if (!process.env.MONGO_URL) {
+      throw new Error("MONGO_URL environment variable is not set");
+    }
     cached.promise = mongoose.connect(process.env.MONGO_URL, {
       bufferCommands: false,
     });

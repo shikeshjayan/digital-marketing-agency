@@ -113,12 +113,12 @@ export const getAdminProfile = asyncHandler(async (req, res) => {
 });
 
 // Logout by clearing the token cookie
-export const logoutAdmin = async (req, res) => {
+export const logoutAdmin = asyncHandler(async (req, res) => {
   res
     .cookie("token", "", { httpOnly: true, expires: new Date(0) })
     .status(200)
     .json({ success: true, message: "Logged out successfully" });
-};
+});
 
 // Update admin's name, email, photo, and/or password
 export const updateAdminProfile = asyncHandler(async (req, res) => {

@@ -2,7 +2,7 @@ import { create } from "zustand";
 import apiService from "../services/apiService";
 
 const useBrandSettingsStore = create((set) => ({
-  brand: null,
+  content: null,
   loading: false,
   error: null,
 

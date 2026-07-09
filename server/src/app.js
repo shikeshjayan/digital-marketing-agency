@@ -1,6 +1,7 @@
 import express from "express";
 import cors from "cors";
 import cookieParser from "cookie-parser";
+import mongoose from "mongoose";
 import { RateLimiterMemory } from "rate-limiter-flexible";
 import mongoSanitize from "./middleware/mongoSanitize.js";
 import path from "path";
@@ -36,6 +37,9 @@ import errorHandler from "./middleware/errorHandler.js";
 
 const app = express();
 
+// Trust first proxy (required for Vercel/Heroku/etc. so req.ip resolves to client IP)
+app.set("trust proxy", 1);
+
 // Rate limiters
 const generalLimiter = new RateLimiterMemory({
   points: 100,
@@ -58,7 +62,7 @@ const rateLimitMiddleware = (limiter, message) => async (req, res, next) => {
 };
 
 // Allow requests from the React frontend
-app.use(cors({ origin: process.env.CLIENT_URL, credentials: true }));
+app.use(cors({ origin: process.env.CLIENT_URL || true, credentials: true }));
 // Convert incoming JSON data so we can read it easily
 app.use(express.json({ limit: "5mb" }));
 app.use(express.urlencoded({ extended: true, limit: "5mb" }));
@@ -106,6 +110,22 @@ app.use("/api/v1/site-content", siteContentRoutes);
 app.use("/api/v1/admin/site-content", adminSiteContentRoutes);
 app.use("/api/v1/brand-settings", brandSettingsRoutes);
 app.use("/api/v1/admin/brand-settings", adminBrandSettingsRoutes);
+
+// Health check — exposes env status and DB state for debugging
+app.get("/api/v1/health", (req, res) => {
+  res.json({
+    success: true,
+    uptime: process.uptime(),
+    env: {
+      MONGO_URL: !!process.env.MONGO_URL,
+      JWT_SECRET: !!process.env.JWT_SECRET,
+      CLIENT_URL: process.env.CLIENT_URL || "(not set)",
+      NODE_ENV: process.env.NODE_ENV || "(not set)",
+      BLOB_READ_WRITE_TOKEN: !!process.env.BLOB_READ_WRITE_TOKEN,
+    },
+    mongooseState: mongoose.connection.readyState,
+  });
+});
 
 app.use(errorHandler);
 
