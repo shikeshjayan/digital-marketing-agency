@@ -35,17 +35,19 @@ export default function LogoMarquee({
         </FadeIn>
       </div>
 
-      <div className="overflow-hidden py-6">
-        <div className="logo-marquee">
-          {[...logos, ...logos].map((logo, index) => (
-            <span
-              key={index}
-              className="inline-flex items-center px-8 whitespace-nowrap tracking-wider font-extrabold text-muted hover:text-primary transition-colors duration-300 text-sm md:text-xl uppercase cursor-default select-none">
-              {logo}
-            </span>
-          ))}
+      <FadeIn>
+        <div className="overflow-hidden py-6">
+          <div className="logo-marquee">
+            {[...logos, ...logos].map((logo, index) => (
+              <span
+                key={index}
+                className="inline-flex items-center px-8 whitespace-nowrap tracking-wider font-extrabold text-muted hover:text-primary transition-colors duration-300 text-sm md:text-xl uppercase cursor-default select-none">
+                {logo}
+              </span>
+            ))}
+          </div>
         </div>
-      </div>
+      </FadeIn>
     </section>
   );
 }

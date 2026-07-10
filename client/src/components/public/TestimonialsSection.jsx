@@ -57,39 +57,36 @@ export default function TestimonialsSection({
     <section className={`py-12 ${bg}`}>
       <div className="max-w-6xl mx-auto px-4">
         
-        {/* Responsive flex row placing heading on left and navigation action buttons on top-right side */}
-        <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-6">
-          <FadeIn className="flex-1">
-            <div className="text-center sm:text-left">
-              <SectionHeading
-                eyebrow={eyebrow}
-                title={title}
-                subtitle={subtitle}
-              />
+        <FadeIn>
+          <div className="text-center sm:text-left">
+            <SectionHeading
+              eyebrow={eyebrow}
+              title={title}
+              subtitle={subtitle}
+            />
+          </div>
+        </FadeIn>
+
+        {totalPages > 1 && (
+          <FadeIn>
+            <div className="flex items-center justify-center sm:justify-end gap-2 mt-2">
+              <button
+                type="button"
+                onClick={prev}
+                className="w-10 h-10 rounded-lg bg-surface border border-border flex items-center justify-center text-primary hover:bg-primary hover:text-white transition cursor-pointer"
+                aria-label="Previous reviews">
+                <FontAwesomeIcon icon={faAngleLeft} className="text-sm" />
+              </button>
+              <button
+                type="button"
+                onClick={next}
+                className="w-10 h-10 rounded-lg bg-surface border border-border flex items-center justify-center text-primary hover:bg-primary hover:text-white transition cursor-pointer"
+                aria-label="Next reviews">
+                <FontAwesomeIcon icon={faAngleRight} className="text-sm" />
+              </button>
             </div>
           </FadeIn>
-
-          {totalPages > 1 && (
-            <FadeIn>
-              <div className="flex items-center justify-center sm:justify-end gap-2 shrink-0 pb-1">
-                <button
-                  type="button"
-                  onClick={prev}
-                  className="w-10 h-10 rounded-lg bg-surface border border-border flex items-center justify-center text-primary hover:bg-primary hover:text-white transition cursor-pointer shadow-sm"
-                  aria-label="Previous reviews">
-                  <FontAwesomeIcon icon={faAngleLeft} className="text-sm" />
-                </button>
-                <button
-                  type="button"
-                  onClick={next}
-                  className="w-10 h-10 rounded-lg bg-surface border border-border flex items-center justify-center text-primary hover:bg-primary hover:text-white transition cursor-pointer shadow-sm"
-                  aria-label="Next reviews">
-                  <FontAwesomeIcon icon={faAngleRight} className="text-sm" />
-                </button>
-              </div>
-            </FadeIn>
-          )}
-        </div>
+        )}
 
         <div className="mt-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {visible.map((review, i) => {
@@ -127,7 +124,7 @@ export default function TestimonialsSection({
                     </div>
 
                     {/* Flat inline sentence container to avoid responsive hidden line-clamp breaks */}
-                    <div className="mt-4 text-text text-sm leading-relaxed break-words w-full italic text-left">
+                    <div className="mt-4 text-text text-sm leading-relaxed wrap-break-word w-full italic text-left">
                       <span className="inline">
                         &ldquo;{shortText}
                       </span>
@@ -170,10 +167,10 @@ export default function TestimonialsSection({
           detail
             ? [
                 detail.company && { label: detail.company, variant: "primary" },
-                detail.location && { label: detail.location, variant: "default" },
               ].filter(Boolean)
             : []
         }
+        location={detail?.location}
         rating={detail?.rating}
         description={detail?.review_text || ""}
       />

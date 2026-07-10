@@ -22,14 +22,18 @@ export default function FadeIn({
   const hidden = `opacity-0 ${transforms[direction]}`
   const visible = 'opacity-100 translate-x-0 translate-y-0'
 
-  return (
-    <Tag
-      ref={ref}
-      className={`${base} ${isInView ? visible : hidden} ${className}`}
-      style={{ transitionDelay: `${delay}ms` }}
-      {...props}
-    >
-      {children}
-    </Tag>
-  )
+  const child = typeof children === 'function'
+    ? children({ isInView, ref })
+    : (
+      <Tag
+        ref={ref}
+        className={`${base} ${isInView ? visible : hidden} ${className}`}
+        style={{ transitionDelay: `${delay}ms` }}
+        {...props}
+      >
+        {children}
+      </Tag>
+    )
+
+  return child
 }

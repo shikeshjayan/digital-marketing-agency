@@ -98,7 +98,7 @@ function HeroCarousel() {
           </div>
           <div className="text-white min-h-50" key={index}>
             <div className="animate-page-fade">
-              <div className="text-sm font-bold tracking-widest uppercase inline-block px-3 py-1 rounded">
+              <div className="small-text font-bold tracking-widest uppercase inline-block px-3 py-1 rounded">
                 DIGITAL MARKETING AGENCY
               </div>
               <h2 className="mt-3 hero-heading text-white">
@@ -196,7 +196,7 @@ function ServicesCarousel({ services }) {
         <div className="max-w-6xl mx-auto px-4">
           <div className="bg-background rounded-lg shadow-sm border border-border overflow-hidden">
             <div className="px-6 py-12 md:px-10 text-center">
-              <p className="text-muted body-text">No featured services available at the moment.</p>
+              <p className="text-muted body-text font-body">No featured services available at the moment.</p>
             </div>
           </div>
         </div>
@@ -223,10 +223,10 @@ function ServicesCarousel({ services }) {
               onTouchStart={handleTouchStart}
               onTouchEnd={handleTouchEnd}>
               
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-stretch animate-page-fade">
-                {currentChunk.map((item) => (
+              <div key={index} className="grid grid-cols-1 md:grid-cols-3 gap-6 items-stretch animate-page-fade">
+                {currentChunk.map((item, i) => (
+                  <FadeIn key={item._id} delay={i * 100}>
                   <div 
-                    key={item._id} 
                     className="bg-background rounded-lg shadow-sm border border-border overflow-hidden flex flex-col justify-between p-6 h-full min-h-[250px]"
                   >
                     <div className="flex-1 flex flex-col">
@@ -236,7 +236,7 @@ function ServicesCarousel({ services }) {
                           {item.service_name.split(" ").slice(2).join(" ")}
                         </span>
                       </h3>
-                      <p className="mt-3 text-text body-text text-sm line-clamp-4 flex-1">
+                      <p className="mt-3 small-text text-text line-clamp-4 flex-1">
                         {item.short_description || item.description}
                       </p>
                     </div>
@@ -244,11 +244,12 @@ function ServicesCarousel({ services }) {
                     <div className="mt-5 pt-4 border-t border-border/60 flex items-center justify-between">
                       <Link
                         to={`/services/${slugify(item.service_name)}`}
-                        className="inline-flex items-center rounded-lg bg-primary text-white px-4 py-2 text-xs font-semibold hover:bg-primary-hover transition cursor-pointer">
+                        className="inline-flex items-center rounded-lg bg-primary text-white px-4 py-2 button-text hover:bg-primary-hover transition cursor-pointer">
                         Read More
                       </Link>
                     </div>
                   </div>
+                  </FadeIn>
                 ))}
               </div>
             </div>
@@ -313,10 +314,10 @@ function TechnologyStack({ items = [] }) {
         <div className="mt-10 flex flex-wrap justify-center gap-6">
           {items.map((it, i) => (
             <FadeIn key={it.name} delay={i * 80}>
-              <div className="w-28 h-28 flex flex-col items-center justify-center text-white  rounded-lg hover:text-primary hover:scale-110 transition-all duration-300 cursor-default shadow-lg">
+              <div className="w-28 h-28 flex flex-col items-center justify-center text-white  rounded-lg hover:text-primary hover:scale-110 transition-all duration-300 cursor-default">
                 <div className="text-2xl font-extrabold">{it.code}</div>
                 <div
-                  className="mt-1 text-xs text-white/90 text-center max-w-20 truncate"
+                  className="mt-1 text-sm text-white/90 text-center max-w-20 truncate"
                   title={it.name}>
                   {it.name}
                 </div>
@@ -347,14 +348,14 @@ function StatsSection({ stats = [] }) {
                 <h3 className="mt-4 section-heading text-heading">
                   Why teams trust us
                 </h3>
-                <p className="mt-3 text-text body-text">
+                <p className="mt-3 text-text body-text font-body">
                   We combine design, engineering, and marketing strategy to
                   deliver websites and campaigns that perform.
                 </p>
                 <div className="mt-8">
                   <Link
                     to="/about"
-                    className="inline-flex rounded-lg bg-primary text-white px-5 py-2.5 text-sm font-semibold hover:bg-primary-hover transition cursor-pointer">
+                    className="inline-flex rounded-lg bg-primary text-white px-5 py-2.5 button-text hover:bg-primary-hover transition cursor-pointer">
                     Read More
                   </Link>
                 </div>
@@ -365,14 +366,18 @@ function StatsSection({ stats = [] }) {
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 items-stretch">
             {displayStats.map((stat, i) => (
               <FadeIn key={stat.key || i} delay={(i + 1) * 100} className="h-full">
-                <div className="bg-background border border-border rounded-lg p-6 text-center shadow-sm flex flex-col items-center justify-center h-full min-h-[120px]">
+                {({ isInView, ref }) => (
+                <div ref={ref} className="bg-background border border-border rounded-lg p-6 text-center shadow-sm flex flex-col items-center justify-center h-full min-h-[120px]">
                   <div className="text-4xl font-extrabold text-heading">
-                    <AnimatedCounter target={stat.target} suffix={stat.suffix || ""} />
+                    <AnimatedCounter target={stat.target} suffix={stat.suffix || ""} isInView={isInView} />
                   </div>
-                  <div className="mt-2 text-sm font-semibold text-text">
+                  <div className="mt-2 small-text font-semibold text-text"
+                  style={{ '--font-size-st': '12px' }}
+                  >
                     {stat.label}
                   </div>
                 </div>
+                )}
               </FadeIn>
             ))}
           </div>
@@ -414,20 +419,24 @@ export default function Home() {
               <span className="font-headings text-primary pr-2">Meet</span> Our
               Team
             </div>
-            <p className="mt-4 text-white/70 max-w-2xl mx-auto leading-relaxed">
-              A creative and technical team focused on delivering premium
-              digital experiences.
-            </p>
-            <div className="mt-8">
-              <button
-                type="button"
-                className="inline-flex items-center rounded-lg bg-primary px-6 py-3 text-sm font-semibold hover:bg-primary-hover transition cursor-pointer"
-                onClick={() => navigate("/team")}>
-                Read More
-              </button>
-            </div>
           </div>
         </FadeIn>
+        <FadeIn delay={100}>
+          <p className="mt-4 text-white/70 max-w-2xl mx-auto text-center leading-relaxed px-4">
+            A creative and technical team focused on delivering premium
+            digital experiences.
+          </p>
+        </FadeIn>
+        <div className="mt-8 flex justify-center">
+          <FadeIn delay={200}>
+            <button
+              type="button"
+              className="inline-flex items-center rounded-lg bg-primary px-6 py-3 text-sm font-b hover:bg-primary-hover transition cursor-pointer"
+              onClick={() => navigate("/team")}>
+              Read More
+            </button>
+          </FadeIn>
+        </div>
       </section>
 
       <TestimonialsSection
