@@ -1,4 +1,4 @@
-import { useEffect, useMemo } from "react";
+import { useEffect } from "react";
 import { Link } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBuilding, faMicrochip, faArrowRight } from "@fortawesome/free-solid-svg-icons";
@@ -44,7 +44,7 @@ const ServiceCard = ({ service }) => (
       <p className="mt-3 small-text text-text body-text line-clamp-3">
         {service.short_description}
       </p>
-      <span className="mt-auto pt-6 inline-flex items-center gap-2 text-sm font-semibold text-primary group-hover:gap-3 transition-all">
+      <span className="mt-auto pt-6 inline-flex items-center gap-2 text-sm font-semibold text-primary group-hover:gap-3 transition-all button-text">
         Learn More <FontAwesomeIcon icon={faArrowRight} />
       </span>
     </div>
@@ -84,23 +84,35 @@ function IndustriesWeServe({ industries = [] }) {
           />
         </FadeIn>
         
-        {/* Fixed: Converted to dynamic flex layout wrapping rules with explicit basis mapping to support Tailwind CSS v4 compiler metrics flawlessly */}
-        <div className="mt-10 flex flex-wrap justify-center gap-6">
-          {industries.map((ind, i) => (
-            <FadeIn key={ind._id || i} delay={i * 80}>
-              <div className="bg-surface border border-border rounded-lg p-5 text-center hover:shadow-md hover:-translate-y-0.5 transition-all duration-300 group cursor-default h-full">
-                <div className="w-12 h-12 mx-auto rounded-lg bg-primary-light flex items-center justify-center group-hover:bg-primary transition-colors">
-                  {ind.iconType === "image" && ind.icon ? (
-                    <img src={resolveImagePath(ind.icon)} alt={ind.name} className="w-6 h-6 object-contain group-hover:brightness-0 group-hover:invert transition-all" />
-                  ) : (
-                    <FontAwesomeIcon icon={faBuilding} className="text-primary text-xl group-hover:text-white transition-colors" />
-                  )}
+        {/* 12-column grid configuration for exact 4 + 2 centered breakdown on desktop */}
+        <div className="mt-10 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-12 gap-6 max-w-5xl mx-auto">
+          {industries.slice(0, 6).map((ind, i) => {
+            // Setup layouts: span 3 out of 12 columns per card (4 cards per row)
+            let gridClasses = "lg:col-span-3";
+            
+            // Adjust the 5th card (index 4) to leave a 3-column gap on the left, centering the row
+            if (i === 4) {
+              gridClasses = "lg:col-span-3 lg:col-start-4";
+            } else if (i === 5) {
+              gridClasses = "lg:col-span-3";
+            }
+
+            return (
+              <FadeIn key={ind._id || i} delay={i * 40} className={gridClasses}>
+                <div className="bg-surface border border-border rounded-lg p-5 text-center hover:shadow-md hover:-translate-y-0.5 transition-all duration-300 group cursor-default h-full flex flex-col justify-center">
+                  <div className="w-12 h-12 mx-auto rounded-lg bg-primary-light flex items-center justify-center group-hover:bg-primary transition-colors">
+                    {ind.iconType === "image" && ind.icon ? (
+                      <img src={resolveImagePath(ind.icon)} alt={ind.name} className="w-6 h-6 object-contain group-hover:brightness-0 group-hover:invert transition-all" />
+                    ) : (
+                      <FontAwesomeIcon icon={faBuilding} className="text-primary text-xl group-hover:text-white transition-colors" />
+                    )}
+                  </div>
+                  <h3 className="mt-3 small-text font-bold text-heading">{ind.name}</h3>
+                  <p className="mt-1.5 text-xs text-text leading-relaxed">{ind.description}</p>
                 </div>
-                <h3 className="mt-3 small-text font-bold text-heading">{ind.name}</h3>
-                <p className="mt-1.5 text-xs text-text leading-relaxed">{ind.description}</p>
-              </div>
-            </FadeIn>
-          ))}
+              </FadeIn>
+            );
+          })}
         </div>
       </div>
     </section>
@@ -138,7 +150,7 @@ function FeaturedCaseStudies({ caseStudies, loading }) {
         ) : (
           <div className="mt-10 flex flex-wrap justify-center gap-6">
             {caseStudies.map((cs, i) => (
-              <FadeIn key={cs._id} delay={i * 100} className="w-full md:basis-[calc(50%-12px)] lg:basis-[calc(33.33%-16px)] max-w-sm lg:max-w-none">
+              <FadeIn key={cs._id} delay={i * 40} className="w-full md:basis-[calc(50%-12px)] lg:basis-[calc(33.33%-16px)] max-w-sm lg:max-w-none">
                 <div className="bg-background border border-border rounded-lg p-6 h-full flex flex-col hover:shadow-md transition group">
                   {cs.hero_image && (
                     <div className="-mx-6 -mt-6 mb-4 overflow-hidden rounded-t-lg">
@@ -149,7 +161,7 @@ function FeaturedCaseStudies({ caseStudies, loading }) {
                       />
                     </div>
                   )}
-                  <span className="text-xs font-semibold text-primary bg-primary-light px-2.5 py-1 rounded w-fit">
+                  <span className="text-xs font-semibold text-primary bg-primary-light px-2.5 py-1 rounded w-fit text-xxs">
                     {cs.results?.[0]?.title || "Case Study"}
                   </span>
                   <h3 className="mt-3 body-text font-bold text-heading">{cs.title}</h3>
@@ -161,7 +173,7 @@ function FeaturedCaseStudies({ caseStudies, loading }) {
                   <p className="mt-2 small-text text-text body-text flex-1 line-clamp-3">{cs.overview}</p>
                   <Link
                     to={`/case-studies/${cs.slug}`}
-                    className="mt-4 inline-flex items-center gap-2 text-sm font-semibold text-primary group-hover:gap-3 transition-all">
+                    className="mt-4 inline-flex items-center gap-2 text-sm font-semibold text-primary group-hover:gap-3 transition-all button-text">
                     Read Case Study <FontAwesomeIcon icon={faArrowRight} />
                   </Link>
                 </div>
@@ -189,7 +201,7 @@ function TechnologiesPlatforms({ technologies = [] }) {
         </FadeIn>
         <div className="mt-10 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
           {technologies.map((tech, i) => (
-            <FadeIn key={tech._id || i} delay={i * 60}>
+            <FadeIn key={tech._id || i} delay={i * 30}>
               <div className="flex items-center gap-3 bg-surface border border-border rounded-lg px-4 py-3 hover:shadow-sm hover:border-primary/30 transition-all duration-200 cursor-default">
                 <div className="w-9 h-9 rounded-md bg-primary-light flex items-center justify-center shrink-0">
                   {tech.iconType === "image" && tech.icon ? (
@@ -224,7 +236,7 @@ function ResultsStatistics({ stats = [] }) {
         </FadeIn>
         <div className="mt-10 grid grid-cols-2 sm:grid-cols-4 gap-6">
           {displayStats.map((stat, i) => (
-            <FadeIn key={stat.key || i} delay={i * 100}>
+            <FadeIn key={stat.key || i} delay={i * 40}>
               <div className="bg-surface border border-border rounded-lg p-6 text-center hover:shadow-sm transition">
                 <div className="text-4xl font-extrabold text-primary">
                   <AnimatedCounter target={stat.target} suffix={stat.suffix || ""} />
@@ -306,7 +318,7 @@ export default function Services() {
               <button
                 type="button"
                 onClick={() => fetchServices()}
-                className="px-5 py-2.5 text-sm font-semibold text-white bg-primary rounded-lg hover:bg-primary-hover transition cursor-pointer">
+                className="px-5 py-2.5 text-sm font-semibold text-white bg-primary rounded-lg hover:bg-primary-hover transition cursor-pointer button-text">
                 Retry
               </button>
             </div>
@@ -316,7 +328,7 @@ export default function Services() {
     );
 
   return (
-    <div>
+    <div className="animate-page-fade">
       {/* 1. Hero */}
       <HeroSplit
         title="Services"
@@ -360,17 +372,17 @@ export default function Services() {
                   d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"
                 />
               </svg>
-              <div className="mt-4 text-lg font-semibold text-heading">
+              <div className="mt-4 text-lg font-semibold text-heading subheading">
                 No services available
               </div>
-              <div className="mt-2 text-sm text-text">
+              <div className="mt-2 text-sm text-text small-text">
                 Check back later for our services.
               </div>
             </div>
           ) : (
             <div className="mt-10 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
               {services.map((s, i) => (
-                <FadeIn key={s._id} delay={i * 100}>
+                <FadeIn key={s._id} delay={i * 40}>
                   <ServiceCard service={s} />
                 </FadeIn>
               ))}
@@ -380,10 +392,14 @@ export default function Services() {
       </section>
 
       {/* 4. Why Choose Us */}
-      <WhyChooseUs stats={whyChooseUsStats} bg="bg-background" />
+      <FadeIn>
+        <WhyChooseUs stats={whyChooseUsStats} bg="bg-background" />
+      </FadeIn>
 
       {/* 5. Our Process */}
-      <OurProcess bg="bg-background-section" />
+      <FadeIn>
+        <OurProcess bg="bg-background-section" />
+      </FadeIn>
 
       {/* 6. Industries We Serve */}
       <IndustriesWeServe industries={industries} />
@@ -398,16 +414,24 @@ export default function Services() {
       <ResultsStatistics stats={content?.companyStats} />
 
       {/* 10. Client Testimonials */}
-      <TestimonialsSection reviews={reviews} loading={reviewsLoading} bg="bg-background" />
+      <FadeIn>
+        <TestimonialsSection reviews={reviews} loading={reviewsLoading} bg="bg-background" />
+      </FadeIn>
 
       {/* 11. FAQ */}
-      <FAQSection items={faqs.map((f) => ({ q: f.question, a: f.answer }))} bg="bg-background-section" />
+      <FadeIn>
+        <FAQSection items={faqs.map((f) => ({ q: f.question, a: f.answer }))} bg="bg-background-section" />
+      </FadeIn>
 
       {/* 12. Final CTA */}
-      <FinalCTA />
+      <FadeIn>
+        <FinalCTA />
+      </FadeIn>
 
       {/* 13. Trust Section */}
-      <LogoMarquee logos={content?.trustMarqueeLogos} bg="bg-background" />
+      <FadeIn>
+        <LogoMarquee logos={content?.trustMarqueeLogos} bg="bg-background" />
+      </FadeIn>
     </div>
   );
 }
