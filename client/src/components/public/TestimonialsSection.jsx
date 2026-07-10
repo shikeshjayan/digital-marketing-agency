@@ -88,7 +88,7 @@ export default function TestimonialsSection({
           </FadeIn>
         )}
 
-        <div className="mt-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div key={page} className="mt-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 animate-page-fade">
           {visible.map((review, i) => {
             const isLongText = review.review_text && review.review_text.length > 100;
             const initials = review.name ? review.name.split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 2) : '?';

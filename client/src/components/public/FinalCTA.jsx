@@ -1,15 +1,15 @@
 import { useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faEnvelope, faPhone, faComments } from "@fortawesome/free-solid-svg-icons";
+import { faEnvelope, faPhone, faComments, faCompass } from "@fortawesome/free-solid-svg-icons";
 import FadeIn from "../ui/FadeIn.jsx";
 
 export default function FinalCTA({
   title = "Ready to Grow Your Business?",
   description = "Let's discuss how our digital marketing expertise can help you achieve your goals. Get in touch with us today for a free consultation.",
   primaryLabel = "Get a Free Quote",
-  primaryTo = "/contact",
-  secondaryLabel = "Schedule a Consultation",
-  secondaryTo = "/contact",
+  primaryTo = "/contact#contact-form",
+  secondaryLabel = "Explore Our Services",
+  secondaryTo = "/services",
   showWhatsApp = false,
 }) {
   const navigate = useNavigate();
@@ -26,7 +26,16 @@ export default function FinalCTA({
             <button
               type="button"
               className="inline-flex items-center gap-2 rounded-lg bg-primary text-white px-6 py-3 text-sm font-semibold hover:bg-primary-hover transition cursor-pointer"
-              onClick={() => navigate(primaryTo)}>
+              onClick={() => {
+                const [path, hash] = primaryTo.split("#");
+                navigate(path);
+                if (hash) {
+                  setTimeout(() => {
+                    const el = document.querySelector(`#${hash}`);
+                    if (el) el.scrollIntoView({ behavior: "smooth" });
+                  }, 100);
+                }
+              }}>
               <FontAwesomeIcon icon={faEnvelope} />
               {primaryLabel}
             </button>
@@ -34,7 +43,7 @@ export default function FinalCTA({
               type="button"
               className="inline-flex items-center gap-2 rounded-lg border border-white text-white px-6 py-3 text-sm font-semibold hover:bg-white/10 transition cursor-pointer"
               onClick={() => navigate(secondaryTo)}>
-              <FontAwesomeIcon icon={faComments} />
+              <FontAwesomeIcon icon={faCompass} />
               {secondaryLabel}
             </button>
             {showWhatsApp && (
