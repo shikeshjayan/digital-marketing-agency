@@ -8,8 +8,6 @@ import { TeamCardSkeleton } from '../../components/ui/Skeleton.jsx'
 import useTeamStore from '../../store/teamStore.js'
 import useSiteContentStore from '../../store/siteContentStore.js'
 
-/* ─── Data ────────────────────────────────────────────────── */
-
 const departments = [
   {
     name: "Strategy",
@@ -109,7 +107,6 @@ const certifications = [
 ];
 
 /* ─── Section: Departments ────────────────────────────────── */
-
 function Departments() {
   return (
     <section className="py-12 md:py-16 bg-background-section">
@@ -120,10 +117,9 @@ function Departments() {
             title="Our Departments"
             subtitle="Specialized teams working together to deliver end-to-end digital marketing solutions."
           />
-          {/* Converted grid structure to a flexible wrap structure so second-row items center automatically */}
           <div className="mt-10 flex flex-wrap justify-center gap-6">
             {departments.map((dept, i) => (
-              <FadeIn key={dept.name} delay={i * 80} className="w-full sm:basis-[calc(50%-12px)] lg:basis-[calc(33.33%-16px)] xl:basis-[calc(25%-18px)] max-w-sm">
+              <FadeIn key={dept.name} delay={i * 40} className="w-full sm:basis-[calc(50%-12px)] lg:basis-[calc(33.33%-16px)] xl:basis-[calc(25%-18px)] max-w-sm">
                 <div className="bg-surface border border-border rounded-lg p-6 h-full hover:shadow-sm transition group">
                   <div className="w-12 h-12 rounded-lg bg-primary-light flex items-center justify-center group-hover:bg-primary group-hover:text-white transition text-primary">
                     {dept.icon}
@@ -141,7 +137,6 @@ function Departments() {
 }
 
 /* ─── Section: Team Statistics ────────────────────────────── */
-
 function TeamStatistics({ stats = [] }) {
   const displayStats = stats.slice(0, 4);
   if (!displayStats.length) return null;
@@ -156,7 +151,7 @@ function TeamStatistics({ stats = [] }) {
           />
           <div className="mt-10 grid grid-cols-2 md:grid-cols-4 gap-6">
             {displayStats.map((stat, i) => (
-              <FadeIn key={stat.key || i} delay={i * 100}>
+              <FadeIn key={stat.key || i} delay={i * 40}>
                 <div className="bg-background border border-border rounded-lg p-6 text-center hover:shadow-sm transition">
                   <div className="text-3xl md:text-4xl font-extrabold text-primary">{stat.target}{stat.suffix}</div>
                   <div className="mt-2 text-sm text-text">{stat.label}</div>
@@ -171,7 +166,6 @@ function TeamStatistics({ stats = [] }) {
 }
 
 /* ─── Section: Our Culture ────────────────────────────────── */
-
 function OurCulture() {
   return (
     <section className="py-12 md:py-16 bg-background-section">
@@ -184,7 +178,7 @@ function OurCulture() {
           />
           <div className="mt-10 grid grid-cols-1 sm:grid-cols-2 gap-6">
             {cultureValues.map((item, i) => (
-              <FadeIn key={item.title} delay={i * 100}>
+              <FadeIn key={item.title} delay={i * 40}>
                 <div className="bg-surface border border-border rounded-lg p-6 h-full hover:shadow-sm transition group">
                   <div className="flex items-center gap-3">
                     <div className="w-2.5 h-2.5 rounded-full bg-primary shrink-0" />
@@ -202,7 +196,6 @@ function OurCulture() {
 }
 
 /* ─── Section: Certifications & Skills ────────────────────── */
-
 function Certifications() {
   return (
     <section className="py-12 md:py-16 bg-background">
@@ -215,12 +208,12 @@ function Certifications() {
           />
           <div className="mt-10 flex flex-wrap justify-center gap-3">
             {certifications.map((cert, i) => (
-              <FadeIn key={cert} delay={i * 60}>
+              <FadeIn key={cert} delay={i * 30}>
                 <div className="inline-flex items-center gap-2 px-4 py-2.5 bg-background border border-border rounded-lg hover:shadow-sm transition">
                   <svg className="w-4 h-4 text-primary shrink-0" fill="currentColor" viewBox="0 0 20 20">
                     <path fillRule="evenodd" d="M6.267 3.455a3.066 3.066 0 001.745-.723 3.066 3.066 0 013.976 0 3.066 3.066 0 001.745.723 3.066 3.066 0 012.812 2.812c.051.643.304 1.254.723 1.745a3.066 3.066 0 010 3.976 3.066 3.066 0 00-.723 1.745 3.066 3.066 0 01-2.812 2.812 3.066 3.066 0 00-1.745.723 3.066 3.066 0 01-3.976 0 3.066 3.066 0 00-1.745-.723 3.066 3.066 0 01-2.812-2.812 3.066 3.066 0 00-.723-1.745 3.066 3.066 0 010-3.976 3.066 3.066 0 00.723-1.745 3.066 3.066 0 012.812-2.812zm7.44 5.252a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
                   </svg>
-                  <span className="text-sm font-semibold text-heading">{cert}</span>
+                  <span className="text-sm font-semibold text-heading small-text font-bold">{cert}</span>
                 </div>
               </FadeIn>
             ))}
@@ -231,12 +224,10 @@ function Certifications() {
   );
 }
 
-/* ─── Page ────────────────────────────────────────────────── */
-
+/* ─── Page Component ──────────────────────────────────────── */
 export default function Team() {
   const { team, loading, error, fetchTeam } = useTeamStore()
   const { content, fetchPublicSiteContent } = useSiteContentStore()
-
   const companyStats = content?.companyStats ?? [];
 
   const getStat = (key) => {
@@ -254,7 +245,7 @@ export default function Team() {
   }, [team])
 
   return (
-    <div className="bg-background min-h-screen">
+    <div className="bg-background min-h-screen animate-page-fade">
       <HeroSplit
         title="Our Team"
         titleHighlight="Meet"
@@ -275,7 +266,7 @@ export default function Team() {
         <FadeIn>
           <div className="max-w-6xl mx-auto px-4">
             <div className="text-center mb-10">
-              <div className="text-primary font-semibold text-sm">Our People</div>
+              <div className="text-primary font-semibold text-sm small-text">Our People</div>
               <h2 className="mt-2 section-heading text-heading">
                 <span className="font-headings text-primary pr-2">Leadership</span> Team
               </h2>
@@ -283,7 +274,6 @@ export default function Team() {
                 The driving force behind our mission to deliver exceptional digital marketing results.
               </p>
             </div>
-
             {loading ? (
               <div className="flex flex-wrap justify-center gap-6">
                 {[...Array(4)].map((_, i) => (
@@ -296,7 +286,7 @@ export default function Team() {
                 <button
                   type="button"
                   onClick={() => fetchTeam()}
-                  className="px-5 py-2.5 text-sm font-semibold text-white bg-primary rounded-lg hover:bg-primary-hover transition cursor-pointer">
+                  className="px-5 py-2.5 text-sm font-semibold text-white bg-primary rounded-lg hover:bg-primary-hover transition cursor-pointer button-text">
                   Retry
                 </button>
               </div>
@@ -314,17 +304,17 @@ export default function Team() {
                     d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"
                   />
                 </svg>
-                <div className="mt-4 text-lg font-semibold text-heading">
+                <div className="mt-4 text-lg font-semibold text-heading subheading">
                   No team members found
                 </div>
-                <div className="mt-2 text-sm text-text">
+                <div className="mt-2 text-sm text-text small-text">
                   Check back later for updates.
                 </div>
               </div>
             ) : (
               <div className="flex flex-wrap justify-center gap-6">
                 {sorted.map((m, i) => (
-                  <FadeIn key={m._id || m.member_id} delay={i * 100}>
+                  <FadeIn key={m._id || m.member_id} delay={i * 40}>
                     <TeamCard member={m} />
                   </FadeIn>
                 ))}
@@ -338,13 +328,16 @@ export default function Team() {
       <TeamStatistics stats={companyStats} />
       <OurCulture />
       <Certifications />
-      <FinalCTA
-        title="Join Our Team"
-        description="We're always looking for talented people who are passionate about digital marketing. Explore open positions and grow with us."
-        primaryLabel="Contact Us"
-        secondaryLabel="View Services"
-        secondaryTo="/services"
-      />
+      
+      <FadeIn>
+        <FinalCTA
+          title="Join Our Team"
+          description="We're always looking for talented people who are passionate about digital marketing. Explore open positions and grow with us."
+          primaryLabel="Contact Us"
+          secondaryLabel="View Services"
+          secondaryTo="/services"
+        />
+      </FadeIn>
     </div>
   )
 }
