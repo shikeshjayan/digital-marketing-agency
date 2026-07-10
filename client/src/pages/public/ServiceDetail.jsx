@@ -41,12 +41,12 @@ function getIndustryIcon(name) {
 }
 
 const processSteps = [
-  { icon: "🔍", title: "Discovery", desc: "We dive deep into your business, audience, and goals to build a strategic foundation." },
-  { icon: "🎯", title: "Strategy", desc: "We craft a tailored roadmap with clear timelines, milestones, and deliverables." },
-  { icon: "🎨", title: "Design", desc: "Our designers create wireframes and visual mockups that align with your brand identity." },
-  { icon: "💻", title: "Development", desc: "Our engineers build robust, scalable solutions with rigorous quality assurance." },
-  { icon: "🧪", title: "Testing", desc: "Comprehensive testing ensures everything works flawlessly across all devices." },
-  { icon: "🚀", title: "Launch", desc: "We handle the full launch process, ensuring everything runs smoothly from day one." },
+  { icon: " ", title: "Discovery", desc: "We dive deep into your business, audience, and goals to build a strategic foundation." },
+  { icon: " ", title: "Strategy", desc: "We craft a tailored roadmap with clear timelines, milestones, and deliverables." },
+  { icon: " ", title: "Design", desc: "Our designers create wireframes and visual mockups that align with your brand identity." },
+  { icon: " ", title: "Development", desc: "Our engineers build robust, scalable solutions with rigorous quality assurance." },
+  { icon: " ", title: "Testing", desc: "Comprehensive testing ensures everything works flawlessly across all devices." },
+  { icon: " ", title: "Launch", desc: "We handle the full launch process, ensuring everything runs smoothly from day one." },
 ];
 
 export default function ServiceDetail() {
@@ -144,8 +144,7 @@ export default function ServiceDetail() {
 
   return (
     <div className="bg-background animate-page-fade">
-
-      {/* ─── 1. Hero Section ─────────────────────────────────── */}
+      {/*   1. Hero Section   */}
       <section className="bg-secondary text-white relative overflow-hidden py-16">
         <div className="absolute inset-0 pointer-events-none">
           <div className="absolute -top-10 -left-10 w-32 h-32 bg-white/10 rounded-lg rotate-12" />
@@ -176,8 +175,8 @@ export default function ServiceDetail() {
                   {service.service_name.split(" ").slice(2).join(" ")}
                 </span>
               </h1>
-              <div className="mt-4 text-white/90 leading-relaxed max-w-prose mx-auto md:mx-0">
-                <p className="text-sm md:text-base text-justify md:text-left">
+              <div className="mt-4 text-white/70 leading-relaxed max-w-prose mx-auto md:mx-0">
+                <p className="text-lg text-justify md:text-left">
                   {service.description}
                 </p>
               </div>
@@ -213,7 +212,7 @@ export default function ServiceDetail() {
         </div>
       </section>
 
-      {/* ─── 2. Service Overview ──────────────────────────────── */}
+      {/*   2. Service Overview   */}
       <section className="py-14 md:py-16 bg-background">
         <div className="max-w-4xl mx-auto px-4">
           <FadeIn>
@@ -227,7 +226,7 @@ export default function ServiceDetail() {
         </div>
       </section>
 
-      {/* ─── 3. What We Deliver ──────────────────────────────── */}
+      {/*   3. What We Deliver   */}
       {service.deliverables?.length > 0 && (
         <section className="py-14 md:py-16 bg-background-section">
           <div className="max-w-6xl mx-auto px-4">
@@ -250,7 +249,7 @@ export default function ServiceDetail() {
         </section>
       )}
 
-      {/* ─── 4. Why Choose This Service ──────────────────────── */}
+      {/*   4. Why Choose This Service   */}
       {service.benefits?.length > 0 && (
         <section className="py-14 md:py-16 bg-background">
           <div className="max-w-6xl mx-auto px-4">
@@ -271,7 +270,7 @@ export default function ServiceDetail() {
         </section>
       )}
 
-      {/* ─── 5. Our Process (Static) ─────────────────────────── */}
+      {/*   5. Our Process (Static)   */}
       <OurProcess
         steps={processSteps.map((s) => ({
           icon: faArrowRight,
@@ -281,7 +280,7 @@ export default function ServiceDetail() {
         bg="bg-background-section"
       />
 
-      {/* ─── 6. Technologies & Platforms ──────────────────────── */}
+      {/*   6. Technologies & Platforms   */}
       {uniqueTechnologies.length > 0 && (
         <section className="py-14 md:py-16 bg-background">
           <div className="max-w-6xl mx-auto px-4">
@@ -301,7 +300,7 @@ export default function ServiceDetail() {
         </section>
       )}
 
-      {/* ─── 7. Industries We Serve ──────────────────────────── */}
+      {/*   7. Industries We Serve   */}
       {uniqueIndustries.length > 0 && (
         <section className="py-14 md:py-16 bg-background-section">
           <div className="max-w-6xl mx-auto px-4">
@@ -324,7 +323,7 @@ export default function ServiceDetail() {
         </section>
       )}
 
-      {/* ─── 8. Projects We've Delivered ─────────────────────── */}
+      {/*   8. Projects We've Delivered   */}
       {projects.length > 0 && (
         <section className="py-14 md:py-16 bg-background">
           <div className="max-w-6xl mx-auto px-4">
@@ -351,24 +350,29 @@ export default function ServiceDetail() {
                     <div className="flex flex-col p-5 flex-1">
                       <h3 className="text-lg font-extrabold text-heading">{project.project_name}</h3>
                       <p className="mt-2 text-sm text-text leading-relaxed line-clamp-2">{project.short_description}</p>
+                      
+                      {/* Changed radius style of Industry labels from rounded-full to rounded-sm */}
                       {project.industries?.length > 0 && (
                         <div className="mt-3 flex flex-wrap gap-2">
                           {project.industries.slice(0, 2).map((ind, i) => (
-                            <span key={i} className="text-xs px-2 py-0.5 rounded-full bg-primary-light/40 text-primary font-medium">
+                            <span key={i} className="text-xs px-2 py-0.5 rounded-sm bg-primary-light/40 text-primary font-medium">
                               {typeof ind === "object" ? ind.name : ind}
                             </span>
                           ))}
                         </div>
                       )}
+                      
+                      {/* Changed radius style of Technology tags from rounded-full to rounded-sm */}
                       {project.technologies?.length > 0 && (
                         <div className="mt-2 flex flex-wrap gap-1.5">
                           {project.technologies.slice(0, 3).map((t, i) => (
-                            <span key={i} className="text-xs px-2 py-0.5 rounded-full bg-surface border border-border text-muted">
+                            <span key={i} className="text-xs px-2 py-0.5 rounded-sm bg-surface border border-border text-muted">
                               {typeof t === "object" ? t.name : t}
                             </span>
                           ))}
                         </div>
                       )}
+                      
                       <Link
                         to={`/projects/${project.slug}`}
                         className="mt-4 inline-flex items-center gap-1.5 text-sm font-semibold text-primary hover:text-primary-hover transition">
@@ -383,7 +387,7 @@ export default function ServiceDetail() {
         </section>
       )}
 
-      {/* ─── 9. Frequently Asked Questions ──────────────────── */}
+      {/*   9. Frequently Asked Questions   */}
       <FAQSection
         items={faqs.map((f) => ({ q: f.question, a: f.answer }))}
         eyebrow="Questions"
@@ -392,7 +396,7 @@ export default function ServiceDetail() {
         bg="bg-background-section"
       />
 
-      {/* ─── 12. Related Services ────────────────────────────── */}
+      {/*   12. Related Services   */}
       {relatedServices.length > 0 && (
         <section className="py-14 md:py-16 bg-background">
           <div className="max-w-6xl mx-auto px-4">
@@ -441,7 +445,7 @@ export default function ServiceDetail() {
         </section>
       )}
 
-      {/* ─── 13. Final CTA ──────────────────────────────────── */}
+      {/*   13. Final CTA   */}
       <FinalCTA
         title="Ready to Grow Your Business?"
         description="Let's discuss how our digital marketing expertise can help you achieve your goals. Get in touch with us today for a free consultation."

@@ -88,9 +88,11 @@ export default function CaseStudyDetail() {
             <FadeIn>
               <div className="text-center lg:text-left">
                 {cs.featured && (
-                  <span className="inline-block px-3 py-1 text-xs font-semibold bg-primary text-white rounded-sm mb-4">
-                    Featured Case Study
-                  </span>
+                  <div className="w-full flex justify-center lg:justify-start mb-3">
+                    <div className="text-sm font-bold tracking-widest uppercase inline-block px-3 py-1 rounded bg-white/10 text-white">
+                      FEATURED CASE STUDY
+                    </div>
+                  </div>
                 )}
                 <h1 className="hero-heading text-white">
                   {cs.title?.includes("6a4e3f0bbd61320543a80b36") ? "MediCare Health Portal" : cs.title}
@@ -139,15 +141,12 @@ export default function CaseStudyDetail() {
         </div>
       </section>
 
-      {/* ─── Layer 1: Overview (bg-background) ─── */}
+      {/* Layer 1: Overview */}
       <section className="py-12 md:py-16 bg-background">
         <div className="max-w-4xl mx-auto px-4 text-center">
           <FadeIn>
             <div>
               <div className="flex flex-col items-center justify-center gap-2 mb-4">
-                <span className="w-10 h-10 rounded-sm bg-primary/10 flex items-center justify-center text-primary">
-                  <FontAwesomeIcon icon={faRocket} />
-                </span>
                 <h2 className="section-heading text-heading">Overview</h2>
               </div>
               <p className="text-text leading-relaxed body-text max-w-3xl mx-auto">{cs.overview}</p>
@@ -156,7 +155,7 @@ export default function CaseStudyDetail() {
         </div>
       </section>
 
-      {/* ─── Layer 2: Challenge (bg-background-section) ─── */}
+      {/* Layer 2: Challenge */}
       <section className="py-12 md:py-16 bg-background-section border-y border-border">
         <div className="max-w-4xl mx-auto px-4 text-center">
           <FadeIn>
@@ -173,7 +172,7 @@ export default function CaseStudyDetail() {
         </div>
       </section>
 
-      {/* ─── Layer 3: Objectives (bg-background) ─── */}
+      {/* Layer 3: Objectives */}
       {cs.objectives?.length > 0 && (
         <section className="py-12 md:py-16 bg-background">
           <div className="max-w-4xl mx-auto px-4 text-center">
@@ -194,7 +193,7 @@ export default function CaseStudyDetail() {
         </section>
       )}
 
-      {/* ─── Layer 4: Strategy (bg-background-section) ─── */}
+      {/* Layer 4: Strategy */}
       {cs.strategy && (
         <section className="py-12 md:py-16 bg-background-section border-y border-border">
           <div className="max-w-4xl mx-auto px-4 text-center">
@@ -208,7 +207,7 @@ export default function CaseStudyDetail() {
         </section>
       )}
 
-      {/* ─── Layer 5: Solution (bg-background) ─── */}
+      {/* Layer 5: Solution */}
       <section className="py-12 md:py-16 bg-background">
         <div className="max-w-4xl mx-auto px-4 text-center">
           <FadeIn>
@@ -225,7 +224,7 @@ export default function CaseStudyDetail() {
         </div>
       </section>
 
-      {/* ─── Layer 6: Deliverables (bg-background-section) ─── */}
+      {/* Layer 6: Deliverables */}
       {cs.deliverables?.length > 0 && (
         <section className="py-12 md:py-16 bg-background-section border-y border-border">
           <div className="max-w-4xl mx-auto px-4 text-center">
@@ -245,7 +244,7 @@ export default function CaseStudyDetail() {
         </section>
       )}
 
-      {/* ─── Layer 7: Timeline (bg-background) ─── */}
+      {/* Layer 7: Timeline */}
       {cs.timeline && (cs.timeline.duration || cs.timeline.started_at) && (
         <section className="py-12 md:py-16 bg-background">
           <div className="max-w-4xl mx-auto px-4 text-center">
@@ -283,7 +282,7 @@ export default function CaseStudyDetail() {
         </section>
       )}
 
-      {/* ─── Layer 8: Development Process (bg-background-section) ─── */}
+      {/* Layer 8: Development Process */}
       {cs.development_process?.length > 0 && (
         <section className="py-12 md:py-16 bg-background-section border-y border-border">
           <div className="max-w-4xl mx-auto px-4 text-center">
@@ -309,7 +308,7 @@ export default function CaseStudyDetail() {
         </section>
       )}
 
-      {/* ─── Layer 9: Challenges & Solutions (bg-background) ─── */}
+      {/* Layer 9: Challenges & Solutions */}
       {cs.challenges_and_solutions?.length > 0 && (
         <section className="py-12 md:py-16 bg-background">
           <div className="max-w-4xl mx-auto px-4 text-center">
@@ -336,33 +335,37 @@ export default function CaseStudyDetail() {
         </section>
       )}
 
-      {/* ─── Layer 10: Results (bg-background-section) ─── */}
+      {/* Layer 10: Results */}
       {cs.results?.length > 0 && (
-        <section className="py-12 md:py-16 bg-background-section border-y border-border">
-          <div className="max-w-4xl mx-auto px-4 text-center">
+        <section className="py-14 md:py-16 bg-[#FEF3E2]">
+          <div className="max-w-6xl mx-auto px-4">
             <FadeIn>
-              <div>
-                <div className="flex flex-col items-center justify-center gap-2 mb-4">
-                  <span className="w-10 h-10 rounded-sm bg-success/10 flex items-center justify-center text-success">
-                    <FontAwesomeIcon icon={faChartLine} />
-                  </span>
-                  <h2 className="section-heading text-heading">Results</h2>
-                </div>
-                <div className="flex flex-wrap justify-center gap-4">
-                  {cs.results.map((r, i) => (
-                    <div key={i} className="p-4 bg-[#FAFAFA] border border-border rounded-sm text-center basis-[calc(50%-8px)] md:basis-[calc(25%-12px)] max-w-[200px] w-full shadow-xs">
-                      <div className="text-2xl font-bold text-primary">{r.value}</div>
-                      <div className="text-muted text-sm mt-1 font-medium">{r.title}</div>
-                    </div>
-                  ))}
-                </div>
+              <div className="flex flex-col items-center justify-center gap-2 mb-4">
+                <span className="w-10 h-10 rounded-sm bg-success/10 flex items-center justify-center text-success">
+                  <FontAwesomeIcon icon={faChartLine} />
+                </span>
+                <h2 className="section-heading text-heading">Results</h2>
               </div>
             </FadeIn>
+            <div className="mt-10 flex flex-wrap justify-center gap-4">
+              {cs.results.map((r, i) => (
+                <FadeIn key={i} delay={i * 50} className="w-[calc(50%-8px)] md:w-[calc(25%-12px)] min-w-[140px]">
+                  <div className="h-full flex flex-col justify-between bg-[#FAFAFA] border border-border rounded-lg p-5 text-center hover:shadow-sm transition">
+                    <div>
+                      <div className="text-2xl font-bold text-primary">{r.value}</div>
+                    </div>
+                    <div className="mt-3 text-sm text-muted font-medium leading-snug">
+                      {r.title}
+                    </div>
+                  </div>
+                </FadeIn>
+              ))}
+            </div>
           </div>
         </section>
       )}
 
-      {/* ─── Layer 11: Gallery (bg-background) ─── */}
+      {/* Layer 11: Gallery */}
       {cs.gallery?.length > 0 && (
         <section className="py-12 md:py-16 bg-background">
           <div className="max-w-4xl mx-auto px-4 text-center">
@@ -387,10 +390,9 @@ export default function CaseStudyDetail() {
         </section>
       )}
 
-      {/* ─── Layer 12: Testimonial & Footer Links (bg-background-section) ─── */}
+      {/* Layer 12: Testimonial & Footer Links */}
       <section className="py-12 md:py-16 bg-background-section border-t border-border text-center">
         <div className="max-w-4xl mx-auto px-4 space-y-12">
-          {/* Client Testimonial */}
           {cs.client_testimonial?.quote && (
             <FadeIn>
               <div className="p-6 md:p-8 bg-[#FAFAFA] border border-border rounded-sm max-w-2xl mx-auto shadow-xs">
@@ -408,15 +410,10 @@ export default function CaseStudyDetail() {
             </FadeIn>
           )}
 
-          {/* Project Link */}
           {project.project_url && (
             <FadeIn>
               <div className="text-center">
-                <a
-                  href={project.project_url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center gap-2 px-6 py-3 bg-primary text-white font-semibold rounded-sm hover:bg-primary-hover transition-colors">
+                <a href={project.project_url} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 px-6 py-3 bg-primary text-white font-semibold rounded-sm hover:bg-primary-hover transition-colors">
                   View Live Project
                   <FontAwesomeIcon icon={faExternalLinkAlt} className="text-sm" />
                 </a>

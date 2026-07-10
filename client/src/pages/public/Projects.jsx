@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { Link } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -10,6 +10,8 @@ import {
   faBuilding,
   faClock,
   faCogs,
+  faChevronLeft,
+  faChevronRight,
 } from "@fortawesome/free-solid-svg-icons";
 import useProjectStore from "../../store/projectStore.js";
 import useSiteContentStore from "../../store/siteContentStore.js";
@@ -42,12 +44,12 @@ const ProjectCard = ({ project }) => {
         </h3>
         <div className="mt-2 flex items-center gap-2 text-xs flex-wrap">
           {project.services?.length > 0 && (
-            <span className="inline-block px-2.5 py-0.5 rounded-full bg-primary-light text-primary font-semibold">
+            <span className="inline-block px-2.5 py-0.5 rounded-sm bg-primary-light text-primary font-semibold">
               {typeof project.services[0] === "object" ? project.services[0].service_name : "Service"}
             </span>
           )}
           {project.industries?.length > 0 && (
-            <span className="inline-block px-2.5 py-0.5 rounded-full bg-surface text-text font-semibold border border-border">
+            <span className="inline-block px-2.5 py-0.5 rounded-sm bg-surface text-text font-semibold border border-border">
               {typeof project.industries[0] === "object" ? project.industries[0].name : "Industry"}
             </span>
           )}
@@ -162,12 +164,12 @@ function FeaturedCaseStudy({ projects }) {
               <div className="p-5 sm:p-6 lg:p-8 flex flex-col">
                 <div className="flex items-center gap-2 text-xs flex-wrap">
                   {featured.services?.length > 0 && (
-                    <span className="inline-block px-2.5 py-0.5 rounded-full bg-primary-light text-primary font-semibold">
+                    <span className="inline-block px-2.5 py-0.5 rounded-sm bg-primary-light text-primary font-semibold">
                       {typeof featured.services[0] === "object" ? featured.services[0].service_name : "Service"}
                     </span>
                   )}
                   {featured.industries?.length > 0 && (
-                    <span className="inline-block px-2.5 py-0.5 rounded-full bg-surface text-text font-semibold border border-border">
+                    <span className="inline-block px-2.5 py-0.5 rounded-sm bg-surface text-text font-semibold border border-border">
                       {typeof featured.industries[0] === "object" ? featured.industries[0].name : "Industry"}
                     </span>
                   )}
@@ -242,7 +244,6 @@ function ResultsAnalytics({ stats = [] }) {
       desc: "Return on investment for our clients",
     },
     {
-      /* Fixed: Replaced unimported faBallseye typo with correctly imported faBullseye icon variable */
       icon: faBullseye,
       value: getStatValue("onTimeDelivery") || "95%",
       label: "On-Time Delivery",
@@ -391,6 +392,8 @@ const Projects = () => {
   const { content, fetchPublicSiteContent } = useSiteContentStore();
   const { services, fetchServices } = useServiceStore();
 
+  const scrollContainerRef = useRef(null);
+
   const categoryFilters = [
     { id: "All", label: "All" },
     ...services.map((s) => ({ id: s._id, label: s.service_name })),
@@ -411,6 +414,17 @@ const Projects = () => {
     fetchPublicSiteContent();
     fetchServices();
   }, [fetchReviews, fetchPublicSiteContent, fetchServices]);
+
+  // Carousel scroll navigation handling
+  const scroll = (direction) => {
+    if (scrollContainerRef.current) {
+      const scrollAmount = 240;
+      scrollContainerRef.current.scrollBy({
+        left: direction === "left" ? -scrollAmount : scrollAmount,
+        behavior: "smooth",
+      });
+    }
+  };
 
   return (
     <div className="bg-background min-h-screen">
@@ -443,20 +457,49 @@ const Projects = () => {
               subtitle="Browse through our work filtered by category."
             />
           </FadeIn>
-          <div className="mt-8 flex flex-wrap gap-3 justify-center">
-            {categoryFilters.map((cat) => (
-              <button
-                key={cat.id}
-                type="button"
-                onClick={() => setActive(cat.id)}
-                className={`px-4 py-2 rounded-lg text-sm font-semibold border transition cursor-pointer ${
-                  active === cat.id
-                    ? "bg-primary text-white border-primary"
-                    : "bg-background text-text border-border hover:border-primary/50 hover:text-primary"
-                }`}>
-                {cat.label}
-              </button>
-            ))}
+          
+          {/* Categories Carousel Layout */}
+          <div className="mt-8 relative max-w-4xl mx-auto flex items-center gap-2">
+            {/* Left Button styled explicitly as a standalone button with a border and shadow */}
+            <button
+              type="button"
+              onClick={() => scroll("left")}
+              className="w-9 h-9 flex items-center justify-center text-text bg-background border border-border rounded-lg shadow-2xs hover:text-primary hover:border-primary/50 transition shrink-0 z-10 cursor-pointer"
+              aria-label="Scroll Left"
+            >
+              <FontAwesomeIcon icon={faChevronLeft} className="text-xs" />
+            </button>
+
+            {/* Scrollable Items Container without an outer background shell */}
+            <div
+              ref={scrollContainerRef}
+              className="flex gap-2 overflow-x-auto scroll-smooth py-1 flex-1 no-scrollbar"
+              style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
+            >
+              {categoryFilters.map((cat) => (
+                <button
+                  key={cat.id}
+                  type="button"
+                  onClick={() => setActive(cat.id)}
+                  className={`px-4 py-2 rounded-lg text-sm font-semibold border transition cursor-pointer whitespace-nowrap shrink-0 ${
+                    active === cat.id
+                      ? "bg-primary text-white border-primary"
+                      : "bg-background text-text border-border hover:border-primary/50 hover:text-primary"
+                  }`}>
+                  {cat.label}
+                </button>
+              ))}
+            </div>
+
+            {/* Right Button styled explicitly as a standalone button with a border and shadow */}
+            <button
+              type="button"
+              onClick={() => scroll("right")}
+              className="w-9 h-9 flex items-center justify-center text-text bg-background border border-border rounded-lg shadow-2xs hover:text-primary hover:border-primary/50 transition shrink-0 z-10 cursor-pointer"
+              aria-label="Scroll Right"
+            >
+              <FontAwesomeIcon icon={faChevronRight} className="text-xs" />
+            </button>
           </div>
 
           {loading ? (
