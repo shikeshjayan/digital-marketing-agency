@@ -4,7 +4,6 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faArrowRight,
   faBuilding,
-  faGlobe,
   faMapMarkerAlt,
   faCalendar,
   faExternalLinkAlt,
@@ -62,9 +61,9 @@ export default function ProjectDetail() {
   if (error || !selectedProject) {
     return (
       <div className="max-w-4xl mx-auto px-4 py-16 text-center">
-        <div className="text-heading text-xl font-bold">Project Not Found</div>
-        <p className="text-muted mt-2">The project you are looking for does not exist or has been removed.</p>
-        <Link to="/projects" className="inline-block mt-4 text-primary hover:text-primary-hover font-medium">
+        <div className="text-heading text-xl font-bold subheading">Project Not Found</div>
+        <p className="text-muted mt-2 body-text">The project you are looking for does not exist or has been removed.</p>
+        <Link to="/projects" className="inline-block mt-4 text-primary hover:text-primary-hover font-medium button-text">
           &larr; Back to Projects
         </Link>
       </div>
@@ -84,7 +83,7 @@ export default function ProjectDetail() {
           <div className="absolute bottom-10 right-16 w-20 h-20 bg-white/10 rounded-lg rotate-12" />
         </div>
         <div className="relative max-w-7xl mx-auto px-4 py-16 md:py-20">
-          <nav className="flex items-center gap-2 text-sm text-white/60 mb-6">
+          <nav className="flex items-center gap-2 text-sm text-white/60 mb-6 text-xs">
             <Link to="/" className="hover:text-white transition-colors">Home</Link>
             <span className="text-white/30">/</span>
             <Link to="/projects" className="hover:text-white transition-colors">Projects</Link>
@@ -95,29 +94,29 @@ export default function ProjectDetail() {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
             <FadeIn>
               <div>
-                {project.featured && (
-                  <div className="w-full flex justify-start mb-3">
-                    <div className="text-sm font-bold tracking-widest uppercase inline-block px-3 py-1 rounded bg-white/10 text-white">
-                      FEATURED PROJECT
-                    </div>
+                {/* Fixed structure to always display FEATURED PROJECT label */}
+                <div className="w-full flex justify-start mb-3">
+                  <div className="text-sm font-bold tracking-widest uppercase inline-block px-3 py-1 rounded bg-white/10 text-white text-xxs">
+                    FEATURED PROJECT
                   </div>
-                )}
+                </div>
+
                 <h1 className="hero-heading text-white">{project.project_name}</h1>
-                <p className="mt-4 text-white/70 text-lg leading-relaxed">{project.short_description}</p>
+                <p className="mt-4 text-white/70 text-lg leading-relaxed body-text">{project.short_description}</p>
 
                 <div className="flex flex-wrap gap-3 mt-6">
                   {project.services?.slice(0, 2).map((s, i) => (
-                    <span key={i} className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-white/10 text-white/80 text-xs rounded-sm">
+                    <span key={i} className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-white/10 text-white/80 text-xs rounded-sm text-xxs">
                       {typeof s === "object" ? s.service_name : "Service"}
                     </span>
                   ))}
                   {project.industries?.[0] && (
-                    <span key="ind-hero" className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-white/10 text-white/80 text-xs rounded-sm">
+                    <span key="ind-hero" className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-white/10 text-white/80 text-xs rounded-sm text-xxs">
                       {typeof project.industries[0] === "object" ? project.industries[0].name : project.industries[0]}
                     </span>
                   )}
                   {project.completion_date && (
-                    <span className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-white/10 text-white/80 text-xs rounded-sm">
+                    <span className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-white/10 text-white/80 text-xs rounded-sm text-xxs">
                       <FontAwesomeIcon icon={faCalendar} className="text-[10px]" />
                       {formatDate(project.completion_date)}
                     </span>
@@ -126,7 +125,7 @@ export default function ProjectDetail() {
               </div>
             </FadeIn>
 
-            <FadeIn delay={0.1}>
+            <FadeIn delay={40}>
               <div className="relative">
                 {project.thumbnail ? (
                   <img
@@ -139,7 +138,7 @@ export default function ProjectDetail() {
                     decoding="async"
                   />
                 ) : (
-                  <div className="w-full aspect-[16/9] bg-surface flex items-center justify-center text-muted text-sm rounded-sm">
+                  <div className="w-full aspect-[16/9] bg-surface flex items-center justify-center text-muted text-sm rounded-sm small-text">
                     No image available
                   </div>
                 )}
@@ -158,34 +157,42 @@ export default function ProjectDetail() {
             </FadeIn>
             <div className="mt-10 grid grid-cols-2 sm:grid-cols-4 gap-4">
               {client.name && (
-                <div className="bg-background-section border border-border rounded-lg p-4 text-center">
-                  <FontAwesomeIcon icon={faBuilding} className="text-primary text-lg" />
-                  <div className="mt-2 text-xs text-muted uppercase tracking-wider">Client</div>
-                  <div className="mt-1 text-sm font-semibold text-heading truncate">{client.name}</div>
-                </div>
+                <FadeIn delay={20}>
+                  <div className="bg-background-section border border-border rounded-lg p-4 text-center">
+                    <FontAwesomeIcon icon={faBuilding} className="text-primary text-lg" />
+                    <div className="mt-2 text-xs text-muted uppercase tracking-wider text-xxs">Client</div>
+                    <div className="mt-1 text-sm font-semibold text-heading truncate subheading text-sm">{client.name}</div>
+                  </div>
+                </FadeIn>
               )}
               {project.industries?.length > 0 && (
-                <div className="bg-background-section border border-border rounded-lg p-4 text-center">
-                  <FontAwesomeIcon icon={faIndustry} className="text-primary text-lg" />
-                  <div className="mt-2 text-xs text-muted uppercase tracking-wider">Industry</div>
-                  <div className="mt-1 text-sm font-semibold text-heading truncate">
-                    {typeof project.industries[0] === "object" ? project.industries[0].name : "Industry"}
+                <FadeIn delay={40}>
+                  <div className="bg-background-section border border-border rounded-lg p-4 text-center">
+                    <FontAwesomeIcon icon={faIndustry} className="text-primary text-lg" />
+                    <div className="mt-2 text-xs text-muted uppercase tracking-wider text-xxs">Industry</div>
+                    <div className="mt-1 text-sm font-semibold text-heading truncate subheading text-sm">
+                      {typeof project.industries[0] === "object" ? project.industries[0].name : "Industry"}
+                    </div>
                   </div>
-                </div>
+                </FadeIn>
               )}
               {client.location && (
-                <div className="bg-background-section border border-border rounded-lg p-4 text-center">
-                  <FontAwesomeIcon icon={faMapMarkerAlt} className="text-primary text-lg" />
-                  <div className="mt-2 text-xs text-muted uppercase tracking-wider">Location</div>
-                  <div className="mt-1 text-sm font-semibold text-heading truncate">{client.location}</div>
-                </div>
+                <FadeIn delay={60}>
+                  <div className="bg-background-section border border-border rounded-lg p-4 text-center">
+                    <FontAwesomeIcon icon={faMapMarkerAlt} className="text-primary text-lg" />
+                    <div className="mt-2 text-xs text-muted uppercase tracking-wider text-xxs">Location</div>
+                    <div className="mt-1 text-sm font-semibold text-heading truncate subheading text-sm">{client.location}</div>
+                  </div>
+                </FadeIn>
               )}
               {project.completion_date && (
-                <div className="bg-background-section border border-border rounded-lg p-4 text-center">
-                  <FontAwesomeIcon icon={faCalendar} className="text-primary text-lg" />
-                  <div className="mt-2 text-xs text-muted uppercase tracking-wider">Completed</div>
-                  <div className="mt-1 text-sm font-semibold text-heading truncate">{formatDate(project.completion_date)}</div>
-                </div>
+                <FadeIn delay={80}>
+                  <div className="bg-background-section border border-border rounded-lg p-4 text-center">
+                    <FontAwesomeIcon icon={faCalendar} className="text-primary text-lg" />
+                    <div className="mt-2 text-xs text-muted uppercase tracking-wider text-xxs">Completed</div>
+                    <div className="mt-1 text-sm font-semibold text-heading truncate subheading text-sm">{formatDate(project.completion_date)}</div>
+                  </div>
+                </FadeIn>
               )}
             </div>
           </div>
@@ -199,7 +206,7 @@ export default function ProjectDetail() {
             <FadeIn>
               <SectionHeading eyebrow="About" title="Project Overview" />
             </FadeIn>
-            <FadeIn delay={100}>
+            <FadeIn delay={40}>
               <div className="mt-8 text-text leading-relaxed body-text whitespace-pre-line text-justify md:text-left">
                 {project.description}
               </div>
@@ -217,13 +224,14 @@ export default function ProjectDetail() {
             </FadeIn>
             <div className="mt-10 grid grid-cols-2 md:grid-cols-3 gap-3">
               {project.gallery.map((img, i) => (
-                <img
-                  key={i}
-                  src={resolveImagePath(img)}
-                  alt={`Gallery ${i + 1}`}
-                  className="w-full aspect-video object-cover border border-border rounded-sm"
-                  loading="lazy"
-                />
+                <FadeIn key={i} delay={i * 30}>
+                  <img
+                    src={resolveImagePath(img)}
+                    alt={`Gallery ${i + 1}`}
+                    className="w-full aspect-video object-cover border border-border rounded-sm"
+                    loading="lazy"
+                  />
+                </FadeIn>
               ))}
             </div>
           </div>
@@ -239,9 +247,11 @@ export default function ProjectDetail() {
             </FadeIn>
             <div className="mt-10 flex flex-wrap justify-center gap-3">
               {project.services.map((s, i) => (
-                <span key={i} className="px-4 py-2 bg-background border border-border text-text text-sm rounded-sm">
-                  {typeof s === "object" ? s.service_name : "Service"}
-                </span>
+                <FadeIn key={i} delay={i * 20}>
+                  <span className="px-4 py-2 bg-background border border-border text-text text-sm rounded-sm small-text">
+                    {typeof s === "object" ? s.service_name : "Service"}
+                  </span>
+                </FadeIn>
               ))}
             </div>
           </div>
@@ -264,7 +274,7 @@ export default function ProjectDetail() {
                 const name = typeof tech === "object" ? tech.name : tech;
                 return (
                   <FadeIn key={i} delay={i * 30}>
-                    <span className="inline-flex items-center gap-2 px-4 py-2 rounded-sm bg-background-section border border-border text-heading text-sm font-semibold hover:border-primary/40 transition">
+                    <span className="inline-flex items-center gap-2 px-4 py-2 rounded-sm bg-background-section border border-border text-heading text-sm font-semibold hover:border-primary/40 transition small-text font-bold">
                       {name}
                     </span>
                   </FadeIn>
@@ -284,7 +294,7 @@ export default function ProjectDetail() {
             </FadeIn>
             <div className="mt-10 flex flex-wrap justify-center gap-4">
               {project.industries.map((ind, i) => (
-                <FadeIn key={ind._id || i} delay={i * 50} className="w-[calc(50%-8px)] sm:w-[calc(33.33%-11px)] lg:w-[calc(25%-12px)] min-w-[140px]">
+                <FadeIn key={ind._id || i} delay={i * 30} className="w-[calc(50%-8px)] sm:w-[calc(33.33%-11px)] lg:w-[calc(25%-12px)] min-w-[140px]">
                   <div className="bg-background border border-border rounded-lg p-5 flex flex-col items-center text-center hover:shadow-sm transition h-full w-full">
                     {ind.icon ? (
                       <img
@@ -298,9 +308,9 @@ export default function ProjectDetail() {
                         <FontAwesomeIcon icon={faIndustry} className="text-primary text-lg" />
                       </div>
                     )}
-                    <h3 className="font-semibold text-heading text-sm">{ind.name}</h3>
+                    <h3 className="font-semibold text-heading text-sm subheading text-sm">{ind.name}</h3>
                     {ind.description && (
-                      <p className="mt-2 text-xs text-text leading-relaxed">{ind.description}</p>
+                      <p className="mt-2 text-xs text-text leading-relaxed text-xxs">{ind.description}</p>
                     )}
                   </div>
                 </FadeIn>
@@ -319,7 +329,9 @@ export default function ProjectDetail() {
             </FadeIn>
             <div className="mt-10 flex flex-wrap justify-center gap-6">
               {project.team.map((m, i) => (
-                <TeamCard key={i} member={m} />
+                <FadeIn key={i} delay={i * 40}>
+                  <TeamCard member={m} />
+                </FadeIn>
               ))}
             </div>
           </div>
@@ -333,8 +345,8 @@ export default function ProjectDetail() {
             <FadeIn>
               <SectionHeading eyebrow="About" title="Client Information" />
             </FadeIn>
-            <FadeIn delay={100}>
-              <div className="mt-8 bg-background p-6 border border-border/60 rounded-lg">
+            <FadeIn delay={40}>
+              <div className="mt-8 bg-background p-6 border border-border/60 rounded-lg body-text">
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-3">
                   {client.name && (
                     <div className="text-sm text-text">
@@ -396,16 +408,12 @@ export default function ProjectDetail() {
             </FadeIn>
             <div className="mt-10 flex flex-wrap justify-center gap-4">
               {caseStudy.results.map((r, i) => (
-                <FadeIn
-                  key={i}
-                  delay={i * 50}
-                  className="w-[calc(50%-8px)] md:w-[calc(25%-12px)] min-w-[140px]"
-                >
+                <FadeIn key={i} delay={i * 30} className="w-[calc(50%-8px)] md:w-[calc(25%-12px)] min-w-[140px]">
                   <div className="h-full flex flex-col justify-between bg-background-section border border-border rounded-lg p-5 text-center hover:shadow-sm transition">
                     <div>
                       <div className="text-2xl font-bold text-primary">{r.value}</div>
                     </div>
-                    <div className="mt-3 text-sm text-muted font-medium leading-snug">
+                    <div className="mt-3 text-sm text-muted font-medium leading-snug small-text font-semibold">
                       {r.title}
                     </div>
                   </div>
@@ -416,27 +424,29 @@ export default function ProjectDetail() {
         </section>
       )}
 
-      {/* Case Study */}
+      {/* Case Study Summary */}
       {caseStudy && (
         <section className="py-14 md:py-16 bg-background-section">
           <div className="max-w-4xl mx-auto px-4">
             <FadeIn>
               <SectionHeading eyebrow="Read More" title="Featured Case Study" />
             </FadeIn>
-            <div className="mt-8 bg-background p-6 border border-border rounded-lg">
-              <p className="text-text leading-relaxed body-text mb-4">{caseStudy.overview || caseStudy.challenge}</p>
-              <Link
-                to={`/case-studies/${caseStudy.slug}`}
-                className="inline-flex items-center gap-2 text-primary hover:text-primary-hover font-semibold transition-colors">
-                Read Full Case Study
-                <FontAwesomeIcon icon={faExternalLinkAlt} className="text-xs" />
-              </Link>
-            </div>
+            <FadeIn delay={40}>
+              <div className="mt-8 bg-background p-6 border border-border rounded-lg">
+                <p className="text-text leading-relaxed body-text mb-4">{caseStudy.overview || caseStudy.challenge}</p>
+                <Link
+                  to={`/case-studies/${caseStudy.slug}`}
+                  className="inline-flex items-center gap-2 text-primary hover:text-primary-hover font-semibold transition-colors button-text">
+                  Read Full Case Study
+                  <FontAwesomeIcon icon={faExternalLinkAlt} className="text-xs" />
+                </Link>
+              </div>
+            </FadeIn>
           </div>
         </section>
       )}
 
-      {/* Related Projects */}
+      {/* Related Projects Grid */}
       {relatedProjects.length > 0 && (
         <section className="py-14 md:py-16 bg-background">
           <div className="max-w-6xl mx-auto px-4">
@@ -444,11 +454,11 @@ export default function ProjectDetail() {
               <SectionHeading eyebrow="More Work" title="Related Projects" subtitle="Other projects delivered using similar services." />
             </FadeIn>
             <div className="mt-10 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-              {relatedProjects.map((rp) => (
-                <FadeIn key={rp._id}>
+              {relatedProjects.map((rp, i) => (
+                <FadeIn key={rp._id} delay={i * 40}>
                   <Link
                     to={`/projects/${rp.slug}`}
-                    className="flex flex-col bg-[#FAFAFA] border border-border rounded-lg h-full overflow-hidden hover:-translate-y-1 transition-all duration-300">
+                    className="flex flex-col bg-[#FAFAFA] border border-border rounded-sm h-full overflow-hidden hover:-translate-y-1 transition-all duration-300">
                     <div className="h-44 overflow-hidden">
                       <img
                         src={resolveImagePath(rp.thumbnail)}
@@ -463,18 +473,18 @@ export default function ProjectDetail() {
                       />
                     </div>
                     <div className="flex flex-col p-5 flex-1">
-                      <h3 className="text-lg font-extrabold text-heading">{rp.project_name}</h3>
-                      <p className="mt-2 text-sm text-text leading-relaxed line-clamp-2">{rp.short_description}</p>
+                      <h3 className="text-lg font-extrabold text-heading subheading text-sm">{rp.project_name}</h3>
+                      <p className="mt-2 text-sm text-text leading-relaxed line-clamp-2 small-text">{rp.short_description}</p>
                       {rp.industries?.length > 0 && (
                         <div className="mt-3 flex flex-wrap gap-2">
-                          {rp.industries.slice(0, 2).map((ind, i) => (
-                            <span key={i} className="text-xs px-2 py-0.5 bg-primary-light/40 text-primary font-medium rounded-sm">
+                          {rp.industries.slice(0, 2).map((ind, idx) => (
+                            <span key={idx} className="text-xs px-2 py-0.5 bg-primary-light/40 text-primary font-medium rounded-sm text-xxs">
                               {typeof ind === "object" ? ind.name : ind}
                             </span>
                           ))}
                         </div>
                       )}
-                      <span className="mt-4 inline-flex items-center gap-1.5 text-sm font-semibold text-primary">
+                      <span className="mt-4 inline-flex items-center gap-1.5 text-sm font-semibold text-primary button-text">
                         View Project <FontAwesomeIcon icon={faArrowRight} className="text-xs" />
                       </span>
                     </div>
@@ -486,7 +496,9 @@ export default function ProjectDetail() {
         </section>
       )}
 
-      <FinalCTA />
+      <FadeIn>
+        <FinalCTA />
+      </FadeIn>
     </div>
   );
 }
