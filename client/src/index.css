@@ -1,0 +1,337 @@
+@import "tailwindcss";
+
+/* ─── Design Tokens ─────────────────────────────────────────── */
+@theme {
+  /* Brand */
+  --color-primary: #DC2626;
+  --color-primary-hover: #B91C1C;
+  --color-primary-light: #FEE2E2;
+
+  --color-secondary: #0E1E42;
+
+  /* Background */
+  --color-background: #FAFAFA;
+  --color-background-section: #FEF3E2;
+  --color-surface: #F8FAFC;
+  --color-border: #E5E7EB;
+
+  /* Text */
+  --color-heading: #111827;
+  --color-text: #2B2A2A;
+  --color-muted: #6B7280;
+  --color-dark: #262626;
+
+  /* Footer */
+  --color-footer: #1A1A1A;
+
+  /* Status */
+  --color-success: #16A34A;
+  --color-warning: #F59E0B;
+  --color-info: #2563EB;
+  --color-danger: #FF0000;
+
+  /* Typography */
+  --font-headings: "Poppins", sans-serif;
+  --font-body: "Inter", sans-serif;
+  --font-brand: "La Belle Aurore", cursive;
+
+  /* Font Sizes */
+  /* Hero Heading */
+  --font-size-hh: clamp(2rem, 4.2vw, 3.5rem);
+  /* Section Heading */
+  --font-size-sh: clamp(1.75rem, 3vw, 2.5rem);
+  /* Subheading */
+  --font-size-sb: clamp(1.125rem, 2vw, 1.5rem);
+  /* Body Text */
+  --font-size-bt: clamp(0.95rem, 1.7vw, 1.125rem);
+  /* Small Text */
+  --font-size-st: clamp(0.875rem, 1.4vw, 1rem);
+  /* Button Text */
+  --font-size-b: clamp(0.875rem, 1.2vw, 1rem);
+
+  /* Font Weights */
+  /* Hero Heading */
+  --font-weight-hh: 700;
+  /* Section Heading */
+  --font-weight-sh: 700;
+  /* Subheading */
+  --font-weight-sb: 600;
+  /* Body Text */
+  --font-weight-bt: 400;
+  /* Small Text */
+  --font-weight-st: 400;
+  /* Button Text */
+  --font-weight-b: 600;
+
+  /* Line Heights */
+  /* Heading */
+  --line-height-hh: 1.2;
+  /* Body Text */
+  --line-height-bt: 1.5;
+
+  /* Letter Spacing */
+  --letter-spacing-h: -0.02em;
+  --letter-spacing-b: 0;
+
+
+  /* Border Radius */
+  --radius-sm: 0.125rem;
+  /* 2px – inputs, badges  */
+  --radius-md: 0.1875rem;
+  /* 3px – dropdowns       */
+  --radius-lg: 0.25rem;
+  /* 4px – cards           */
+  /* Button */
+  --radius-b: 0.5rem;
+  /* Input Field */
+  --radius-ip: 0.5rem;
+  /* Cards */
+  --radius-c: 0.75rem;
+  /* Image */
+  --radius-img: 1rem;
+  /* Small badges/tags */
+  --radius-sb: 9999px;
+  /* modals */
+  --radius-m: 1rem;
+
+  /* Font Weights */
+  --font-weight-bold: 700;
+  --font-weight-semibold: 600;
+  --font-weight-medium: 500;
+  --font-weight-extrabold: 800;
+
+  /* Additional Font Sizes */
+  --font-size-xs: 0.625rem;
+  --font-size-xxs: 0.6875rem;
+  --font-size-display: 8.75rem;
+}
+
+/* ─── Token Utilities ───────────────────────────────────────── */
+
+@layer utilities {
+
+  /* Font Weight Utilities */
+  .font-hh {
+    font-weight: var(--font-weight-hh);
+  }
+
+  .font-sh {
+    font-weight: var(--font-weight-sh);
+  }
+
+  .font-sb {
+    font-weight: var(--font-weight-sb);
+  }
+
+  .font-bt {
+    font-weight: var(--font-weight-bt);
+  }
+
+  .font-st {
+    font-weight: var(--font-weight-st);
+  }
+
+  .font-b {
+    font-weight: var(--font-weight-b);
+  }
+
+  .font-bold {
+    font-weight: var(--font-weight-bold);
+  }
+
+  .font-semibold {
+    font-weight: var(--font-weight-semibold);
+  }
+
+  .font-medium {
+    font-weight: var(--font-weight-medium);
+  }
+
+  .font-extrabold {
+    font-weight: var(--font-weight-extrabold);
+  }
+
+  /* Font Size Utilities */
+  .text-xs {
+    font-size: var(--font-size-xs);
+  }
+
+  .text-xxs {
+    font-size: var(--font-size-xxs);
+  }
+
+  .text-display {
+    font-size: var(--font-size-display);
+  }
+}
+
+/* ─────────────────────────────────────────────────────────── */
+
+.hero-heading {
+  font-family: var(--font-headings);
+  font-size: var(--font-size-hh);
+  font-weight: var(--font-weight-hh);
+  line-height: var(--line-height-hh);
+  letter-spacing: var(--letter-spacing-h);
+  text-wrap: balance;
+}
+
+.section-heading {
+  font-family: var(--font-headings);
+  font-size: var(--font-size-sh);
+  font-weight: var(--font-weight-sh);
+  letter-spacing: var(--letter-spacing-h);
+  line-height: 1.2;
+  text-wrap: balance;
+}
+
+.subheading {
+  font-family: var(--font-headings);
+  font-size: var(--font-size-sb);
+  font-weight: var(--font-weight-sb);
+  line-height: 1.3;
+}
+
+.body-text {
+  font-size: var(--font-size-bt);
+  font-weight: var(--font-weight-bt);
+  line-height: var(--line-height-bt);
+}
+
+.small-text {
+  font-size: var(--font-size-st);
+  font-weight: var(--font-weight-st);
+  line-height: 1.5;
+}
+
+.button-text {
+  font-size: var(--font-size-b);
+  font-weight: var(--font-weight-b);
+}
+
+.radius-b {
+  border-radius: var(--radius-b);
+}
+
+.radius-ip {
+  border-radius: var(--radius-ip);
+}
+
+.radius-c {
+  border-radius: var(--radius-c);
+}
+
+.radius-img {
+  border-radius: var(--radius-img);
+}
+
+.radius-sb {
+  border-radius: var(--radius-sb);
+}
+
+.radius-m {
+  border-radius: var(--radius-m);
+}
+
+@layer base {
+  body {
+    @apply antialiased;
+    font-family: var(--font-body);
+  }
+}
+
+.logo-marquee {
+  display: flex;
+  width: max-content;
+  animation: marquee 30s linear infinite;
+}
+
+.logo-marquee:hover {
+  animation-play-state: paused;
+}
+
+@keyframes marquee {
+  from {
+    transform: translateX(0);
+  }
+
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+textarea::-webkit-scrollbar {
+  width: 6px;
+}
+
+textarea::-webkit-scrollbar-track {
+  background: var(--color-surface);
+  border-radius: 10px;
+}
+
+textarea::-webkit-scrollbar-thumb {
+  background: var(--color-primary);
+  border-radius: 10px;
+}
+
+textarea::-webkit-scrollbar-thumb:hover {
+  background: var(--color-primary-hover);
+}
+
+@keyframes page-fade-in {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+.animate-page-fade {
+  animation: page-fade-in 0.35s ease-out both;
+}
+
+@keyframes wave {
+  0% {
+    transform: rotate(0deg);
+  }
+
+  15% {
+    transform: rotate(14deg);
+  }
+
+  30% {
+    transform: rotate(-8deg);
+  }
+
+  40% {
+    transform: rotate(14deg);
+  }
+
+  50% {
+    transform: rotate(-4deg);
+  }
+
+  60% {
+    transform: rotate(10deg);
+  }
+
+  70% {
+    transform: rotate(0deg);
+  }
+
+  100% {
+    transform: rotate(0deg);
+  }
+}
+
+.animate-wave {
+  display: inline-block;
+  animation: wave 1.8s ease-in-out 1;
+  transform-origin: 70% 70%;
+}
+
+::-webkit-scrollbar {
+  display: none;
+}

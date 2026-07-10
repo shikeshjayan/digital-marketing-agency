@@ -1,0 +1,21 @@
+// Routes for admin to manage team members (with photo upload)
+import express from "express";
+import {
+  createMember,
+  getAllTeamMembers,
+  updateMember,
+  deleteMember,
+  deleteAllMembers,
+} from "../controllers/team.controller.js";
+import { protect } from "../middleware/auth.js";
+import upload, { processImage } from "../config/upload.js";
+
+const router = express.Router();
+
+router.get("/", protect, getAllTeamMembers);
+router.post("/create", protect, upload.single("photo"), processImage, createMember);
+router.put("/:id", protect, upload.single("photo"), processImage, updateMember);
+router.delete("/:id", protect, deleteMember);
+router.delete("/", protect, deleteAllMembers);
+
+export default router;
