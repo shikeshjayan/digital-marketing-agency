@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 
-export default function Select({ value, onChange, options, placeholder = 'Select...', className = '' }) {
+export default function Select({ id, value, onChange, options, placeholder = 'Select...', className = '' }) {
   const [open, setOpen] = useState(false)
   const ref = useRef(null)
 
@@ -15,7 +15,7 @@ export default function Select({ value, onChange, options, placeholder = 'Select
   const selected = options.find((o) => o.value === value)
 
   return (
-    <div ref={ref} className={`relative ${className}`}>
+      <div id={id} ref={ref} className={`relative ${className}`}>
       <button
         type="button"
         onClick={() => setOpen((o) => !o)}

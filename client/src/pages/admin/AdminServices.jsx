@@ -1,4 +1,5 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import useDebounce from "../../hooks/useDebounce.js";
 import { toast } from "sonner";
 import useServiceStore from "../../store/serviceStore.js";
 import ConfirmModal from "../../components/ui/ConfirmModal.jsx";
@@ -19,6 +20,22 @@ import { faTrash, faPen } from "@fortawesome/free-solid-svg-icons";
 const inputCls =
   "w-full rounded border border-border bg-surface px-4 py-2 text-sm text-text outline-none transition focus:border-primary focus:bg-background focus:ring-2 focus:ring-primary-light placeholder:text-muted";
 
+const EMPTY_FORM = {
+    service_id: null,
+    service_name: "",
+    slug: "",
+    short_description: "",
+    description: "",
+    status: "Active",
+    hero_image: "",
+    icon: "",
+    deliverables: [],
+    benefits: [],
+    featured: false,
+    display_order: 0,
+    seo: { meta_title: "", meta_description: "" },
+  };
+
 export default function AdminServices() {
   const {
     fetchAdminServices,
@@ -35,26 +52,7 @@ export default function AdminServices() {
   const [page, setPage] = useState(1);
   const [pagination, setPagination] = useState({ total: 0, page: 1, pages: 1 });
 
-  const emptyForm = useMemo(
-    () => ({
-      service_id: null,
-      service_name: "",
-      slug: "",
-      short_description: "",
-      description: "",
-      status: "Active",
-      hero_image: "",
-      icon: "",
-      deliverables: [],
-      benefits: [],
-      featured: false,
-      display_order: 0,
-      seo: { meta_title: "", meta_description: "" },
-    }),
-    [],
-  );
-
-  const [form, setForm] = useState(emptyForm);
+  const [form, setForm] = useState(EMPTY_FORM);
   const [error, setError] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const formRef = useRef(null);
@@ -80,6 +78,7 @@ export default function AdminServices() {
 
   const load = async () => {
     setLoading(true);
+    setError("");
     try {
       const result = await fetchAdminServices({
         search: search || undefined,
@@ -89,6 +88,10 @@ export default function AdminServices() {
       });
       setItems(result?.items ?? []);
       setPagination(result?.pagination ?? { total: 0, page: 1, pages: 1 });
+    } catch (err) {
+      const msg = err?.response?.data?.message || err?.message || "Failed to load services.";
+      setError(msg);
+      toast.error(msg);
     } finally {
       setLoading(false);
     }
@@ -104,11 +107,7 @@ export default function AdminServices() {
     setPage(1);
   }, [search, status]);
 
-  useEffect(() => {
-    const t = setTimeout(() => load(), 250);
-    return () => clearTimeout(t);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [page, search, status]);
+  useDebounce(() => load(), [page, search, status], 250);
 
   function onPickHeroImage(file) {
     setForm((f) => ({ ...f, hero_image: file }));
@@ -172,7 +171,7 @@ export default function AdminServices() {
         toast.success("Service created successfully.");
       }
 
-      setForm(emptyForm);
+      setForm(EMPTY_FORM);
       setTagInputs({ deliverables: "", benefits: "" });
       await load();
     } catch (err) {
@@ -464,7 +463,7 @@ export default function AdminServices() {
               submitting={submitting}
               editId={form.service_id}
               onSubmit={onSubmit}
-              onReset={() => setForm(emptyForm)}
+              onReset={() => setForm(EMPTY_FORM)}
               submitLabel={
                 form.service_id ? "Update Service" : "Create Service"
               }
@@ -558,13 +557,15 @@ export default function AdminServices() {
                                 block: "start",
                               });
                             }}
-                            title="Edit">
+                            title="Edit"
+                            aria-label="Edit">
                             <FontAwesomeIcon icon={faPen} className="w-4 h-4" />
                           </button>
                           <button
                             type="button"
                             className="px-3 py-2 text-xs sm:px-4 sm:py-2 sm:text-sm min-h-[44px] text-danger hover:text-primary-hover rounded transition cursor-pointer"
                             title="Delete"
+                            aria-label="Delete"
                             onClick={() => onDelete(s._id)}>
                             <FontAwesomeIcon icon={faTrash} className="w-4 h-4" />
                           </button>

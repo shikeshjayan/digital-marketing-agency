@@ -1,3 +1,5 @@
+import { useEffect } from "react";
+
 export default function ConfirmModal({
   open,
   onCancel,
@@ -5,12 +7,21 @@ export default function ConfirmModal({
   message = "Are you sure? This action cannot be undone.",
   danger = false,
 }) {
+  useEffect(() => {
+    if (!open) return;
+    function handleKeyDown(e) {
+      if (e.key === "Escape") onCancel();
+    }
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [open, onCancel]);
+
   if (!open) return null;
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4" role="dialog" aria-modal="true" aria-label="Confirm action">
       <div className="absolute inset-0 bg-black/50" onClick={onCancel} />
-      <div className="relative bg-white rounded-m shadow-xl w-full max-w-sm p-6">
+      <div className="relative bg-background rounded-m shadow-xl w-full max-w-sm p-6">
         <div className="flex flex-col items-center text-center">
           <div className={`w-12 h-12 rounded-full flex items-center justify-center mb-4 ${danger ? "bg-red-100" : "bg-primary-light"}`}>
             <svg

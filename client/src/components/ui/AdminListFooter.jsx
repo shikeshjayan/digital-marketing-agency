@@ -22,7 +22,7 @@ export default function AdminListFooter({
           </button>
         )}
         <div className="small-text text-muted">
-          {loading ? "Loading..." : `${total} items`}
+          {loading ? <span className="inline-block animate-spin w-3 h-3 border-2 border-primary border-t-transparent rounded-full" /> : `${total} items`}
         </div>
       </div>
     </div>

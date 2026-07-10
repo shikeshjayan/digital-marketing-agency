@@ -1,4 +1,5 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import useDebounce from "../../hooks/useDebounce.js";
 import { toast } from "sonner";
 import useProjectStore from "../../store/projectStore.js";
 import useServiceStore from "../../store/serviceStore.js";
@@ -17,16 +18,32 @@ import FormField from "../../components/ui/FormField.jsx";
 import FileUploadField from "../../components/ui/FileUploadField.jsx";
 import FormActions from "../../components/ui/FormActions.jsx";
 import ErrorBanner from "../../components/ui/ErrorBanner.jsx";
+import resolveImagePath from "../../utils/resolveImagePath.js";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTrash, faPen } from "@fortawesome/free-solid-svg-icons";
 
-const resolveUrl = (path) => {
-  if (!path || path.startsWith("blob:") || path.startsWith("http")) return path;
-  const base = (import.meta.env.VITE_API_URL || "/api/v1").replace(
-    /\/api\/v1\/?$/,
-    "",
-  );
-  return base + path;
+const EMPTY_FORM = {
+  project_id: null,
+  project_name: "",
+  short_description: "",
+  description: "",
+  thumbnail: "",
+  gallery: [],
+  services: [],
+  technologies: [],
+  industries: [],
+  team: [],
+  client_name: "",
+  client_company: "",
+  client_website: "",
+  client_location: "",
+  project_url: "",
+  github_url: "",
+  completion_date: "",
+  featured: false,
+  seo_meta_title: "",
+  seo_meta_description: "",
+  status: "Published",
 };
 
 export default function AdminProjects() {
@@ -50,35 +67,8 @@ export default function AdminProjects() {
   const [page, setPage] = useState(1);
   const [pagination, setPagination] = useState({ total: 0, page: 1, pages: 1 });
   const galleryRef = useRef(null);
-
-  const emptyForm = useMemo(
-    () => ({
-      project_id: null,
-      project_name: "",
-      short_description: "",
-      description: "",
-      thumbnail: "",
-      gallery: [],
-      services: [],
-      technologies: [],
-      industries: [],
-      team: [],
-      client_name: "",
-      client_company: "",
-      client_website: "",
-      client_location: "",
-      project_url: "",
-      github_url: "",
-      completion_date: "",
-      featured: false,
-      seo_meta_title: "",
-      seo_meta_description: "",
-      status: "Published",
-    }),
-    [],
-  );
-
-  const [form, setForm] = useState(emptyForm);
+  const blobUrls = useRef(new Map());
+  const [form, setForm] = useState(EMPTY_FORM);
   const [error, setError] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const formRef = useRef(null);
@@ -86,8 +76,37 @@ export default function AdminProjects() {
   const [deleteAllTarget, setDeleteAllTarget] = useState(false);
   const [confirmGalleryIdx, setConfirmGalleryIdx] = useState(null);
 
+  function getGallerySrc(img) {
+    if (img instanceof File) {
+      if (!blobUrls.current.has(img)) {
+        blobUrls.current.set(img, URL.createObjectURL(img));
+      }
+      return blobUrls.current.get(img);
+    }
+    return resolveImagePath(img);
+  }
+
+  useEffect(() => {
+    const map = blobUrls.current;
+    const currentFiles = new Set(form.gallery.filter((f) => f instanceof File));
+    for (const [file, url] of map.entries()) {
+      if (!currentFiles.has(file)) {
+        URL.revokeObjectURL(url);
+        map.delete(file);
+      }
+    }
+  }, [form.gallery]);
+
+  useEffect(() => {
+    return () => {
+      blobUrls.current.forEach((url) => URL.revokeObjectURL(url));
+      blobUrls.current.clear();
+    };
+  }, []);
+
   const load = async () => {
     setLoading(true);
+    setError("");
     try {
       const result = await fetchAdminProjects({
         search: search || undefined,
@@ -97,6 +116,10 @@ export default function AdminProjects() {
       });
       setItems(result?.items ?? []);
       setPagination(result?.pagination ?? { total: 0, page: 1, pages: 1 });
+    } catch (err) {
+      const msg = err?.response?.data?.message || err?.message || "Failed to load projects.";
+      setError(msg);
+      toast.error(msg);
     } finally {
       setLoading(false);
     }
@@ -118,11 +141,7 @@ export default function AdminProjects() {
     setPage(1);
   }, [search, status]);
 
-  useEffect(() => {
-    const t = setTimeout(() => load(), 250);
-    return () => clearTimeout(t);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [page, search, status]);
+  useDebounce(() => load(), [page, search, status], 250);
 
   function onPickThumbnail(file) {
     setForm((f) => ({ ...f, thumbnail: file }));
@@ -209,7 +228,7 @@ export default function AdminProjects() {
         toast.success("Project created successfully.");
       }
 
-      setForm(emptyForm);
+      setForm(EMPTY_FORM);
       await load();
     } catch (err) {
       const msg = err?.response?.data?.message || err?.message || "Operation failed.";
@@ -366,7 +385,7 @@ export default function AdminProjects() {
               label="Thumbnail"
               required
               file={form.thumbnail instanceof File ? form.thumbnail : null}
-              existingUrl={typeof form.thumbnail === "string" ? resolveUrl(form.thumbnail) : ""}
+              existingUrl={typeof form.thumbnail === "string" ? resolveImagePath(form.thumbnail) : ""}
               onChange={onPickThumbnail}
               onRemove={() => setForm((f) => ({ ...f, thumbnail: "" }))}
               confirmText="Remove thumbnail?"
@@ -387,7 +406,7 @@ export default function AdminProjects() {
                   {form.gallery.map((img, idx) => (
                     <div key={idx} className="relative w-16 h-16 border border-border rounded overflow-hidden">
                       <img
-                        src={img instanceof File ? URL.createObjectURL(img) : resolveUrl(img)}
+                        src={getGallerySrc(img)}
                         alt=""
                         className="w-full h-full object-cover"
                       />
@@ -562,7 +581,7 @@ export default function AdminProjects() {
               submitting={submitting}
               editId={form.project_id}
               onSubmit={onSubmit}
-              onReset={() => setForm(emptyForm)}
+              onReset={() => setForm(EMPTY_FORM)}
               submitLabel={form.project_id ? "Update Project" : "Create Project"}
             />
           </form>
@@ -603,7 +622,7 @@ export default function AdminProjects() {
                         <div className="flex items-center gap-3">
                           {p.thumbnail && (
                             <img
-                              src={resolveUrl(p.thumbnail)}
+                              src={resolveImagePath(p.thumbnail)}
                               alt=""
                               className="w-10 h-10 rounded object-cover border border-border shrink-0"
                             />
@@ -651,6 +670,7 @@ export default function AdminProjects() {
                             type="button"
                             className="px-3 py-2 text-xs sm:px-4 sm:py-2 sm:text-sm min-h-[44px] text-text hover:text-heading rounded transition cursor-pointer"
                             title="Edit"
+                            aria-label="Edit"
                             onClick={() => onEdit(p)}>
                             <FontAwesomeIcon icon={faPen} className="w-4 h-4" />
                           </button>
@@ -658,6 +678,7 @@ export default function AdminProjects() {
                             type="button"
                             className="px-3 py-2 text-xs sm:px-4 sm:py-2 sm:text-sm min-h-[44px] text-danger hover:text-primary-hover rounded transition cursor-pointer"
                             title="Delete"
+                            aria-label="Delete"
                             onClick={() => setDeleteTarget(p._id)}>
                             <FontAwesomeIcon icon={faTrash} className="w-4 h-4" />
                           </button>

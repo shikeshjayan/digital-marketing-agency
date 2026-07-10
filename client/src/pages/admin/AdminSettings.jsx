@@ -1,16 +1,19 @@
 import { useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
+import useAuthStore from "../../store/authStore.js";
 import useSettingsStore from "../../store/settingsStore.js";
 import FileUploadField from "../../components/ui/FileUploadField.jsx";
 import AdminPageHeader from "../../components/ui/AdminPageHeader.jsx";
 import ErrorBanner from "../../components/ui/ErrorBanner.jsx";
+import ConfirmModal from "../../components/ui/ConfirmModal.jsx";
 import resolveImagePath from "../../utils/resolveImagePath.js";
 import { changePasswordSchema } from "../../utils/formSchemas.js";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTrash, faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
 
 export default function AdminSettings() {
-  const { loading, fetchProfile, updateProfile, profile } = useSettingsStore();
+  const { loading, updateProfile, profile } = useSettingsStore();
+  const user = useAuthStore((s) => s.user);
   const [form, setForm] = useState({
     name: "",
     photo: "",
@@ -18,6 +21,16 @@ export default function AdminSettings() {
     newPassword: "",
   });
   const [imageFile, setImageFile] = useState(null);
+  const [photoUrl, setPhotoUrl] = useState(null);
+
+  useEffect(() => {
+    if (imageFile) {
+      const url = URL.createObjectURL(imageFile);
+      setPhotoUrl(url);
+      return () => URL.revokeObjectURL(url);
+    }
+    setPhotoUrl(null);
+  }, [imageFile]);
   const [photoRemoved, setPhotoRemoved] = useState(false);
   const [confirmPassword, setConfirmPassword] = useState("");
   const [showCurrentPassword, setShowCurrentPassword] = useState(false);
@@ -25,6 +38,7 @@ export default function AdminSettings() {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [fieldErrors, setFieldErrors] = useState({});
   const [originalName, setOriginalName] = useState("");
+  const [confirmingRemove, setConfirmingRemove] = useState(false);
   const [error, setError] = useState("");
   const [saving, setSaving] = useState(false);
 
@@ -42,20 +56,16 @@ export default function AdminSettings() {
   }, [form.newPassword, confirmPassword]);
 
   useEffect(() => {
-    fetchProfile()
-      .then((data) => {
-        if (data) {
-          setOriginalName(data.name ?? "");
-          setForm((f) => ({
-            ...f,
-            name: data.name ?? "",
-            photo: data.photo ?? "",
-          }));
-          setPhotoRemoved(false);
-        }
-      })
-      .catch(() => {});
-  }, [fetchProfile]);
+    if (user) {
+      setOriginalName(user.name ?? "");
+      setForm((f) => ({
+        ...f,
+        name: user.name ?? "",
+        photo: user.photo ?? "",
+      }));
+      setPhotoRemoved(false);
+    }
+  }, [user]);
 
   async function onSubmit(e) {
     e.preventDefault();
@@ -92,8 +102,10 @@ export default function AdminSettings() {
       if (form.name !== originalName) {
         formData.append("name", form.name);
       }
-      formData.append("currentPassword", form.currentPassword);
-      formData.append("newPassword", form.newPassword);
+      if (hasPasswordFields) {
+        formData.append("currentPassword", form.currentPassword);
+        formData.append("newPassword", form.newPassword);
+      }
       if (imageFile) {
         formData.append("photo", imageFile);
       } else if (photoRemoved) {
@@ -131,41 +143,43 @@ export default function AdminSettings() {
         subtitle="Update your profile and password."
       />
 
-      {profile && (
+      {user && (
         <div className="mt-6 bg-background border border-border rounded p-5 shadow-xs">
           <div className="flex items-center gap-5">
             <div className="w-20 h-20 rounded-full bg-primary border border-border overflow-hidden flex items-center justify-center shrink-0">
-              {profile.photo ? (
+              {user.photo ? (
                 <img
-                  src={resolveImagePath(profile.photo)}
-                  alt={profile.name}
+                  src={resolveImagePath(user.photo)}
+                  alt={user.name}
                   className="w-full h-full object-cover"
                 />
               ) : (
                 <span className="text-3xl font-bold text-background">
-                  {profile.name?.charAt(0)?.toUpperCase() ?? "A"}
+                  {user.name?.charAt(0)?.toUpperCase() ?? "A"}
                 </span>
               )}
             </div>
             <div className="min-w-0 flex-1">
               <div className="text-lg font-extrabold text-heading truncate">
-                {profile.name}
+                {user.name}
               </div>
               <div className="text-sm text-text truncate mt-0.5">
-                {profile.email}
+                {user.email}
               </div>
               <div className="flex items-center gap-3 mt-2">
                 <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium border bg-info/10 text-info border-info/20 capitalize">
-                  {profile.role}
+                  {user.role}
                 </span>
-                <span className="text-xs text-muted">
-                  Member since{" "}
-                  {new Date(profile.createdAt).toLocaleDateString("en-US", {
-                    year: "numeric",
-                    month: "long",
-                    day: "numeric",
-                  })}
-                </span>
+                {user.createdAt && (
+                  <span className="text-xs text-muted">
+                    Member since{" "}
+                    {new Date(user.createdAt).toLocaleDateString("en-US", {
+                      year: "numeric",
+                      month: "long",
+                      day: "numeric",
+                    })}
+                  </span>
+                )}
               </div>
             </div>
           </div>
@@ -180,8 +194,8 @@ export default function AdminSettings() {
             <div className="font-extrabold text-heading">Profile Image</div>
             <FileUploadField
               label="Photo"
-              file={null}
-              existingUrl=""
+              file={imageFile}
+              hidePreview
               onChange={(f) => {
                 setImageFile(f);
                 setPhotoRemoved(false);
@@ -196,26 +210,32 @@ export default function AdminSettings() {
             {(imageFile || (form.photo && !photoRemoved)) && (
               <div className="mt-3 relative">
                 <img
-                  src={
-                    imageFile
-                      ? URL.createObjectURL(imageFile)
-                      : resolveImagePath(form.photo)
-                  }
+                  src={imageFile ? photoUrl : resolveImagePath(form.photo)}
                   alt="Preview"
-                  className="w-full h-40 object-cover rounded border border-border"
+                  className="w-full h-50 object-cover rounded border border-border"
                 />
                 <button
                   type="button"
-                  onClick={() => {
-                    setImageFile(null);
-                    setPhotoRemoved(true);
-                  }}
+                  onClick={() => setConfirmingRemove(true)}
                   className="absolute top-1 right-1 p-1 bg-background/80 hover:bg-primary-light rounded-full shadow transition cursor-pointer"
                   title="Remove image">
-                  <FontAwesomeIcon icon={faTrash} className="w-4 h-4 text-primary hover:text-primary-hover" />
+                  <FontAwesomeIcon
+                    icon={faTrash}
+                    className="w-4 h-4 text-primary hover:text-primary-hover"
+                  />
                 </button>
               </div>
             )}
+            <ConfirmModal
+              open={confirmingRemove}
+              onCancel={() => setConfirmingRemove(false)}
+              onConfirm={() => {
+                setConfirmingRemove(false);
+                setImageFile(null);
+                setPhotoRemoved(true);
+              }}
+              message="Remove photo?"
+            />
           </div>
 
           <div className="lg:col-span-3">
@@ -250,13 +270,15 @@ export default function AdminSettings() {
                       }))
                     }
                     placeholder="Enter current password"
-                    autoComplete="current-password"
                   />
                   <button
                     type="button"
                     onClick={() => setShowCurrentPassword((p) => !p)}
                     className="absolute inset-y-0 right-0 flex items-center px-4 text-muted hover:text-primary cursor-pointer">
-                    <FontAwesomeIcon icon={showCurrentPassword ? faEyeSlash : faEye} className="h-4 w-4" />
+                    <FontAwesomeIcon
+                      icon={showCurrentPassword ? faEyeSlash : faEye}
+                      className="h-4 w-4"
+                    />
                   </button>
                 </div>
                 {fieldErrors.currentPassword && (
@@ -284,7 +306,10 @@ export default function AdminSettings() {
                     type="button"
                     onClick={() => setShowNewPassword((p) => !p)}
                     className="absolute inset-y-0 right-0 flex items-center px-4 text-muted hover:text-primary cursor-pointer">
-                    <FontAwesomeIcon icon={showNewPassword ? faEyeSlash : faEye} className="h-4 w-4" />
+                    <FontAwesomeIcon
+                      icon={showNewPassword ? faEyeSlash : faEye}
+                      className="h-4 w-4"
+                    />
                   </button>
                 </div>
                 {fieldErrors.newPassword && (
@@ -310,7 +335,10 @@ export default function AdminSettings() {
                     type="button"
                     onClick={() => setShowConfirmPassword((p) => !p)}
                     className="absolute inset-y-0 right-0 flex items-center px-4 text-muted hover:text-primary cursor-pointer">
-                    <FontAwesomeIcon icon={showConfirmPassword ? faEyeSlash : faEye} className="h-4 w-4" />
+                    <FontAwesomeIcon
+                      icon={showConfirmPassword ? faEyeSlash : faEye}
+                      className="h-4 w-4"
+                    />
                   </button>
                 </div>
                 {fieldErrors.confirmPassword && (

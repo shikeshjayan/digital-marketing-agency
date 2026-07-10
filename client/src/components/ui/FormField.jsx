@@ -1,3 +1,4 @@
+import { useId } from "react";
 import Select from "./Select.jsx";
 
 const inputCls =
@@ -16,13 +17,15 @@ export default function FormField({
   selectOptions = null,
   disabled = false,
 }) {
+  const id = useId();
   return (
     <div className={className}>
-      <label className="text-sm font-semibold text-heading">
+      <label htmlFor={id} className="text-sm font-semibold text-heading">
         {label} {required && <span className="text-primary">*</span>}
       </label>
       {selectOptions ? (
         <Select
+          id={id}
           value={value}
           onChange={onChange}
           className="mt-2"
@@ -30,6 +33,7 @@ export default function FormField({
         />
       ) : textarea ? (
         <textarea
+          id={id}
           rows={rows}
           className={`${inputCls} resize-none`}
           value={value}
@@ -39,6 +43,7 @@ export default function FormField({
         />
       ) : (
         <input
+          id={id}
           type={type}
           className={inputCls}
           value={value}

@@ -1,3 +1,4 @@
+import { lazy, Suspense } from 'react'
 import { BrowserRouter, Route, Routes } from 'react-router-dom'
 import ScrollToTop from './components/ui/ScrollToTop.jsx'
 import PublicLayout from './layouts/PublicLayout.jsx'
@@ -15,27 +16,37 @@ import CaseStudyDetail from './pages/public/CaseStudyDetail.jsx'
 import Team from './pages/public/Team.jsx'
 import Testimonials from './pages/public/Testimonials.jsx'
 import Contact from './pages/public/Contact.jsx'
-// Import the new legal pages
 import TermsConditions from './components/public/TermsConditions.jsx'
 import PrivacyPolicy from './components/public/PrivacyPolicy.jsx'
-
-import AdminLogin from './pages/admin/AdminLogin.jsx'
-import AdminRegister from './pages/admin/AdminRegister.jsx'
-import ForgotPassword from './pages/admin/ForgotPassword.jsx'
-import AdminDashboard from './pages/admin/AdminDashboard.jsx'
-import AdminServices from './pages/admin/AdminServices.jsx'
-import AdminProjects from './pages/admin/AdminProjects.jsx'
-import AdminCaseStudies from './pages/admin/AdminCaseStudies.jsx'
-import AdminTechnologies from './pages/admin/AdminTechnologies.jsx'
-import AdminIndustries from './pages/admin/AdminIndustries.jsx'
-
-import AdminTeam from './pages/admin/AdminTeam.jsx'
-import AdminReviews from './pages/admin/AdminReviews.jsx'
-import AdminMessages from './pages/admin/AdminMessages.jsx'
-import AdminSettings from './pages/admin/AdminSettings.jsx'
-import AdminSiteContent from './pages/admin/AdminSiteContent.jsx'
-import AdminBrandSettings from './pages/admin/AdminBrandSettings.jsx'
 import NotFound from './pages/NotFound.jsx'
+
+const AdminLogin = lazy(() => import('./pages/admin/AdminLogin.jsx'))
+const AdminRegister = lazy(() => import('./pages/admin/AdminRegister.jsx'))
+const ForgotPassword = lazy(() => import('./pages/admin/ForgotPassword.jsx'))
+const AdminDashboard = lazy(() => import('./pages/admin/AdminDashboard.jsx'))
+const AdminServices = lazy(() => import('./pages/admin/AdminServices.jsx'))
+const AdminProjects = lazy(() => import('./pages/admin/AdminProjects.jsx'))
+const AdminCaseStudies = lazy(() => import('./pages/admin/AdminCaseStudies.jsx'))
+const AdminTechnologies = lazy(() => import('./pages/admin/AdminTechnologies.jsx'))
+const AdminIndustries = lazy(() => import('./pages/admin/AdminIndustries.jsx'))
+const AdminTeam = lazy(() => import('./pages/admin/AdminTeam.jsx'))
+const AdminReviews = lazy(() => import('./pages/admin/AdminReviews.jsx'))
+const AdminMessages = lazy(() => import('./pages/admin/AdminMessages.jsx'))
+const AdminSettings = lazy(() => import('./pages/admin/AdminSettings.jsx'))
+const AdminSiteContent = lazy(() => import('./pages/admin/AdminSiteContent.jsx'))
+const AdminBrandSettings = lazy(() => import('./pages/admin/AdminBrandSettings.jsx'))
+
+const AuthSuspense = ({ children }) => (
+  <Suspense fallback={<div className="flex items-center justify-center min-h-screen"><div className="animate-spin w-8 h-8 border-4 border-primary border-t-transparent rounded-full" /></div>}>
+    {children}
+  </Suspense>
+)
+
+const AdminSuspense = ({ children }) => (
+  <Suspense fallback={<div className="flex items-center justify-center min-h-[calc(100vh-4rem)]"><div className="animate-spin w-8 h-8 border-4 border-primary border-t-transparent rounded-full" /></div>}>
+    {children}
+  </Suspense>
+)
 
 export default function App() {
   return (
@@ -61,24 +72,23 @@ export default function App() {
         </Route>
 
         {/* Admin */}
-        <Route path="admin/login" element={<AdminLogin />} />
-        <Route path="admin/register" element={<AdminRegister />} />
-        <Route path="admin/forgot-password" element={<ForgotPassword />} />
+        <Route path="admin/login" element={<AuthSuspense><AdminLogin /></AuthSuspense>} />
+        <Route path="admin/register" element={<AuthSuspense><AdminRegister /></AuthSuspense>} />
+        <Route path="admin/forgot-password" element={<AuthSuspense><ForgotPassword /></AuthSuspense>} />
         <Route path="admin" element={<AdminGuard />}>
           <Route element={<AdminLayout />}>
-            <Route index element={<AdminDashboard />} />
-            <Route path="services" element={<AdminServices />} />
-            <Route path="projects" element={<AdminProjects />} />
-            <Route path="case-studies" element={<AdminCaseStudies />} />
-            <Route path="technologies" element={<AdminTechnologies />} />
-            <Route path="industries" element={<AdminIndustries />} />
-
-            <Route path="team" element={<AdminTeam />} />
-            <Route path="reviews" element={<AdminReviews />} />
-            <Route path="messages" element={<AdminMessages />} />
-            <Route path="settings" element={<AdminSettings />} />
-            <Route path="site-content" element={<AdminSiteContent />} />
-            <Route path="brand-settings" element={<AdminBrandSettings />} />
+            <Route index element={<AdminSuspense><AdminDashboard /></AdminSuspense>} />
+            <Route path="services" element={<AdminSuspense><AdminServices /></AdminSuspense>} />
+            <Route path="projects" element={<AdminSuspense><AdminProjects /></AdminSuspense>} />
+            <Route path="case-studies" element={<AdminSuspense><AdminCaseStudies /></AdminSuspense>} />
+            <Route path="technologies" element={<AdminSuspense><AdminTechnologies /></AdminSuspense>} />
+            <Route path="industries" element={<AdminSuspense><AdminIndustries /></AdminSuspense>} />
+            <Route path="team" element={<AdminSuspense><AdminTeam /></AdminSuspense>} />
+            <Route path="reviews" element={<AdminSuspense><AdminReviews /></AdminSuspense>} />
+            <Route path="messages" element={<AdminSuspense><AdminMessages /></AdminSuspense>} />
+            <Route path="settings" element={<AdminSuspense><AdminSettings /></AdminSuspense>} />
+            <Route path="site-content" element={<AdminSuspense><AdminSiteContent /></AdminSuspense>} />
+            <Route path="brand-settings" element={<AdminSuspense><AdminBrandSettings /></AdminSuspense>} />
           </Route>
         </Route>
 
