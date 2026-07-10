@@ -1,7 +1,7 @@
 import { useEffect, useRef } from "react";
 import { createPortal } from "react-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faTimes, faArrowRight } from "@fortawesome/free-solid-svg-icons";
+import { faTimes, faArrowRight, faLocation } from "@fortawesome/free-solid-svg-icons";
 import StarRow from "./StarRow.jsx";
 
 const IMAGE_PLACEHOLDER =
@@ -18,6 +18,7 @@ export default function DetailModal({
   rating,
   cta,
   initials,
+  location,
 }) {
   const onCloseRef = useRef(onClose);
   onCloseRef.current = onClose;
@@ -41,7 +42,7 @@ export default function DetailModal({
 
   return createPortal(
     <div
-      className="fixed inset-0 z-[9999] flex items-center justify-center p-3 sm:p-4"
+      className="fixed inset-0 z-9999 flex items-center justify-center p-3 sm:p-4"
       role="dialog"
       aria-modal="true"
       aria-label={title}>
@@ -62,7 +63,7 @@ export default function DetailModal({
 
         {isAvatar ? (
           <div className="flex flex-col items-center pt-10 pb-6 border-b border-border/60 bg-background-section px-6 text-center">
-            <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-full overflow-hidden ring-4 ring-primary/10 shadow-md flex items-center justify-center bg-surface border border-border">
+            <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-full overflow-hidden ring-1 ring-primary shadow-sm flex items-center justify-center bg-surface border border-border">
               {image ? (
                 <img
                   src={image}
@@ -96,6 +97,19 @@ export default function DetailModal({
                     {tag.label}
                   </span>
                 ))}
+              </div>
+            )}
+
+            {location && (
+              <div className="flex items-center justify-center gap-1.5 mt-3 small-text text-muted">
+                <FontAwesomeIcon icon={faLocation} className="text-xs" />
+                <span>{location}</span>
+              </div>
+            )}
+
+            {rating !== undefined && (
+              <div className="flex justify-center mt-3">
+                <StarRow rating={rating} />
               </div>
             )}
           </div>
@@ -137,8 +151,8 @@ export default function DetailModal({
               </>
             )}
 
-            {rating !== undefined && (
-              <div className={isAvatar ? "flex justify-center mb-4" : "mb-4"}>
+            {!isAvatar && rating !== undefined && (
+              <div className="mb-4">
                 <StarRow rating={rating} />
               </div>
             )}

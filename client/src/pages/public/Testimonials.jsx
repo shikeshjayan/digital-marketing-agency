@@ -181,8 +181,6 @@ export default function Testimonials() {
     }
   }
 
-  const modalTags = detail && detail.location ? [{ label: detail.location, variant: "default" }] : [];
-
   return (
     <div className="bg-background min-h-screen">
       <HeroSplit
@@ -446,7 +444,7 @@ export default function Testimonials() {
             ? detail.name.split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 2)
             : "?"
         }
-        tags={modalTags}
+        location={detail?.location}
         rating={detail?.rating}
         description={detail?.review_text || ""}
       />
