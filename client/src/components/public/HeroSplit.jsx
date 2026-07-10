@@ -1,5 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import AnimatedCounter from "../ui/AnimatedCounter.jsx";
+import useInView from "../../hooks/useInView.js";
 
 export default function HeroSplit({
   title,
@@ -17,6 +19,7 @@ export default function HeroSplit({
 }) {
   const navigate = useNavigate();
   const [loaded, setLoaded] = useState(false);
+  const [trustRef, trustInView] = useInView();
 
   function handleCTA(to) {
     if (!to) return;
@@ -50,7 +53,7 @@ export default function HeroSplit({
               loading="eager"
               decoding="async"
               onLoad={() => setLoaded(true)}
-              className="w-full h-[280px] md:h-[340px] lg:h-[380px] rounded-3xl object-cover"
+              className="w-full h-[280px] md:h-[340px] lg:h-[380px] rounded-3xl object-contain"
             />
             <div className="absolute -bottom-8 -right-8 -z-10 h-36 w-36 rounded-full bg-primary/20 blur-3xl" />
             <div className="absolute -bottom-8 -right-8 h-32 w-32 rounded-full bg-primary/30 blur-3xl -z-10" />
@@ -112,13 +115,18 @@ export default function HeroSplit({
 
             {trustIndicators && trustIndicators.length > 0 && (
               <div
+                ref={trustRef}
                 className={`transition-all duration-700 ease-out ${loaded ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"}`}
                 style={{ transitionDelay: "450ms" }}>
                 <div className="mt-8 flex flex-col items-center gap-3 md:flex-row md:items-center md:justify-start md:gap-6">
                   {trustIndicators.map((item, i) => (
                     <div key={i} className="flex items-center gap-2 whitespace-nowrap">
-                      <span className="text-xl md:text-2xl font-extrabold text-white">
-                        {item.value}
+                      <span className="text-xl md:text-2xl font-extrabold text-white tabular-nums">
+                        {item.target != null ? (
+                          <AnimatedCounter target={item.target} suffix={item.suffix || ""} isInView={trustInView} />
+                        ) : (
+                          item.value
+                        )}
                       </span>
                       <span className="small-text text-white/60 leading-tight">
                         {item.label}

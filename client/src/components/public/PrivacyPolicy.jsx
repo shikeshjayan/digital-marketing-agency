@@ -8,6 +8,8 @@ export default function PrivacyPolicy() {
         title="Policy"
         titleHighlight="Privacy"
         subtitle="Your data protection and operational confidentiality are core to our execution systems."
+        imageSrc="/privacy-policy.webp"
+        imageAlt="Privacy Policy"
       />
 
       <section className="py-14 bg-surface animate-page-fade">

@@ -63,7 +63,7 @@ export default function DetailModal({
 
         {isAvatar ? (
           <div className="flex flex-col items-center pt-10 pb-6 border-b border-border/60 bg-background-section px-6 text-center">
-            <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-full overflow-hidden ring-1 ring-primary shadow-sm flex items-center justify-center bg-surface border border-border">
+            <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-full overflow-hidden ring-1 ring-primary shadow-sm flex items-center justify-center bg-primary border-border">
               {image ? (
                 <img
                   src={image}
@@ -74,7 +74,7 @@ export default function DetailModal({
                   }}
                 />
               ) : (
-                <span className="text-xl sm:text-2xl font-extrabold text-primary tracking-wider select-none">
+                <span className="text-xl sm:text-2xl font-extrabold text-background tracking-wider select-none">
                   {initials || "?"}
                 </span>
               )}
