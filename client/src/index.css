@@ -33,6 +33,7 @@
   /* Typography */
   --font-headings: "Poppins", sans-serif;
   --font-body: "Inter", sans-serif;
+  --font-brand: "La Belle Aurore", cursive;
 
   /* Font Sizes */
   /* Hero Heading */
@@ -92,6 +93,76 @@
   --radius-sb: 9999px;
   /* modals */
   --radius-m: 1rem;
+
+  /* Font Weights */
+  --font-weight-bold: 700;
+  --font-weight-semibold: 600;
+  --font-weight-medium: 500;
+  --font-weight-extrabold: 800;
+
+  /* Additional Font Sizes */
+  --font-size-xs: 0.625rem;
+  --font-size-xxs: 0.6875rem;
+  --font-size-display: 8.75rem;
+}
+
+/* ─── Token Utilities ───────────────────────────────────────── */
+
+@layer utilities {
+
+  /* Font Weight Utilities */
+  .font-hh {
+    font-weight: var(--font-weight-hh);
+  }
+
+  .font-sh {
+    font-weight: var(--font-weight-sh);
+  }
+
+  .font-sb {
+    font-weight: var(--font-weight-sb);
+  }
+
+  .font-bt {
+    font-weight: var(--font-weight-bt);
+  }
+
+  .font-st {
+    font-weight: var(--font-weight-st);
+  }
+
+  .font-b {
+    font-weight: var(--font-weight-b);
+  }
+
+  .font-bold {
+    font-weight: var(--font-weight-bold);
+  }
+
+  .font-semibold {
+    font-weight: var(--font-weight-semibold);
+  }
+
+  .font-medium {
+    font-weight: var(--font-weight-medium);
+  }
+
+  .font-extrabold {
+    font-weight: var(--font-weight-extrabold);
+  }
+
+  /* Font Size Utilities */
+  .text-xs {
+    font-size: var(--font-size-xs);
+  }
+
+  .text-xxs {
+    font-size: var(--font-size-xxs);
+  }
+
+  .text-display {
+    font-size: var(--font-size-display);
+  }
 }
 
 /* ─────────────────────────────────────────────────────────── */
