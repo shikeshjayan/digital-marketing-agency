@@ -95,7 +95,13 @@ export default function ProjectDetail() {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
             <FadeIn>
               <div>
-                {/* Featured Project banner removed cleanly from here */}
+                {project.featured && (
+                  <div className="w-full flex justify-start mb-3">
+                    <div className="text-sm font-bold tracking-widest uppercase inline-block px-3 py-1 rounded bg-white/10 text-white">
+                      FEATURED PROJECT
+                    </div>
+                  </div>
+                )}
                 <h1 className="hero-heading text-white">{project.project_name}</h1>
                 <p className="mt-4 text-white/70 text-lg leading-relaxed">{project.short_description}</p>
 
@@ -242,7 +248,7 @@ export default function ProjectDetail() {
         </section>
       )}
 
-      {/* Technologies Section (Styled exactly like the Service Detail Page layer layout) */}
+      {/* Technologies Section */}
       {project.technologies?.length > 0 && (
         <section className="py-14 md:py-16 bg-background">
           <div className="max-w-6xl mx-auto px-4">
@@ -321,7 +327,7 @@ export default function ProjectDetail() {
       )}
 
       {/* Client Info */}
-      {(client.company || client.website) && (
+      {(client.name || client.company || client.website || client.location || project.project_url || project.github_url || project.completion_date) && (
         <section className="py-14 md:py-16 bg-background-section">
           <div className="max-w-4xl mx-auto px-4">
             <FadeIn>
@@ -329,18 +335,49 @@ export default function ProjectDetail() {
             </FadeIn>
             <FadeIn delay={100}>
               <div className="mt-8 bg-background p-6 border border-border/60 rounded-lg">
-                <div className="space-y-2">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-3">
+                  {client.name && (
+                    <div className="text-sm text-text">
+                      <span className="font-bold text-heading">Client Name:</span> {client.name}
+                    </div>
+                  )}
                   {client.company && (
                     <div className="text-sm text-text">
-                      <span className="font-semibold">Company:</span> {client.company}
+                      <span className="font-bold text-heading">Company:</span> {client.company}
                     </div>
                   )}
                   {client.website && (
                     <div className="text-sm text-text">
-                      <span className="font-semibold">Website:</span>{" "}
-                      <a href={client.website} target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">
+                      <span className="font-bold text-heading">Website:</span>{" "}
+                      <a href={client.website} target="_blank" rel="noopener noreferrer" className="text-primary hover:underline break-all">
                         {client.website}
                       </a>
+                    </div>
+                  )}
+                  {client.location && (
+                    <div className="text-sm text-text">
+                      <span className="font-bold text-heading">Location:</span> {client.location}
+                    </div>
+                  )}
+                  {project.project_url && (
+                    <div className="text-sm text-text">
+                      <span className="font-bold text-heading">Project URL:</span>{" "}
+                      <a href={project.project_url} target="_blank" rel="noopener noreferrer" className="text-primary hover:underline break-all">
+                        {project.project_url}
+                      </a>
+                    </div>
+                  )}
+                  {project.github_url && (
+                    <div className="text-sm text-text">
+                      <span className="font-bold text-heading">GitHub URL:</span>{" "}
+                      <a href={project.github_url} target="_blank" rel="noopener noreferrer" className="text-primary hover:underline break-all">
+                        {project.github_url}
+                      </a>
+                    </div>
+                  )}
+                  {project.completion_date && (
+                    <div className="text-sm text-text">
+                      <span className="font-bold text-heading">Completion Date:</span> {formatDate(project.completion_date)}
                     </div>
                   )}
                 </div>
@@ -364,9 +401,13 @@ export default function ProjectDetail() {
                   delay={i * 50}
                   className="w-[calc(50%-8px)] md:w-[calc(25%-12px)] min-w-[140px]"
                 >
-                  <div className="h-full flex flex-col items-center justify-center bg-background-section border border-border rounded-lg p-5 text-center hover:shadow-sm transition">
-                    <div className="text-2xl font-bold text-primary">{r.value}</div>
-                    <div className="mt-2 text-sm text-muted">{r.title}</div>
+                  <div className="h-full flex flex-col justify-between bg-background-section border border-border rounded-lg p-5 text-center hover:shadow-sm transition">
+                    <div>
+                      <div className="text-2xl font-bold text-primary">{r.value}</div>
+                    </div>
+                    <div className="mt-3 text-sm text-muted font-medium leading-snug">
+                      {r.title}
+                    </div>
                   </div>
                 </FadeIn>
               ))}
@@ -407,7 +448,7 @@ export default function ProjectDetail() {
                 <FadeIn key={rp._id}>
                   <Link
                     to={`/projects/${rp.slug}`}
-                    className="flex flex-col bg-background-section border border-border rounded-lg h-full overflow-hidden hover:-translate-y-1 transition-all duration-300">
+                    className="flex flex-col bg-[#FAFAFA] border border-border rounded-lg h-full overflow-hidden hover:-translate-y-1 transition-all duration-300">
                     <div className="h-44 overflow-hidden">
                       <img
                         src={resolveImagePath(rp.thumbnail)}
