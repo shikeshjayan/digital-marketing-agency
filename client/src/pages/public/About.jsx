@@ -61,7 +61,8 @@ function WhoWeAre({ stats = [] }) {
           <FadeIn direction="right">
             <div className="grid grid-cols-2 gap-4">
               {displayStats.map((stat, i) => (
-                <div key={stat.key || i} className="bg-primary-light rounded-lg p-6 text-center">
+                /* Changed bg-primary-light to bg-[#FAFAFA] */
+                <div key={stat.key || i} className="bg-[#FAFAFA] rounded-lg p-6 text-center">
                   <FontAwesomeIcon
                     icon={icons[i] || faChartLine}
                     className="text-3xl text-primary"

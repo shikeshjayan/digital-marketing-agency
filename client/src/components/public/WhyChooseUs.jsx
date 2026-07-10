@@ -59,7 +59,7 @@ export default function WhyChooseUs({
     <section className={`py-16 md:py-20 ${bg}`}>
       <div className="max-w-6xl mx-auto px-4">
         
-        {/* 1. Horizontally Centered Heading Layer (Pulled to the top) */}
+        {/* 1. Horizontally Centered Heading Layer */}
         <div className="flex flex-col items-center text-center max-w-3xl mx-auto mb-12">
           <SectionHeading
             eyebrow="Our Edge"
@@ -68,7 +68,7 @@ export default function WhyChooseUs({
           />
         </div>
 
-        {/* 2. Content Layout (Using items-center to keep the stats container vertically centered) */}
+        {/* 2. Content Layout */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-10 md:gap-16 items-center">
           
           {/* Left Side: Reasons Grid */}
@@ -76,8 +76,9 @@ export default function WhyChooseUs({
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 h-full">
               {reasons.map((r, i) => (
                 <FadeIn key={i} delay={i * 80} direction="up" className="h-full">
-                  <div className="h-full bg-background border border-border rounded-c p-5 hover:shadow-md hover:-translate-y-0.5 transition-all duration-300 group">
-                    <div className="w-10 h-10 rounded-lg bg-primary-light flex items-center justify-center shrink-0 group-hover:bg-primary transition-colors">
+                  {/* Fixed: Changed rounded-c to rounded-sm to adopt the 0.125rem radius cleanly */}
+                  <div className="h-full bg-background border border-border rounded-sm p-5 hover:shadow-md hover:-translate-y-0.5 transition-all duration-300 group">
+                    <div className="w-10 h-10 bg-primary-light flex items-center justify-center shrink-0 group-hover:bg-primary transition-colors rounded-sm">
                       <FontAwesomeIcon
                         icon={r.icon}
                         className="text-primary group-hover:text-white transition-colors"
@@ -91,7 +92,7 @@ export default function WhyChooseUs({
             </div>
           </FadeIn>
 
-          {/* Right Side: Original Big White Border Card, now perfectly Centered */}
+          {/* Right Side: Original Big White Border Card, perfectly Centered */}
           <FadeIn direction="right">
             <div className="bg-background border border-border rounded-lg p-8 flex flex-col justify-center items-center">
               <div className="grid grid-cols-2 gap-4 w-full">

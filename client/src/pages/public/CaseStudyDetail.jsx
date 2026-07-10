@@ -68,44 +68,52 @@ export default function CaseStudyDetail() {
   const project = cs.project || {};
 
   return (
-    <div>
-      {/* Hero */}
+    <div className="bg-background min-h-screen animate-page-fade">
+      {/* Hero Section */}
       <section className="relative bg-secondary overflow-hidden">
         <div className="max-w-7xl mx-auto px-4 py-16 md:py-20">
-          <nav className="flex items-center gap-2 text-sm text-white/60 mb-6">
+          <nav className="flex items-center gap-2 text-sm text-white/60 mb-6 justify-center lg:justify-start">
             <Link to="/" className="hover:text-white transition-colors">Home</Link>
             <span className="text-white/30">/</span>
             <Link to="/projects" className="hover:text-white transition-colors">Projects</Link>
             <span className="text-white/30">/</span>
             <Link to={project?.slug ? `/projects/${project.slug}` : "/projects"} className="hover:text-white transition-colors truncate max-w-[200px]">{project?.project_name || "Project"}</Link>
             <span className="text-white/30">/</span>
-            <span className="text-white truncate">{cs.title}</span>
+            <span className="text-white truncate">
+              {cs.title?.includes("6a4e3f0bbd61320543a80b36") ? "MediCare Health Portal" : cs.title}
+            </span>
           </nav>
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
             <FadeIn>
-              <div>
+              <div className="text-center lg:text-left">
                 {cs.featured && (
-                  <span className="inline-block px-3 py-1 text-xs font-semibold bg-primary text-white rounded-full mb-4">
+                  <span className="inline-block px-3 py-1 text-xs font-semibold bg-primary text-white rounded-sm mb-4">
                     Featured Case Study
                   </span>
                 )}
-                <h1 className="hero-heading text-white">{cs.title}</h1>
+                <h1 className="hero-heading text-white">
+                  {cs.title?.includes("6a4e3f0bbd61320543a80b36") ? "MediCare Health Portal" : cs.title}
+                </h1>
                 <p className="mt-4 text-white/70 text-lg leading-relaxed">{cs.overview}</p>
 
-                <div className="flex flex-wrap gap-3 mt-6">
+                <div className="flex flex-wrap gap-3 mt-6 justify-center lg:justify-start">
                   {project.project_name && (
-                    <span className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-white/10 text-white/80 text-xs rounded-full">
+                    <span className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-white/10 text-white/80 text-xs rounded-sm">
                       {project.project_name}
                     </span>
                   )}
-                  {project.industries?.[0] && (
-                    <span className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-white/10 text-white/80 text-xs rounded-full">
-                      {typeof project.industries[0] === "object" ? project.industries[0].name : project.industries[0]}
-                    </span>
-                  )}
+                  {project.industries?.map((ind, i) => {
+                    const targetName = typeof ind === "object" ? ind.name : ind;
+                    if (!targetName || targetName === "6a4e3f0bbd61320543a80b36") return null;
+                    return (
+                      <span key={i} className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-white/10 text-white/80 text-xs rounded-sm">
+                        {targetName}
+                      </span>
+                    );
+                  })}
                   {cs.timeline?.duration && (
-                    <span className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-white/10 text-white/80 text-xs rounded-full">
+                    <span className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-white/10 text-white/80 text-xs rounded-sm">
                       <FontAwesomeIcon icon={faClock} className="text-[10px]" />
                       {cs.timeline.duration}
                     </span>
@@ -119,7 +127,7 @@ export default function CaseStudyDetail() {
                 <img
                   src={resolveImagePath(cs.hero_image)}
                   alt={cs.title}
-                  className="w-full aspect-[16/9] object-cover"
+                  className="w-full aspect-[16/9] object-cover rounded-sm"
                   width="800"
                   height="450"
                   loading="eager"
@@ -131,248 +139,292 @@ export default function CaseStudyDetail() {
         </div>
       </section>
 
-      {/* Content */}
-      <div className="max-w-4xl mx-auto px-4 py-12 md:py-16 space-y-12">
-
-        {/* Overview */}
-        <FadeIn>
-          <section>
-            <div className="flex items-center gap-3 mb-4">
-              <span className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center text-primary">
-                <FontAwesomeIcon icon={faRocket} />
-              </span>
-              <h2 className="section-heading text-heading">Overview</h2>
-            </div>
-            <p className="text-text leading-relaxed body-text">{cs.overview}</p>
-          </section>
-        </FadeIn>
-
-        {/* Challenge */}
-        <FadeIn>
-          <section>
-            <div className="flex items-center gap-3 mb-4">
-              <span className="w-10 h-10 rounded-lg bg-warning/10 flex items-center justify-center text-warning">
-                <FontAwesomeIcon icon={faBullseye} />
-              </span>
-              <h2 className="section-heading text-heading">The Challenge</h2>
-            </div>
-            <p className="text-text leading-relaxed body-text">{cs.challenge}</p>
-          </section>
-        </FadeIn>
-
-        {/* Objectives */}
-        {cs.objectives?.length > 0 && (
+      {/* ─── Layer 1: Overview (bg-background) ─── */}
+      <section className="py-12 md:py-16 bg-background">
+        <div className="max-w-4xl mx-auto px-4 text-center">
           <FadeIn>
-            <section>
-              <h2 className="section-heading text-heading mb-4">Objectives</h2>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                {cs.objectives.map((obj, i) => (
-                  <div key={i} className="flex items-start gap-3 p-4 bg-surface border border-border rounded-lg">
-                    <FontAwesomeIcon icon={faCheckCircle} className="text-primary mt-0.5 shrink-0" />
-                    <span className="text-text body-text">{obj}</span>
-                  </div>
-                ))}
-              </div>
-            </section>
-          </FadeIn>
-        )}
-
-        {/* Strategy */}
-        {cs.strategy && (
-          <FadeIn>
-            <section>
-              <h2 className="section-heading text-heading mb-4">Strategy</h2>
-              <p className="text-text leading-relaxed body-text">{cs.strategy}</p>
-            </section>
-          </FadeIn>
-        )}
-
-        {/* Solution */}
-        <FadeIn>
-          <section>
-            <div className="flex items-center gap-3 mb-4">
-              <span className="w-10 h-10 rounded-lg bg-info/10 flex items-center justify-center text-info">
-                <FontAwesomeIcon icon={faLightbulb} />
-              </span>
-              <h2 className="section-heading text-heading">The Solution</h2>
-            </div>
-            <p className="text-text leading-relaxed body-text">{cs.solution}</p>
-          </section>
-        </FadeIn>
-
-        {/* Deliverables */}
-        {cs.deliverables?.length > 0 && (
-          <FadeIn>
-            <section>
-              <h2 className="section-heading text-heading mb-4">Deliverables</h2>
-              <div className="flex flex-wrap gap-2">
-                {cs.deliverables.map((d, i) => (
-                  <span key={i} className="px-4 py-2 bg-surface border border-border text-text text-sm rounded-full">
-                    {d}
-                  </span>
-                ))}
-              </div>
-            </section>
-          </FadeIn>
-        )}
-
-        {/* Timeline */}
-        {cs.timeline && (cs.timeline.duration || cs.timeline.started_at) && (
-          <FadeIn>
-            <section>
-              <div className="flex items-center gap-3 mb-4">
-                <span className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center text-primary">
-                  <FontAwesomeIcon icon={faCalendarAlt} />
+            <div>
+              <div className="flex flex-col items-center justify-center gap-2 mb-4">
+                <span className="w-10 h-10 rounded-sm bg-primary/10 flex items-center justify-center text-primary">
+                  <FontAwesomeIcon icon={faRocket} />
                 </span>
-                <h2 className="section-heading text-heading">Timeline</h2>
+                <h2 className="section-heading text-heading">Overview</h2>
               </div>
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                {cs.timeline.duration && (
-                  <div className="p-4 bg-surface border border-border rounded-lg text-center">
-                    <div className="text-muted text-sm mb-1">Duration</div>
-                    <div className="font-bold text-heading">{cs.timeline.duration}</div>
-                  </div>
-                )}
-                {cs.timeline.started_at && (
-                  <div className="p-4 bg-surface border border-border rounded-lg text-center">
-                    <div className="text-muted text-sm mb-1">Started</div>
-                    <div className="font-bold text-heading">{formatDate(cs.timeline.started_at)}</div>
-                  </div>
-                )}
-                {cs.timeline.completed_at && (
-                  <div className="p-4 bg-surface border border-border rounded-lg text-center">
-                    <div className="text-muted text-sm mb-1">Completed</div>
-                    <div className="font-bold text-heading">{formatDate(cs.timeline.completed_at)}</div>
-                  </div>
-                )}
-              </div>
-            </section>
+              <p className="text-text leading-relaxed body-text max-w-3xl mx-auto">{cs.overview}</p>
+            </div>
           </FadeIn>
-        )}
+        </div>
+      </section>
 
-        {/* Development Process */}
-        {cs.development_process?.length > 0 && (
+      {/* ─── Layer 2: Challenge (bg-background-section) ─── */}
+      <section className="py-12 md:py-16 bg-background-section border-y border-border">
+        <div className="max-w-4xl mx-auto px-4 text-center">
           <FadeIn>
-            <section>
-              <h2 className="section-heading text-heading mb-6">Development Process</h2>
-              <div className="space-y-4">
-                {cs.development_process.map((step, i) => (
-                  <div key={i} className="flex gap-4 p-4 bg-surface border border-border rounded-lg">
-                    <span className="w-8 h-8 rounded-full bg-primary text-white flex items-center justify-center text-sm font-bold shrink-0">
-                      {i + 1}
+            <div>
+              <div className="flex flex-col items-center justify-center gap-2 mb-4">
+                <span className="w-10 h-10 rounded-sm bg-warning/10 flex items-center justify-center text-warning">
+                  <FontAwesomeIcon icon={faBullseye} />
+                </span>
+                <h2 className="section-heading text-heading">The Challenge</h2>
+              </div>
+              <p className="text-text leading-relaxed body-text max-w-3xl mx-auto">{cs.challenge}</p>
+            </div>
+          </FadeIn>
+        </div>
+      </section>
+
+      {/* ─── Layer 3: Objectives (bg-background) ─── */}
+      {cs.objectives?.length > 0 && (
+        <section className="py-12 md:py-16 bg-background">
+          <div className="max-w-4xl mx-auto px-4 text-center">
+            <FadeIn>
+              <div>
+                <h2 className="section-heading text-heading mb-6">Objectives</h2>
+                <div className="flex flex-wrap justify-center gap-3">
+                  {cs.objectives.map((obj, i) => (
+                    <div key={i} className="flex flex-col items-center justify-center gap-3 p-5 bg-[#FAFAFA] border border-border rounded-sm w-full sm:basis-[calc(50%-6px)] max-w-md text-center shadow-xs">
+                      <FontAwesomeIcon icon={faCheckCircle} className="text-primary text-lg" />
+                      <span className="text-text body-text font-medium">{obj}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </FadeIn>
+          </div>
+        </section>
+      )}
+
+      {/* ─── Layer 4: Strategy (bg-background-section) ─── */}
+      {cs.strategy && (
+        <section className="py-12 md:py-16 bg-background-section border-y border-border">
+          <div className="max-w-4xl mx-auto px-4 text-center">
+            <FadeIn>
+              <div>
+                <h2 className="section-heading text-heading mb-4">Strategy</h2>
+                <p className="text-text leading-relaxed body-text max-w-3xl mx-auto">{cs.strategy}</p>
+              </div>
+            </FadeIn>
+          </div>
+        </section>
+      )}
+
+      {/* ─── Layer 5: Solution (bg-background) ─── */}
+      <section className="py-12 md:py-16 bg-background">
+        <div className="max-w-4xl mx-auto px-4 text-center">
+          <FadeIn>
+            <div>
+              <div className="flex flex-col items-center justify-center gap-2 mb-4">
+                <span className="w-10 h-10 rounded-sm bg-info/10 flex items-center justify-center text-info">
+                  <FontAwesomeIcon icon={faLightbulb} />
+                </span>
+                <h2 className="section-heading text-heading">The Solution</h2>
+              </div>
+              <p className="text-text leading-relaxed body-text max-w-3xl mx-auto">{cs.solution}</p>
+            </div>
+          </FadeIn>
+        </div>
+      </section>
+
+      {/* ─── Layer 6: Deliverables (bg-background-section) ─── */}
+      {cs.deliverables?.length > 0 && (
+        <section className="py-12 md:py-16 bg-background-section border-y border-border">
+          <div className="max-w-4xl mx-auto px-4 text-center">
+            <FadeIn>
+              <div>
+                <h2 className="section-heading text-heading mb-4">Deliverables</h2>
+                <div className="flex flex-wrap gap-2 justify-center">
+                  {cs.deliverables.map((d, i) => (
+                    <span key={i} className="px-4 py-2 bg-[#FAFAFA] border border-border text-text text-sm rounded-sm font-medium">
+                      {d}
                     </span>
-                    <div>
-                      <div className="font-bold text-heading">{step.title}</div>
-                      <p className="text-text text-sm mt-1 body-text">{step.description}</p>
+                  ))}
+                </div>
+              </div>
+            </FadeIn>
+          </div>
+        </section>
+      )}
+
+      {/* ─── Layer 7: Timeline (bg-background) ─── */}
+      {cs.timeline && (cs.timeline.duration || cs.timeline.started_at) && (
+        <section className="py-12 md:py-16 bg-background">
+          <div className="max-w-4xl mx-auto px-4 text-center">
+            <FadeIn>
+              <div>
+                <div className="flex flex-col items-center justify-center gap-2 mb-6">
+                  <span className="w-10 h-10 rounded-sm bg-primary/10 flex items-center justify-center text-primary">
+                    <FontAwesomeIcon icon={faCalendarAlt} />
+                  </span>
+                  <h2 className="section-heading text-heading">Timeline</h2>
+                </div>
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                  {cs.timeline.duration && (
+                    <div className="p-4 bg-[#FAFAFA] border border-border rounded-sm text-center">
+                      <div className="text-muted text-sm mb-1">Duration</div>
+                      <div className="font-bold text-heading">{cs.timeline.duration}</div>
                     </div>
-                  </div>
-                ))}
-              </div>
-            </section>
-          </FadeIn>
-        )}
-
-        {/* Challenges & Solutions */}
-        {cs.challenges_and_solutions?.length > 0 && (
-          <FadeIn>
-            <section>
-              <h2 className="section-heading text-heading mb-6">Challenges & Solutions</h2>
-              <div className="space-y-4">
-                {cs.challenges_and_solutions.map((item, i) => (
-                  <div key={i} className="border border-border rounded-lg overflow-hidden">
-                    <div className="p-4 bg-warning/5 border-b border-border">
-                      <div className="text-sm font-semibold text-warning mb-1">Challenge</div>
-                      <p className="text-text body-text">{item.challenge}</p>
+                  )}
+                  {cs.timeline.started_at && (
+                    <div className="p-4 bg-[#FAFAFA] border border-border rounded-sm text-center">
+                      <div className="text-muted text-sm mb-1">Started</div>
+                      <div className="font-bold text-heading">{formatDate(cs.timeline.started_at)}</div>
                     </div>
-                    <div className="p-4 bg-info/5">
-                      <div className="text-sm font-semibold text-info mb-1">Solution</div>
-                      <p className="text-text body-text">{item.solution}</p>
+                  )}
+                  {cs.timeline.completed_at && (
+                    <div className="p-4 bg-[#FAFAFA] border border-border rounded-sm text-center">
+                      <div className="text-muted text-sm mb-1">Completed</div>
+                      <div className="font-bold text-heading">{formatDate(cs.timeline.completed_at)}</div>
                     </div>
-                  </div>
-                ))}
+                  )}
+                </div>
               </div>
-            </section>
-          </FadeIn>
-        )}
+            </FadeIn>
+          </div>
+        </section>
+      )}
 
-        {/* Results */}
-        {cs.results?.length > 0 && (
-          <FadeIn>
-            <section>
-              <div className="flex items-center gap-3 mb-4">
-                <span className="w-10 h-10 rounded-lg bg-success/10 flex items-center justify-center text-success">
-                  <FontAwesomeIcon icon={faChartLine} />
-                </span>
-                <h2 className="section-heading text-heading">Results</h2>
+      {/* ─── Layer 8: Development Process (bg-background-section) ─── */}
+      {cs.development_process?.length > 0 && (
+        <section className="py-12 md:py-16 bg-background-section border-y border-border">
+          <div className="max-w-4xl mx-auto px-4 text-center">
+            <FadeIn>
+              <div>
+                <h2 className="section-heading text-heading mb-6">Development Process</h2>
+                <div className="space-y-4 max-w-2xl mx-auto">
+                  {cs.development_process.map((step, i) => (
+                    <div key={i} className="flex flex-col items-center p-5 bg-[#FAFAFA] border border-border rounded-sm text-center">
+                      <span className="w-8 h-8 rounded-full bg-primary text-white flex items-center justify-center text-sm font-bold mb-3 shadow-xs">
+                        {i + 1}
+                      </span>
+                      <div>
+                        <div className="font-bold text-heading text-base">{step.title}</div>
+                        <p className="text-text text-sm mt-2 body-text">{step.description}</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
               </div>
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                {cs.results.map((r, i) => (
-                  <div key={i} className="p-4 bg-surface border border-border rounded-lg text-center">
-                    <div className="text-2xl font-bold text-primary">{r.value}</div>
-                    <div className="text-muted text-sm mt-1">{r.title}</div>
-                  </div>
-                ))}
-              </div>
-            </section>
-          </FadeIn>
-        )}
+            </FadeIn>
+          </div>
+        </section>
+      )}
 
-        {/* Gallery */}
-        {cs.gallery?.length > 0 && (
-          <FadeIn>
-            <section>
-              <h2 className="section-heading text-heading mb-4">Gallery</h2>
-              <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-                {cs.gallery.map((img, i) => (
-                  <img
-                    key={i}
-                    src={resolveImagePath(img)}
-                    alt={`Gallery ${i + 1}`}
-                    className="w-full aspect-video object-cover border border-border"
-                    loading="lazy"
-                  />
-                ))}
+      {/* ─── Layer 9: Challenges & Solutions (bg-background) ─── */}
+      {cs.challenges_and_solutions?.length > 0 && (
+        <section className="py-12 md:py-16 bg-background">
+          <div className="max-w-4xl mx-auto px-4 text-center">
+            <FadeIn>
+              <div>
+                <h2 className="section-heading text-heading mb-6">Challenges & Solutions</h2>
+                <div className="space-y-4 max-w-2xl mx-auto">
+                  {cs.challenges_and_solutions.map((item, i) => (
+                    <div key={i} className="border border-border rounded-sm overflow-hidden shadow-xs">
+                      <div className="p-4 bg-warning/5 border-b border-border text-center">
+                        <div className="text-xs font-bold uppercase tracking-wider text-warning mb-1">Challenge</div>
+                        <p className="text-text body-text">{item.challenge}</p>
+                      </div>
+                      <div className="p-4 bg-info/5 text-center">
+                        <div className="text-xs font-bold uppercase tracking-wider text-info mb-1">Solution</div>
+                        <p className="text-text body-text">{item.solution}</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
               </div>
-            </section>
-          </FadeIn>
-        )}
+            </FadeIn>
+          </div>
+        </section>
+      )}
 
-        {/* Client Testimonial */}
-        {cs.client_testimonial?.quote && (
-          <FadeIn>
-            <section className="p-6 md:p-8 bg-background-section border border-border rounded-lg">
-              <FontAwesomeIcon icon={faQuoteLeft} className="text-primary text-2xl mb-4" />
-              <blockquote className="text-text text-lg leading-relaxed italic body-text">
-                &ldquo;{cs.client_testimonial.quote}&rdquo;
-              </blockquote>
-              <div className="mt-4 flex items-center gap-3">
-                <div>
+      {/* ─── Layer 10: Results (bg-background-section) ─── */}
+      {cs.results?.length > 0 && (
+        <section className="py-12 md:py-16 bg-background-section border-y border-border">
+          <div className="max-w-4xl mx-auto px-4 text-center">
+            <FadeIn>
+              <div>
+                <div className="flex flex-col items-center justify-center gap-2 mb-4">
+                  <span className="w-10 h-10 rounded-sm bg-success/10 flex items-center justify-center text-success">
+                    <FontAwesomeIcon icon={faChartLine} />
+                  </span>
+                  <h2 className="section-heading text-heading">Results</h2>
+                </div>
+                <div className="flex flex-wrap justify-center gap-4">
+                  {cs.results.map((r, i) => (
+                    <div key={i} className="p-4 bg-[#FAFAFA] border border-border rounded-sm text-center basis-[calc(50%-8px)] md:basis-[calc(25%-12px)] max-w-[200px] w-full shadow-xs">
+                      <div className="text-2xl font-bold text-primary">{r.value}</div>
+                      <div className="text-muted text-sm mt-1 font-medium">{r.title}</div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </FadeIn>
+          </div>
+        </section>
+      )}
+
+      {/* ─── Layer 11: Gallery (bg-background) ─── */}
+      {cs.gallery?.length > 0 && (
+        <section className="py-12 md:py-16 bg-background">
+          <div className="max-w-4xl mx-auto px-4 text-center">
+            <FadeIn>
+              <div>
+                <h2 className="section-heading text-heading mb-6">Gallery</h2>
+                <div className="flex flex-wrap justify-center gap-3">
+                  {cs.gallery.map((img, i) => (
+                    <div key={i} className="w-full sm:basis-[calc(50%-6px)] md:basis-[calc(33.33%-8px)] max-w-sm">
+                      <img
+                        src={resolveImagePath(img)}
+                        alt={`Gallery ${i + 1}`}
+                        className="w-full aspect-video object-cover border border-border rounded-sm"
+                        loading="lazy"
+                      />
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </FadeIn>
+          </div>
+        </section>
+      )}
+
+      {/* ─── Layer 12: Testimonial & Footer Links (bg-background-section) ─── */}
+      <section className="py-12 md:py-16 bg-background-section border-t border-border text-center">
+        <div className="max-w-4xl mx-auto px-4 space-y-12">
+          {/* Client Testimonial */}
+          {cs.client_testimonial?.quote && (
+            <FadeIn>
+              <div className="p-6 md:p-8 bg-[#FAFAFA] border border-border rounded-sm max-w-2xl mx-auto shadow-xs">
+                <FontAwesomeIcon icon={faQuoteLeft} className="text-primary text-2xl mb-4 mx-auto" />
+                <blockquote className="text-text text-lg leading-relaxed italic body-text">
+                  &ldquo;{cs.client_testimonial.quote}&rdquo;
+                </blockquote>
+                <div className="mt-4 flex flex-col items-center gap-1">
                   <div className="font-bold text-heading">{cs.client_testimonial.client_name}</div>
                   <div className="text-muted text-sm">
                     {[cs.client_testimonial.designation, cs.client_testimonial.company].filter(Boolean).join(" at ")}
                   </div>
                 </div>
               </div>
-            </section>
-          </FadeIn>
-        )}
+            </FadeIn>
+          )}
 
-        {/* Project Link */}
-        {project.project_url && (
-          <FadeIn>
-            <div className="text-center">
-              <a
-                href={project.project_url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 px-6 py-3 bg-primary text-white font-semibold rounded-lg hover:bg-primary-hover transition-colors">
-                View Live Project
-                <FontAwesomeIcon icon={faExternalLinkAlt} className="text-sm" />
-              </a>
-            </div>
-          </FadeIn>
-        )}
-      </div>
+          {/* Project Link */}
+          {project.project_url && (
+            <FadeIn>
+              <div className="text-center">
+                <a
+                  href={project.project_url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 px-6 py-3 bg-primary text-white font-semibold rounded-sm hover:bg-primary-hover transition-colors">
+                  View Live Project
+                  <FontAwesomeIcon icon={faExternalLinkAlt} className="text-sm" />
+                </a>
+              </div>
+            </FadeIn>
+          )}
+        </div>
+      </section>
 
       <FinalCTA />
     </div>

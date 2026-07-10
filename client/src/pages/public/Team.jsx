@@ -120,15 +120,16 @@ function Departments() {
             title="Our Departments"
             subtitle="Specialized teams working together to deliver end-to-end digital marketing solutions."
           />
-          <div className="mt-10 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+          {/* Converted grid structure to a flexible wrap structure so second-row items center automatically */}
+          <div className="mt-10 flex flex-wrap justify-center gap-6">
             {departments.map((dept, i) => (
-              <FadeIn key={dept.name} delay={i * 80}>
+              <FadeIn key={dept.name} delay={i * 80} className="w-full sm:basis-[calc(50%-12px)] lg:basis-[calc(33.33%-16px)] xl:basis-[calc(25%-18px)] max-w-sm">
                 <div className="bg-surface border border-border rounded-lg p-6 h-full hover:shadow-sm transition group">
                   <div className="w-12 h-12 rounded-lg bg-primary-light flex items-center justify-center group-hover:bg-primary group-hover:text-white transition text-primary">
                     {dept.icon}
                   </div>
                   <h3 className="mt-4 subheading text-heading">{dept.name}</h3>
-                  <p className="mt-2 small-text text-text body-text">{dept.description}</p>
+                  <p className="mt-2 mt-auto small-text text-text body-text">{dept.description}</p>
                 </div>
               </FadeIn>
             ))}
