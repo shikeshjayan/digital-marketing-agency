@@ -229,15 +229,15 @@ export default function ServiceDetail() {
 
       {/* ─── 3. What We Deliver ──────────────────────────────── */}
       {service.deliverables?.length > 0 && (
-        <section className="py-14 md:py-16 bg-surface">
+        <section className="py-14 md:py-16 bg-background-section">
           <div className="max-w-6xl mx-auto px-4">
             <FadeIn>
               <SectionHeading eyebrow="Deliverables" title="What We Deliver" subtitle="Everything you get when you choose this service." />
             </FadeIn>
-            <div className="mt-10 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div className="mt-10 flex flex-wrap justify-center gap-4">
               {service.deliverables.map((item, i) => (
-                <FadeIn key={i} delay={i * 50}>
-                  <div className="bg-background border border-border rounded-lg p-5 flex items-start gap-3 hover:shadow-sm transition h-full">
+                <FadeIn key={i} delay={i * 50} className="w-full sm:basis-[calc(50%-8px)] lg:basis-[calc(33.33%-11px)] max-w-sm lg:max-w-none">
+                  <div className="bg-[#FAFAFA] border border-border rounded-lg p-5 flex items-start gap-3 hover:shadow-sm transition h-full w-full">
                     <div className="flex items-center justify-center h-9 w-9 rounded-lg bg-primary-light text-primary font-extrabold text-sm shrink-0">
                       {i + 1}
                     </div>
@@ -260,7 +260,7 @@ export default function ServiceDetail() {
             <div className="mt-10 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
               {service.benefits.map((item, i) => (
                 <FadeIn key={i} delay={i * 50}>
-                  <div className="bg-surface border border-border rounded-lg p-5 flex items-start gap-3 hover:shadow-sm transition h-full">
+                  <div className="bg-[#FAFAFA] border border-border rounded-lg p-5 flex items-start gap-3 hover:shadow-sm transition h-full">
                     <FontAwesomeIcon icon={faCheckCircle} className="text-primary mt-0.5 shrink-0" />
                     <p className="text-text leading-relaxed text-sm md:text-base">{item}</p>
                   </div>
@@ -278,7 +278,7 @@ export default function ServiceDetail() {
           title: s.title,
           desc: s.desc,
         }))}
-        bg="bg-surface"
+        bg="bg-background-section"
       />
 
       {/* ─── 6. Technologies & Platforms ──────────────────────── */}
@@ -291,7 +291,7 @@ export default function ServiceDetail() {
             <div className="mt-10 flex flex-wrap justify-center gap-3">
               {uniqueTechnologies.map((tech, i) => (
                 <FadeIn key={tech.id} delay={i * 30}>
-                  <span className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-surface border border-border text-heading text-sm font-semibold hover:border-primary/40 transition">
+                  <span className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-background-section border border-border text-heading text-sm font-semibold hover:border-primary/40 transition">
                     {tech.name}
                   </span>
                 </FadeIn>
@@ -303,15 +303,15 @@ export default function ServiceDetail() {
 
       {/* ─── 7. Industries We Serve ──────────────────────────── */}
       {uniqueIndustries.length > 0 && (
-        <section className="py-14 md:py-16 bg-surface">
+        <section className="py-14 md:py-16 bg-background-section">
           <div className="max-w-6xl mx-auto px-4">
             <FadeIn>
               <SectionHeading eyebrow="Industries" title="Industries We Serve" subtitle="We partner with businesses across a wide range of industries." />
             </FadeIn>
-            <div className="mt-10 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
+            <div className="mt-10 flex flex-wrap justify-center gap-4">
               {uniqueIndustries.map((ind, i) => (
-                <FadeIn key={ind.id} delay={i * 50}>
-                  <div className="bg-background border border-border rounded-lg p-5 flex flex-col items-center text-center hover:shadow-sm transition h-full">
+                <FadeIn key={ind.id} delay={i * 50} className="basis-[calc(50%-8px)] sm:basis-[calc(33.33%-11px)] lg:basis-[calc(25%-12px)] min-w-[140px]">
+                  <div className="bg-[#FAFAFA] border border-border rounded-lg p-5 flex flex-col items-center text-center hover:shadow-sm transition h-full w-full">
                     <div className="w-12 h-12 rounded-lg bg-primary-light flex items-center justify-center mb-3">
                       <FontAwesomeIcon icon={getIndustryIcon(ind.name)} className="text-primary text-lg" />
                     </div>
@@ -331,10 +331,10 @@ export default function ServiceDetail() {
             <FadeIn>
               <SectionHeading eyebrow="Our Work" title="Projects We've Delivered" subtitle="Real results from real projects." />
             </FadeIn>
-            <div className="mt-10 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="mt-10 flex flex-wrap justify-center gap-6">
               {projects.map((project) => (
-                <FadeIn key={project._id}>
-                  <div className="flex flex-col bg-surface border border-border rounded-lg h-full overflow-hidden hover:-translate-y-1 transition-all duration-300">
+                <FadeIn key={project._id} className="w-full sm:basis-[calc(50%-12px)] lg:basis-[calc(33.33%-16px)] max-w-sm lg:max-w-none">
+                  <div className="flex flex-col bg-[#FAFAFA] border border-border rounded-lg h-full w-full overflow-hidden hover:-translate-y-1 transition-all duration-300">
                     <div className="h-44 overflow-hidden">
                       <img
                         src={resolveImagePath(project.thumbnail)}
@@ -389,7 +389,7 @@ export default function ServiceDetail() {
         eyebrow="Questions"
         title="Frequently Asked Questions"
         subtitle="Find answers to common questions about this service."
-        bg="bg-surface"
+        bg="bg-background-section"
       />
 
       {/* ─── 12. Related Services ────────────────────────────── */}
@@ -399,12 +399,12 @@ export default function ServiceDetail() {
             <FadeIn>
               <SectionHeading eyebrow="Explore" title="Related Services" subtitle="Other services that might interest you." />
             </FadeIn>
-            <div className="mt-10 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="mt-10 flex flex-wrap justify-center gap-6">
               {relatedServices.map((rs) => (
-                <FadeIn key={rs._id}>
+                <FadeIn key={rs._id} className="w-full sm:basis-[calc(50%-12px)] lg:basis-[calc(33.33%-16px)]">
                   <Link
                     to={`/services/${rs.slug}`}
-                    className="flex flex-col bg-surface border border-border rounded-lg h-full overflow-hidden cursor-pointer hover:-translate-y-1 transition-all duration-300">
+                    className="flex flex-col bg-[#FAFAFA] border border-border rounded-lg h-full overflow-hidden cursor-pointer hover:-translate-y-1 transition-all duration-300">
                     <div className="h-40 overflow-hidden">
                       <img
                         src={resolveImagePath(rs.hero_image)}
@@ -453,5 +453,3 @@ export default function ServiceDetail() {
     </div>
   );
 }
-
-
