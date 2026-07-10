@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import useDebounce from "../../hooks/useDebounce.js";
 import { toast } from "sonner";
 import useContactStore from "../../store/contactStore.js";
 import ConfirmModal from "../../components/ui/ConfirmModal.jsx";
@@ -42,6 +43,7 @@ export default function AdminMessages() {
   const [error, setError] = useState("");
   const [deleteTarget, setDeleteTarget] = useState(null);
   const [deleteAllTarget, setDeleteAllTarget] = useState(false);
+  const [spamTarget, setSpamTarget] = useState(null);
 
   const load = async () => {
     setLoading(true);
@@ -74,11 +76,7 @@ export default function AdminMessages() {
     setPage(1);
   }, [search, status, date]);
 
-  useEffect(() => {
-    const t = setTimeout(() => load(), 250);
-    return () => clearTimeout(t);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [page, search, status, date]);
+  useDebounce(() => load(), [page, search, status, date], 250);
 
   async function transition(id, nextStatus) {
     try {
@@ -164,7 +162,7 @@ export default function AdminMessages() {
           />
           <button
             type="button"
-            className="rounded border border-border py-2 text-sm font-semibold text-text hover:bg-surface transition cursor-pointer"
+            className="rounded border border-border py-2 text-sm font-semibold text-text hover:bg-surface hover:text-primary transition cursor-pointer"
             onClick={() => {
               setSearch("");
               setStatus("");
@@ -276,15 +274,16 @@ export default function AdminMessages() {
                           <button
                             type="button"
                             className="px-3 py-2 text-xs sm:px-4 sm:py-2 sm:text-sm min-h-[44px] text-warning hover:text-warning/80 rounded transition cursor-pointer"
-                            onClick={() => transition(e.enquiry_id, "Spam")}>
+                            onClick={() => setSpamTarget(e.enquiry_id)}>
                             Mark Spam
                           </button>
                         )}
                         <button
                           type="button"
                           className="px-3 py-2 text-xs sm:px-4 sm:py-2 sm:text-sm min-h-[44px] text-danger hover:text-red-700 rounded transition cursor-pointer"
-                          title="Delete"
-                          onClick={() => onDelete(e.enquiry_id)}>
+                           title="Delete"
+                           aria-label="Delete"
+                           onClick={() => onDelete(e.enquiry_id)}>
                           <FontAwesomeIcon icon={faTrash} className="w-4 h-4" />
                         </button>
                       </div>
@@ -323,6 +322,18 @@ export default function AdminMessages() {
         />
       </div>
 
+      <ConfirmModal
+        open={!!spamTarget}
+        danger={false}
+        onCancel={() => setSpamTarget(null)}
+        onConfirm={() => {
+          if (spamTarget) {
+            transition(spamTarget, "Spam");
+            setSpamTarget(null);
+          }
+        }}
+        message="Mark this enquiry as spam? It will be hidden from the main list."
+      />
       <ConfirmModal
         danger
         open={!!deleteTarget}

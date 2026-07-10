@@ -1,7 +1,6 @@
 import { NavLink, useNavigate } from "react-router-dom";
 import { useState, useEffect, useCallback, memo } from "react";
 import useAuthStore from "../../store/authStore.js";
-import apiService from "../../services/apiService.js";
 
 function Icon({ children, className = "" }) {
   return (
@@ -298,47 +297,13 @@ export default function AdminSidebar() {
 
   const sidebarWidth = collapsed ? "w-[72px]" : "w-64";
 
-  const fetchBadges = useCallback(async () => {
-    try {
-      const [messagesRes, reviewsRes] = await Promise.all([
-        apiService.get("/admin/contact/enquiries", {
-          params: { limit: 1, status: "New" },
-        }),
-        apiService.get("/admin/reviews", {
-          params: { limit: 1, status: "Pending" },
-        }),
-      ]);
-      setBadges({
-        messages: messagesRes.data.counters?.new || 0,
-        reviews: reviewsRes.data.counters?.pending || 0,
-      });
-    } catch {
-      // ignore
-    }
-  }, []);
-
   useEffect(() => {
-    fetchBadges();
-    const interval = setInterval(fetchBadges, 30000);
-
-    function onFocus() {
-      fetchBadges();
+    function onBadgeUpdate(e) {
+      setBadges(e.detail);
     }
-    function onRefresh() {
-      fetchBadges();
-    }
-
-    window.addEventListener("focus", onFocus);
-    window.addEventListener("visibilitychange", onFocus);
-    window.addEventListener("refresh-badges", onRefresh);
-
-    return () => {
-      clearInterval(interval);
-      window.removeEventListener("focus", onFocus);
-      window.removeEventListener("visibilitychange", onFocus);
-      window.removeEventListener("refresh-badges", onRefresh);
-    };
-  }, [fetchBadges]);
+    window.addEventListener("badge-update", onBadgeUpdate);
+    return () => window.removeEventListener("badge-update", onBadgeUpdate);
+  }, []);
 
   const closeMobileMenu = useCallback(() => setMobileOpen(false), []);
 

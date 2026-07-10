@@ -1,13 +1,15 @@
 import { useMemo, useRef, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faTrash } from "@fortawesome/free-solid-svg-icons";
+import { faTrash, faExpand } from "@fortawesome/free-solid-svg-icons";
 import ConfirmModal from "./ConfirmModal.jsx";
+import ImageViewerModal from "./ImageViewerModal.jsx";
 
 export default function FileUploadField({
   label,
   required = false,
   file,
   existingUrl = "",
+  hidePreview = false,
   onChange,
   onRemove,
   accept = "image/*",
@@ -17,12 +19,15 @@ export default function FileUploadField({
 }) {
   const inputRef = useRef(null);
   const [confirmingRemove, setConfirmingRemove] = useState(false);
+  const [viewOpen, setViewOpen] = useState(false);
   const previewUrl = useMemo(() => {
     if (file instanceof File) return URL.createObjectURL(file);
     return "";
   }, [file]);
 
   const displayUrl = previewUrl || existingUrl;
+
+  const showImage = displayUrl && !hidePreview;
 
   return (
     <div className={className}>
@@ -31,7 +36,7 @@ export default function FileUploadField({
       </label>
       <div className={`mt-2 relative w-full ${containerHeight}`}>
         <label className={`flex flex-col items-center justify-center w-full ${containerHeight} border-2 border-dashed border-border rounded cursor-pointer hover:border-primary hover:bg-primary-light transition`}>
-          {displayUrl ? (
+          {showImage ? (
             <img
               src={displayUrl}
               alt="Preview"
@@ -72,7 +77,19 @@ export default function FileUploadField({
             }}
           />
         </label>
-        {displayUrl && (
+        {showImage && (
+          <button
+            type="button"
+            onClick={(e) => {
+              e.stopPropagation();
+              setViewOpen(true);
+            }}
+            className="absolute top-1 left-1 p-1 bg-background/80 hover:bg-primary-light rounded-full shadow transition cursor-pointer"
+            title="View full size">
+            <FontAwesomeIcon icon={faExpand} className="w-4 h-4 text-primary hover:text-primary-hover" />
+          </button>
+        )}
+        {showImage && (
           <button
             type="button"
             onClick={(e) => {
@@ -101,6 +118,13 @@ export default function FileUploadField({
           onRemove?.();
         }}
         message={confirmText}
+      />
+
+      <ImageViewerModal
+        open={viewOpen}
+        src={displayUrl}
+        alt={label}
+        onClose={() => setViewOpen(false)}
       />
     </div>
   );

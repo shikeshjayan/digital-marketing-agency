@@ -21,23 +21,29 @@ export const checkEmailExists = asyncHandler(async (req, res) => {
   res.status(200).json({ success: true, data: { exists: !!admin } });
 });
 
-// Create a JWT token for a given admin ID that expires in 7 days
-const generateToken = (id) => {
-  return jwt.sign({ id }, process.env.JWT_SECRET, { expiresIn: "7d" });
+// Create a JWT token for a given admin ID
+const generateToken = (id, expiresIn = "7d") => {
+  return jwt.sign({ id }, process.env.JWT_SECRET, { expiresIn });
 };
 
 // Send back the token as an httpOnly cookie
-const sendTokenResponse = (admin, statusCode, res) => {
-  const token = generateToken(admin._id);
+const sendTokenResponse = (admin, statusCode, res, rememberMe = false) => {
+  const tokenExpiry = rememberMe ? "30d" : "7d";
+  const token = generateToken(admin._id, tokenExpiry);
+
+  const cookieOptions = {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "lax",
+  };
+
+  if (rememberMe) {
+    cookieOptions.maxAge = 30 * 24 * 60 * 60 * 1000; // match JWT expiry
+  }
 
   res
     .status(statusCode)
-    .cookie("token", token, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "lax",
-      maxAge: 7 * 24 * 60 * 60 * 1000,
-    })
+    .cookie("token", token, cookieOptions)
     .json({
       success: true,
       data: {
@@ -86,7 +92,7 @@ export const registerAdmin = asyncHandler(async (req, res) => {
 
 // Login an existing admin with email and password
 export const loginAdmin = asyncHandler(async (req, res) => {
-  const { email, password } = req.body;
+  const { email, password, rememberMe } = req.body;
 
   // Find admin by email and include the password field (it's hidden by default)
   const admin = await Admin.findOne({ email }).select("+password");
@@ -104,7 +110,7 @@ export const loginAdmin = asyncHandler(async (req, res) => {
       .json({ success: false, message: "Invalid credentials" });
   }
 
-  sendTokenResponse(admin, 200, res);
+  sendTokenResponse(admin, 200, res, rememberMe);
 });
 
 // Get the currently logged-in admin's profile info

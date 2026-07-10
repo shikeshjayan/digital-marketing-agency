@@ -3,7 +3,7 @@ import { Toaster } from "sonner";
 import AdminSidebar from "../components/admin/AdminSidebar.jsx";
 import NotificationDropdown from "../components/admin/NotificationDropdown.jsx";
 import { useState, useEffect } from "react";
-import useSettingsStore from "../store/settingsStore.js";
+import useAuthStore from "../store/authStore.js";
 import useBrandSettingsStore from "../store/brandSettingsStore.js";
 
 const resolveUrl = (path) => {
@@ -18,7 +18,7 @@ const resolveUrl = (path) => {
 export default function AdminLayout() {
   const location = useLocation();
   const navigate = useNavigate();
-  const { profile, fetchProfile } = useSettingsStore();
+  const user = useAuthStore((s) => s.user);
   const [imgFailed, setImgFailed] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const { content, fetchBrandSettings } = useBrandSettingsStore();
@@ -26,10 +26,6 @@ export default function AdminLayout() {
   useEffect(() => {
     fetchBrandSettings();
   }, [fetchBrandSettings]);
-
-  useEffect(() => {
-    fetchProfile();
-  }, [fetchProfile]);
 
   useEffect(() => {
     function handleSidebarState(e) {
@@ -114,16 +110,16 @@ export default function AdminLayout() {
               type="button"
               onClick={() => navigate("/admin/settings")}
               className="flex items-center gap-2 cursor-pointer">
-              {profile?.photo && !imgFailed ? (
+              {user?.photo && !imgFailed ? (
                 <img
-                  src={resolveUrl(profile.photo)}
-                  alt={profile?.name || "Admin"}
+                  src={resolveUrl(user.photo)}
+                  alt={user?.name || "Admin"}
                   className="w-8 h-8 rounded-full object-cover border border-border shrink-0"
                   onError={() => setImgFailed(true)}
                 />
               ) : (
                 <div className="w-8 h-8 rounded-full bg-primary text-white flex items-center justify-center small-text font-bold shrink-0">
-                  {(profile?.name || profile?.email || "A")
+                  {(user?.name || user?.email || "A")
                     .charAt(0)
                     .toUpperCase()}
                 </div>

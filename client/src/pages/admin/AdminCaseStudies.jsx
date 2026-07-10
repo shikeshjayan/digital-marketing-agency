@@ -1,4 +1,5 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import useDebounce from "../../hooks/useDebounce.js";
 import { toast } from "sonner";
 import useCaseStudyStore from "../../store/caseStudyStore.js";
 import useProjectStore from "../../store/projectStore.js";
@@ -14,16 +15,36 @@ import FormField from "../../components/ui/FormField.jsx";
 import FileUploadField from "../../components/ui/FileUploadField.jsx";
 import FormActions from "../../components/ui/FormActions.jsx";
 import ErrorBanner from "../../components/ui/ErrorBanner.jsx";
+import resolveImagePath from "../../utils/resolveImagePath.js";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTrash, faPen } from "@fortawesome/free-solid-svg-icons";
 
-const resolveUrl = (path) => {
-  if (!path || path.startsWith("blob:") || path.startsWith("http")) return path;
-  const base = (import.meta.env.VITE_API_URL || "/api/v1").replace(
-    /\/api\/v1\/?$/,
-    "",
-  );
-  return base + path;
+const EMPTY_FORM = {
+  case_study_id: null,
+  title: "",
+  project: "",
+  hero_image: "",
+  overview: "",
+  challenge: "",
+  objectives: [],
+  strategy: "",
+  solution: "",
+  deliverables: [],
+  timeline_duration: "",
+  timeline_started_at: "",
+  timeline_completed_at: "",
+  development_process: [],
+  challenges_and_solutions: [],
+  results: [],
+  gallery: [],
+  client_testimonial_quote: "",
+  client_testimonial_name: "",
+  client_testimonial_designation: "",
+  client_testimonial_company: "",
+  featured: false,
+  seo_meta_title: "",
+  seo_meta_description: "",
+  status: "Published",
 };
 
 export default function AdminCaseStudies() {
@@ -44,39 +65,8 @@ export default function AdminCaseStudies() {
   const [page, setPage] = useState(1);
   const [pagination, setPagination] = useState({ total: 0, page: 1, pages: 1 });
   const galleryRef = useRef(null);
-
-  const emptyForm = useMemo(
-    () => ({
-      case_study_id: null,
-      title: "",
-      project: "",
-      hero_image: "",
-      overview: "",
-      challenge: "",
-      objectives: [],
-      strategy: "",
-      solution: "",
-      deliverables: [],
-      timeline_duration: "",
-      timeline_started_at: "",
-      timeline_completed_at: "",
-      development_process: [],
-      challenges_and_solutions: [],
-      results: [],
-      gallery: [],
-      client_testimonial_quote: "",
-      client_testimonial_name: "",
-      client_testimonial_designation: "",
-      client_testimonial_company: "",
-      featured: false,
-      seo_meta_title: "",
-      seo_meta_description: "",
-      status: "Published",
-    }),
-    [],
-  );
-
-  const [form, setForm] = useState(emptyForm);
+  const blobUrls = useRef(new Map());
+  const [form, setForm] = useState(EMPTY_FORM);
   const [error, setError] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const formRef = useRef(null);
@@ -84,8 +74,37 @@ export default function AdminCaseStudies() {
   const [deleteAllTarget, setDeleteAllTarget] = useState(false);
   const [confirmItemDelete, setConfirmItemDelete] = useState(null);
 
+  function getGallerySrc(img) {
+    if (img instanceof File) {
+      if (!blobUrls.current.has(img)) {
+        blobUrls.current.set(img, URL.createObjectURL(img));
+      }
+      return blobUrls.current.get(img);
+    }
+    return resolveImagePath(img);
+  }
+
+  useEffect(() => {
+    const map = blobUrls.current;
+    const currentFiles = new Set(form.gallery.filter((f) => f instanceof File));
+    for (const [file, url] of map.entries()) {
+      if (!currentFiles.has(file)) {
+        URL.revokeObjectURL(url);
+        map.delete(file);
+      }
+    }
+  }, [form.gallery]);
+
+  useEffect(() => {
+    return () => {
+      blobUrls.current.forEach((url) => URL.revokeObjectURL(url));
+      blobUrls.current.clear();
+    };
+  }, []);
+
   const load = async () => {
     setLoading(true);
+    setError("");
     try {
       const result = await fetchAdminCaseStudies({
         search: search || undefined,
@@ -95,6 +114,10 @@ export default function AdminCaseStudies() {
       });
       setItems(result?.items ?? []);
       setPagination(result?.pagination ?? { total: 0, page: 1, pages: 1 });
+    } catch (err) {
+      const msg = err?.response?.data?.message || err?.message || "Failed to load case studies.";
+      setError(msg);
+      toast.error(msg);
     } finally {
       setLoading(false);
     }
@@ -113,11 +136,7 @@ export default function AdminCaseStudies() {
     setPage(1);
   }, [search, status]);
 
-  useEffect(() => {
-    const t = setTimeout(() => load(), 250);
-    return () => clearTimeout(t);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [page, search, status]);
+  useDebounce(() => load(), [page, search, status], 250);
 
   function onPickHeroImage(file) {
     setForm((f) => ({ ...f, hero_image: file }));
@@ -246,7 +265,7 @@ export default function AdminCaseStudies() {
         toast.success("Case study created successfully.");
       }
 
-      setForm(emptyForm);
+      setForm(EMPTY_FORM);
       await load();
     } catch (err) {
       const msg = err?.response?.data?.message || err?.message || "Operation failed.";
@@ -442,7 +461,7 @@ export default function AdminCaseStudies() {
               label="Hero Image"
               required
               file={form.hero_image instanceof File ? form.hero_image : null}
-              existingUrl={typeof form.hero_image === "string" ? resolveUrl(form.hero_image) : ""}
+              existingUrl={typeof form.hero_image === "string" ? resolveImagePath(form.hero_image) : ""}
               onChange={onPickHeroImage}
               onRemove={() => setForm((f) => ({ ...f, hero_image: "" }))}
               confirmText="Remove hero image?"
@@ -463,7 +482,7 @@ export default function AdminCaseStudies() {
                   {form.gallery.map((img, idx) => (
                     <div key={idx} className="relative w-16 h-16 border border-border rounded overflow-hidden">
                       <img
-                        src={img instanceof File ? URL.createObjectURL(img) : resolveUrl(img)}
+                        src={getGallerySrc(img)}
                         alt=""
                         className="w-full h-full object-cover"
                       />
@@ -691,7 +710,7 @@ export default function AdminCaseStudies() {
               submitting={submitting}
               editId={form.case_study_id}
               onSubmit={onSubmit}
-              onReset={() => setForm(emptyForm)}
+              onReset={() => setForm(EMPTY_FORM)}
               submitLabel={form.case_study_id ? "Update Case Study" : "Create Case Study"}
             />
           </form>
@@ -732,7 +751,7 @@ export default function AdminCaseStudies() {
                         <div className="flex items-center gap-3">
                           {cs.hero_image && (
                             <img
-                              src={resolveUrl(cs.hero_image)}
+                              src={resolveImagePath(cs.hero_image)}
                               alt=""
                               className="w-10 h-10 rounded object-cover border border-border shrink-0"
                             />
@@ -773,6 +792,7 @@ export default function AdminCaseStudies() {
                             type="button"
                             className="px-3 py-2 text-xs sm:px-4 sm:py-2 sm:text-sm min-h-[44px] text-text hover:text-heading rounded transition cursor-pointer"
                             title="Edit"
+                            aria-label="Edit"
                             onClick={() => onEdit(cs)}>
                             <FontAwesomeIcon icon={faPen} className="w-4 h-4" />
                           </button>
@@ -780,6 +800,7 @@ export default function AdminCaseStudies() {
                             type="button"
                             className="px-3 py-2 text-xs sm:px-4 sm:py-2 sm:text-sm min-h-[44px] text-danger hover:text-red-700 rounded transition cursor-pointer"
                             title="Delete"
+                            aria-label="Delete"
                             onClick={() => setDeleteTarget(cs._id)}>
                             <FontAwesomeIcon icon={faTrash} className="w-4 h-4" />
                           </button>

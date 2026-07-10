@@ -22,7 +22,7 @@ export default function AdminGuard() {
   if (loading || checking) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <div className="text-muted small-text">Loading...</div>
+        <div className="animate-spin w-8 h-8 border-4 border-primary border-t-transparent rounded-full" />
       </div>
     )
   }

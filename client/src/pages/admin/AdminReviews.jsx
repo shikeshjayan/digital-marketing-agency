@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import useDebounce from "../../hooks/useDebounce.js";
 import { toast } from "sonner";
 import useReviewStore from "../../store/reviewStore.js";
 import ConfirmModal from "../../components/ui/ConfirmModal.jsx";
@@ -87,11 +88,7 @@ export default function AdminReviews() {
     setPage(1);
   }, [tab, search]);
 
-  useEffect(() => {
-    const t = setTimeout(() => load(), 300);
-    return () => clearTimeout(t);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [page, search]);
+  useDebounce(() => load(), [page, search], 300);
 
   async function handleApprove(id) {
     setActionLoading(id);

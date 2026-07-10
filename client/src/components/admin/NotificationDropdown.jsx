@@ -116,6 +116,15 @@ export default function NotificationDropdown() {
         .slice(0, 10);
 
       setNotifications(combined);
+
+      window.dispatchEvent(
+        new CustomEvent("badge-update", {
+          detail: {
+            messages: enquiriesRes.data.counters?.new || 0,
+            reviews: reviewsRes.data.counters?.pending || 0,
+          },
+        }),
+      );
     } catch {
       // ignore
     } finally {
@@ -208,7 +217,7 @@ export default function NotificationDropdown() {
           <div className="max-h-[60vh] sm:max-h-96 overflow-y-auto">
             {loading && notifications.length === 0 ? (
               <div className="px-4 py-8 text-center text-sm text-muted">
-                Loading...
+                <div className="inline-block animate-spin w-5 h-5 border-2 border-primary border-t-transparent rounded-full" />
               </div>
             ) : notifications.length === 0 ? (
               <div className="px-4 py-8 text-center text-sm text-muted">
