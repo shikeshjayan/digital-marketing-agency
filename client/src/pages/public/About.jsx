@@ -13,6 +13,7 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import HeroSplit from "../../components/public/HeroSplit.jsx";
 import FadeIn from "../../components/ui/FadeIn.jsx";
+import AnimatedCounter from "../../components/ui/AnimatedCounter.jsx";
 import SectionHeading from "../../components/ui/SectionHeading.jsx";
 import OurProcess from "../../components/public/OurProcess.jsx";
 import WhyChooseUs from "../../components/public/WhyChooseUs.jsx";
@@ -59,21 +60,33 @@ function WhoWeAre({ stats = [] }) {
           </FadeIn>
 
           <FadeIn direction="right">
-            <div className="grid grid-cols-2 gap-4">
-              {displayStats.map((stat, i) => (
-                /* Changed bg-primary-light to bg-[#FAFAFA] */
-                <div key={stat.key || i} className="bg-[#FAFAFA] rounded-lg p-6 text-center">
-                  <FontAwesomeIcon
-                    icon={icons[i] || faChartLine}
-                    className="text-3xl text-primary"
-                  />
-                  <div className="mt-3 text-2xl font-extrabold text-heading">
-                    {stat.target}{stat.suffix || ""}
+            {({ isInView, ref }) => (
+              <div ref={ref} className="grid grid-cols-2 gap-4">
+                {displayStats.map((stat, i) => (
+                  <div
+                    key={stat.key || i}
+                    className={`rounded-lg p-6 text-center transition-colors duration-700 ease-out ${isInView ? "bg-[#FAFAFA]" : "bg-transparent"}`}>
+                    <FontAwesomeIcon
+                      icon={icons[i] || faChartLine}
+                      className="text-3xl text-primary"
+                    />
+                    <div className="mt-3 text-2xl font-extrabold text-heading">
+                      <AnimatedCounter
+                        key={stat.key}
+                        target={Number(stat.target)}
+                        suffix={stat.suffix || ""}
+                        isInView={isInView}
+                      />
+                    </div>
+                    <div
+                      className="text-muted mt-1"
+                      style={{ "font-size": "12px" }}>
+                      {stat.label}
+                    </div>
                   </div>
-                  <div className="text-xs text-muted mt-1">{stat.label}</div>
-                </div>
-              ))}
-            </div>
+                ))}
+              </div>
+            )}
           </FadeIn>
         </div>
       </div>
@@ -103,9 +116,7 @@ function MissionVision() {
                   className="text-2xl text-primary"
                 />
               </div>
-              <h3 className="mt-6 subheading text-heading">
-                Our Mission
-              </h3>
+              <h3 className="mt-6 subheading text-heading">Our Mission</h3>
               <p className="mt-3 small-text text-text body-text">
                 To empower businesses of all sizes with innovative digital
                 solutions that drive growth, enhance brand visibility, and
@@ -124,9 +135,7 @@ function MissionVision() {
                   className="text-2xl text-primary"
                 />
               </div>
-              <h3 className="mt-6 subheading text-heading">
-                Our Vision
-              </h3>
+              <h3 className="mt-6 subheading text-heading">Our Vision</h3>
               <p className="mt-3 small-text text-text body-text">
                 To be the most trusted digital partner for businesses worldwide,
                 recognized for our commitment to quality, innovation, and
@@ -187,12 +196,8 @@ function OurValues() {
                     className="text-xl text-primary group-hover:text-white transition"
                   />
                 </div>
-                <h3 className="mt-4 subheading text-heading">
-                  {v.title}
-                </h3>
-                <p className="mt-2 small-text text-text body-text">
-                  {v.desc}
-                </p>
+                <h3 className="mt-4 subheading text-heading">{v.title}</h3>
+                <p className="mt-2 small-text text-text body-text">{v.desc}</p>
               </div>
             </FadeIn>
           ))}
@@ -250,14 +255,24 @@ export default function About() {
     return s ? `${s.target}${s.suffix}` : "";
   };
 
-  const aboutStats = ['teamMembers', 'yearsExperience', 'projectsCompleted', 'satisfactionGoal']
-    .map(key => companyStats.find(s => s.key === key))
+  const aboutStats = [
+    "teamMembers",
+    "yearsExperience",
+    "projectsCompleted",
+    "satisfactionGoal",
+  ]
+    .map((key) => companyStats.find((s) => s.key === key))
     .filter(Boolean);
 
-  const whyChooseUsStats = ['clientRetention', 'support247', 'averageRoi', 'satisfactionGoal']
-    .map(key => companyStats.find(s => s.key === key))
+  const whyChooseUsStats = [
+    "clientRetention",
+    "support247",
+    "averageRoi",
+    "satisfactionGoal",
+  ]
+    .map((key) => companyStats.find((s) => s.key === key))
     .filter(Boolean)
-    .map(s => ({ value: `${s.target}${s.suffix}`, label: s.label }));
+    .map((s) => ({ target: s.target, suffix: s.suffix || "", label: s.label }));
 
   return (
     <div>
@@ -272,8 +287,14 @@ export default function About() {
         imageAlt="About Us"
         trustIndicators={[
           { value: getStat("teamMembers") || "25+", label: "Team\nMembers" },
-          { value: getStat("projectsCompleted") || "500+", label: "Projects\nDelivered" },
-          { value: getStat("clientRetention") || "98%", label: "Client\nRetention" },
+          {
+            value: getStat("projectsCompleted") || "500+",
+            label: "Projects\nDelivered",
+          },
+          {
+            value: getStat("clientRetention") || "98%",
+            label: "Client\nRetention",
+          },
         ]}
       />
 
@@ -286,7 +307,7 @@ export default function About() {
                 Hello, <span className="text-primary">Welcome</span> to Digital
                 Marketing
               </h2>
-              <div className="mt-4 small-text text-text leading-relaxed max-w-3xl mx-auto text-justify md:text-center space-y-3">
+              <div className="mt-4 small-text text-text leading-relaxed max-w-3xl mx-auto md:text-center space-y-3">
                 <p className="small-text text-text body-text">
                   We help brands navigate and scale modern digital landscapes by
                   executing high-performance web engineering alongside robust
@@ -294,7 +315,7 @@ export default function About() {
                   unnecessary layers to zero in on real results: identifying
                   exact business goals, transforming concepts into scalable
                   customer pipelines, building platforms with structural
-                  cleanliness, and monitoring active engagement behaviors.
+                  cleanliness, and monitoring active engagement behaviours.
                 </p>
                 <p className="small-text text-text body-text">
                   By linking functional data capture analytics directly with
@@ -328,7 +349,11 @@ export default function About() {
       <MeetOurTeam />
 
       {/* 9. Client Testimonials */}
-      <TestimonialsSection reviews={reviews} loading={reviewsLoading} bg="bg-background" />
+      <TestimonialsSection
+        reviews={reviews}
+        loading={reviewsLoading}
+        bg="bg-background"
+      />
 
       {/* 10. Trusted By */}
       <LogoMarquee logos={trustMarqueeLogos} bg="bg-background-section" />

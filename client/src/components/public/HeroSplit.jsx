@@ -57,59 +57,75 @@ export default function HeroSplit({
           </div>
 
           <div className="text-center lg:text-left">
-            <h1 className="hero-heading text-white">
-              <span className="text-primary">{titleHighlight}</span> {title}
-            </h1>
+            <div
+              className={`transition-all duration-700 ease-out ${loaded ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"}`}
+              style={{ transitionDelay: "0ms" }}>
+              <h1 className="hero-heading text-white">
+                <span className="text-primary">{titleHighlight}</span> {title}
+              </h1>
+            </div>
 
             {subtitle && (
-              <p className="mt-6 max-w-xl body-text leading-8 text-white/70 mx-auto lg:mx-0">
-                {subtitle}
-              </p>
+              <div
+                className={`transition-all duration-700 ease-out ${loaded ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"}`}
+                style={{ transitionDelay: "150ms" }}>
+                <p className="mt-6 max-w-xl body-text leading-8 text-white/70 mx-auto lg:mx-0">
+                  {subtitle}
+                </p>
+              </div>
             )}
 
             {(primaryCTA || secondaryCTA) && (
-              <div className="mt-8 flex flex-wrap items-center justify-center lg:justify-start gap-4">
-                {primaryCTA && (
-                  <button
-                    type="button"
-                    className="inline-flex items-center rounded-lg bg-primary text-white px-6 py-3 text-sm font-semibold hover:bg-primary-hover transition cursor-pointer"
-                    onClick={() =>
-                      primaryCTA.to
-                        ? handleCTA(primaryCTA.to)
-                        : primaryCTA.onClick?.()
-                    }>
-                    {primaryCTA.label}
-                  </button>
-                )}
-                {secondaryCTA && (
-                  <button
-                    type="button"
-                    className="inline-flex items-center rounded-lg border border-white text-white px-6 py-3 text-sm font-semibold hover:bg-white/10 transition cursor-pointer"
-                    onClick={() =>
-                      secondaryCTA.to
-                        ? handleCTA(secondaryCTA.to)
-                        : secondaryCTA.onClick?.()
-                    }>
-                    {secondaryCTA.label}
-                  </button>
-                )}
+              <div
+                className={`transition-all duration-700 ease-out ${loaded ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"}`}
+                style={{ transitionDelay: "300ms" }}>
+                <div className="mt-8 flex flex-wrap items-center justify-center lg:justify-start gap-4">
+                  {primaryCTA && (
+                    <button
+                      type="button"
+                      className="inline-flex items-center rounded-lg bg-primary text-white px-6 py-3 text-sm font-semibold hover:bg-primary-hover transition cursor-pointer"
+                      onClick={() =>
+                        primaryCTA.to
+                          ? handleCTA(primaryCTA.to)
+                          : primaryCTA.onClick?.()
+                      }>
+                      {primaryCTA.label}
+                    </button>
+                  )}
+                  {secondaryCTA && (
+                    <button
+                      type="button"
+                      className="inline-flex items-center rounded-lg border border-white text-white px-6 py-3 text-sm font-semibold hover:bg-white/10 transition cursor-pointer"
+                      onClick={() =>
+                        secondaryCTA.to
+                          ? handleCTA(secondaryCTA.to)
+                          : secondaryCTA.onClick?.()
+                      }>
+                      {secondaryCTA.label}
+                    </button>
+                  )}
+                </div>
               </div>
             )}
 
             {children}
 
             {trustIndicators && trustIndicators.length > 0 && (
-              <div className="mt-8 flex flex-col items-center gap-3 md:flex-row md:items-center md:justify-start md:gap-6">
-                {trustIndicators.map((item, i) => (
-                  <div key={i} className="flex items-center gap-2 whitespace-nowrap">
-                    <span className="text-xl md:text-2xl font-extrabold text-white">
-                      {item.value}
-                    </span>
-                    <span className="small-text text-white/60 leading-tight">
-                      {item.label}
-                    </span>
-                  </div>
-                ))}
+              <div
+                className={`transition-all duration-700 ease-out ${loaded ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"}`}
+                style={{ transitionDelay: "450ms" }}>
+                <div className="mt-8 flex flex-col items-center gap-3 md:flex-row md:items-center md:justify-start md:gap-6">
+                  {trustIndicators.map((item, i) => (
+                    <div key={i} className="flex items-center gap-2 whitespace-nowrap">
+                      <span className="text-xl md:text-2xl font-extrabold text-white">
+                        {item.value}
+                      </span>
+                      <span className="small-text text-white/60 leading-tight">
+                        {item.label}
+                      </span>
+                    </div>
+                  ))}
+                </div>
               </div>
             )}
           </div>
