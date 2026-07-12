@@ -2,6 +2,27 @@ import SiteContent from "../models/siteContent.model.js";
 import asyncHandler from "../middleware/asyncHandler.js";
 
 const DEFAULT_CONTENT = {
+  testimonials: {
+    heroTitle: "Testimonials",
+    heroTitleHighlight: "Client",
+    heroSubtitle: "Real feedback from businesses we've helped grow. See what our clients say about working with us.",
+    heroPrimaryCTA: "Leave a Review",
+    heroSecondaryCTA: "View Our Work",
+    leftCardBadge: "How Can I Help You?",
+    leftCardHeading: "Wanna ",
+    leftCardHeadingHighlight: "Hear",
+    leftCardHeadingRest: " From You",
+    leftCardDescription: "Tell us what you need and we'll respond with a clear plan and timeline.",
+    formSectionTitle: "SHARE YOUR EXPERIENCE!",
+    formSectionSubtitle: "Send Review",
+    trustBadge: "Innovation meets execution",
+    trustHeading: "Why teams trust us",
+    trustDescription: "We combine design, engineering, and marketing strategy to deliver websites and campaigns that perform.",
+    trustCTALabel: "Read More",
+    trustCTATo: "/about",
+    reviewsBadge: "Approved Reviews",
+    reviewsTitle: "What learners say",
+  },
   technologyStackItems: [
     { name: "WordPress", code: "WP" },
     { name: "Angular", code: "AG" },
