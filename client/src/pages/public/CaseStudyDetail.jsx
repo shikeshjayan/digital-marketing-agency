@@ -21,6 +21,11 @@ function formatDate(dateStr) {
   });
 }
 
+// Utility function to check if a string is a raw MongoDB ObjectID hex string
+function isObjectId(str) {
+  return /^[0-9a-fA-F]{24}$/.test(String(str).trim());
+}
+
 export default function CaseStudyDetail() {
   const { slug } = useParams();
   const { fetchCaseStudyBySlug, selectedCaseStudy, loading, error } = useCaseStudyStore();
@@ -67,6 +72,11 @@ export default function CaseStudyDetail() {
   const cs = selectedCaseStudy;
   const project = cs.project || {};
 
+  // Clean the title: If it's a raw ObjectID or contains one, fall back to project name or standard header safely
+  const displayTitle = cs.title && !isObjectId(cs.title) 
+    ? cs.title 
+    : (project?.project_name || "Case Study Success Story");
+
   return (
     <div className="bg-background min-h-screen animate-page-fade">
       {/* Hero Section */}
@@ -80,7 +90,7 @@ export default function CaseStudyDetail() {
             <Link to={project?.slug ? `/projects/${project.slug}` : "/projects"} className="hover:text-white transition-colors truncate max-w-[200px]">{project?.project_name || "Project"}</Link>
             <span className="text-white/30">/</span>
             <span className="text-white truncate">
-              {cs.title?.includes("6a4e3f0bbd61320543a80b36") ? "MediCare Health Portal" : cs.title}
+              {displayTitle}
             </span>
           </nav>
 
@@ -95,7 +105,7 @@ export default function CaseStudyDetail() {
                   </div>
                 )}
                 <h1 className="hero-heading text-white">
-                  {cs.title?.includes("6a4e3f0bbd61320543a80b36") ? "MediCare Health Portal" : cs.title}
+                  {displayTitle}
                 </h1>
                 <p className="mt-4 text-white/70 text-lg leading-relaxed body-text">{cs.overview}</p>
 
@@ -107,7 +117,8 @@ export default function CaseStudyDetail() {
                   )}
                   {project.industries?.map((ind, i) => {
                     const targetName = typeof ind === "object" ? ind.name : ind;
-                    if (!targetName || targetName === "6a4e3f0bbd61320543a80b36") return null;
+                    // FIX: Automatically catch and drop any raw database ID values from rendering as badges
+                    if (!targetName || isObjectId(targetName)) return null;
                     return (
                       <span key={i} className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-white/10 text-white/80 text-xs rounded-sm text-xxs">
                         {targetName}
@@ -128,7 +139,7 @@ export default function CaseStudyDetail() {
               <div className="relative">
                 <img
                   src={resolveImagePath(cs.hero_image)}
-                  alt={cs.title}
+                  alt={displayTitle}
                   className="w-full aspect-[16/9] object-cover rounded-sm"
                   width="800"
                   height="450"
