@@ -27,7 +27,9 @@ import FinalCTA from "../../components/public/FinalCTA.jsx";
 import TestimonialsSection from "../../components/public/TestimonialsSection.jsx";
 import ImageLoader from "../../components/ui/ImageLoader.jsx";
 
-/* ─── Project Card ────────────────────────────────────────── */
+/* ==========================================
+   Project Card Component
+   ========================================== */
 const ProjectCard = ({ project }) => {
   return (
     <div className="group block bg-background border border-border rounded-lg overflow-hidden hover:shadow-lg hover:border-primary transition-all duration-300 h-full flex flex-col w-full">
@@ -98,7 +100,9 @@ const ProjectCard = ({ project }) => {
   );
 };
 
-/* ─── Section: Project Statistics ─────────────────────────── */
+/* ==========================================
+   Project Statistics / Our Track Record Component
+   ========================================== */
 function ProjectStatistics({ stats = [] }) {
   const displayStats = stats.slice(0, 4);
   if (!displayStats.length) return null;
@@ -118,26 +122,40 @@ function ProjectStatistics({ stats = [] }) {
             </p>
           </div>
         </FadeIn>
-        <div className="mt-10 grid grid-cols-2 md:grid-cols-4 gap-6">
-          {displayStats.map((s, i) => (
-            <FadeIn key={s.key || i} delay={i * 40}>
-              <div className="bg-white/5 border border-white/10 rounded-lg p-6 text-center hover:bg-white/10 transition">
-                <div className="text-3xl md:text-4xl font-extrabold text-primary">
-                  <AnimatedCounter target={s.target} suffix={s.suffix} />
-                </div>
-                <div className="mt-2 small-text md:body-text text-text/70">
-                  {s.label}
-                </div>
-              </div>
-            </FadeIn>
-          ))}
-        </div>
+
+        {/* Dynamic scroll tracking added for Track Record numbers */}
+        <FadeIn>
+          {({ isInView, ref }) => (
+            <div ref={ref} className="mt-10 grid grid-cols-2 md:grid-cols-4 gap-6">
+              {displayStats.map((s, i) => {
+                const numericTarget = Number(String(s.target || "").replace(/[^0-9.]/g, "")) || 0;
+
+                return (
+                  <div key={s.key || i} className="bg-white/5 border border-white/10 rounded-lg p-6 text-center hover:bg-white/10 transition">
+                    <div className="text-3xl md:text-4xl font-extrabold text-primary">
+                      <AnimatedCounter 
+                        target={numericTarget} 
+                        suffix={s.suffix || ""} 
+                        isInView={isInView} 
+                      />
+                    </div>
+                    <div className="mt-2 small-text md:body-text text-text/70">
+                      {s.label}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          )}
+        </FadeIn>
       </div>
     </section>
   );
 }
 
-/* ─── Section: Featured Case Study ────────────────────────── */
+/* ==========================================
+   Featured Case Study Component
+   ========================================== */
 function FeaturedCaseStudy({ projects }) {
   const featured = projects.find((p) => p.status === "Published") || projects[0];
   if (!featured) return null;
@@ -231,38 +249,49 @@ function FeaturedCaseStudy({ projects }) {
   );
 }
 
-/* ─── Section: Results & Analytics ────────────────────────── */
+/* ==========================================
+   Results & Analytics Component
+   ========================================== */
 function ResultsAnalytics({ stats = [] }) {
-  const getStatValue = (key) => {
+  const getStat = (key, type) => {
     const s = stats.find((st) => st.key === key);
-    return s ? `${s.target}${s.suffix}` : "";
+    if (!s) return type === "target" ? 0 : "";
+    return type === "target" 
+      ? Number(String(s.target || "").replace(/[^0-9.]/g, "")) || 0
+      : s.suffix || "";
   };
+
   const metrics = [
     {
       icon: faChartLine,
-      value: getStatValue("averageRoi") || "3x",
+      target: getStat("averageRoi", "target") || 3,
+      suffix: getStat("averageRoi", "suffix") || "x",
       label: "Average ROI",
       desc: "Return on investment for our clients",
     },
     {
       icon: faBullseye,
-      value: getStatValue("onTimeDelivery") || "95%",
+      target: getStat("onTimeDelivery", "target") || 95,
+      suffix: getStat("onTimeDelivery", "suffix") || "%",
       label: "On-Time Delivery",
       desc: "Projects delivered within deadline",
     },
     {
       icon: faGlobe,
-      value: getStatValue("countriesServed") || "10+",
+      target: getStat("countriesServed", "target") || 10,
+      suffix: getStat("countriesServed", "suffix") || "+",
       label: "Countries Served",
       desc: "Global client reach",
     },
     {
       icon: faCheckCircle,
-      value: getStatValue("uptimeGuaranteed") || "99%",
+      target: getStat("uptimeGuaranteed", "target") || 99,
+      suffix: getStat("uptimeGuaranteed", "suffix") || "%",
       label: "Uptime Guaranteed",
       desc: "Reliable hosted solutions",
     },
   ];
+
   return (
     <section className="py-12 md:py-16 bg-background">
       <div className="max-w-6xl mx-auto px-4">
@@ -273,35 +302,45 @@ function ResultsAnalytics({ stats = [] }) {
             subtitle="Data-driven outcomes that demonstrate our impact."
           />
         </FadeIn>
-        <div className="mt-10 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          {metrics.map((m, i) => (
-            <FadeIn key={m.label} delay={i * 40} className="h-full">
-              <div className="bg-surface border border-border rounded-lg p-6 text-center h-full hover:shadow-sm transition group flex flex-col items-center">
-                <div className="w-12 h-12 rounded-lg bg-primary-light flex items-center justify-center mx-auto group-hover:bg-primary group-hover:text-white transition shrink-0">
-                  <FontAwesomeIcon
-                    icon={m.icon}
-                    className="text-xl text-primary group-hover:text-white transition"
-                  />
+
+        {/* Dynamic scroll tracking wrapper added for Results metrics */}
+        <FadeIn>
+          {({ isInView, ref }) => (
+            <div ref={ref} className="mt-10 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+              {metrics.map((m, i) => (
+                <div key={m.label} className="bg-surface border border-border rounded-lg p-6 text-center h-full hover:shadow-sm transition group flex flex-col items-center">
+                  <div className="w-12 h-12 rounded-lg bg-primary-light flex items-center justify-center mx-auto group-hover:bg-primary group-hover:text-white transition shrink-0">
+                    <FontAwesomeIcon
+                      icon={m.icon}
+                      className="text-xl text-primary group-hover:text-white transition"
+                    />
+                  </div>
+                  <div className="mt-4 text-3xl font-extrabold text-heading">
+                    <AnimatedCounter 
+                      target={m.target} 
+                      suffix={m.suffix} 
+                      isInView={isInView} 
+                    />
+                  </div>
+                  <div className="mt-1 text-sm font-semibold text-heading subheading">
+                    {m.label}
+                  </div>
+                  <div className="mt-auto pt-3 text-xs text-muted text-xxs w-full">
+                    {m.desc}
+                  </div>
                 </div>
-                <div className="mt-4 text-3xl font-extrabold text-heading">
-                  {m.value}
-                </div>
-                <div className="mt-1 text-sm font-semibold text-heading subheading">
-                  {m.label}
-                </div>
-                <div className="mt-auto pt-3 text-xs text-muted text-xxs w-full">
-                  {m.desc}
-                </div>
-              </div>
-            </FadeIn>
-          ))}
-        </div>
+              ))}
+            </div>
+          )}
+        </FadeIn>
       </div>
     </section>
   );
 }
 
-/* ─── Section: Client Logos (Trusted By) ───────────────────── */
+/* ==========================================
+   Client Logos (Trusted By) Component
+   ========================================== */
 function ClientLogos({ logos = [] }) {
   if (!logos.length) return null;
   return (
@@ -330,7 +369,9 @@ function ClientLogos({ logos = [] }) {
   );
 }
 
-/* ─── Before / After Results ──────────────────────────────── */
+/* ==========================================
+   Before / After Results Component
+   ========================================== */
 const beforeAfterData = [
   { metric: "Organic Traffic", before: "4,200/mo", after: "12,100/mo" },
   { metric: "Lead Generation", before: "20/mo", after: "68/mo" },
@@ -357,7 +398,6 @@ function BeforeAfterResults() {
                   {item.metric}
                 </div>
                 
-                {/* Clean unboxed stack structure for the metrics data */}
                 <div className="flex flex-col items-center justify-center gap-1.5 flex-1 w-full">
                   <div className="w-full">
                     <div className="text-[10px] text-muted uppercase tracking-wider font-semibold opacity-70">
@@ -381,7 +421,6 @@ function BeforeAfterResults() {
                     </div>
                   </div>
                 </div>
-
               </div>
             </FadeIn>
           ))}
@@ -391,14 +430,15 @@ function BeforeAfterResults() {
   );
 }
 
-/* ─── Main Projects Page ──────────────────────────────────── */
+/* ==========================================
+   Main Projects Page Component
+   ========================================== */
 const Projects = () => {
   const [active, setActive] = useState("All");
   const { projects, loading, error, fetchProjects } = useProjectStore();
   const { reviews, loading: reviewsLoading, fetchReviews } = useReviewStore();
   const { content, fetchPublicSiteContent } = useSiteContentStore();
   const { services, fetchServices } = useServiceStore();
-
   const scrollContainerRef = useRef(null);
 
   const categoryFilters = [
@@ -459,12 +499,11 @@ const Projects = () => {
           <FadeIn>
             <SectionHeading
               eyebrow="Portfolio"
-              title="Our Projects"
+              title="Our Our Projects"
               subtitle="Browse through our work filtered by category."
             />
           </FadeIn>
           
-          {/* Categories Carousel Layout */}
           <div className="mt-8 relative max-w-4xl mx-auto flex items-center gap-2">
             <button
               type="button"
@@ -474,7 +513,6 @@ const Projects = () => {
             >
               <FontAwesomeIcon icon={faChevronLeft} className="text-xs" />
             </button>
-
             <div
               ref={scrollContainerRef}
               className="flex gap-2 overflow-x-auto scroll-smooth py-1 flex-1 no-scrollbar"
@@ -494,7 +532,6 @@ const Projects = () => {
                 </button>
               ))}
             </div>
-
             <button
               type="button"
               onClick={() => scroll("right")}
@@ -504,7 +541,6 @@ const Projects = () => {
               <FontAwesomeIcon icon={faChevronRight} className="text-xs" />
             </button>
           </div>
-
           {loading ? (
             <div className="mt-10 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
               {[...Array(6)].map((_, i) => (
