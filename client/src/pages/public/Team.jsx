@@ -2,6 +2,7 @@ import { useEffect, useMemo } from 'react'
 import HeroSplit from '../../components/public/HeroSplit.jsx'
 import FadeIn from '../../components/ui/FadeIn.jsx'
 import SectionHeading from '../../components/ui/SectionHeading.jsx'
+import AnimatedCounter from '../../components/ui/AnimatedCounter.jsx'
 import FinalCTA from '../../components/public/FinalCTA.jsx'
 import TeamCard from '../../components/public/TeamCard.jsx'
 import { TeamCardSkeleton } from '../../components/ui/Skeleton.jsx'
@@ -106,7 +107,9 @@ const certifications = [
   "Meta Front-End Developer",
 ];
 
-/* ─── Section: Departments ────────────────────────────────── */
+/* ==========================================
+   Departments Component
+   ========================================== */
 function Departments() {
   return (
     <section className="py-12 md:py-16 bg-background-section">
@@ -136,36 +139,54 @@ function Departments() {
   );
 }
 
-/* ─── Section: Team Statistics ────────────────────────────── */
+/* ==========================================
+   Team Statistics / By the Numbers Component
+   ========================================== */
 function TeamStatistics({ stats = [] }) {
   const displayStats = stats.slice(0, 4);
   if (!displayStats.length) return null;
   return (
     <section className="py-12 md:py-16 bg-background">
-      <FadeIn>
-        <div className="max-w-6xl mx-auto px-4">
+      <div className="max-w-6xl mx-auto px-4">
+        <FadeIn>
           <SectionHeading
             eyebrow="By the Numbers"
             title="Team Statistics"
             subtitle="Our collective expertise speaks through the results we deliver."
           />
-          <div className="mt-10 grid grid-cols-2 md:grid-cols-4 gap-6">
-            {displayStats.map((stat, i) => (
-              <FadeIn key={stat.key || i} delay={i * 40}>
-                <div className="bg-background border border-border rounded-lg p-6 text-center hover:shadow-sm transition">
-                  <div className="text-3xl md:text-4xl font-extrabold text-primary">{stat.target}{stat.suffix}</div>
-                  <div className="mt-2 text-sm text-text">{stat.label}</div>
-                </div>
-              </FadeIn>
-            ))}
-          </div>
-        </div>
-      </FadeIn>
+        </FadeIn>
+
+        {/* Dynamic viewport connection wrapper for counter elements */}
+        <FadeIn>
+          {({ isInView, ref }) => (
+            <div ref={ref} className="mt-10 grid grid-cols-2 md:grid-cols-4 gap-6">
+              {displayStats.map((stat, i) => {
+                const numericTarget = Number(String(stat.target || "").replace(/[^0-9.]/g, "")) || 0;
+
+                return (
+                  <div key={stat.key || i} className="bg-background border border-border rounded-lg p-6 text-center hover:shadow-sm transition">
+                    <div className="text-3xl md:text-4xl font-extrabold text-primary">
+                      <AnimatedCounter 
+                        target={numericTarget} 
+                        suffix={stat.suffix || ""} 
+                        isInView={isInView}
+                      />
+                    </div>
+                    <div className="mt-2 text-sm text-text">{stat.label}</div>
+                  </div>
+                );
+              })}
+            </div>
+          )}
+        </FadeIn>
+      </div>
     </section>
   );
 }
 
-/* ─── Section: Our Culture ────────────────────────────────── */
+/* ==========================================
+   Our Culture Component
+   ========================================== */
 function OurCulture() {
   return (
     <section className="py-12 md:py-16 bg-background-section">
@@ -195,7 +216,9 @@ function OurCulture() {
   );
 }
 
-/* ─── Section: Certifications & Skills ────────────────────── */
+/* ==========================================
+   Certifications Component
+   ========================================== */
 function Certifications() {
   return (
     <section className="py-12 md:py-16 bg-background">
@@ -211,7 +234,7 @@ function Certifications() {
               <FadeIn key={cert} delay={i * 30}>
                 <div className="inline-flex items-center gap-2 px-4 py-2.5 bg-background border border-border rounded-lg hover:shadow-sm transition">
                   <svg className="w-4 h-4 text-primary shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                    <path fillRule="evenodd" d="M6.267 3.455a3.066 3.066 0 001.745-.723 3.066 3.066 0 013.976 0 3.066 3.066 0 001.745.723 3.066 3.066 0 012.812 2.812c.051.643.304 1.254.723 1.745a3.066 3.066 0 010 3.976 3.066 3.066 0 00-.723 1.745 3.066 3.066 0 01-2.812 2.812 3.066 3.066 0 00-1.745.723 3.066 3.066 0 01-3.976 0 3.066 3.066 0 00-1.745-.723 3.066 3.066 0 01-2.812-2.812 3.066 3.066 0 00-.723-1.745 3.066 3.066 0 010-3.976 3.066 3.066 0 00.723-1.745 3.066 3.066 0 012.812-2.812zm7.44 5.252a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                    <path fillRule="evenodd" d="M6.267 3.455a3.066 3.066 0 001.745-.723 3.066 3.066 0 013.976 0 3.066 3.066 0 001.745.723 3.066 3.066 0 012.812 2.812c.051.643.304 1.254.723 1.745a3.066 3.066 0 010 3.976 3.066 3.066 0 00-.723 1.745 3.066 3.066 0 01-2.812 2.812 3.066 3.066 0 00-1.745.723 3.066 3.066 0 01-3.976 0 3.066 3.066 0 00-1.745-.723 3.066 3.066 0 01-2.812-2.812 3.066 3.066 0 00-.723-1.745 3.066 3.066 0 012.812-2.812zm7.44 5.252a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
                   </svg>
                   <span className="text-sm font-semibold text-heading small-text font-bold">{cert}</span>
                 </div>
@@ -224,12 +247,14 @@ function Certifications() {
   );
 }
 
-/* ─── Page Component ──────────────────────────────────────── */
+/* ==========================================
+   Main Page Component
+   ========================================== */
 export default function Team() {
   const { team, loading, error, fetchTeam } = useTeamStore()
   const { content, fetchPublicSiteContent } = useSiteContentStore()
+  
   const companyStats = content?.companyStats ?? [];
-
   const getStat = (key) => {
     const s = companyStats.find((st) => st.key === key);
     return s ? `${s.target}${s.suffix}` : "";
@@ -339,5 +364,5 @@ export default function Team() {
         />
       </FadeIn>
     </div>
-  )
+  );
 }
