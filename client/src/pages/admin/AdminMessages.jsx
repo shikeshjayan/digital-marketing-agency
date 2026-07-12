@@ -12,7 +12,8 @@ import SearchInput from "../../components/ui/SearchInput.jsx";
 import TableEmptyState from "../../components/ui/TableEmptyState.jsx";
 import ErrorBanner from "../../components/ui/ErrorBanner.jsx";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faTrash } from "@fortawesome/free-solid-svg-icons";
+import { faEye, faTrash } from "@fortawesome/free-solid-svg-icons";
+import EnquiryDetailModal from "../../components/ui/EnquiryDetailModal.jsx";
 
 function statusChip(status) {
   const map = {
@@ -44,6 +45,7 @@ export default function AdminMessages() {
   const [deleteTarget, setDeleteTarget] = useState(null);
   const [deleteAllTarget, setDeleteAllTarget] = useState(false);
   const [spamTarget, setSpamTarget] = useState(null);
+  const [selectedEnquiry, setSelectedEnquiry] = useState(null);
 
   const load = async () => {
     setLoading(true);
@@ -244,7 +246,7 @@ export default function AdminMessages() {
                       <div className="font-bold text-heading truncate max-w-[150px]">
                         {e.name}
                       </div>
-                      <div className="text-xs text-muted truncate max-w-[150px]">
+                      <div className="text-sm text-muted truncate max-w-[150px]">
                         {e.email}
                       </div>
                     </td>
@@ -253,19 +255,27 @@ export default function AdminMessages() {
                     </td>
                     <td className="py-3 pr-3">
                       <span
-                        className={`inline-flex items-center rounded-full px-3 py-1 text-xs font-semibold border ${statusChip(e.status)}`}>
+                        className={`inline-flex items-center rounded-full px-3 py-1 text-sm font-semibold border ${statusChip(e.status)}`}>
                         {e.status}
                       </span>
                     </td>
-                    <td className="py-3 pr-3 text-xs text-muted hidden sm:table-cell">
+                    <td className="py-3 pr-3 text-sm text-muted hidden sm:table-cell">
                       {new Date(e.date).toLocaleDateString()}
                     </td>
                     <td className="py-3">
                       <div className="flex gap-2 flex-wrap">
+                          <button
+                            type="button"
+                            className="px-3 py-2 text-sm sm:px-4 sm:py-2 sm:text-sm min-h-[44px] text-primary hover:text-primary/80 rounded transition cursor-pointer"
+                            title="View"
+                            aria-label="View"
+                            onClick={() => setSelectedEnquiry(e)}>
+                            <FontAwesomeIcon icon={faEye} className="w-4 h-4" />
+                          </button>
                         {(e.status === "New" || e.status === "Pending") && (
                           <button
                             type="button"
-                            className="px-3 py-2 text-xs sm:px-4 sm:py-2 sm:text-sm min-h-[44px] text-text hover:text-heading rounded transition cursor-pointer"
+                            className="px-3 py-2 text-sm sm:px-4 sm:py-2 sm:text-sm min-h-[44px] text-text hover:text-heading rounded transition cursor-pointer"
                             onClick={() => transition(e.enquiry_id, "Replied")}>
                             Mark Replied
                           </button>
@@ -273,14 +283,14 @@ export default function AdminMessages() {
                         {e.status !== "Spam" && (
                           <button
                             type="button"
-                            className="px-3 py-2 text-xs sm:px-4 sm:py-2 sm:text-sm min-h-[44px] text-warning hover:text-warning/80 rounded transition cursor-pointer"
+                            className="px-3 py-2 text-sm sm:px-4 sm:py-2 sm:text-sm min-h-[44px] text-warning hover:text-warning/80 rounded transition cursor-pointer"
                             onClick={() => setSpamTarget(e.enquiry_id)}>
                             Mark Spam
                           </button>
                         )}
                         <button
                           type="button"
-                          className="px-3 py-2 text-xs sm:px-4 sm:py-2 sm:text-sm min-h-[44px] text-danger hover:text-red-700 rounded transition cursor-pointer"
+                          className="px-3 py-2 text-sm sm:px-4 sm:py-2 sm:text-sm min-h-[44px] text-danger hover:text-red-700 rounded transition cursor-pointer"
                            title="Delete"
                            aria-label="Delete"
                            onClick={() => onDelete(e.enquiry_id)}>
@@ -321,6 +331,14 @@ export default function AdminMessages() {
           onPageChange={setPage}
         />
       </div>
+
+      <EnquiryDetailModal
+        open={!!selectedEnquiry}
+        onClose={() => setSelectedEnquiry(null)}
+        enquiry={selectedEnquiry}
+        onMarkReplied={(id) => transition(id, "Replied")}
+        onMarkSpam={(id) => transition(id, "Spam")}
+      />
 
       <ConfirmModal
         open={!!spamTarget}

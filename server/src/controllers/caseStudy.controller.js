@@ -174,11 +174,12 @@ export const updateCaseStudy = asyncHandler(async (req, res) => {
     update.hero_image = req.body.hero_image;
   }
 
-  // Handle gallery upload
+  // Handle gallery upload — merge new images with existing ones
   if (req.files?.gallery) {
     const newGalleryUrls = req.files.gallery.map((f) => f.url).filter(Boolean);
     if (newGalleryUrls.length > 0) {
-      update.gallery = newGalleryUrls;
+      const existing = await CaseStudy.findById(req.params.id).select("gallery");
+      update.gallery = [...(existing?.gallery || []), ...newGalleryUrls];
     }
   }
 

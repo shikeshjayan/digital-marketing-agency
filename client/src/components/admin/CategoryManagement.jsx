@@ -304,7 +304,7 @@ export default function CategoryManagement({ config }) {
             )}
 
             {form.icon && !iconFile && (
-              <div className="flex items-center gap-2 text-xs text-muted">
+              <div className="flex items-center gap-2 text-sm text-muted">
                 <span>Current:</span>
                 {form.iconType === "image" ? (
                   <img src={resolveImagePath(form.icon)} alt="" className="w-6 h-6 object-contain rounded" />
@@ -383,7 +383,7 @@ export default function CategoryManagement({ config }) {
                           {item.name}
                         </div>
                         {item.description && (
-                          <div className="text-xs text-muted truncate max-w-[200px]">
+                          <div className="text-sm text-muted truncate max-w-[200px]">
                             {item.description}
                           </div>
                         )}
@@ -391,7 +391,7 @@ export default function CategoryManagement({ config }) {
                       <td className="py-3 pr-3 text-text">{item.display_order}</td>
                       <td className="py-3 pr-3">
                         <span
-                          className={`inline-flex items-center rounded-full px-3 py-1 text-xs font-semibold border ${
+                          className={`inline-flex items-center rounded-full px-3 py-1 text-sm font-semibold border ${
                             item.status === "Active"
                               ? "bg-success/10 text-success border-success/20"
                               : "bg-warning/10 text-warning border-warning/20"
@@ -403,7 +403,7 @@ export default function CategoryManagement({ config }) {
                         <div className="flex gap-2 flex-wrap">
                           <button
                             type="button"
-                            className="px-3 py-2 text-xs sm:px-4 sm:py-2 sm:text-sm min-h-[44px] text-text hover:text-heading rounded transition cursor-pointer"
+                            className="px-3 py-2 text-sm sm:px-4 sm:py-2 sm:text-sm min-h-[44px] text-text hover:text-heading rounded transition cursor-pointer"
                             title="Edit"
                             aria-label="Edit"
                             onClick={() => onEdit(item)}>
@@ -411,7 +411,7 @@ export default function CategoryManagement({ config }) {
                           </button>
                           <button
                             type="button"
-                            className="px-3 py-2 text-xs sm:px-4 sm:py-2 sm:text-sm min-h-[44px] text-danger hover:text-red-700 rounded transition cursor-pointer"
+                            className="px-3 py-2 text-sm sm:px-4 sm:py-2 sm:text-sm min-h-[44px] text-danger hover:text-red-700 rounded transition cursor-pointer"
                             title="Delete"
                             aria-label="Delete"
                             onClick={() => setDeleteTarget(item._id)}>

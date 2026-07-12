@@ -187,7 +187,7 @@ export default function AdminLogin() {
               By logging in, you agree to our{" "}
               <a
                 href="/internal-data-policies"
-                target="_blank"
+                target="_self"
                 className="text-primary underline hover:text-primary-hover">
                 Internal Data Policies
               </a>

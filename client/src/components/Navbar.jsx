@@ -33,7 +33,7 @@ export default function Navbar() {
     <header className="sticky top-0 z-50 bg-background/90 backdrop-blur border-b border-border">
       <div className="max-w-7xl mx-auto px-4">
         <div className="flex items-center justify-between h-20">
-          <Link to="/" className="flex items-center gap-3 cursor-pointer">
+          <Link to="/" className="flex items-center gap-2 cursor-pointer">
             <img
               src={content?.brand?.logo || "/crown-99.png"}
               alt={`${content?.brand?.name || "CrawlCrown"} Logo`}
@@ -42,14 +42,14 @@ export default function Navbar() {
             <span className="font-bold text-heading">{content?.brand?.name || "CrawlCrown"}</span>
           </Link>
 
-          <nav className="hidden md:flex items-center gap-2">
+          <nav className="hidden md:flex items-center justify-center flex-1 gap-2">
             {navItems.map((item) => (
               <NavLink
                 key={item.to}
                 to={item.to}
                 className={({ isActive: active }) =>
                   `px-3 py-2 rounded-lg text-sm font-medium transition cursor-pointer ${
-                    active ? "text-primary" : "text-text hover:text-primary"
+                    active ? "text-primary" : "text-text hover:text-primary-hover"
                   }`
                 }>
                 {item.label}
@@ -60,8 +60,8 @@ export default function Navbar() {
           <div className="hidden lg:flex items-center gap-3">
             <NavLink
               to="/contact"
-              className="px-4 py-2 rounded-b bg-primary text-white text-sm font-semibold transition cursor-pointer hover:bg-primary-hover">
-              Book an Appointment
+              className="px-5 py-2.5 rounded-lg bg-primary text-white text-base font-semibold leading-none transition cursor-pointer hover:bg-primary-hover">
+              Book Now
             </NavLink>
           </div>
 
@@ -87,11 +87,11 @@ export default function Navbar() {
           <div className="max-w-7xl mx-auto px-4 py-3 flex flex-col gap-2">
             {navItems.map((item) => (
               <NavLink
-                key={item.to ?? item.label}
+                key={item.to}
                 to={item.to}
                 className={({ isActive: active }) =>
                   `px-3 py-2 rounded-lg text-sm font-medium cursor-pointer ${
-                    active ? "text-primary" : "text-text hover:text-primary"
+                    active ? "text-primary" : "text-text hover:text-primary-hover"
                   }`
                 }
                 onClick={() => setMobileOpen(false)}>
@@ -100,9 +100,9 @@ export default function Navbar() {
             ))}
             <NavLink
               to="/contact"
-              className="mt-2 px-4 py-2 rounded-lg bg-primary text-white text-sm font-semibold transition text-center cursor-pointer hover:bg-primary-hover"
+              className="mt-2 px-5 py-2.5 rounded-lg bg-primary text-white text-base font-semibold transition text-center cursor-pointer hover:bg-primary-hover"
               onClick={() => setMobileOpen(false)}>
-              Book an Appointment
+              Book Now
             </NavLink>
           </div>
         </div>

@@ -27,6 +27,7 @@ const DEFAULT_BRAND = {
     { label: "Projects", path: "/projects" },
     { label: "Terms & Conditions", path: "/terms" },
     { label: "Privacy Policy", path: "/privacy" },
+    { label: "Internal Data Policies", path: "/internal-data-policies" },
   ],
 };
 

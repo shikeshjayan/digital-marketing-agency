@@ -84,7 +84,7 @@ export default function AdminServices() {
         search: search || undefined,
         status: status || undefined,
         page,
-        limit: 10,
+        limit: 9,
       });
       setItems(result?.items ?? []);
       setPagination(result?.pagination ?? { total: 0, page: 1, pages: 1 });
@@ -251,223 +251,227 @@ export default function AdminServices() {
       <div className="mt-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
         <div
           ref={formRef}
-          className="lg:col-span-2 bg-background border border-border rounded p-4 shadow-xs lg:h-[80vh] lg:overflow-y-auto">
+          className="lg:col-span-2 bg-background border border-border rounded p-4 shadow-xs lg:h-[80vh] lg:overflow-y-auto flex flex-col scrollbar-custom">
           <div className="font-extrabold text-heading">
             {form.service_id ? "Edit Service" : "Add New Service"}
           </div>
 
-          <form onSubmit={onSubmit} className="mt-4 space-y-3">
-            <FormField
-              label="Service Name"
-              value={form.service_name}
-              onChange={(e) =>
-                setForm((f) => ({ ...f, service_name: e.target.value }))
-              }
-              placeholder="e.g. SEO Optimization"
-            />
-
-            {form.slug && (
-              <div>
-                <label className="text-sm font-semibold text-heading">Slug</label>
-                <input
-                  className={`${inputCls} bg-surface/50 cursor-not-allowed`}
-                  value={form.slug}
-                  readOnly
-                />
-              </div>
-            )}
-
-            <FormField
-              label="Short Description"
-              value={form.short_description}
-              onChange={(e) =>
-                setForm((f) => ({ ...f, short_description: e.target.value }))
-              }
-              placeholder="Brief summary of the service"
-            />
-            <FormField
-              label="Description"
-              textarea
-              rows={3}
-              value={form.description}
-              onChange={(e) =>
-                setForm((f) => ({ ...f, description: e.target.value }))
-              }
-              placeholder="Detailed description of the service"
-            />
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <form onSubmit={onSubmit} className="mt-4 flex flex-col flex-1 justify-between gap-3">
+            <div className="space-y-3">
               <FormField
-                label="Status"
-                value={form.status}
-                onChange={(val) => setForm((f) => ({ ...f, status: val }))}
-                selectOptions={[
-                  { value: "Active", label: "Active" },
-                  { value: "Inactive", label: "Inactive" },
-                ]}
+                label="Service Name"
+                value={form.service_name}
+                onChange={(e) =>
+                  setForm((f) => ({ ...f, service_name: e.target.value }))
+                }
+                placeholder="e.g. SEO Optimization"
+              />
+
+              {form.slug && (
+                <div>
+                  <label className="text-sm font-semibold text-heading">Slug</label>
+                  <input
+                    className={`${inputCls} bg-surface/50 cursor-not-allowed`}
+                    value={form.slug}
+                    readOnly
+                  />
+                </div>
+              )}
+
+              <FormField
+                label="Short Description"
+                value={form.short_description}
+                onChange={(e) =>
+                  setForm((f) => ({ ...f, short_description: e.target.value }))
+                }
+                placeholder="Brief summary of the service"
               />
               <FormField
-                label="Display Order"
-                type="number"
-                value={form.display_order}
-                onChange={(e) =>
-                  setForm((f) => ({
-                    ...f,
-                    display_order: Number(e.target.value),
-                  }))
-                }
-                placeholder="0"
-              />
-            </div>
-
-            <div className="flex items-center gap-3">
-              <label className="relative inline-flex items-center cursor-pointer">
-                <input
-                  type="checkbox"
-                  checked={form.featured}
-                  onChange={(e) =>
-                    setForm((f) => ({ ...f, featured: e.target.checked }))
-                  }
-                  className="sr-only peer"
-                />
-                <div className="w-9 h-5 bg-border rounded-full peer peer-checked:bg-primary peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all" />
-              </label>
-              <span className="text-sm font-semibold text-heading">
-                Featured Service
-              </span>
-            </div>
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-              <FileUploadField
-                label="Hero Image"
-                required
-                file={form.hero_image instanceof File ? form.hero_image : null}
-                existingUrl={typeof form.hero_image === "string" ? form.hero_image : ""}
-                onChange={onPickHeroImage}
-                onRemove={() => setForm((f) => ({ ...f, hero_image: "" }))}
-                confirmText="Remove hero image?"
-              />
-              <FileUploadField
-                label="Icon"
-                file={form.icon instanceof File ? form.icon : null}
-                existingUrl={typeof form.icon === "string" ? form.icon : ""}
-                onChange={onPickIcon}
-                onRemove={() => setForm((f) => ({ ...f, icon: "" }))}
-                confirmText="Remove icon?"
-              />
-            </div>
-
-            <div>
-              <label className="text-sm font-semibold text-heading">
-                Deliverables
-              </label>
-              <div className="mt-2 flex flex-wrap gap-2">
-                {form.deliverables.map((tag, i) => (
-                  <span
-                    key={i}
-                    className="inline-flex items-center gap-1 bg-primary-light text-primary text-xs font-semibold px-3 py-1 rounded-full border border-primary/20">
-                    {tag}
-                    <button
-                      type="button"
-                      onClick={() => onRemoveTag("deliverables", i)}
-                      className="ml-1 text-danger hover:text-red-700 cursor-pointer">
-                      <FontAwesomeIcon icon={faTrash} className="w-3 h-3" />
-                    </button>
-                  </span>
-                ))}
-              </div>
-              <input
-                className={`mt-2 ${inputCls}`}
-                value={tagInputs.deliverables}
-                onChange={(e) =>
-                  setTagInputs((t) => ({ ...t, deliverables: e.target.value }))
-                }
-                onKeyDown={(e) => {
-                  if (e.key === "Enter") {
-                    e.preventDefault();
-                    onAddTag("deliverables", tagInputs.deliverables);
-                  }
-                }}
-                placeholder="e.g. Keyword Research, On-Page SEO, Link Building"
-              />
-            </div>
-
-            <div>
-              <label className="text-sm font-semibold text-heading">
-                Benefits
-              </label>
-              <div className="mt-2 flex flex-wrap gap-2">
-                {form.benefits.map((tag, i) => (
-                  <span
-                    key={i}
-                    className="inline-flex items-center gap-1 bg-success/10 text-success text-xs font-semibold px-3 py-1 rounded-full border border-success/20">
-                    {tag}
-                    <button
-                      type="button"
-                      onClick={() => onRemoveTag("benefits", i)}
-                      className="ml-1 text-success hover:text-success/80 cursor-pointer">
-                      <FontAwesomeIcon icon={faTrash} className="w-3 h-3" />
-                    </button>
-                  </span>
-                ))}
-              </div>
-              <input
-                className={`mt-2 ${inputCls}`}
-                value={tagInputs.benefits}
-                onChange={(e) =>
-                  setTagInputs((t) => ({ ...t, benefits: e.target.value }))
-                }
-                onKeyDown={(e) => {
-                  if (e.key === "Enter") {
-                    e.preventDefault();
-                    onAddTag("benefits", tagInputs.benefits);
-                  }
-                }}
-                placeholder="e.g. Increased ROI, Faster Results"
-              />
-            </div>
-
-            <div className="border border-border rounded-lg p-3 space-y-3">
-              <div className="text-sm font-semibold text-heading">
-                SEO Settings
-              </div>
-              <FormField
-                label="Meta Title"
-                value={form.seo.meta_title}
-                onChange={(e) =>
-                  setForm((f) => ({
-                    ...f,
-                    seo: { ...f.seo, meta_title: e.target.value },
-                  }))
-                }
-                placeholder="SEO page title"
-              />
-              <FormField
-                label="Meta Description"
+                label="Description"
                 textarea
-                rows={2}
-                value={form.seo.meta_description}
+                rows={3}
+                value={form.description}
                 onChange={(e) =>
-                  setForm((f) => ({
-                    ...f,
-                    seo: { ...f.seo, meta_description: e.target.value },
-                  }))
+                  setForm((f) => ({ ...f, description: e.target.value }))
                 }
-                placeholder="SEO page description"
+                placeholder="Detailed description of the service"
               />
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <FormField
+                  label="Status"
+                  value={form.status}
+                  onChange={(val) => setForm((f) => ({ ...f, status: val }))}
+                  selectOptions={[
+                    { value: "Active", label: "Active" },
+                    { value: "Inactive", label: "Inactive" },
+                  ]}
+                />
+                <FormField
+                  label="Display Order"
+                  type="number"
+                  value={form.display_order}
+                  onChange={(e) =>
+                    setForm((f) => ({
+                      ...f,
+                      display_order: Number(e.target.value),
+                    }))
+                  }
+                  placeholder="0"
+                />
+              </div>
+
+              <div className="flex items-center gap-3">
+                <label className="relative inline-flex items-center cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={form.featured}
+                    onChange={(e) =>
+                      setForm((f) => ({ ...f, featured: e.target.checked }))
+                    }
+                    className="sr-only peer"
+                  />
+                  <div className="w-9 h-5 bg-border rounded-full peer peer-checked:bg-primary peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all" />
+                </label>
+                <span className="text-sm font-semibold text-heading">
+                  Featured Service
+                </span>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <FileUploadField
+                  label="Hero Image"
+                  required
+                  file={form.hero_image instanceof File ? form.hero_image : null}
+                  existingUrl={typeof form.hero_image === "string" ? form.hero_image : ""}
+                  onChange={onPickHeroImage}
+                  onRemove={() => setForm((f) => ({ ...f, hero_image: "" }))}
+                  confirmText="Remove hero image?"
+                />
+                <FileUploadField
+                  label="Icon"
+                  file={form.icon instanceof File ? form.icon : null}
+                  existingUrl={typeof form.icon === "string" ? form.icon : ""}
+                  onChange={onPickIcon}
+                  onRemove={() => setForm((f) => ({ ...f, icon: "" }))}
+                  confirmText="Remove icon?"
+                />
+              </div>
+
+              <div>
+                <label className="text-sm font-semibold text-heading">
+                  Deliverables
+                </label>
+                <div className="mt-2 flex flex-wrap gap-2">
+                  {form.deliverables.map((tag, i) => (
+                    <span
+                      key={i}
+                      className="inline-flex items-center gap-1 bg-primary-light text-primary text-sm font-semibold px-3 py-1 rounded-full border border-primary/20">
+                      {tag}
+                      <button
+                        type="button"
+                        onClick={() => onRemoveTag("deliverables", i)}
+                        className="ml-1 text-danger hover:text-red-700 cursor-pointer">
+                        <FontAwesomeIcon icon={faTrash} className="w-3 h-3" />
+                      </button>
+                    </span>
+                  ))}
+                </div>
+                <input
+                  className={`mt-2 ${inputCls}`}
+                  value={tagInputs.deliverables}
+                  onChange={(e) =>
+                    setTagInputs((t) => ({ ...t, deliverables: e.target.value }))
+                  }
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") {
+                      e.preventDefault();
+                      onAddTag("deliverables", tagInputs.deliverables);
+                    }
+                  }}
+                  placeholder="e.g. Keyword Research, On-Page SEO, Link Building"
+                />
+              </div>
+
+              <div>
+                <label className="text-sm font-semibold text-heading">
+                  Benefits
+                </label>
+                <div className="mt-2 flex flex-wrap gap-2">
+                  {form.benefits.map((tag, i) => (
+                    <span
+                      key={i}
+                      className="inline-flex items-center gap-1 bg-success/10 text-success text-sm font-semibold px-3 py-1 rounded-full border border-success/20">
+                      {tag}
+                      <button
+                        type="button"
+                        onClick={() => onRemoveTag("benefits", i)}
+                        className="ml-1 text-success hover:text-success/80 cursor-pointer">
+                        <FontAwesomeIcon icon={faTrash} className="w-3 h-3" />
+                      </button>
+                    </span>
+                  ))}
+                </div>
+                <input
+                  className={`mt-2 ${inputCls}`}
+                  value={tagInputs.benefits}
+                  onChange={(e) =>
+                    setTagInputs((t) => ({ ...t, benefits: e.target.value }))
+                  }
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") {
+                      e.preventDefault();
+                      onAddTag("benefits", tagInputs.benefits);
+                    }
+                  }}
+                  placeholder="e.g. Increased ROI, Faster Results"
+                />
+              </div>
+
+              <div className="border border-border rounded-lg p-3 space-y-3">
+                <div className="text-sm font-semibold text-heading">
+                  SEO Settings
+                </div>
+                <FormField
+                  label="Meta Title"
+                  value={form.seo.meta_title}
+                  onChange={(e) =>
+                    setForm((f) => ({
+                      ...f,
+                      seo: { ...f.seo, meta_title: e.target.value },
+                    }))
+                  }
+                  placeholder="SEO page title"
+                />
+                <FormField
+                  label="Meta Description"
+                  textarea
+                  rows={2}
+                  value={form.seo.meta_description}
+                  onChange={(e) =>
+                    setForm((f) => ({
+                      ...f,
+                      seo: { ...f.seo, meta_description: e.target.value },
+                    }))
+                  }
+                  placeholder="SEO page description"
+                />
+              </div>
             </div>
 
-            <ErrorBanner message={error} />
+            <div>
+              <ErrorBanner message={error} />
 
-            <FormActions
-              submitting={submitting}
-              editId={form.service_id}
-              onSubmit={onSubmit}
-              onReset={() => setForm(EMPTY_FORM)}
-              submitLabel={
-                form.service_id ? "Update Service" : "Create Service"
-              }
-            />
+              <FormActions
+                submitting={submitting}
+                editId={form.service_id}
+                onSubmit={onSubmit}
+                onReset={() => setForm(EMPTY_FORM)}
+                submitLabel={
+                  form.service_id ? "Update Service" : "Create Service"
+                }
+              />
+            </div>
           </form>
         </div>
 
@@ -510,20 +514,20 @@ export default function AdminServices() {
                         <div className="font-bold text-heading truncate max-w-[200px]">
                           {s.service_name}
                         </div>
-                        <div className="text-muted text-xs sm:text-sm truncate max-w-[200px]">
+                        <div className="text-muted text-sm sm:text-sm truncate max-w-[200px]">
                           {s.short_description}
                         </div>
                       </td>
                       <td className="py-3 pr-3 hidden md:table-cell">
                         {s.featured && (
-                          <span className="inline-flex items-center rounded-full px-3 py-1 text-xs font-semibold border bg-info/10 text-info border-info/20">
+                          <span className="inline-flex items-center rounded-full px-3 py-1 text-sm font-semibold border bg-info/10 text-info border-info/20">
                             Featured
                           </span>
                         )}
                       </td>
                       <td className="py-3 pr-3">
                         <span
-                          className={`inline-flex items-center rounded-full px-3 py-1 text-xs font-semibold border ${
+                          className={`inline-flex items-center rounded-full px-3 py-1 text-sm font-semibold border ${
                             s.status === "Active"
                               ? "bg-success/10 text-success border-success/20"
                               : "bg-warning/10 text-warning border-warning/20"
@@ -535,7 +539,7 @@ export default function AdminServices() {
                         <div className="flex gap-2 flex-wrap">
                           <button
                             type="button"
-                            className="px-3 py-2 text-xs sm:px-4 sm:py-2 sm:text-sm min-h-[44px] text-text hover:text-heading rounded transition cursor-pointer"
+                            className="px-3 py-2 text-sm sm:px-4 sm:py-2 sm:text-sm min-h-[44px] text-text hover:text-heading rounded transition cursor-pointer"
                             onClick={() => {
                               setForm({
                                 service_id: s._id,
@@ -563,7 +567,7 @@ export default function AdminServices() {
                           </button>
                           <button
                             type="button"
-                            className="px-3 py-2 text-xs sm:px-4 sm:py-2 sm:text-sm min-h-[44px] text-danger hover:text-primary-hover rounded transition cursor-pointer"
+                            className="px-3 py-2 text-sm sm:px-4 sm:py-2 sm:text-sm min-h-[44px] text-danger hover:text-primary-hover rounded transition cursor-pointer"
                             title="Delete"
                             aria-label="Delete"
                             onClick={() => onDelete(s._id)}>
