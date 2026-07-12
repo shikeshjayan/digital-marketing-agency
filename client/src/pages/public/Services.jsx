@@ -41,7 +41,15 @@ const ServiceCard = ({ service }) => (
       <h3 className="subheading text-heading">
         {service.service_name}
       </h3>
-      <p className="mt-3 small-text text-text body-text line-clamp-3">
+      <p 
+        className="mt-3 small-text text-text body-text"
+        style={{
+          display: '-webkit-box',
+          WebkitLineClamp: 3,
+          WebkitBoxOrient: 'vertical',
+          overflow: 'hidden'
+        }}
+      >
         {service.short_description}
       </p>
       <span className="mt-auto pt-6 inline-flex items-center gap-2 text-sm font-semibold text-primary group-hover:gap-3 transition-all button-text">
@@ -148,34 +156,54 @@ function FeaturedCaseStudies({ caseStudies, loading }) {
             <p className="text-muted">No featured case studies available yet.</p>
           </div>
         ) : (
-          <div className="mt-10 flex flex-wrap justify-center gap-6">
+          <div className="mt-10 flex flex-wrap justify-center gap-6 items-stretch">
             {caseStudies.map((cs, i) => (
-              <FadeIn key={cs._id} delay={i * 40} className="w-full md:basis-[calc(50%-12px)] lg:basis-[calc(33.33%-16px)] max-w-sm lg:max-w-none">
-                <div className="bg-background border border-border rounded-lg p-6 h-full flex flex-col hover:shadow-md transition group">
-                  {cs.hero_image && (
-                    <div className="-mx-6 -mt-6 mb-4 overflow-hidden rounded-t-lg">
-                      <img
-                        src={resolveImagePath(cs.hero_image)}
-                        alt={cs.title}
-                        className="w-full h-40 object-cover"
-                      />
-                    </div>
-                  )}
-                  <span className="text-xs font-semibold text-primary bg-primary-light px-2.5 py-1 rounded w-fit text-xxs">
-                    {cs.results?.[0]?.title || "Case Study"}
-                  </span>
-                  <h3 className="mt-3 body-text font-bold text-heading">{cs.title}</h3>
-                  {cs.results?.[0] && (
-                    <div className="mt-3 text-2xl font-extrabold text-primary">
-                       {cs.results[0].value}
-                    </div>
-                  )}
-                  <p className="mt-2 small-text text-text body-text flex-1 line-clamp-3">{cs.overview}</p>
-                  <Link
-                    to={`/case-studies/${cs.slug}`}
-                    className="mt-4 inline-flex items-center gap-2 text-sm font-semibold text-primary group-hover:gap-3 transition-all button-text">
-                    Read Case Study <FontAwesomeIcon icon={faArrowRight} />
-                  </Link>
+              <FadeIn key={cs._id} delay={i * 40} className="w-full md:basis-[calc(50%-12px)] lg:basis-[calc(33.33%-16px)] max-w-sm lg:max-w-none flex">
+                {/* CHANGED: Removed flex-1 from <p> and added flex-1 to the layout container wrappers below to balance distribution */}
+                <div className="bg-background border border-border rounded-lg p-6 w-full flex flex-col justify-between hover:shadow-md transition group">
+                  <div className="flex flex-col flex-1">
+                    {cs.hero_image && (
+                      <div className="-mx-6 -mt-6 mb-4 overflow-hidden rounded-t-lg">
+                        <img
+                          src={resolveImagePath(cs.hero_image)}
+                          alt={cs.title}
+                          className="w-full h-40 object-cover"
+                        />
+                      </div>
+                    )}
+                    <span className="text-xs font-semibold text-primary bg-primary-light px-2.5 py-1 rounded w-fit text-xxs">
+                      {cs.results?.[0]?.title || "Case Study"}
+                    </span>
+                    
+                    <h3 className="mt-3 text-base font-bold text-heading line-clamp-1">{cs.title}</h3>
+                    
+                    {cs.results?.[0] && (
+                      <div className="mt-3 text-2xl font-extrabold text-primary">
+                         {cs.results[0].value}
+                      </div>
+                    )}
+                    
+                    {/* CHANGED: Swapped flex-1 out for a clean bottom margin structure to give room to the absolute line clamping */}
+                    <p 
+                      className="mt-2 mb-4 text-sm leading-relaxed text-text break-words"
+                      style={{
+                        display: '-webkit-box',
+                        WebkitLineClamp: 3,
+                        WebkitBoxOrient: 'vertical',
+                        overflow: 'hidden'
+                      }}
+                    >
+                      {cs.overview}
+                    </p>
+                  </div>
+                  
+                  <div className="mt-auto pt-2">
+                    <Link
+                      to={`/case-studies/${cs.slug}`}
+                      className="inline-flex items-center gap-2 text-sm font-semibold text-primary group-hover:gap-3 transition-all button-text">
+                      Read Case Study <FontAwesomeIcon icon={faArrowRight} />
+                    </Link>
+                  </div>
                 </div>
               </FadeIn>
             ))}
