@@ -8,6 +8,7 @@ import useIndustryStore from "../../store/industryStore.js";
 import useTeamStore from "../../store/teamStore.js";
 import ConfirmModal from "../../components/ui/ConfirmModal.jsx";
 import Select from "../../components/ui/Select.jsx";
+import MultiSelect from "../../components/ui/MultiSelect.jsx";
 import Pagination from "../../components/ui/Pagination.jsx";
 import { TableSkeleton } from "../../components/ui/Skeleton.jsx";
 import AdminPageHeader from "../../components/ui/AdminPageHeader.jsx";
@@ -55,7 +56,7 @@ export default function AdminProjects() {
     deleteAllProjects,
   } = useProjectStore();
 
-  const { fetchServices, adminServices } = useServiceStore();
+  const { fetchAdminServices, adminServices } = useServiceStore();
   const { fetchAdminTechnologies, adminTechnologies } = useTechnologyStore();
   const { fetchAdminIndustries, adminIndustries } = useIndustryStore();
   const { fetchAdminTeam, adminTeam } = useTeamStore();
@@ -67,7 +68,6 @@ export default function AdminProjects() {
   const [page, setPage] = useState(1);
   const [pagination, setPagination] = useState({ total: 0, page: 1, pages: 1 });
   const galleryRef = useRef(null);
-  const blobUrls = useRef(new Map());
   const [form, setForm] = useState(EMPTY_FORM);
   const [error, setError] = useState("");
   const [submitting, setSubmitting] = useState(false);
@@ -75,32 +75,20 @@ export default function AdminProjects() {
   const [deleteTarget, setDeleteTarget] = useState(null);
   const [deleteAllTarget, setDeleteAllTarget] = useState(false);
   const [confirmGalleryIdx, setConfirmGalleryIdx] = useState(null);
+  const galleryUrlsRef = useRef([]);
 
   function getGallerySrc(img) {
-    if (img instanceof File) {
-      if (!blobUrls.current.has(img)) {
-        blobUrls.current.set(img, URL.createObjectURL(img));
-      }
-      return blobUrls.current.get(img);
-    }
+    if (img && typeof img === "object" && "url" in img) return img.url;
     return resolveImagePath(img);
   }
 
   useEffect(() => {
-    const map = blobUrls.current;
-    const currentFiles = new Set(form.gallery.filter((f) => f instanceof File));
-    for (const [file, url] of map.entries()) {
-      if (!currentFiles.has(file)) {
-        URL.revokeObjectURL(url);
-        map.delete(file);
-      }
-    }
+    galleryUrlsRef.current = form.gallery.filter((i) => i?.url).map((i) => i.url);
   }, [form.gallery]);
 
   useEffect(() => {
     return () => {
-      blobUrls.current.forEach((url) => URL.revokeObjectURL(url));
-      blobUrls.current.clear();
+      galleryUrlsRef.current.forEach((url) => URL.revokeObjectURL(url));
     };
   }, []);
 
@@ -112,7 +100,7 @@ export default function AdminProjects() {
         search: search || undefined,
         status: status || undefined,
         page,
-        limit: 10,
+        limit: 9,
       });
       setItems(result?.items ?? []);
       setPagination(result?.pagination ?? { total: 0, page: 1, pages: 1 });
@@ -128,7 +116,7 @@ export default function AdminProjects() {
   useEffect(() => {
     const t = setTimeout(() => {
       load();
-      fetchServices();
+      fetchAdminServices({ limit: 200 });
       fetchAdminTechnologies({ limit: 200 });
       fetchAdminIndustries({ limit: 200 });
       fetchAdminTeam({ limit: 200 });
@@ -148,15 +136,11 @@ export default function AdminProjects() {
   }
 
   function onPickGallery(files) {
-    setForm((f) => ({ ...f, gallery: [...f.gallery, ...files] }));
-  }
-
-  function toggleMultiSelect(field, value) {
-    setForm((f) => {
-      const arr = f[field];
-      const next = arr.includes(value) ? arr.filter((v) => v !== value) : [...arr, value];
-      return { ...f, [field]: next };
-    });
+    const items = Array.from(files).map((file) => ({
+      file,
+      url: URL.createObjectURL(file),
+    }));
+    setForm((f) => ({ ...f, gallery: [...f.gallery, ...items] }));
   }
 
   async function onSubmit(e) {
@@ -190,9 +174,9 @@ export default function AdminProjects() {
       payload.append("removeThumbnail", "true");
     }
 
-    form.gallery.forEach((file) => {
-      if (file instanceof File) {
-        payload.append("gallery", file);
+    form.gallery.forEach((item) => {
+      if (item?.file instanceof File) {
+        payload.append("gallery", item.file);
       }
     });
 
@@ -328,262 +312,223 @@ export default function AdminProjects() {
       <div className="mt-6 grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div
           ref={formRef}
-          className="lg:col-span-1 bg-background border border-border rounded p-4 shadow-xs lg:h-[80vh] lg:overflow-y-auto">
+          className="lg:col-span-1 bg-background border border-border rounded p-4 shadow-xs lg:h-[80vh] lg:overflow-y-auto flex flex-col scrollbar-custom">
           <div className="font-extrabold text-heading">
             {form.project_id ? "Edit Project" : "Add New Project"}
           </div>
 
-          <form onSubmit={onSubmit} className="mt-4 space-y-3">
-            <FormField
-              label="Project Name"
-              value={form.project_name}
-              onChange={(e) => setForm((f) => ({ ...f, project_name: e.target.value }))}
-              placeholder="e.g. E-commerce Website"
-            />
-            <FormField
-              label="Short Description"
-              value={form.short_description}
-              onChange={(e) => setForm((f) => ({ ...f, short_description: e.target.value }))}
-              placeholder="Brief summary (max 200 chars)"
-            />
-            <FormField
-              label="Description"
-              textarea
-              rows={3}
-              value={form.description}
-              onChange={(e) => setForm((f) => ({ ...f, description: e.target.value }))}
-              placeholder="Detailed description of the project"
-            />
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <form onSubmit={onSubmit} className="mt-4 flex flex-col flex-1 justify-between gap-3">
+            <div className="space-y-3">
               <FormField
-                label="Status"
-                value={form.status}
-                onChange={(val) => setForm((f) => ({ ...f, status: val }))}
-                selectOptions={[
-                  { value: "Draft", label: "Draft" },
-                  { value: "Published", label: "Published" },
-                ]}
+                label="Project Name"
+                value={form.project_name}
+                onChange={(e) => setForm((f) => ({ ...f, project_name: e.target.value }))}
+                placeholder="e.g. E-commerce Website"
               />
-              <div className="flex items-end pb-1">
-                <div className="flex items-center gap-3">
-                  <label className="relative inline-flex items-center cursor-pointer">
-                    <input
-                      type="checkbox"
-                      checked={form.featured}
-                      onChange={(e) => setForm((f) => ({ ...f, featured: e.target.checked }))}
-                      className="sr-only peer"
-                    />
-                    <div className="w-9 h-5 bg-border rounded-full peer peer-checked:bg-primary peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all" />
-                  </label>
-                  <span className="text-sm font-semibold text-heading">Featured Project</span>
-                </div>
-              </div>
-            </div>
-
-            <FileUploadField
-              label="Thumbnail"
-              required
-              file={form.thumbnail instanceof File ? form.thumbnail : null}
-              existingUrl={typeof form.thumbnail === "string" ? resolveImagePath(form.thumbnail) : ""}
-              onChange={onPickThumbnail}
-              onRemove={() => setForm((f) => ({ ...f, thumbnail: "" }))}
-              confirmText="Remove thumbnail?"
-            />
-
-            <div>
-              <label className="block text-sm font-medium text-heading mb-1">Gallery Images</label>
-              <input
-                ref={galleryRef}
-                type="file"
-                multiple
-                accept="image/*"
-                onChange={(e) => onPickGallery(Array.from(e.target.files))}
-                className="text-sm text-muted file:mr-3 file:py-2 file:px-4 file:rounded file:border-0 file:text-sm file:font-semibold file:bg-primary file:text-white hover:file:bg-primary-hover cursor-pointer"
+              <FormField
+                label="Short Description"
+                value={form.short_description}
+                onChange={(e) => setForm((f) => ({ ...f, short_description: e.target.value }))}
+                placeholder="Brief summary (max 200 chars)"
               />
-              {form.gallery.length > 0 && (
-                <div className="mt-2 flex flex-wrap gap-2">
-                  {form.gallery.map((img, idx) => (
-                    <div key={idx} className="relative w-16 h-16 border border-border rounded overflow-hidden">
-                      <img
-                        src={getGallerySrc(img)}
-                        alt=""
-                        className="w-full h-full object-cover"
+              <FormField
+                label="Description"
+                textarea
+                rows={3}
+                value={form.description}
+                onChange={(e) => setForm((f) => ({ ...f, description: e.target.value }))}
+                placeholder="Detailed description of the project"
+              />
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <FormField
+                  label="Status"
+                  value={form.status}
+                  onChange={(val) => setForm((f) => ({ ...f, status: val }))}
+                  selectOptions={[
+                    { value: "Draft", label: "Draft" },
+                    { value: "Published", label: "Published" },
+                  ]}
+                />
+                <div className="flex items-end pb-1">
+                  <div className="flex items-center gap-3">
+                    <label className="relative inline-flex items-center cursor-pointer">
+                      <input
+                        type="checkbox"
+                        checked={form.featured}
+                        onChange={(e) => setForm((f) => ({ ...f, featured: e.target.checked }))}
+                        className="sr-only peer"
                       />
-                      <button
-                        type="button"
-                        onClick={() => setConfirmGalleryIdx(idx)}
-                        className="absolute top-0 right-0 bg-danger text-white w-4 h-4 flex items-center justify-center text-xs cursor-pointer">
-                        <FontAwesomeIcon icon={faTrash} className="w-3 h-3" />
-                      </button>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
-
-            {/* Services multi-select */}
-            <div>
-              <label className="block text-sm font-medium text-heading mb-1">Services *</label>
-              <div className="max-h-32 overflow-y-auto border border-border rounded p-2 space-y-1">
-                {adminServices.map((s) => (
-                  <label key={s._id} className="flex items-center gap-2 cursor-pointer">
-                    <input
-                      type="checkbox"
-                      checked={form.services.includes(s._id)}
-                      onChange={() => toggleMultiSelect("services", s._id)}
-                      className="w-3 h-3 rounded border-border accent-primary"
-                    />
-                    <span className="text-xs text-text">{s.service_name}</span>
-                  </label>
-                ))}
-                {adminServices.length === 0 && <p className="text-xs text-muted">No services found. Create services first.</p>}
-              </div>
-            </div>
-
-            {/* Technologies multi-select */}
-            <div>
-              <label className="block text-sm font-medium text-heading mb-1">Technologies</label>
-              <div className="max-h-32 overflow-y-auto border border-border rounded p-2 space-y-1">
-                {adminTechnologies.map((t) => (
-                  <label key={t._id} className="flex items-center gap-2 cursor-pointer">
-                    <input
-                      type="checkbox"
-                      checked={form.technologies.includes(t._id)}
-                      onChange={() => toggleMultiSelect("technologies", t._id)}
-                      className="w-3 h-3 rounded border-border accent-primary"
-                    />
-                    <span className="text-xs text-text">{t.name}</span>
-                  </label>
-                ))}
-                {adminTechnologies.length === 0 && <p className="text-xs text-muted">No technologies found. Create them first.</p>}
-              </div>
-            </div>
-
-            {/* Industries multi-select */}
-            <div>
-              <label className="block text-sm font-medium text-heading mb-1">Industries</label>
-              <div className="max-h-32 overflow-y-auto border border-border rounded p-2 space-y-1">
-                {adminIndustries.map((ind) => (
-                  <label key={ind._id} className="flex items-center gap-2 cursor-pointer">
-                    <input
-                      type="checkbox"
-                      checked={form.industries.includes(ind._id)}
-                      onChange={() => toggleMultiSelect("industries", ind._id)}
-                      className="w-3 h-3 rounded border-border accent-primary"
-                    />
-                    <span className="text-xs text-text">{ind.name}</span>
-                  </label>
-                ))}
-                {adminIndustries.length === 0 && <p className="text-xs text-muted">No industries found. Create them first.</p>}
-              </div>
-            </div>
-
-            {/* Team multi-select */}
-            <div>
-              <label className="block text-sm font-medium text-heading mb-1">Team Members</label>
-              <div className="max-h-32 overflow-y-auto border border-border rounded p-2 space-y-1">
-                {adminTeam.map((m) => (
-                  <label key={m._id} className="flex items-center gap-2 cursor-pointer">
-                    <input
-                      type="checkbox"
-                      checked={form.team.includes(m._id)}
-                      onChange={() => toggleMultiSelect("team", m._id)}
-                      className="w-3 h-3 rounded border-border accent-primary"
-                    />
-                    <span className="text-xs text-text">{m.name}</span>
-                  </label>
-                ))}
-                {adminTeam.length === 0 && <p className="text-xs text-muted">No team members found.</p>}
-              </div>
-            </div>
-
-            {/* Client info */}
-            <div className="border-t border-border pt-3">
-              <div className="text-sm font-bold text-heading mb-2">Client Information</div>
-              <div className="space-y-3">
-                <FormField
-                  label="Client Name"
-                  value={form.client_name}
-                  onChange={(e) => setForm((f) => ({ ...f, client_name: e.target.value }))}
-                  placeholder="e.g. John Smith"
-                />
-                <FormField
-                  label="Company"
-                  value={form.client_company}
-                  onChange={(e) => setForm((f) => ({ ...f, client_company: e.target.value }))}
-                  placeholder="e.g. Acme Corp"
-                />
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                  <FormField
-                    label="Website"
-                    value={form.client_website}
-                    onChange={(e) => setForm((f) => ({ ...f, client_website: e.target.value }))}
-                    placeholder="https://example.com"
-                  />
-                  <FormField
-                    label="Location"
-                    value={form.client_location}
-                    onChange={(e) => setForm((f) => ({ ...f, client_location: e.target.value }))}
-                    placeholder="e.g. New York, USA"
-                  />
+                      <div className="w-9 h-5 bg-border rounded-full peer peer-checked:bg-primary peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all" />
+                    </label>
+                    <span className="text-sm font-semibold text-heading">Featured Project</span>
+                  </div>
                 </div>
               </div>
-            </div>
 
-            {/* Links */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-              <FormField
-                label="Project URL"
-                value={form.project_url}
-                onChange={(e) => setForm((f) => ({ ...f, project_url: e.target.value }))}
-                placeholder="https://live-project.com"
+              <FileUploadField
+                label="Thumbnail"
+                required
+                file={form.thumbnail instanceof File ? form.thumbnail : null}
+                existingUrl={typeof form.thumbnail === "string" ? resolveImagePath(form.thumbnail) : ""}
+                onChange={onPickThumbnail}
+                onRemove={() => setForm((f) => ({ ...f, thumbnail: "" }))}
+                confirmText="Remove thumbnail?"
               />
-              <FormField
-                label="GitHub URL"
-                value={form.github_url}
-                onChange={(e) => setForm((f) => ({ ...f, github_url: e.target.value }))}
-                placeholder="https://github.com/..."
+
+              <div>
+                <label className="block text-sm font-medium text-heading mb-1">Gallery Images</label>
+                <input
+                  ref={galleryRef}
+                  type="file"
+                  multiple
+                  accept="image/*"
+                  onChange={(e) => onPickGallery(Array.from(e.target.files))}
+                  className="text-sm text-muted file:mr-3 file:py-2 file:px-4 file:rounded file:border-0 file:text-sm file:font-semibold file:bg-primary file:text-white hover:file:bg-primary-hover cursor-pointer"
+                />
+                {form.gallery.length > 0 && (
+                  <div className="mt-2 flex flex-wrap gap-2">
+                    {form.gallery.map((img, idx) => (
+                      <div key={idx} className="relative w-16 h-16 border border-border rounded overflow-hidden">
+                        <img
+                          src={getGallerySrc(img)}
+                          alt=""
+                          className="w-full h-full object-cover"
+                        />
+                        <button
+                          type="button"
+                          onClick={() => setConfirmGalleryIdx(idx)}
+                          className="absolute top-0 right-0 bg-danger text-white w-4 h-4 flex items-center justify-center text-sm cursor-pointer">
+                          <FontAwesomeIcon icon={faTrash} className="w-3 h-3" />
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              <MultiSelect
+                label="Services"
+                required
+                options={adminServices.map((s) => ({ value: s._id, label: s.service_name }))}
+                value={form.services}
+                onChange={(vals) => setForm((f) => ({ ...f, services: vals }))}
+                emptyMessage="No services found. Create services first."
               />
-            </div>
 
-            <FormField
-              label="Completion Date"
-              type="date"
-              value={form.completion_date}
-              onChange={(e) => setForm((f) => ({ ...f, completion_date: e.target.value }))}
-            />
+              <MultiSelect
+                label="Technologies"
+                options={adminTechnologies.map((t) => ({ value: t._id, label: t.name }))}
+                value={form.technologies}
+                onChange={(vals) => setForm((f) => ({ ...f, technologies: vals }))}
+                emptyMessage="No technologies found. Create them first."
+              />
 
-            {/* SEO */}
-            <div className="border-t border-border pt-3">
-              <div className="text-sm font-bold text-heading mb-2">SEO</div>
-              <div className="space-y-3">
+              <MultiSelect
+                label="Industries"
+                options={adminIndustries.map((ind) => ({ value: ind._id, label: ind.name }))}
+                value={form.industries}
+                onChange={(vals) => setForm((f) => ({ ...f, industries: vals }))}
+                emptyMessage="No industries found. Create them first."
+              />
+
+              <MultiSelect
+                label="Team Members"
+                options={adminTeam.map((m) => ({ value: m._id, label: m.name }))}
+                value={form.team}
+                onChange={(vals) => setForm((f) => ({ ...f, team: vals }))}
+                emptyMessage="No team members found."
+              />
+
+              {/* Client info */}
+              <div className="border-t border-border pt-3">
+                <div className="text-sm font-bold text-heading mb-2">Client Information</div>
+                <div className="space-y-3">
+                  <FormField
+                    label="Client Name"
+                    value={form.client_name}
+                    onChange={(e) => setForm((f) => ({ ...f, client_name: e.target.value }))}
+                    placeholder="e.g. John Smith"
+                  />
+                  <FormField
+                    label="Company"
+                    value={form.client_company}
+                    onChange={(e) => setForm((f) => ({ ...f, client_company: e.target.value }))}
+                    placeholder="e.g. Acme Corp"
+                  />
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <FormField
+                      label="Website"
+                      value={form.client_website}
+                      onChange={(e) => setForm((f) => ({ ...f, client_website: e.target.value }))}
+                      placeholder="https://example.com"
+                    />
+                    <FormField
+                      label="Location"
+                      value={form.client_location}
+                      onChange={(e) => setForm((f) => ({ ...f, client_location: e.target.value }))}
+                      placeholder="e.g. New York, USA"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* Links */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <FormField
-                  label="Meta Title"
-                  value={form.seo_meta_title}
-                  onChange={(e) => setForm((f) => ({ ...f, seo_meta_title: e.target.value }))}
-                  placeholder="SEO title for the project page"
+                  label="Project URL"
+                  value={form.project_url}
+                  onChange={(e) => setForm((f) => ({ ...f, project_url: e.target.value }))}
+                  placeholder="https://live-project.com"
                 />
                 <FormField
-                  label="Meta Description"
-                  textarea
-                  rows={2}
-                  value={form.seo_meta_description}
-                  onChange={(e) => setForm((f) => ({ ...f, seo_meta_description: e.target.value }))}
-                  placeholder="SEO description for the project page"
+                  label="GitHub URL"
+                  value={form.github_url}
+                  onChange={(e) => setForm((f) => ({ ...f, github_url: e.target.value }))}
+                  placeholder="https://github.com/..."
                 />
+              </div>
+
+              <FormField
+                label="Completion Date"
+                type="date"
+                value={form.completion_date}
+                onChange={(e) => setForm((f) => ({ ...f, completion_date: e.target.value }))}
+              />
+
+              {/* SEO */}
+              <div className="border-t border-border pt-3">
+                <div className="text-sm font-bold text-heading mb-2">SEO</div>
+                <div className="space-y-3">
+                  <FormField
+                    label="Meta Title"
+                    value={form.seo_meta_title}
+                    onChange={(e) => setForm((f) => ({ ...f, seo_meta_title: e.target.value }))}
+                    placeholder="SEO title for the project page"
+                  />
+                  <FormField
+                    label="Meta Description"
+                    textarea
+                    rows={2}
+                    value={form.seo_meta_description}
+                    onChange={(e) => setForm((f) => ({ ...f, seo_meta_description: e.target.value }))}
+                    placeholder="SEO description for the project page"
+                  />
+                </div>
               </div>
             </div>
 
-            <ErrorBanner message={error} />
+            <div>
+              <ErrorBanner message={error} />
 
-            <FormActions
-              submitting={submitting}
-              editId={form.project_id}
-              onSubmit={onSubmit}
-              onReset={() => setForm(EMPTY_FORM)}
-              submitLabel={form.project_id ? "Update Project" : "Create Project"}
-            />
+              <FormActions
+                submitting={submitting}
+                editId={form.project_id}
+                onSubmit={onSubmit}
+                onReset={() => setForm(EMPTY_FORM)}
+                submitLabel={form.project_id ? "Update Project" : "Create Project"}
+              />
+            </div>
           </form>
         </div>
 
@@ -631,7 +576,7 @@ export default function AdminProjects() {
                             <div className="font-bold text-heading truncate max-w-[200px]">
                               {p.project_name}
                             </div>
-                            <div className="text-muted text-xs truncate max-w-[200px]">
+                            <div className="text-muted text-sm truncate max-w-[200px]">
                               {p.short_description}
                             </div>
                             {p.featured && (
@@ -656,7 +601,7 @@ export default function AdminProjects() {
                       </td>
                       <td className="py-3 pr-3">
                         <span
-                          className={`inline-flex items-center rounded-full px-3 py-1 text-xs font-semibold border ${
+                          className={`inline-flex items-center rounded-full px-3 py-1 text-sm font-semibold border ${
                             p.status === "Published"
                               ? "bg-success/10 text-success border-success/20"
                               : "bg-warning/10 text-warning border-warning/20"
@@ -664,11 +609,11 @@ export default function AdminProjects() {
                           {p.status}
                         </span>
                       </td>
-                      <td className="py-3">
-                        <div className="flex gap-2 flex-wrap">
+                      <td className="py-3 whitespace-nowrap">
+                        <div className="flex gap-2">
                           <button
                             type="button"
-                            className="px-3 py-2 text-xs sm:px-4 sm:py-2 sm:text-sm min-h-[44px] text-text hover:text-heading rounded transition cursor-pointer"
+                            className="px-3 py-2 text-sm sm:px-4 sm:py-2 sm:text-sm min-h-[44px] text-text hover:text-heading rounded transition cursor-pointer"
                             title="Edit"
                             aria-label="Edit"
                             onClick={() => onEdit(p)}>
@@ -676,7 +621,7 @@ export default function AdminProjects() {
                           </button>
                           <button
                             type="button"
-                            className="px-3 py-2 text-xs sm:px-4 sm:py-2 sm:text-sm min-h-[44px] text-danger hover:text-primary-hover rounded transition cursor-pointer"
+                            className="px-3 py-2 text-sm sm:px-4 sm:py-2 sm:text-sm min-h-[44px] text-danger hover:text-primary-hover rounded transition cursor-pointer"
                             title="Delete"
                             aria-label="Delete"
                             onClick={() => setDeleteTarget(p._id)}>
@@ -724,6 +669,9 @@ export default function AdminProjects() {
         open={confirmGalleryIdx !== null}
         onCancel={() => setConfirmGalleryIdx(null)}
         onConfirm={() => {
+          if (confirmGalleryIdx === null) return;
+          const img = form.gallery[confirmGalleryIdx];
+          if (img?.url) URL.revokeObjectURL(img.url);
           if (galleryRef.current) galleryRef.current.value = "";
           setForm((f) => ({ ...f, gallery: f.gallery.filter((_, i) => i !== confirmGalleryIdx) }));
           setConfirmGalleryIdx(null);

@@ -8,7 +8,14 @@ import { faTrash } from "@fortawesome/free-solid-svg-icons";
 import ConfirmModal from "../../components/ui/ConfirmModal.jsx";
 
 export default function AdminSiteContent() {
-  const { content, loading, error, fetchSiteContent, updateSiteContent, seedSiteContent } = useSiteContentStore();
+  const {
+    content,
+    loading,
+    error,
+    fetchSiteContent,
+    updateSiteContent,
+    seedSiteContent,
+  } = useSiteContentStore();
 
   const [techItems, setTechItems] = useState([]);
   const [marqueeLogos, setMarqueeLogos] = useState([]);
@@ -86,10 +93,22 @@ export default function AdminSiteContent() {
   }
 
   const DEFAULT_STAT_KEYS = new Set([
-    "yearsExperience", "projectsCompleted", "satisfiedClients", "clientRetention",
-    "teamMembers", "averageRating", "averageRoi", "support247",
-    "onTimeDelivery", "countriesServed", "industryAwards", "uptimeGuaranteed",
-    "responseTime", "freeConsultation", "satisfactionGoal", "clientFocus",
+    "yearsExperience",
+    "projectsCompleted",
+    "satisfiedClients",
+    "clientRetention",
+    "teamMembers",
+    "averageRating",
+    "averageRoi",
+    "support247",
+    "onTimeDelivery",
+    "countriesServed",
+    "industryAwards",
+    "uptimeGuaranteed",
+    "responseTime",
+    "freeConsultation",
+    "satisfactionGoal",
+    "clientFocus",
   ]);
 
   function labelToKey(label) {
@@ -101,7 +120,7 @@ export default function AdminSiteContent() {
       .map((word, i) =>
         i === 0
           ? word.toLowerCase()
-          : word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()
+          : word.charAt(0).toUpperCase() + word.slice(1).toLowerCase(),
       )
       .join("");
   }
@@ -186,11 +205,13 @@ export default function AdminSiteContent() {
       {/* ─── Technology Stack Items ─── */}
       <section className="mt-6 bg-background border border-border rounded p-5">
         <h3 className="font-extrabold text-heading">Technology Stack Items</h3>
-        <p className="mt-1 text-xs text-muted">Name/code pairs shown in the Technology Stack section.</p>
+        <p className="mt-1 text-sm text-muted">
+          Name/code pairs shown in the Technology Stack section.
+        </p>
 
         <div className="mt-4 space-y-3">
           {techItems.map((item, i) => (
-             <div key={i} className="flex flex-wrap items-center gap-2">
+            <div key={i} className="flex flex-wrap items-center gap-2">
               <input
                 className="flex-1 min-w-[160px] rounded border border-border bg-surface px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-primary-light"
                 placeholder="Name (e.g. WordPress)"
@@ -225,7 +246,9 @@ export default function AdminSiteContent() {
           open={confirmTechIdx !== null}
           onCancel={() => setConfirmTechIdx(null)}
           onConfirm={() => {
-            setTechItems((prev) => prev.filter((_, idx) => idx !== confirmTechIdx));
+            setTechItems((prev) =>
+              prev.filter((_, idx) => idx !== confirmTechIdx),
+            );
             setConfirmTechIdx(null);
           }}
           message="Remove this technology item?"
@@ -235,7 +258,9 @@ export default function AdminSiteContent() {
       {/* ─── Trust Marquee Logos ─── */}
       <section className="mt-6 bg-background border border-border rounded p-5">
         <h3 className="font-extrabold text-heading">Trust Marquee Logos</h3>
-        <p className="mt-1 text-xs text-muted">Brand/client names that scroll in the marquee section.</p>
+        <p className="mt-1 text-sm text-muted">
+          Brand/client names that scroll in the marquee section.
+        </p>
 
         <div className="mt-4 space-y-3">
           {marqueeLogos.map((logo, i) => (
@@ -268,7 +293,9 @@ export default function AdminSiteContent() {
           open={confirmMarqueeIdx !== null}
           onCancel={() => setConfirmMarqueeIdx(null)}
           onConfirm={() => {
-            setMarqueeLogos((prev) => prev.filter((_, idx) => idx !== confirmMarqueeIdx));
+            setMarqueeLogos((prev) =>
+              prev.filter((_, idx) => idx !== confirmMarqueeIdx),
+            );
             setConfirmMarqueeIdx(null);
           }}
           message="Remove this marquee logo?"
@@ -278,11 +305,13 @@ export default function AdminSiteContent() {
       {/* ─── Company Statistics ─── */}
       <section className="mt-6 bg-background border border-border rounded p-5">
         <h3 className="font-extrabold text-heading">Company Statistics</h3>
-        <p className="mt-1 text-xs text-muted">Manage company stats shown across the site. Core stats are fixed; custom stats can be removed. Key is auto-generated from the label.</p>
+        <p className="mt-1 text-sm text-muted">
+          Manage company stats shown across the site.
+        </p>
 
         <div className="mt-4 space-y-4">
           {companyStats.map((stat, i) => (
-             <div key={i} className="flex flex-wrap items-center gap-2">
+            <div key={i} className="flex flex-wrap items-center gap-2">
               <input
                 className="flex-1 min-w-[80px] sm:w-24 sm:flex-none rounded border border-border bg-surface px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-primary-light"
                 placeholder="Target (e.g. 8)"
@@ -327,7 +356,9 @@ export default function AdminSiteContent() {
           open={confirmStatIdx !== null}
           onCancel={() => setConfirmStatIdx(null)}
           onConfirm={() => {
-            setCompanyStats((prev) => prev.filter((_, idx) => idx !== confirmStatIdx));
+            setCompanyStats((prev) =>
+              prev.filter((_, idx) => idx !== confirmStatIdx),
+            );
             setConfirmStatIdx(null);
           }}
           message="Remove this company statistic?"

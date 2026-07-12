@@ -119,7 +119,7 @@ export default function AdminBrandSettings() {
       {/* ─── Brand Info ─── */}
       <section className="mt-6 bg-background border border-border rounded p-5">
         <h3 className="font-extrabold text-heading">Brand Info</h3>
-        <p className="mt-1 text-xs text-muted">Company name, logo, and tagline shown site-wide.</p>
+        <p className="mt-1 text-sm text-muted">Company name, logo, and tagline shown site-wide.</p>
 
         <div className="mt-4 space-y-4">
           <div>
@@ -158,7 +158,7 @@ export default function AdminBrandSettings() {
       {/* ─── Social Links ─── */}
       <section className="mt-6 bg-background border border-border rounded p-5">
         <h3 className="font-extrabold text-heading">Social Links</h3>
-        <p className="mt-1 text-xs text-muted">Social media links displayed in the footer. Each has a platform name, URL, and icon identifier.</p>
+        <p className="mt-1 text-sm text-muted">Social media links displayed in the footer. Each has a platform name, URL, and icon identifier.</p>
 
         <div className="mt-4 space-y-3">
           {socialLinks.map((link, i) => (
@@ -225,7 +225,7 @@ export default function AdminBrandSettings() {
       {/* ─── Contact Info ─── */}
       <section className="mt-6 bg-background border border-border rounded p-5">
         <h3 className="font-extrabold text-heading">Contact Info</h3>
-        <p className="mt-1 text-xs text-muted">Phone, email, address, WhatsApp, working hours, and location displayed in the footer contact block.</p>
+        <p className="mt-1 text-sm text-muted">Phone, email, address, WhatsApp, working hours, and location displayed in the footer contact block.</p>
 
         <div className="mt-4 space-y-4">
           <div>
@@ -288,7 +288,7 @@ export default function AdminBrandSettings() {
       {/* ─── Company Links ─── */}
       <section className="mt-6 bg-background border border-border rounded p-5">
         <h3 className="font-extrabold text-heading">Company Links</h3>
-        <p className="mt-1 text-xs text-muted">Navigation links in the Company column of the footer.</p>
+        <p className="mt-1 text-sm text-muted">Navigation links in the Company column of the footer.</p>
 
         <div className="mt-4 space-y-3">
           {companyLinks.map((link, i) => (

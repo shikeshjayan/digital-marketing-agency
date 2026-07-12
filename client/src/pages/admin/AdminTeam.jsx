@@ -70,7 +70,7 @@ export default function AdminTeam() {
         search: search || undefined,
         status: status || undefined,
         page,
-        limit: 10,
+        limit: 8,
       });
       setItems(result?.items ?? []);
       setPagination(result?.pagination ?? { total: 0, page: 1, pages: 1 });
@@ -208,97 +208,101 @@ export default function AdminTeam() {
       <div className="mt-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
         <div
           ref={formRef}
-          className="lg:col-span-2 bg-background border border-border rounded p-4 shadow-xs lg:h-[80vh] lg:overflow-y-auto">
+          className="lg:col-span-2 bg-background border border-border rounded p-4 shadow-xs lg:h-[80vh] lg:overflow-y-auto flex flex-col">
           <div className="font-extrabold text-heading">
             {form._id ? "Edit Member" : "Add New Member"}
           </div>
 
-          <form onSubmit={onSubmit} className="mt-4 space-y-3">
-            <FileUploadField
-              label="Photo"
-              file={form.photo instanceof File ? form.photo : null}
-              existingUrl={
-                typeof form.photo === "string" ? resolveImagePath(form.photo) : ""
-              }
-              onChange={onPickImage}
-              onRemove={() => setForm((f) => ({ ...f, photo: "" }))}
-              confirmText="Remove photo?"
-            />
-            <FormField
-              label="Name"
-              value={form.name}
-              onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))}
-              placeholder="e.g. John Doe"
-            />
-            <FormField
-              label="Designation"
-              value={form.designation}
-              onChange={(e) =>
-                setForm((f) => ({ ...f, designation: e.target.value }))
-              }
-              placeholder="e.g. Frontend Developer"
-            />
-            <FormField
-              label="Description"
-              textarea
-              rows={2}
-              value={form.description}
-              onChange={(e) =>
-                setForm((f) => ({ ...f, description: e.target.value }))
-              }
-              placeholder="Brief bio or details about the member"
-            />
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-              <FormField
-                label="LinkedIn URL"
-                value={form.linkedin}
-                onChange={(e) =>
-                  setForm((f) => ({ ...f, linkedin: e.target.value }))
+          <form onSubmit={onSubmit} className="mt-4 flex flex-col flex-1 justify-between gap-3">
+            <div className="space-y-3">
+              <FileUploadField
+                label="Photo"
+                file={form.photo instanceof File ? form.photo : null}
+                existingUrl={
+                  typeof form.photo === "string" ? resolveImagePath(form.photo) : ""
                 }
-                placeholder="https://linkedin.com/in/..."
+                onChange={onPickImage}
+                onRemove={() => setForm((f) => ({ ...f, photo: "" }))}
+                confirmText="Remove photo?"
               />
               <FormField
-                label="Email"
-                type="email"
-                value={form.email}
+                label="Name"
+                value={form.name}
+                onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))}
+                placeholder="e.g. John Doe"
+              />
+              <FormField
+                label="Designation"
+                value={form.designation}
                 onChange={(e) =>
-                  setForm((f) => ({ ...f, email: e.target.value }))
+                  setForm((f) => ({ ...f, designation: e.target.value }))
                 }
-                placeholder="member@example.com"
+                placeholder="e.g. Frontend Developer"
               />
-            </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <FormField
-                label="Display Order"
-                type="number"
-                value={form.display_order}
+                label="Description"
+                textarea
+                rows={2}
+                value={form.description}
                 onChange={(e) =>
-                  setForm((f) => ({
-                    ...f,
-                    display_order: Number(e.target.value),
-                  }))
+                  setForm((f) => ({ ...f, description: e.target.value }))
                 }
+                placeholder="Brief bio or details about the member"
               />
-              <FormField
-                label="Status"
-                value={form.status}
-                onChange={(val) => setForm((f) => ({ ...f, status: val }))}
-                selectOptions={[
-                  { value: "Active", label: "Active" },
-                  { value: "Inactive", label: "Inactive" },
-                ]}
-              />
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <FormField
+                  label="LinkedIn URL"
+                  value={form.linkedin}
+                  onChange={(e) =>
+                    setForm((f) => ({ ...f, linkedin: e.target.value }))
+                  }
+                  placeholder="https://linkedin.com/in/..."
+                />
+                <FormField
+                  label="Email"
+                  type="email"
+                  value={form.email}
+                  onChange={(e) =>
+                    setForm((f) => ({ ...f, email: e.target.value }))
+                  }
+                  placeholder="member@example.com"
+                />
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <FormField
+                  label="Display Order"
+                  type="number"
+                  value={form.display_order}
+                  onChange={(e) =>
+                    setForm((f) => ({
+                      ...f,
+                      display_order: Number(e.target.value),
+                    }))
+                  }
+                />
+                <FormField
+                  label="Status"
+                  value={form.status}
+                  onChange={(val) => setForm((f) => ({ ...f, status: val }))}
+                  selectOptions={[
+                    { value: "Active", label: "Active" },
+                    { value: "Inactive", label: "Inactive" },
+                  ]}
+                />
+              </div>
             </div>
 
-            <ErrorBanner message={error} />
+            <div>
+              <ErrorBanner message={error} />
 
-            <FormActions
-              submitting={submitting}
-              editId={form._id}
-              onSubmit={onSubmit}
-              onReset={() => setForm(EMPTY_FORM)}
-              submitLabel={form._id ? "Update Member" : "Create Member"}
-            />
+              <FormActions
+                submitting={submitting}
+                editId={form._id}
+                onSubmit={onSubmit}
+                onReset={() => setForm(EMPTY_FORM)}
+                submitLabel={form._id ? "Update Member" : "Create Member"}
+              />
+            </div>
           </form>
         </div>
 
@@ -347,7 +351,7 @@ export default function AdminTeam() {
                                 className="w-full h-full object-cover"
                               />
                             ) : (
-                              <span className="text-xs font-bold text-muted">
+                              <span className="text-sm font-bold text-muted">
                                 {getInitials(m.name)}
                               </span>
                             )}
@@ -356,7 +360,7 @@ export default function AdminTeam() {
                             <div className="font-bold text-heading truncate max-w-[150px]">
                               {m.name}
                             </div>
-                            <div className="text-xs text-muted">
+                            <div className="text-sm text-muted">
                               Order: {m.display_order}
                             </div>
                           </div>
@@ -367,7 +371,7 @@ export default function AdminTeam() {
                       </td>
                       <td className="py-3 pr-3">
                         <span
-                          className={`inline-flex items-center rounded-full px-3 py-1 text-xs font-semibold border ${
+                          className={`inline-flex items-center rounded-full px-3 py-1 text-sm font-semibold border ${
                             m.status === "Active"
                               ? "bg-success/10 text-success border-success/20"
                               : "bg-warning/10 text-warning border-warning/20"
@@ -379,7 +383,7 @@ export default function AdminTeam() {
                         <div className="flex gap-2 flex-wrap">
                           <button
                             type="button"
-                            className="px-3 py-2 text-xs sm:px-4 sm:py-2 sm:text-sm min-h-[44px] text-text hover:text-heading rounded transition cursor-pointer"
+                            className="px-3 py-2 text-sm sm:px-4 sm:py-2 sm:text-sm min-h-[44px] text-text hover:text-heading rounded transition cursor-pointer"
                             onClick={() => {
                               setForm({
                                 _id: m._id,
@@ -403,7 +407,7 @@ export default function AdminTeam() {
                           </button>
                           <button
                             type="button"
-                            className="px-3 py-2 text-xs sm:px-4 sm:py-2 sm:text-sm min-h-[44px] text-danger hover:text-red-700 rounded transition cursor-pointer"
+                            className="px-3 py-2 text-sm sm:px-4 sm:py-2 sm:text-sm min-h-[44px] text-danger hover:text-red-700 rounded transition cursor-pointer"
                             title="Delete"
                             aria-label="Delete"
                             onClick={() => setDeleteTarget(m._id)}>

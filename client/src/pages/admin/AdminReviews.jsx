@@ -173,7 +173,7 @@ export default function AdminReviews() {
                 {t.label}
                 {t.count != null && (
                   <span
-                    className={`ml-1.5 inline-flex items-center justify-center w-5 h-5 text-xs rounded-lg ${
+                    className={`ml-1.5 inline-flex items-center justify-center w-5 h-5 text-sm rounded-lg ${
                       tab === t.key
                         ? "bg-primary-hover/20 text-white"
                         : "bg-surface text-muted"
@@ -247,7 +247,7 @@ export default function AdminReviews() {
                             {r.name}
                           </div>
                           {r.location && (
-                            <div className="text-xs text-muted truncate max-w-[130px]">
+                            <div className="text-sm text-muted truncate max-w-[130px]">
                               {r.location}
                             </div>
                           )}
@@ -265,19 +265,19 @@ export default function AdminReviews() {
                         {r.review_text.length > 150 && (
                           <button
                             type="button"
-                            className="text-primary hover:text-primary-hover text-xs font-medium whitespace-nowrap flex-shrink-0 cursor-pointer"
+                            className="text-primary hover:text-primary-hover text-sm font-medium whitespace-nowrap flex-shrink-0 cursor-pointer"
                             onClick={() => setSelectedReview(r)}>
                             Read more
                           </button>
                         )}
                       </div>
                     </td>
-                    <td className="py-3 pr-3 text-xs text-muted hidden md:table-cell whitespace-nowrap">
+                    <td className="py-3 pr-3 text-sm text-muted hidden md:table-cell whitespace-nowrap">
                       {relativeTime(r.date)}
                     </td>
                     <td className="py-3 pr-3 hidden sm:table-cell">
                       <span
-                        className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium border ${statusChip(r.status)}`}>
+                        className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium border ${statusChip(r.status)}`}>
                         {r.status}
                       </span>
                     </td>

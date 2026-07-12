@@ -55,6 +55,14 @@ export default function AdminSettings() {
     return Math.round((matching / maxLen) * 100);
   }, [form.newPassword, confirmPassword]);
 
+  const canSave = useMemo(() => {
+    const hasAnyPassword = form.currentPassword || form.newPassword || confirmPassword;
+    const nameEmpty = !form.name.trim();
+    const partialPassword = hasAnyPassword && (!form.currentPassword || !form.newPassword || !confirmPassword);
+    const noChanges = !hasAnyPassword && form.name === originalName && !imageFile && !photoRemoved;
+    return !nameEmpty && !partialPassword && !noChanges;
+  }, [form, confirmPassword, originalName, imageFile, photoRemoved]);
+
   useEffect(() => {
     if (user) {
       setOriginalName(user.name ?? "");
@@ -75,6 +83,24 @@ export default function AdminSettings() {
 
     const hasPasswordFields =
       form.currentPassword || form.newPassword || confirmPassword;
+
+    if (!form.name.trim()) {
+      setError("Name is required.");
+      setSaving(false);
+      return;
+    }
+
+    if (hasPasswordFields && (!form.currentPassword || !form.newPassword || !confirmPassword)) {
+      setError("All password fields are required to change password.");
+      setSaving(false);
+      return;
+    }
+
+    if (!hasPasswordFields && form.name === originalName && !imageFile && !photoRemoved) {
+      setError("No changes to save.");
+      setSaving(false);
+      return;
+    }
 
     if (hasPasswordFields) {
       try {
@@ -167,11 +193,11 @@ export default function AdminSettings() {
                 {user.email}
               </div>
               <div className="flex items-center gap-3 mt-2">
-                <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium border bg-info/10 text-info border-info/20 capitalize">
+                <span className="inline-flex items-center px-2 py-0.5 rounded-full text-sm font-medium border bg-info/10 text-info border-info/20 capitalize">
                   {user.role}
                 </span>
                 {user.createdAt && (
-                  <span className="text-xs text-muted">
+                  <span className="text-sm text-muted">
                     Member since{" "}
                     {new Date(user.createdAt).toLocaleDateString("en-US", {
                       year: "numeric",
@@ -189,6 +215,7 @@ export default function AdminSettings() {
       <div className="mt-6 bg-background border border-border rounded p-5 shadow-xs">
         <form
           onSubmit={onSubmit}
+          noValidate
           className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
           <div className="lg:col-span-2">
             <div className="font-extrabold text-heading">Profile Image</div>
@@ -252,6 +279,7 @@ export default function AdminSettings() {
                     setForm((f) => ({ ...f, name: e.target.value }))
                   }
                   placeholder="e.g. admin"
+                  autoComplete="off"
                 />
               </div>
               <div>
@@ -270,6 +298,7 @@ export default function AdminSettings() {
                       }))
                     }
                     placeholder="Enter current password"
+                    autoComplete="off"
                   />
                   <button
                     type="button"
@@ -282,7 +311,7 @@ export default function AdminSettings() {
                   </button>
                 </div>
                 {fieldErrors.currentPassword && (
-                  <span className="text-xs text-primary mt-1 block">
+                  <span className="text-sm text-primary mt-1 block">
                     {fieldErrors.currentPassword}
                   </span>
                 )}
@@ -313,7 +342,7 @@ export default function AdminSettings() {
                   </button>
                 </div>
                 {fieldErrors.newPassword && (
-                  <span className="text-xs text-primary mt-1 block">
+                  <span className="text-sm text-primary mt-1 block">
                     {fieldErrors.newPassword}
                   </span>
                 )}
@@ -342,7 +371,7 @@ export default function AdminSettings() {
                   </button>
                 </div>
                 {fieldErrors.confirmPassword && (
-                  <span className="text-xs text-primary mt-1 block">
+                  <span className="text-sm text-primary mt-1 block">
                     {fieldErrors.confirmPassword}
                   </span>
                 )}
@@ -365,7 +394,7 @@ export default function AdminSettings() {
               <div className="pt-2">
                 <button
                   type="submit"
-                  disabled={saving || loading}
+                  disabled={saving || loading || !canSave}
                   className="w-full rounded bg-primary text-white py-2.5 font-extrabold hover:bg-primary-hover transition disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer">
                   {saving ? "Saving..." : "Save Changes"}
                 </button>

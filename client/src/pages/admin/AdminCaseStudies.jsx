@@ -65,7 +65,6 @@ export default function AdminCaseStudies() {
   const [page, setPage] = useState(1);
   const [pagination, setPagination] = useState({ total: 0, page: 1, pages: 1 });
   const galleryRef = useRef(null);
-  const blobUrls = useRef(new Map());
   const [form, setForm] = useState(EMPTY_FORM);
   const [error, setError] = useState("");
   const [submitting, setSubmitting] = useState(false);
@@ -73,32 +72,20 @@ export default function AdminCaseStudies() {
   const [deleteTarget, setDeleteTarget] = useState(null);
   const [deleteAllTarget, setDeleteAllTarget] = useState(false);
   const [confirmItemDelete, setConfirmItemDelete] = useState(null);
+  const galleryUrlsRef = useRef([]);
 
   function getGallerySrc(img) {
-    if (img instanceof File) {
-      if (!blobUrls.current.has(img)) {
-        blobUrls.current.set(img, URL.createObjectURL(img));
-      }
-      return blobUrls.current.get(img);
-    }
+    if (img && typeof img === "object" && "url" in img) return img.url;
     return resolveImagePath(img);
   }
 
   useEffect(() => {
-    const map = blobUrls.current;
-    const currentFiles = new Set(form.gallery.filter((f) => f instanceof File));
-    for (const [file, url] of map.entries()) {
-      if (!currentFiles.has(file)) {
-        URL.revokeObjectURL(url);
-        map.delete(file);
-      }
-    }
+    galleryUrlsRef.current = form.gallery.filter((i) => i?.url).map((i) => i.url);
   }, [form.gallery]);
 
   useEffect(() => {
     return () => {
-      blobUrls.current.forEach((url) => URL.revokeObjectURL(url));
-      blobUrls.current.clear();
+      galleryUrlsRef.current.forEach((url) => URL.revokeObjectURL(url));
     };
   }, []);
 
@@ -110,7 +97,7 @@ export default function AdminCaseStudies() {
         search: search || undefined,
         status: status || undefined,
         page,
-        limit: 10,
+        limit: 9,
       });
       setItems(result?.items ?? []);
       setPagination(result?.pagination ?? { total: 0, page: 1, pages: 1 });
@@ -143,10 +130,16 @@ export default function AdminCaseStudies() {
   }
 
   function onPickGallery(files) {
-    setForm((f) => ({ ...f, gallery: [...f.gallery, ...files] }));
+    const items = Array.from(files).map((file) => ({
+      file,
+      url: URL.createObjectURL(file),
+    }));
+    setForm((f) => ({ ...f, gallery: [...f.gallery, ...items] }));
   }
 
   function removeGalleryImage(index) {
+    const img = form.gallery[index];
+    if (img?.url) URL.revokeObjectURL(img.url);
     if (galleryRef.current) galleryRef.current.value = "";
     setForm((f) => ({ ...f, gallery: f.gallery.filter((_, i) => i !== index) }));
   }
@@ -225,9 +218,9 @@ export default function AdminCaseStudies() {
       payload.append("removeHeroImage", "true");
     }
 
-    form.gallery.forEach((file) => {
-      if (file instanceof File) {
-        payload.append("gallery", file);
+    form.gallery.forEach((item) => {
+      if (item?.file instanceof File) {
+        payload.append("gallery", item.file);
       }
     });
 
@@ -368,351 +361,354 @@ export default function AdminCaseStudies() {
       <div className="mt-6 grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div
           ref={formRef}
-          className="lg:col-span-1 bg-background border border-border rounded p-4 shadow-xs lg:h-[80vh] lg:overflow-y-auto">
+          className="lg:col-span-1 bg-background border border-border rounded p-4 shadow-xs lg:h-[80vh] lg:overflow-y-auto flex flex-col scrollbar-custom">
           <div className="font-extrabold text-heading">
             {form.case_study_id ? "Edit Case Study" : "Add New Case Study"}
           </div>
 
-          <form onSubmit={onSubmit} className="mt-4 space-y-3">
-            <FormField
-              label="Title"
-              value={form.title}
-              onChange={(e) => setForm((f) => ({ ...f, title: e.target.value }))}
-              placeholder="e.g. E-commerce Growth Strategy"
-            />
-
-            <div>
-              <label className="block text-sm font-medium text-heading mb-1">Project *</label>
-              <select
-                value={form.project}
-                onChange={(e) => setForm((f) => ({ ...f, project: e.target.value }))}
-                className="w-full rounded-lg border border-border bg-background px-3 py-2.5 text-sm text-heading focus:border-primary focus:ring-1 focus:ring-primary-light outline-none">
-                <option value="">Select a project</option>
-                {projects.map((p) => (
-                  <option key={p._id} value={p._id}>{p.project_name}</option>
-                ))}
-              </select>
-              {projects.length === 0 && <p className="text-xs text-muted mt-1">No projects found. Create projects first.</p>}
-            </div>
-
-            <FormField
-              label="Overview"
-              textarea
-              rows={3}
-              value={form.overview}
-              onChange={(e) => setForm((f) => ({ ...f, overview: e.target.value }))}
-              placeholder="Brief overview of the case study"
-            />
-
-            <FormField
-              label="Challenge"
-              textarea
-              rows={3}
-              value={form.challenge}
-              onChange={(e) => setForm((f) => ({ ...f, challenge: e.target.value }))}
-              placeholder="What challenge did the client face?"
-            />
-
-            <FormField
-              label="Strategy"
-              textarea
-              rows={2}
-              value={form.strategy}
-              onChange={(e) => setForm((f) => ({ ...f, strategy: e.target.value }))}
-              placeholder="High-level strategy overview"
-            />
-
-            <FormField
-              label="Solution"
-              textarea
-              rows={3}
-              value={form.solution}
-              onChange={(e) => setForm((f) => ({ ...f, solution: e.target.value }))}
-              placeholder="How did you solve the problem?"
-            />
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <form onSubmit={onSubmit} className="mt-4 flex flex-col flex-1 justify-between gap-3">
+            <div className="space-y-3">
               <FormField
-                label="Status"
-                value={form.status}
-                onChange={(val) => setForm((f) => ({ ...f, status: val }))}
-                selectOptions={[
-                  { value: "Draft", label: "Draft" },
-                  { value: "Published", label: "Published" },
-                ]}
+                label="Title"
+                value={form.title}
+                onChange={(e) => setForm((f) => ({ ...f, title: e.target.value }))}
+                placeholder="e.g. E-commerce Growth Strategy"
               />
-              <div className="flex items-end pb-1">
-                <div className="flex items-center gap-3">
-                  <label className="relative inline-flex items-center cursor-pointer">
-                    <input
-                      type="checkbox"
-                      checked={form.featured}
-                      onChange={(e) => setForm((f) => ({ ...f, featured: e.target.checked }))}
-                      className="sr-only peer"
-                    />
-                    <div className="w-9 h-5 bg-border rounded-full peer peer-checked:bg-primary peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all" />
-                  </label>
-                  <span className="text-sm font-semibold text-heading">Featured</span>
-                </div>
-              </div>
-            </div>
 
-            <FileUploadField
-              label="Hero Image"
-              required
-              file={form.hero_image instanceof File ? form.hero_image : null}
-              existingUrl={typeof form.hero_image === "string" ? resolveImagePath(form.hero_image) : ""}
-              onChange={onPickHeroImage}
-              onRemove={() => setForm((f) => ({ ...f, hero_image: "" }))}
-              confirmText="Remove hero image?"
-            />
-
-            <div>
-              <label className="block text-sm font-medium text-heading mb-1">Gallery Images</label>
-              <input
-                ref={galleryRef}
-                type="file"
-                multiple
-                accept="image/*"
-                onChange={(e) => onPickGallery(Array.from(e.target.files))}
-                className="text-sm text-muted file:mr-3 file:py-2 file:px-4 file:rounded file:border-0 file:text-sm file:font-semibold file:bg-primary file:text-white hover:file:bg-primary-hover cursor-pointer"
-              />
-              {form.gallery.length > 0 && (
-                <div className="mt-2 flex flex-wrap gap-2">
-                  {form.gallery.map((img, idx) => (
-                    <div key={idx} className="relative w-16 h-16 border border-border rounded overflow-hidden">
-                      <img
-                        src={getGallerySrc(img)}
-                        alt=""
-                        className="w-full h-full object-cover"
-                      />
-                      <button
-                        type="button"
-                        onClick={() => setConfirmItemDelete({ type: "gallery", index: idx })}
-                        className="absolute top-0 right-0 bg-danger text-white w-4 h-4 flex items-center justify-center text-xs cursor-pointer">
-                        <FontAwesomeIcon icon={faTrash} className="w-3 h-3" />
-                      </button>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
-
-            {/* Objectives */}
-            <div className="border-t border-border pt-3">
-              <div className="flex items-center justify-between mb-2">
-                <span className="text-sm font-bold text-heading">Objectives</span>
-                <button type="button" onClick={() => addArrayItem("objectives")} className="text-xs text-primary hover:text-primary-hover cursor-pointer">+ Add</button>
-              </div>
-              {form.objectives.map((item, idx) => (
-                <div key={idx} className="flex gap-2 mb-2">
-                  <input
-                    type="text"
-                    value={item}
-                    onChange={(e) => updateArrayItem("objectives", idx, e.target.value)}
-                    className="flex-1 rounded-lg border border-border bg-background px-3 py-2 text-sm text-heading focus:border-primary focus:ring-1 focus:ring-primary-light outline-none"
-                    placeholder="Objective"
-                  />
-                  <button type="button" onClick={() => setConfirmItemDelete({ type: "objectives", index: idx })} className="text-danger hover:text-red-700 cursor-pointer"><FontAwesomeIcon icon={faTrash} className="w-3.5 h-3.5" /></button>
-                </div>
-              ))}
-            </div>
-
-            {/* Deliverables */}
-            <div className="border-t border-border pt-3">
-              <div className="flex items-center justify-between mb-2">
-                <span className="text-sm font-bold text-heading">Deliverables</span>
-                <button type="button" onClick={() => addArrayItem("deliverables")} className="text-xs text-primary hover:text-primary-hover cursor-pointer">+ Add</button>
-              </div>
-              {form.deliverables.map((item, idx) => (
-                <div key={idx} className="flex gap-2 mb-2">
-                  <input
-                    type="text"
-                    value={item}
-                    onChange={(e) => updateArrayItem("deliverables", idx, e.target.value)}
-                    className="flex-1 rounded-lg border border-border bg-background px-3 py-2 text-sm text-heading focus:border-primary focus:ring-1 focus:ring-primary-light outline-none"
-                    placeholder="Deliverable"
-                  />
-                  <button type="button" onClick={() => setConfirmItemDelete({ type: "deliverables", index: idx })} className="text-danger hover:text-red-700 cursor-pointer"><FontAwesomeIcon icon={faTrash} className="w-3.5 h-3.5" /></button>
-                </div>
-              ))}
-            </div>
-
-            {/* Timeline */}
-            <div className="border-t border-border pt-3">
-              <div className="text-sm font-bold text-heading mb-2">Timeline</div>
-              <div className="space-y-3">
-                <FormField
-                  label="Duration"
-                  value={form.timeline_duration}
-                  onChange={(e) => setForm((f) => ({ ...f, timeline_duration: e.target.value }))}
-                  placeholder="e.g. 3 months"
+              <div>
+                <label className="block text-sm font-medium text-heading mb-1">Project *</label>
+                <Select
+                  value={form.project}
+                  onChange={(val) => setForm((f) => ({ ...f, project: val }))}
+                  options={[
+                    { value: "", label: "Select a project" },
+                    ...projects.map((p) => ({ value: p._id, label: p.project_name }))
+                  ]}
                 />
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                  <FormField
-                    label="Start Date"
-                    type="date"
-                    value={form.timeline_started_at}
-                    onChange={(e) => setForm((f) => ({ ...f, timeline_started_at: e.target.value }))}
-                  />
-                  <FormField
-                    label="Completion Date"
-                    type="date"
-                    value={form.timeline_completed_at}
-                    onChange={(e) => setForm((f) => ({ ...f, timeline_completed_at: e.target.value }))}
-                  />
-                </div>
+                {projects.length === 0 && <p className="text-sm text-muted mt-1">No projects found. Create projects first.</p>}
               </div>
-            </div>
 
-            {/* Development Process */}
-            <div className="border-t border-border pt-3">
-              <div className="flex items-center justify-between mb-2">
-                <span className="text-sm font-bold text-heading">Development Process</span>
-                <button type="button" onClick={() => addObjectItem("development_process")} className="text-xs text-primary hover:text-primary-hover cursor-pointer">+ Add</button>
-              </div>
-              {form.development_process.map((item, idx) => (
-                <div key={idx} className="border border-border rounded p-2 mb-2 space-y-2">
-                  <input
-                    type="text"
-                    value={item.title}
-                    onChange={(e) => updateObjectItem("development_process", idx, "title", e.target.value)}
-                    className="w-full rounded border border-border bg-background px-3 py-2 text-sm text-heading focus:border-primary focus:ring-1 focus:ring-primary-light outline-none"
-                    placeholder="Step title"
-                  />
-                  <textarea
-                    value={item.description}
-                    onChange={(e) => updateObjectItem("development_process", idx, "description", e.target.value)}
-                    rows={2}
-                    className="w-full rounded border border-border bg-background px-3 py-2 text-sm text-heading focus:border-primary focus:ring-1 focus:ring-primary-light outline-none"
-                    placeholder="Step description"
-                  />
-                  <button type="button" onClick={() => setConfirmItemDelete({ type: "development_process", index: idx })} className="text-danger hover:text-red-700 cursor-pointer"><FontAwesomeIcon icon={faTrash} className="w-3.5 h-3.5" /></button>
-                </div>
-              ))}
-            </div>
+              <FormField
+                label="Overview"
+                textarea
+                rows={3}
+                value={form.overview}
+                onChange={(e) => setForm((f) => ({ ...f, overview: e.target.value }))}
+                placeholder="Brief overview of the case study"
+              />
 
-            {/* Challenges & Solutions */}
-            <div className="border-t border-border pt-3">
-              <div className="flex items-center justify-between mb-2">
-                <span className="text-sm font-bold text-heading">Challenges & Solutions</span>
-                <button type="button" onClick={() => addObjectItem("challenges_and_solutions")} className="text-xs text-primary hover:text-primary-hover cursor-pointer">+ Add</button>
-              </div>
-              {form.challenges_and_solutions.map((item, idx) => (
-                <div key={idx} className="border border-border rounded p-2 mb-2 space-y-2">
-                  <textarea
-                    value={item.challenge}
-                    onChange={(e) => updateObjectItem("challenges_and_solutions", idx, "challenge", e.target.value)}
-                    rows={2}
-                    className="w-full rounded border border-border bg-background px-3 py-2 text-sm text-heading focus:border-primary focus:ring-1 focus:ring-primary-light outline-none"
-                    placeholder="Challenge"
-                  />
-                  <textarea
-                    value={item.solution}
-                    onChange={(e) => updateObjectItem("challenges_and_solutions", idx, "solution", e.target.value)}
-                    rows={2}
-                    className="w-full rounded border border-border bg-background px-3 py-2 text-sm text-heading focus:border-primary focus:ring-1 focus:ring-primary-light outline-none"
-                    placeholder="Solution"
-                  />
-                  <button type="button" onClick={() => setConfirmItemDelete({ type: "challenges_and_solutions", index: idx })} className="text-danger hover:text-red-700 cursor-pointer"><FontAwesomeIcon icon={faTrash} className="w-3.5 h-3.5" /></button>
-                </div>
-              ))}
-            </div>
+              <FormField
+                label="Challenge"
+                textarea
+                rows={3}
+                value={form.challenge}
+                onChange={(e) => setForm((f) => ({ ...f, challenge: e.target.value }))}
+                placeholder="What challenge did the client face?"
+              />
 
-            {/* Results */}
-            <div className="border-t border-border pt-3">
-              <div className="flex items-center justify-between mb-2">
-                <span className="text-sm font-bold text-heading">Results</span>
-                <button type="button" onClick={() => addObjectItem("results")} className="text-xs text-primary hover:text-primary-hover cursor-pointer">+ Add</button>
-              </div>
-              {form.results.map((item, idx) => (
-                <div key={idx} className="flex flex-col gap-2 mb-2">
-                  <input
-                    type="text"
-                    value={item.title}
-                    onChange={(e) => updateObjectItem("results", idx, "title", e.target.value)}
-                    className="rounded border border-border bg-background px-3 py-2 text-sm text-heading focus:border-primary focus:ring-1 focus:ring-primary-light outline-none"
-                    placeholder="Metric name"
-                  />
-                  <div className="flex gap-2">
-                    <input
-                      type="text"
-                      value={item.value}
-                      onChange={(e) => updateObjectItem("results", idx, "value", e.target.value)}
-                      className="flex-1 rounded border border-border bg-background px-3 py-2 text-sm text-heading focus:border-primary focus:ring-1 focus:ring-primary-light outline-none"
-                      placeholder="Value"
-                    />
-                    <button type="button" onClick={() => setConfirmItemDelete({ type: "results", index: idx })} className="text-danger hover:text-red-700 cursor-pointer"><FontAwesomeIcon icon={faTrash} className="w-3.5 h-3.5" /></button>
+              <FormField
+                label="Strategy"
+                textarea
+                rows={2}
+                value={form.strategy}
+                onChange={(e) => setForm((f) => ({ ...f, strategy: e.target.value }))}
+                placeholder="High-level strategy overview"
+              />
+
+              <FormField
+                label="Solution"
+                textarea
+                rows={3}
+                value={form.solution}
+                onChange={(e) => setForm((f) => ({ ...f, solution: e.target.value }))}
+                placeholder="How did you solve the problem?"
+              />
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <FormField
+                  label="Status"
+                  value={form.status}
+                  onChange={(val) => setForm((f) => ({ ...f, status: val }))}
+                  selectOptions={[
+                    { value: "Draft", label: "Draft" },
+                    { value: "Published", label: "Published" },
+                  ]}
+                />
+                <div className="flex items-end pb-1">
+                  <div className="flex items-center gap-3">
+                    <label className="relative inline-flex items-center cursor-pointer">
+                      <input
+                        type="checkbox"
+                        checked={form.featured}
+                        onChange={(e) => setForm((f) => ({ ...f, featured: e.target.checked }))}
+                        className="sr-only peer"
+                      />
+                      <div className="w-9 h-5 bg-border rounded-full peer peer-checked:bg-primary peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all" />
+                    </label>
+                    <span className="text-sm font-semibold text-heading">Featured</span>
                   </div>
                 </div>
-              ))}
-            </div>
+              </div>
 
-            {/* Client Testimonial */}
-            <div className="border-t border-border pt-3">
-              <div className="text-sm font-bold text-heading mb-2">Client Testimonial</div>
-              <div className="space-y-3">
-                <FormField
-                  label="Quote"
-                  textarea
-                  rows={2}
-                  value={form.client_testimonial_quote}
-                  onChange={(e) => setForm((f) => ({ ...f, client_testimonial_quote: e.target.value }))}
-                  placeholder="Client testimonial quote"
+              <FileUploadField
+                label="Hero Image"
+                required
+                file={form.hero_image instanceof File ? form.hero_image : null}
+                existingUrl={typeof form.hero_image === "string" ? resolveImagePath(form.hero_image) : ""}
+                onChange={onPickHeroImage}
+                onRemove={() => setForm((f) => ({ ...f, hero_image: "" }))}
+                confirmText="Remove hero image?"
+              />
+
+              <div>
+                <label className="block text-sm font-medium text-heading mb-1">Gallery Images</label>
+                <input
+                  ref={galleryRef}
+                  type="file"
+                  multiple
+                  accept="image/*"
+                  onChange={(e) => onPickGallery(Array.from(e.target.files))}
+                  className="text-sm text-muted file:mr-3 file:py-2 file:px-4 file:rounded file:border-0 file:text-sm file:font-semibold file:bg-primary file:text-white hover:file:bg-primary-hover cursor-pointer"
                 />
-                <FormField
-                  label="Client Name"
-                  value={form.client_testimonial_name}
-                  onChange={(e) => setForm((f) => ({ ...f, client_testimonial_name: e.target.value }))}
-                  placeholder="e.g. John Smith"
-                />
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                {form.gallery.length > 0 && (
+                  <div className="mt-2 flex flex-wrap gap-2">
+                    {form.gallery.map((img, idx) => (
+                      <div key={idx} className="relative w-16 h-16 border border-border rounded overflow-hidden">
+                        <img
+                          src={getGallerySrc(img)}
+                          alt=""
+                          className="w-full h-full object-cover"
+                        />
+                        <button
+                          type="button"
+                          onClick={() => setConfirmItemDelete({ type: "gallery", index: idx })}
+                          className="absolute top-0 right-0 bg-danger text-white w-4 h-4 flex items-center justify-center text-sm cursor-pointer">
+                          <FontAwesomeIcon icon={faTrash} className="w-3 h-3" />
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              {/* Objectives */}
+              <div className="border-t border-border pt-3">
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-sm font-bold text-heading">Objectives</span>
+                  <button type="button" onClick={() => addArrayItem("objectives")} className="text-sm text-primary hover:text-primary-hover cursor-pointer">+ Add</button>
+                </div>
+                {form.objectives.map((item, idx) => (
+                  <div key={idx} className="flex gap-2 mb-2">
+                    <input
+                      type="text"
+                      value={item}
+                      onChange={(e) => updateArrayItem("objectives", idx, e.target.value)}
+                      className="flex-1 rounded-lg border border-border bg-background px-3 py-2 text-sm text-heading focus:border-primary focus:ring-1 focus:ring-primary-light outline-none"
+                      placeholder="Objective"
+                    />
+                    <button type="button" onClick={() => setConfirmItemDelete({ type: "objectives", index: idx })} className="text-danger hover:text-red-700 cursor-pointer"><FontAwesomeIcon icon={faTrash} className="w-3.5 h-3.5" /></button>
+                  </div>
+                ))}
+              </div>
+
+              {/* Deliverables */}
+              <div className="border-t border-border pt-3">
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-sm font-bold text-heading">Deliverables</span>
+                  <button type="button" onClick={() => addArrayItem("deliverables")} className="text-sm text-primary hover:text-primary-hover cursor-pointer">+ Add</button>
+                </div>
+                {form.deliverables.map((item, idx) => (
+                  <div key={idx} className="flex gap-2 mb-2">
+                    <input
+                      type="text"
+                      value={item}
+                      onChange={(e) => updateArrayItem("deliverables", idx, e.target.value)}
+                      className="flex-1 rounded-lg border border-border bg-background px-3 py-2 text-sm text-heading focus:border-primary focus:ring-1 focus:ring-primary-light outline-none"
+                      placeholder="Deliverable"
+                    />
+                    <button type="button" onClick={() => setConfirmItemDelete({ type: "deliverables", index: idx })} className="text-danger hover:text-red-700 cursor-pointer"><FontAwesomeIcon icon={faTrash} className="w-3.5 h-3.5" /></button>
+                  </div>
+                ))}
+              </div>
+
+              {/* Timeline */}
+              <div className="border-t border-border pt-3">
+                <div className="text-sm font-bold text-heading mb-2">Timeline</div>
+                <div className="space-y-3">
                   <FormField
-                    label="Designation"
-                    value={form.client_testimonial_designation}
-                    onChange={(e) => setForm((f) => ({ ...f, client_testimonial_designation: e.target.value }))}
-                    placeholder="e.g. CEO"
+                    label="Duration"
+                    value={form.timeline_duration}
+                    onChange={(e) => setForm((f) => ({ ...f, timeline_duration: e.target.value }))}
+                    placeholder="e.g. 3 months"
+                  />
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <FormField
+                      label="Start Date"
+                      type="date"
+                      value={form.timeline_started_at}
+                      onChange={(e) => setForm((f) => ({ ...f, timeline_started_at: e.target.value }))}
+                    />
+                    <FormField
+                      label="Completion Date"
+                      type="date"
+                      value={form.timeline_completed_at}
+                      onChange={(e) => setForm((f) => ({ ...f, timeline_completed_at: e.target.value }))}
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* Development Process */}
+              <div className="border-t border-border pt-3">
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-sm font-bold text-heading">Development Process</span>
+                  <button type="button" onClick={() => addObjectItem("development_process")} className="text-sm text-primary hover:text-primary-hover cursor-pointer">+ Add</button>
+                </div>
+                {form.development_process.map((item, idx) => (
+                  <div key={idx} className="border border-border rounded p-2 mb-2 space-y-2">
+                    <input
+                      type="text"
+                      value={item.title}
+                      onChange={(e) => updateObjectItem("development_process", idx, "title", e.target.value)}
+                      className="w-full rounded border border-border bg-background px-3 py-2 text-sm text-heading focus:border-primary focus:ring-1 focus:ring-primary-light outline-none"
+                      placeholder="Step title"
+                    />
+                    <textarea
+                      value={item.description}
+                      onChange={(e) => updateObjectItem("development_process", idx, "description", e.target.value)}
+                      rows={2}
+                      className="w-full rounded border border-border bg-background px-3 py-2 text-sm text-heading focus:border-primary focus:ring-1 focus:ring-primary-light outline-none"
+                      placeholder="Step description"
+                    />
+                    <button type="button" onClick={() => setConfirmItemDelete({ type: "development_process", index: idx })} className="text-danger hover:text-red-700 cursor-pointer"><FontAwesomeIcon icon={faTrash} className="w-3.5 h-3.5" /></button>
+                  </div>
+                ))}
+              </div>
+
+              {/* Challenges & Solutions */}
+              <div className="border-t border-border pt-3">
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-sm font-bold text-heading">Challenges & Solutions</span>
+                  <button type="button" onClick={() => addObjectItem("challenges_and_solutions")} className="text-sm text-primary hover:text-primary-hover cursor-pointer">+ Add</button>
+                </div>
+                {form.challenges_and_solutions.map((item, idx) => (
+                  <div key={idx} className="border border-border rounded p-2 mb-2 space-y-2">
+                    <textarea
+                      value={item.challenge}
+                      onChange={(e) => updateObjectItem("challenges_and_solutions", idx, "challenge", e.target.value)}
+                      rows={2}
+                      className="w-full rounded border border-border bg-background px-3 py-2 text-sm text-heading focus:border-primary focus:ring-1 focus:ring-primary-light outline-none"
+                      placeholder="Challenge"
+                    />
+                    <textarea
+                      value={item.solution}
+                      onChange={(e) => updateObjectItem("challenges_and_solutions", idx, "solution", e.target.value)}
+                      rows={2}
+                      className="w-full rounded border border-border bg-background px-3 py-2 text-sm text-heading focus:border-primary focus:ring-1 focus:ring-primary-light outline-none"
+                      placeholder="Solution"
+                    />
+                    <button type="button" onClick={() => setConfirmItemDelete({ type: "challenges_and_solutions", index: idx })} className="text-danger hover:text-red-700 cursor-pointer"><FontAwesomeIcon icon={faTrash} className="w-3.5 h-3.5" /></button>
+                  </div>
+                ))}
+              </div>
+
+              {/* Results */}
+              <div className="border-t border-border pt-3">
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-sm font-bold text-heading">Results</span>
+                  <button type="button" onClick={() => addObjectItem("results")} className="text-sm text-primary hover:text-primary-hover cursor-pointer">+ Add</button>
+                </div>
+                {form.results.map((item, idx) => (
+                  <div key={idx} className="flex flex-col gap-2 mb-2">
+                    <input
+                      type="text"
+                      value={item.title}
+                      onChange={(e) => updateObjectItem("results", idx, "title", e.target.value)}
+                      className="rounded border border-border bg-background px-3 py-2 text-sm text-heading focus:border-primary focus:ring-1 focus:ring-primary-light outline-none"
+                      placeholder="Metric name"
+                    />
+                    <div className="flex gap-2">
+                      <input
+                        type="text"
+                        value={item.value}
+                        onChange={(e) => updateObjectItem("results", idx, "value", e.target.value)}
+                        className="flex-1 rounded border border-border bg-background px-3 py-2 text-sm text-heading focus:border-primary focus:ring-1 focus:ring-primary-light outline-none"
+                        placeholder="Value"
+                      />
+                      <button type="button" onClick={() => setConfirmItemDelete({ type: "results", index: idx })} className="text-danger hover:text-red-700 cursor-pointer"><FontAwesomeIcon icon={faTrash} className="w-3.5 h-3.5" /></button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              {/* Client Testimonial */}
+              <div className="border-t border-border pt-3">
+                <div className="text-sm font-bold text-heading mb-2">Client Testimonial</div>
+                <div className="space-y-3">
+                  <FormField
+                    label="Quote"
+                    textarea
+                    rows={2}
+                    value={form.client_testimonial_quote}
+                    onChange={(e) => setForm((f) => ({ ...f, client_testimonial_quote: e.target.value }))}
+                    placeholder="Client testimonial quote"
                   />
                   <FormField
-                    label="Company"
-                    value={form.client_testimonial_company}
-                    onChange={(e) => setForm((f) => ({ ...f, client_testimonial_company: e.target.value }))}
-                    placeholder="e.g. Acme Corp"
+                    label="Client Name"
+                    value={form.client_testimonial_name}
+                    onChange={(e) => setForm((f) => ({ ...f, client_testimonial_name: e.target.value }))}
+                    placeholder="e.g. John Smith"
+                  />
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <FormField
+                      label="Designation"
+                      value={form.client_testimonial_designation}
+                      onChange={(e) => setForm((f) => ({ ...f, client_testimonial_designation: e.target.value }))}
+                      placeholder="e.g. CEO"
+                    />
+                    <FormField
+                      label="Company"
+                      value={form.client_testimonial_company}
+                      onChange={(e) => setForm((f) => ({ ...f, client_testimonial_company: e.target.value }))}
+                      placeholder="e.g. Acme Corp"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* SEO */}
+              <div className="border-t border-border pt-3">
+                <div className="text-sm font-bold text-heading mb-2">SEO</div>
+                <div className="space-y-3">
+                  <FormField
+                    label="Meta Title"
+                    value={form.seo_meta_title}
+                    onChange={(e) => setForm((f) => ({ ...f, seo_meta_title: e.target.value }))}
+                    placeholder="SEO title for the case study page"
+                  />
+                  <FormField
+                    label="Meta Description"
+                    textarea
+                    rows={2}
+                    value={form.seo_meta_description}
+                    onChange={(e) => setForm((f) => ({ ...f, seo_meta_description: e.target.value }))}
+                    placeholder="SEO description for the case study page"
                   />
                 </div>
               </div>
             </div>
 
-            {/* SEO */}
-            <div className="border-t border-border pt-3">
-              <div className="text-sm font-bold text-heading mb-2">SEO</div>
-              <div className="space-y-3">
-                <FormField
-                  label="Meta Title"
-                  value={form.seo_meta_title}
-                  onChange={(e) => setForm((f) => ({ ...f, seo_meta_title: e.target.value }))}
-                  placeholder="SEO title for the case study page"
-                />
-                <FormField
-                  label="Meta Description"
-                  textarea
-                  rows={2}
-                  value={form.seo_meta_description}
-                  onChange={(e) => setForm((f) => ({ ...f, seo_meta_description: e.target.value }))}
-                  placeholder="SEO description for the case study page"
-                />
-              </div>
+            <div>
+              <ErrorBanner message={error} />
+
+              <FormActions
+                submitting={submitting}
+                editId={form.case_study_id}
+                onSubmit={onSubmit}
+                onReset={() => setForm(EMPTY_FORM)}
+                submitLabel={form.case_study_id ? "Update Case Study" : "Create Case Study"}
+              />
             </div>
-
-            <ErrorBanner message={error} />
-
-            <FormActions
-              submitting={submitting}
-              editId={form.case_study_id}
-              onSubmit={onSubmit}
-              onReset={() => setForm(EMPTY_FORM)}
-              submitLabel={form.case_study_id ? "Update Case Study" : "Create Case Study"}
-            />
           </form>
         </div>
 
@@ -760,7 +756,7 @@ export default function AdminCaseStudies() {
                             <div className="font-bold text-heading truncate max-w-50">
                               {cs.title}
                             </div>
-                            <div className="text-muted text-xs truncate max-w-50">
+                            <div className="text-muted text-sm truncate max-w-50">
                               {cs.overview}
                             </div>
                             {cs.featured && (
@@ -772,13 +768,13 @@ export default function AdminCaseStudies() {
                         </div>
                       </td>
                       <td className="py-3 pr-3">
-                        <span className="text-xs text-text">
+                        <span className="text-sm text-text">
                           {typeof cs.project === "object" ? cs.project.project_name : "N/A"}
                         </span>
                       </td>
                       <td className="py-3 pr-3">
                         <span
-                          className={`inline-flex items-center rounded-full px-3 py-1 text-xs font-semibold border ${
+                          className={`inline-flex items-center rounded-full px-3 py-1 text-sm font-semibold border ${
                             cs.status === "Published"
                               ? "bg-success/10 text-success border-success/20"
                               : "bg-warning/10 text-warning border-warning/20"
@@ -786,11 +782,11 @@ export default function AdminCaseStudies() {
                           {cs.status}
                         </span>
                       </td>
-                      <td className="py-3">
-                        <div className="flex gap-2 flex-wrap">
+                      <td className="py-3 whitespace-nowrap">
+                        <div className="flex gap-2">
                           <button
                             type="button"
-                            className="px-3 py-2 text-xs sm:px-4 sm:py-2 sm:text-sm min-h-[44px] text-text hover:text-heading rounded transition cursor-pointer"
+                            className="px-3 py-2 text-sm sm:px-4 sm:py-2 sm:text-sm min-h-[44px] text-text hover:text-heading rounded transition cursor-pointer"
                             title="Edit"
                             aria-label="Edit"
                             onClick={() => onEdit(cs)}>
@@ -798,7 +794,7 @@ export default function AdminCaseStudies() {
                           </button>
                           <button
                             type="button"
-                            className="px-3 py-2 text-xs sm:px-4 sm:py-2 sm:text-sm min-h-[44px] text-danger hover:text-red-700 rounded transition cursor-pointer"
+                            className="px-3 py-2 text-sm sm:px-4 sm:py-2 sm:text-sm min-h-[44px] text-danger hover:text-red-700 rounded transition cursor-pointer"
                             title="Delete"
                             aria-label="Delete"
                             onClick={() => setDeleteTarget(cs._id)}>

@@ -41,7 +41,15 @@ const useReviewStore = create((set) => ({
       const { data } = await apiService.get("/admin/reviews", { params });
       const reviews = data.data ?? [];
       set({ adminReviews: reviews, loading: false });
-      return { reviews, counters: data.counters ?? null, pagination: data.pagination ?? { total: reviews.length, page: 1, pages: 1 } };
+      return {
+        reviews,
+        counters: data.counters ?? null,
+        pagination: data.pagination ?? {
+          total: reviews.length,
+          page: 1,
+          pages: 1,
+        },
+      };
     } catch (error) {
       set({
         error: error.response?.data?.message || error.message,
@@ -57,7 +65,7 @@ const useReviewStore = create((set) => ({
       const { data } = await apiService.patch(`/admin/reviews/approve/${id}`);
       set((state) => ({
         adminReviews: state.adminReviews.map((r) =>
-          r._id === id ? { ...r, status: "Approved" } : r
+          r._id === id ? { ...r, status: "Approved" } : r,
         ),
         loading: false,
       }));
@@ -77,7 +85,7 @@ const useReviewStore = create((set) => ({
       const { data } = await apiService.patch(`/admin/reviews/reject/${id}`);
       set((state) => ({
         adminReviews: state.adminReviews.map((r) =>
-          r._id === id ? { ...r, status: "Rejected" } : r
+          r._id === id ? { ...r, status: "Rejected" } : r,
         ),
         loading: false,
       }));

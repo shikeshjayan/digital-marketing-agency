@@ -18,6 +18,7 @@ import Testimonials from './pages/public/Testimonials.jsx'
 import Contact from './pages/public/Contact.jsx'
 import TermsConditions from './components/public/TermsConditions.jsx'
 import PrivacyPolicy from './components/public/PrivacyPolicy.jsx'
+import InternalDataPolicies from './components/public/InternalDataPolicies.jsx'
 import NotFound from './pages/NotFound.jsx'
 
 const AdminLogin = lazy(() => import('./pages/admin/AdminLogin.jsx'))
@@ -69,6 +70,7 @@ export default function App() {
           {/* Registered Legal Link Routes */}
           <Route path="terms" element={<TermsConditions />} />
           <Route path="privacy" element={<PrivacyPolicy />} />
+          <Route path="internal-data-policies" element={<InternalDataPolicies />} />
         </Route>
 
         {/* Admin */}

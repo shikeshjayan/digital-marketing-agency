@@ -8,7 +8,6 @@ const __dirname = dirname(__filename);
 
 dotenv.config({ path: join(__dirname, "..", ".env") });
 
-import Admin from "./models/Admin.model.js";
 import Services from "./models/services.model.js";
 import Technology from "./models/technology.model.js";
 import Industry from "./models/industry.model.js";
@@ -32,25 +31,39 @@ const SEED_IMAGES = {
   web: img("crawlcrown-web"),
   content: img("crawlcrown-content"),
   branding: img("crawlcrown-branding"),
+  email: img("crawlcrown-email"),
+  analytics: img("crawlcrown-analytics"),
+  cro: img("crawlcrown-cro"),
+  video: img("crawlcrown-video"),
+  influencer: img("crawlcrown-influencer"),
+  affiliate: img("crawlcrown-affiliate"),
+  mobile: img("crawlcrown-mobile"),
+  pr: img("crawlcrown-pr"),
+  orm: img("crawlcrown-orm"),
+  voice: img("crawlcrown-voice"),
+  ecom: img("crawlcrown-ecom"),
+  growth: img("crawlcrown-growth"),
   projectMedicare: img("crawlcrown-medicare"),
   projectFintrack: img("crawlcrown-fintrack"),
   projectUrbannest: img("crawlcrown-urbannest"),
   projectCloudscale: img("crawlcrown-cloudscale"),
+  projectEdulearn: img("crawlcrown-edulearn"),
+  projectGreenleaf: img("crawlcrown-greenleaf"),
+  projectMediconnect: img("crawlcrown-mediconnect"),
+  projectDatavault: img("crawlcrown-datavault"),
+  projectBrewhouse: img("crawlcrown-brewhouse"),
+  projectFittrack: img("crawlcrown-fittrack"),
+  projectTravelbuddy: img("crawlcrown-travelbuddy"),
+  projectAgrisense: img("crawlcrown-agrisense"),
   caseStudyMedicare: img("crawlcrown-cs-medicare"),
   caseStudyFintrack: img("crawlcrown-cs-fintrack"),
+  caseStudyEdulearn: img("crawlcrown-cs-edulearn"),
+  caseStudyGreenleaf: img("crawlcrown-cs-greenleaf"),
+  caseStudyDatavault: img("crawlcrown-cs-datavault"),
+  caseStudyAgrisense: img("crawlcrown-cs-agrisense"),
 };
 
 const seedData = {
-  admins: [
-    {
-      name: "Admin",
-      email: "admin@example.com",
-      password: "password123",
-      photo: "",
-      role: "admin",
-    },
-  ],
-
   services: [
     {
       service_name: "Search Engine Optimization",
@@ -244,6 +257,162 @@ const seedData = {
       },
       status: "Active",
     },
+    {
+      service_name: "Email Marketing",
+      short_description: "Reach your audience directly with targeted email campaigns that nurture leads and drive conversions.",
+      description: "Our Email Marketing service helps you build and nurture relationships with your audience through targeted, automated email campaigns. From welcome sequences to abandoned cart recovery and newsletters, we design every email to engage and convert.",
+      hero_image: SEED_IMAGES.email,
+      icon: "faEnvelope",
+      deliverables: ["Email strategy and audience segmentation", "Campaign automation workflows", "A/B tested subject lines and content", "Responsive email template design", "Analytics and performance reporting", "List cleaning and deliverability optimization"],
+      benefits: ["Direct communication channel with your audience", "High ROI with measurable results", "Automated lead nurturing funnels", "Personalized content at scale", "Detailed analytics to refine strategy"],
+      featured: false,
+      display_order: 7,
+      seo: { meta_title: "Email Marketing Services | CrawlCrown", meta_description: "Drive conversions with targeted email campaigns. Automation, segmentation, and analytics-driven email marketing." },
+      status: "Active",
+    },
+    {
+      service_name: "Analytics & Reporting",
+      short_description: "Turn data into decisions with comprehensive analytics dashboards and actionable performance insights.",
+      description: "Our Analytics & Reporting service provides a complete view of your digital performance. We set up custom dashboards, track KPIs across all channels, and deliver clear monthly reports that help you make smarter marketing decisions.",
+      hero_image: SEED_IMAGES.analytics,
+      icon: "faChartBar",
+      deliverables: ["Custom analytics dashboard setup", "Multi-channel KPI tracking", "Monthly performance reports", "Conversion funnel analysis", "Cohort and retention analysis", "Data visualization and executive summaries"],
+      benefits: ["Data-driven decision making", "Clear visibility into campaign ROI", "Identify growth opportunities quickly", "Align team around shared metrics", "Transparent reporting for stakeholders"],
+      featured: false,
+      display_order: 8,
+      seo: { meta_title: "Analytics & Reporting Services | CrawlCrown", meta_description: "Make data-driven decisions with custom analytics dashboards and comprehensive performance reporting." },
+      status: "Active",
+    },
+    {
+      service_name: "Conversion Rate Optimization",
+      short_description: "Maximize your existing traffic by systematically testing and improving your website conversion paths.",
+      description: "Our CRO service uses data-driven experimentation to improve your website conversion rates. We conduct user research, A/B testing, and heatmap analysis to identify friction points and optimize every step of your customer journey.",
+      hero_image: SEED_IMAGES.cro,
+      icon: "faRocket",
+      deliverables: ["Conversion funnel audit", "A/B and multivariate testing", "Heatmap and session recording analysis", "User experience research", "Landing page optimization", "CTA and form optimization"],
+      benefits: ["Higher conversion rates from existing traffic", "Reduced cost per acquisition", "Improved user experience", "Data-backed design decisions", "Compound ROI from ongoing optimization"],
+      featured: false,
+      display_order: 9,
+      seo: { meta_title: "Conversion Rate Optimization Services | CrawlCrown", meta_description: "Convert more visitors with data-driven A/B testing, heatmap analysis, and UX optimization." },
+      status: "Active",
+    },
+    {
+      service_name: "Video Marketing",
+      short_description: "Captivate your audience with professional video content that tells your brand story and drives engagement.",
+      description: "Our Video Marketing service produces high-quality video content for every stage of the funnel. From brand stories and product demos to social clips and explainer videos, we handle scripting, production, editing, and distribution.",
+      hero_image: SEED_IMAGES.video,
+      icon: "faVideo",
+      deliverables: ["Video content strategy", "Scriptwriting and storyboarding", "Professional production and editing", "Motion graphics and animation", "Platform-optimized exports", "Performance analytics and optimization"],
+      benefits: ["Higher engagement and shareability", "Improved brand recall and trust", "Boosted conversion rates", "Stronger social media performance", "Versatile content for multiple platforms"],
+      featured: false,
+      display_order: 10,
+      seo: { meta_title: "Video Marketing Services | CrawlCrown", meta_description: "Engage your audience with professional video content. Brand stories, product demos, and social video production." },
+      status: "Active",
+    },
+    {
+      service_name: "Influencer Marketing",
+      short_description: "Amplify your brand reach by partnering with trusted influencers who connect with your target audience.",
+      description: "Our Influencer Marketing service connects your brand with relevant influencers across Instagram, TikTok, YouTube, and LinkedIn. We handle vetting, outreach, campaign management, and performance tracking to ensure authentic partnerships that deliver real results.",
+      hero_image: SEED_IMAGES.influencer,
+      icon: "faUsers",
+      deliverables: ["Influencer identification and vetting", "Outreach and negotiation management", "Campaign creative briefs", "Content approval and brand alignment", "Performance tracking and ROI reporting", "Long-term partnership development"],
+      benefits: ["Access to engaged, niche audiences", "Authentic brand advocacy", "Increased social proof and trust", "Scalable campaign models", "Diverse content creation"],
+      featured: false,
+      display_order: 11,
+      seo: { meta_title: "Influencer Marketing Services | CrawlCrown", meta_description: "Partner with trusted influencers to amplify your brand reach across Instagram, TikTok, YouTube, and LinkedIn." },
+      status: "Active",
+    },
+    {
+      service_name: "Affiliate Marketing",
+      short_description: "Build a scalable revenue channel through strategic affiliate partnerships and performance-based programs.",
+      description: "Our Affiliate Marketing service sets up and manages performance-based programs that reward partners for driving sales. We recruit relevant affiliates, provide them with creative assets, track performance, and optimize campaigns for maximum ROI.",
+      hero_image: SEED_IMAGES.affiliate,
+      icon: "faHandshake",
+      deliverables: ["Affiliate program strategy and setup", "Recruitment of relevant affiliates", "Creative assets and tracking links", "Commission structure optimization", "Performance monitoring and fraud detection", "Monthly reconciliation and reporting"],
+      benefits: ["Pay only for performance", "Scalable revenue growth", "Expanded brand reach through partners", "Diversified marketing channels", "Low-risk, high-reward model"],
+      featured: false,
+      display_order: 12,
+      seo: { meta_title: "Affiliate Marketing Services | CrawlCrown", meta_description: "Build a scalable affiliate program that pays for performance. Recruit, manage, and optimize your affiliate partnerships." },
+      status: "Active",
+    },
+    {
+      service_name: "Mobile Marketing",
+      short_description: "Engage your audience on the devices they use most with SMS, push notifications, and mobile-optimized campaigns.",
+      description: "Our Mobile Marketing service reaches customers on their smartphones through SMS campaigns, push notifications, in-app messaging, and mobile-optimized landing pages. We help you connect with your audience anytime, anywhere.",
+      hero_image: SEED_IMAGES.mobile,
+      icon: "faMobileAlt",
+      deliverables: ["Mobile marketing strategy", "SMS and MMS campaign management", "Push notification setup and automation", "Mobile landing page optimization", "App store optimization", "Mobile analytics and attribution"],
+      benefits: ["Direct, high-open-rate communication", "Immediate customer engagement", "Location-based targeting", "Complementary to other channels", "High conversion rates on mobile"],
+      featured: false,
+      display_order: 13,
+      seo: { meta_title: "Mobile Marketing Services | CrawlCrown", meta_description: "Engage customers on their phones with SMS, push notifications, and mobile-optimized campaigns." },
+      status: "Active",
+    },
+    {
+      service_name: "Public Relations",
+      short_description: "Earn meaningful media coverage and build your brand credibility through strategic PR campaigns.",
+      description: "Our Public Relations service helps you earn valuable media coverage across digital and traditional outlets. We craft compelling narratives, build relationships with journalists, and manage press outreach to position your brand as an industry leader.",
+      hero_image: SEED_IMAGES.pr,
+      icon: "faNewspaper",
+      deliverables: ["PR strategy and messaging framework", "Media list building and journalist outreach", "Press release writing and distribution", "Thought leadership content", "Media monitoring and reporting", "Crisis communication planning"],
+      benefits: ["Earned media credibility", "Increased brand awareness", "Stronger stakeholder trust", "Competitive differentiation", "Long-lasting SEO value from coverage"],
+      featured: false,
+      display_order: 14,
+      seo: { meta_title: "Public Relations Services | CrawlCrown", meta_description: "Build brand credibility through strategic PR campaigns. Media outreach, press releases, and thought leadership." },
+      status: "Active",
+    },
+    {
+      service_name: "Online Reputation Management",
+      short_description: "Protect and enhance your brand reputation by monitoring, managing, and improving your online presence.",
+      description: "Our ORM service monitors your brand mentions across the web and helps you maintain a positive online reputation. We manage review platforms, address negative feedback, and promote positive content to ensure your brand is seen in the best light.",
+      hero_image: SEED_IMAGES.orm,
+      icon: "faStar",
+      deliverables: ["Brand mention monitoring setup", "Review platform management", "Negative feedback response strategy", "Positive content promotion", "Reputation audit and gap analysis", "Monthly reputation scorecard"],
+      benefits: ["Protect your brand image", "Build customer trust and confidence", "Improve search result perception", "Proactive issue resolution", "Data-backed reputation insights"],
+      featured: false,
+      display_order: 15,
+      seo: { meta_title: "Online Reputation Management Services | CrawlCrown", meta_description: "Protect and enhance your brand reputation with monitoring, review management, and positive content promotion." },
+      status: "Active",
+    },
+    {
+      service_name: "Voice Search SEO",
+      short_description: "Optimize your content for voice search to capture growing traffic from smart speakers and virtual assistants.",
+      description: "Our Voice Search SEO service prepares your brand for the growing voice-activated search market. We optimize for conversational queries, featured snippets, and local search to ensure your business is found when users ask Siri, Alexa, or Google Assistant.",
+      hero_image: SEED_IMAGES.voice,
+      icon: "faMicrophone",
+      deliverables: ["Voice search keyword research", "Conversational content optimization", "Featured snippet targeting", "Local SEO for voice queries", "Schema markup implementation", "Voice search performance tracking"],
+      benefits: ["Early mover advantage in voice search", "Capture growing hands-free traffic", "Improved featured snippet rankings", "Enhanced local search visibility", "Future-proof your SEO strategy"],
+      featured: false,
+      display_order: 16,
+      seo: { meta_title: "Voice Search SEO Services | CrawlCrown", meta_description: "Optimize for voice search and capture traffic from smart speakers and virtual assistants like Siri and Alexa." },
+      status: "Active",
+    },
+    {
+      service_name: "E-commerce Marketing",
+      short_description: "Drive sales and grow your online store with a full-funnel marketing strategy tailored for e-commerce.",
+      description: "Our E-commerce Marketing service is purpose-built for online stores. We integrate PPC, SEO, email, and social campaigns with your product catalog to drive traffic, increase average order value, and maximize customer lifetime value across all channels.",
+      hero_image: SEED_IMAGES.ecom,
+      icon: "faStore",
+      deliverables: ["Full-funnel e-commerce strategy", "Product feed optimization for shopping ads", "Cart abandonment email automation", "Upsell and cross-sell campaign design", "Customer loyalty program setup", "Revenue attribution and reporting"],
+      benefits: ["Increased average order value", "Reduced cart abandonment rates", "Higher customer lifetime value", "Multi-channel revenue attribution", "Scalable growth for peak seasons"],
+      featured: false,
+      display_order: 17,
+      seo: { meta_title: "E-commerce Marketing Services | CrawlCrown", meta_description: "Drive online sales with full-funnel e-commerce marketing. PPC, email, social, and SEO optimized for your store." },
+      status: "Active",
+    },
+    {
+      service_name: "Growth Hacking",
+      short_description: "Accelerate your business growth with rapid experimentation and data-driven marketing tactics.",
+      description: "Our Growth Hacking service uses rapid experimentation across all channels to identify the most effective ways to grow your business. We combine creative marketing tactics with rigorous data analysis to find scalable, repeatable growth engines.",
+      hero_image: SEED_IMAGES.growth,
+      icon: "faChartLine",
+      deliverables: ["Growth funnel audit and analysis", "Rapid experimentation roadmap", "Viral loop and referral program design", "Channel mix optimization", "Retention and re-engagement strategies", "Growth metric tracking and reporting"],
+      benefits: ["Rapid, cost-effective growth", "Data-validated marketing channels", "Scalable acquisition strategies", "Improved retention and virality", "Culture of experimentation"],
+      featured: false,
+      display_order: 18,
+      seo: { meta_title: "Growth Hacking Services | CrawlCrown", meta_description: "Accelerate growth with rapid experimentation and data-driven tactics across every marketing channel." },
+      status: "Active",
+    },
   ],
 
   technologies: [
@@ -255,6 +424,22 @@ const seedData = {
     { name: "TypeScript", description: "A typed superset of JavaScript that improves code quality and developer productivity.", icon: "faFileAlt", display_order: 6 },
     { name: "Next.js", description: "A React framework for production-grade server-rendered and static web applications.", icon: "faGlobe", display_order: 7 },
     { name: "Tailwind CSS", description: "A utility-first CSS framework for rapidly building custom user interfaces.", icon: "faPaintBrush", display_order: 8 },
+    { name: "Docker", description: "A containerization platform for building, shipping, and running applications consistently.", icon: "faCube", display_order: 9 },
+    { name: "GraphQL", description: "A query language for APIs that enables efficient, flexible data fetching.", icon: "faProjectDiagram", display_order: 10 },
+    { name: "Redis", description: "An in-memory data store for high-performance caching and real-time data processing.", icon: "faBolt", display_order: 11 },
+    { name: "Kubernetes", description: "An orchestration platform for automating deployment, scaling, and management of containers.", icon: "faCogs", display_order: 12 },
+    { name: "PostgreSQL", description: "A powerful, open-source relational database with advanced query capabilities.", icon: "faDatabase", display_order: 13 },
+    { name: "Git", description: "A distributed version control system for tracking changes in source code.", icon: "faCodeBranch", display_order: 14 },
+    { name: "Linux", description: "An open-source operating system powering most servers and cloud infrastructure.", icon: "faTerminal", display_order: 15 },
+    { name: "Nginx", description: "A high-performance web server and reverse proxy for serving web applications.", icon: "faServer", display_order: 16 },
+    { name: "RabbitMQ", description: "A message broker that enables reliable asynchronous communication between services.", icon: "faEnvelope", display_order: 17 },
+    { name: "Elasticsearch", description: "A distributed search and analytics engine for fast data exploration.", icon: "faSearch", display_order: 18 },
+    { name: "Jenkins", description: "An automation server for building, testing, and deploying code continuously.", icon: "faTools", display_order: 19 },
+    { name: "Terraform", description: "An infrastructure-as-code tool for provisioning and managing cloud resources.", icon: "faCloud", display_order: 20 },
+    { name: "Vue.js", description: "A progressive JavaScript framework for building interactive user interfaces.", icon: "faCode", display_order: 21 },
+    { name: "Go", description: "A statically typed compiled language designed for high-performance applications.", icon: "faTerminal", display_order: 22 },
+    { name: "Rust", description: "A systems programming language focused on safety, speed, and concurrency.", icon: "faShieldAlt", display_order: 23 },
+    { name: "Firebase", description: "A Google platform for building web and mobile apps with backend services.", icon: "faFire", display_order: 24 },
   ],
 
   industries: [
@@ -264,6 +449,18 @@ const seedData = {
     { name: "Education", description: "EdTech platforms, LMS systems, and educational institution websites.", icon: "faGraduationCap", display_order: 4 },
     { name: "Real Estate", description: "Property listing platforms, virtual tours, and real estate marketing solutions.", icon: "faBuilding", display_order: 5 },
     { name: "Technology", description: "SaaS products, tech startups, and enterprise software platforms.", icon: "faMicrochip", display_order: 6 },
+    { name: "Travel & Hospitality", description: "Travel booking platforms, hotel chains, and tourism experiences.", icon: "faPlane", display_order: 7 },
+    { name: "Legal", description: "Law firms, legal tech platforms, and compliance solutions.", icon: "faGavel", display_order: 8 },
+    { name: "Non-profit", description: "Charities, foundations, and social impact organizations.", icon: "faHandHoldingHeart", display_order: 9 },
+    { name: "Manufacturing", description: "Industrial automation, supply chain, and production management.", icon: "faIndustry", display_order: 10 },
+    { name: "Media & Entertainment", description: "Streaming platforms, publishing, and digital content studios.", icon: "faFilm", display_order: 11 },
+    { name: "Telecommunications", description: "Network providers, communication platforms, and connectivity solutions.", icon: "faBroadcastTower", display_order: 12 },
+    { name: "Energy", description: "Renewable energy, utilities, and smart grid technologies.", icon: "faBolt", display_order: 13 },
+    { name: "Agriculture", description: "AgTech, farm management, and sustainable food production.", icon: "faTractor", display_order: 14 },
+    { name: "Transportation & Logistics", description: "Fleet management, shipping, and supply chain optimization.", icon: "faTruck", display_order: 15 },
+    { name: "Government", description: "Public sector digital services and civic technology solutions.", icon: "faLandmark", display_order: 16 },
+    { name: "Sports", description: "Sports teams, fitness platforms, and athletic performance technology.", icon: "faFutbol", display_order: 17 },
+    { name: "Food & Beverage", description: "Restaurant chains, food delivery, and beverage brands.", icon: "faUtensils", display_order: 18 },
   ],
 
   team: [
@@ -271,6 +468,7 @@ const seedData = {
       name: "Sarah Johnson",
       designation: "Chief Executive Officer",
       description: "With over 15 years of experience in digital marketing and business strategy, Sarah leads our vision of helping businesses thrive in the digital landscape.",
+      photo: img("team-sarah"),
       linkedin: "https://linkedin.com/in/sarahjohnson",
       email: "sarah@digitalagency.com",
       display_order: 1,
@@ -279,6 +477,7 @@ const seedData = {
       name: "Michael Chen",
       designation: "Chief Technology Officer",
       description: "A full-stack architect with deep expertise in cloud infrastructure and modern web technologies. Michael ensures our solutions are scalable, secure, and performant.",
+      photo: img("team-michael"),
       linkedin: "https://linkedin.com/in/michaelchen",
       email: "michael@digitalagency.com",
       display_order: 2,
@@ -287,6 +486,7 @@ const seedData = {
       name: "Emily Rodriguez",
       designation: "Creative Director",
       description: "Emily brings brands to life through compelling visual storytelling. Her award-winning designs have helped dozens of companies establish memorable brand identities.",
+      photo: img("team-emily"),
       linkedin: "https://linkedin.com/in/emilyrodriguez",
       email: "emily@digitalagency.com",
       display_order: 3,
@@ -295,6 +495,7 @@ const seedData = {
       name: "David Kim",
       designation: "Lead Developer",
       description: "David is a senior engineer specializing in React and Node.js. He leads our development team in building performant, accessible web applications.",
+      photo: img("team-david"),
       linkedin: "https://linkedin.com/in/davidkim",
       email: "david@digitalagency.com",
       display_order: 4,
@@ -303,6 +504,7 @@ const seedData = {
       name: "Rachel Patel",
       designation: "SEO Manager",
       description: "Rachel is a certified SEO specialist who combines data analysis with creative strategy to deliver consistent organic growth for our clients.",
+      photo: img("team-rachel"),
       linkedin: "https://linkedin.com/in/rachelpatel",
       email: "rachel@digitalagency.com",
       display_order: 5,
@@ -311,6 +513,7 @@ const seedData = {
       name: "James Wilson",
       designation: "Marketing Director",
       description: "James oversees all marketing campaigns across channels. His data-driven approach has generated millions in revenue for our clients.",
+      photo: img("team-james"),
       linkedin: "https://linkedin.com/in/jameswilson",
       email: "james@digitalagency.com",
       display_order: 6,
@@ -319,6 +522,7 @@ const seedData = {
       name: "Sofia Andersson",
       designation: "UI/UX Designer",
       description: "Sofia crafts intuitive, beautiful interfaces rooted in user research. She is passionate about creating digital experiences that feel effortless.",
+      photo: img("team-sofia"),
       linkedin: "https://linkedin.com/in/sofiaandersson",
       email: "sofia@digitalagency.com",
       display_order: 7,
@@ -327,9 +531,154 @@ const seedData = {
       name: "Alex Thompson",
       designation: "Project Manager",
       description: "Alex ensures every project is delivered on time, within budget, and to the highest standard. He keeps the entire team aligned and moving forward.",
+      photo: img("team-alex"),
       linkedin: "https://linkedin.com/in/alexthompson",
       email: "alex@digitalagency.com",
       display_order: 8,
+    },
+    {
+      name: "Marcus Williams",
+      designation: "Lead UX Researcher",
+      description: "Marcus uncovers deep user insights through qualitative and quantitative research that shapes every design decision.",
+      photo: img("team-marcus"),
+      linkedin: "https://linkedin.com/in/marcuswilliams",
+      email: "marcus@digitalagency.com",
+      display_order: 9,
+    },
+    {
+      name: "Nina Patel",
+      designation: "Digital Marketing Strategist",
+      description: "Nina architects multi-channel marketing strategies that align with business goals and deliver measurable growth.",
+      photo: img("team-nina"),
+      linkedin: "https://linkedin.com/in/ninapatel",
+      email: "nina@digitalagency.com",
+      display_order: 10,
+    },
+    {
+      name: "Oliver Grant",
+      designation: "Senior Backend Developer",
+      description: "Oliver builds scalable, secure APIs and microservices that power complex web applications.",
+      photo: img("team-oliver"),
+      linkedin: "https://linkedin.com/in/olivergrant",
+      email: "oliver@digitalagency.com",
+      display_order: 11,
+    },
+    {
+      name: "Priya Kapoor",
+      designation: "Social Media Manager",
+      description: "Priya creates engaging social content and manages communities across Instagram, TikTok, and LinkedIn.",
+      photo: img("team-priya"),
+      linkedin: "https://linkedin.com/in/priyakapoor",
+      email: "priya@digitalagency.com",
+      display_order: 12,
+    },
+    {
+      name: "Quentin Blake",
+      designation: "Copywriter",
+      description: "Quentin crafts compelling copy that captures brand voice and drives action across every channel.",
+      photo: img("team-quentin"),
+      linkedin: "https://linkedin.com/in/quentinblake",
+      email: "quentin@digitalagency.com",
+      display_order: 13,
+    },
+    {
+      name: "Rachel Chen",
+      designation: "Data Analyst",
+      description: "Rachel turns complex datasets into clear insights that guide strategy and prove campaign ROI.",
+      photo: img("team-rachelchen"),
+      linkedin: "https://linkedin.com/in/rachelchen",
+      email: "rachelchen@digitalagency.com",
+      display_order: 14,
+    },
+    {
+      name: "Samuel Torres",
+      designation: "DevOps Engineer",
+      description: "Samuel automates infrastructure and deployment pipelines to keep applications reliable and scalable.",
+      photo: img("team-samuel"),
+      linkedin: "https://linkedin.com/in/samueltorres",
+      email: "samuel@digitalagency.com",
+      display_order: 15,
+    },
+    {
+      name: "Tina Huang",
+      designation: "Brand Designer",
+      description: "Tina creates visual identities that tell compelling stories and leave lasting impressions.",
+      photo: img("team-tina"),
+      linkedin: "https://linkedin.com/in/tinahuang",
+      email: "tina@digitalagency.com",
+      display_order: 16,
+    },
+    {
+      name: "Uma Krishnan",
+      designation: "SEO Specialist",
+      description: "Uma combines technical SEO expertise with creative content strategies to drive organic growth.",
+      photo: img("team-uma"),
+      linkedin: "https://linkedin.com/in/umakrishnan",
+      email: "uma@digitalagency.com",
+      display_order: 17,
+    },
+    {
+      name: "Victor Adeyemi",
+      designation: "Full Stack Developer",
+      description: "Victor builds end-to-end features with equal comfort across frontend and backend systems.",
+      photo: img("team-victor"),
+      linkedin: "https://linkedin.com/in/victoradeyemi",
+      email: "victor@digitalagency.com",
+      display_order: 18,
+    },
+    {
+      name: "Wendy Chang",
+      designation: "PPC Campaign Manager",
+      description: "Wendy manages high-performing ad campaigns with meticulous bid strategies and relentless optimization.",
+      photo: img("team-wendy"),
+      linkedin: "https://linkedin.com/in/wendychang",
+      email: "wendy@digitalagency.com",
+      display_order: 19,
+    },
+    {
+      name: "Xavier Dupont",
+      designation: "Creative Lead",
+      description: "Xavier leads creative direction across projects, ensuring every output meets the highest design standards.",
+      photo: img("team-xavier"),
+      linkedin: "https://linkedin.com/in/xavierdupont",
+      email: "xavier@digitalagency.com",
+      display_order: 20,
+    },
+    {
+      name: "Yuki Tanaka",
+      designation: "Frontend Developer",
+      description: "Yuki builds pixel-perfect, accessible interfaces with modern frontend frameworks and tools.",
+      photo: img("team-yuki"),
+      linkedin: "https://linkedin.com/in/yukitanaka",
+      email: "yuki@digitalagency.com",
+      display_order: 21,
+    },
+    {
+      name: "Zoe Williams",
+      designation: "Content Strategist",
+      description: "Zoe develops content strategies that attract, engage, and convert target audiences through every stage of the funnel.",
+      photo: img("team-zoe"),
+      linkedin: "https://linkedin.com/in/zoewilliams",
+      email: "zoe@digitalagency.com",
+      display_order: 22,
+    },
+    {
+      name: "Aaron Mitchell",
+      designation: "Marketing Analyst",
+      description: "Aaron tracks campaign performance, identifies trends, and delivers actionable recommendations for improvement.",
+      photo: img("team-aaron"),
+      linkedin: "https://linkedin.com/in/aaronmitchell",
+      email: "aaron@digitalagency.com",
+      display_order: 23,
+    },
+    {
+      name: "Bella Santos",
+      designation: "UI Designer",
+      description: "Bella designs intuitive, beautiful interfaces that balance aesthetics with usability.",
+      photo: img("team-bella"),
+      linkedin: "https://linkedin.com/in/bellasantos",
+      email: "bella@digitalagency.com",
+      display_order: 24,
     },
   ],
 
@@ -338,6 +687,7 @@ const seedData = {
       name: "Robert Mitchell",
       location: "New York, NY",
       rating: 5,
+      user_avatar: img("review-robert"),
       review_text: "Working with this agency completely transformed our online presence. Our organic traffic increased by 340% within six months, and the leads we receive are now highly qualified. The team is responsive, creative, and truly understands our business goals.",
       status: "Approved",
     },
@@ -345,6 +695,7 @@ const seedData = {
       name: "Jennifer Lee",
       location: "San Francisco, CA",
       rating: 5,
+      user_avatar: img("review-jennifer"),
       review_text: "The PPC campaigns they set up for us delivered a 5x return on ad spend in the first quarter alone. Their attention to detail in audience targeting and ad copywriting is exceptional. We have finally found a marketing partner that truly cares about results.",
       status: "Approved",
     },
@@ -352,6 +703,7 @@ const seedData = {
       name: "David Park",
       location: "Chicago, IL",
       rating: 4,
+      user_avatar: img("review-david"),
       review_text: "They redesigned our website and the results speak for themselves. Bounce rate dropped by 45%, page load time went from 6 seconds to under 2, and our conversion rate doubled. The process was smooth and the team kept us informed at every step.",
       status: "Approved",
     },
@@ -359,6 +711,7 @@ const seedData = {
       name: "Maria Gonzalez",
       location: "Austin, TX",
       rating: 5,
+      user_avatar: img("review-maria"),
       review_text: "Their social media marketing has been a game-changer for our brand. We went from 2,000 to over 25,000 followers in eight months, and the engagement rates are consistently above industry averages. They understand how to build an authentic community.",
       status: "Approved",
     },
@@ -366,6 +719,7 @@ const seedData = {
       name: "Thomas Wright",
       location: "Seattle, WA",
       rating: 4,
+      user_avatar: img("review-thomas"),
       review_text: "The branding project they delivered exceeded our expectations. Our new logo, color palette, and brand guidelines have given us a professional, cohesive look that our customers and partners constantly compliment. Highly recommended for any rebranding effort.",
       status: "Approved",
     },
@@ -373,7 +727,104 @@ const seedData = {
       name: "Amanda Foster",
       location: "Denver, CO",
       rating: 5,
+      user_avatar: img("review-amanda"),
       review_text: "We hired them for content marketing and the quality of the articles and case studies they produce is outstanding. Our blog traffic increased by 280% and we have seen a noticeable uptick in inbound leads. They are an extension of our marketing team.",
+      status: "Approved",
+    },
+    {
+      name: "Sarah Mitchell",
+      location: "Miami, FL",
+      rating: 5,
+      user_avatar: img("review-sarah"),
+      review_text: "Their email marketing campaigns have completely transformed our customer retention. Our open rates increased by 45% and we are seeing consistent revenue from our automated flows.",
+      status: "Approved",
+    },
+    {
+      name: "Chris Anderson",
+      location: "Atlanta, GA",
+      rating: 4,
+      user_avatar: img("review-chris"),
+      review_text: "The analytics dashboard they built gives us real-time visibility into our marketing performance. We can now make decisions based on data rather than gut feelings.",
+      status: "Approved",
+    },
+    {
+      name: "Michelle Kim",
+      location: "Los Angeles, CA",
+      rating: 5,
+      user_avatar: img("review-michelle"),
+      review_text: "Our conversion rate improved by 65% after implementing their CRO recommendations. The A/B testing framework they set up continues to deliver improvements every month.",
+      status: "Approved",
+    },
+    {
+      name: "Ryan Taylor",
+      location: "Dallas, TX",
+      rating: 4,
+      user_avatar: img("review-ryan"),
+      review_text: "The video content they produced for our product launch was exceptional. The explainer video alone generated over 50,000 views and directly contributed to our strongest quarter ever.",
+      status: "Approved",
+    },
+    {
+      name: "Olivia Brooks",
+      location: "Portland, OR",
+      rating: 5,
+      user_avatar: img("review-olivia"),
+      review_text: "Working with their PR team earned us coverage in five major industry publications. Our brand credibility has never been higher and we are being approached by partners we could only dream of before.",
+      status: "Approved",
+    },
+    {
+      name: "Nathan Cooper",
+      location: "Phoenix, AZ",
+      rating: 5,
+      user_avatar: img("review-nathan"),
+      review_text: "Their e-commerce marketing strategy doubled our Black Friday revenue year over year. The multi-channel approach they implemented created a seamless customer experience from discovery to purchase.",
+      status: "Approved",
+    },
+    {
+      name: "Hannah Lee",
+      location: "Nashville, TN",
+      rating: 4,
+      user_avatar: img("review-hannah"),
+      review_text: "The influencer marketing campaign they managed for us was incredibly authentic and effective. We saw a 300% increase in social engagement and a significant bump in website traffic.",
+      status: "Approved",
+    },
+    {
+      name: "Ethan Garcia",
+      location: "Minneapolis, MN",
+      rating: 5,
+      user_avatar: img("review-ethan"),
+      review_text: "Their team helped us completely turn around our online reputation. Negative reviews were addressed professionally, and our average rating went from 3.2 to 4.6 stars.",
+      status: "Approved",
+    },
+    {
+      name: "Lily Thompson",
+      location: "Charlotte, NC",
+      rating: 4,
+      user_avatar: img("review-lily"),
+      review_text: "The affiliate program they built for us now accounts for 20% of our monthly revenue. Their partner recruitment and management have been top-notch from day one.",
+      status: "Approved",
+    },
+    {
+      name: "Jack Robinson",
+      location: "Detroit, MI",
+      rating: 5,
+      user_avatar: img("review-jack"),
+      review_text: "Their growth hacking approach helped us find our most effective customer acquisition channel. We reduced our CPA by 40% while scaling our monthly leads by 3x.",
+      status: "Approved",
+    },
+    {
+      name: "Emily Foster",
+      location: "Philadelphia, PA",
+      rating: 5,
+      user_avatar: img("review-emily"),
+      review_text: "The mobile marketing campaigns they designed have been incredibly effective. Our SMS campaigns see open rates above 90% and our app push notifications drive consistent daily engagement.",
+      status: "Approved",
+    },
+    {
+      name: "Daniel Wright",
+      location: "San Diego, CA",
+      rating: 4,
+      user_avatar: img("review-daniel"),
+      review_text: "Their voice search SEO work has put us in the featured snippet for over 50 key queries. We are capturing traffic we were missing entirely before.",
       status: "Approved",
     },
   ],
@@ -403,6 +854,54 @@ const seedData = {
       message: "Our social media presence has been inconsistent. We need help building a content strategy and managing our Instagram and LinkedIn accounts. Do you offer monthly retainer packages?",
       status: "Pending",
     },
+    {
+      name: "Emma Wilson",
+      email: "emma.wilson@example.com",
+      phone: "+1-555-0104",
+      service: "Pay-Per-Click Advertising",
+      message: "We are launching a new product next quarter and want to run a comprehensive PPC campaign across Google and LinkedIn. Could you share your typical campaign setup process and pricing?",
+      status: "New",
+    },
+    {
+      name: "Daniel Lee",
+      email: "daniel.lee@example.com",
+      phone: "+1-555-0105",
+      service: "Branding and Identity",
+      message: "Our startup is going through a rebrand and we need help with logo design, brand guidelines, and a new website. Do you offer a combined branding plus web development package?",
+      status: "New",
+    },
+    {
+      name: "Sophia Martinez",
+      email: "sophia.martinez@example.com",
+      phone: "+1-555-0106",
+      service: "Content Marketing",
+      message: "We are a B2B SaaS company looking for a content marketing partner. We need blog posts, case studies, and whitepapers on a monthly retainer. Can you share examples of similar work?",
+      status: "Pending",
+    },
+    {
+      name: "Liam O'Brien",
+      email: "liam.obrien@example.com",
+      phone: "+1-555-0107",
+      service: "Video Marketing",
+      message: "We need a product explainer video and ongoing social video content for our brand. Do you handle both scriptwriting and production in-house?",
+      status: "New",
+    },
+    {
+      name: "Isabella Kim",
+      email: "isabella.kim@example.com",
+      phone: "+1-555-0108",
+      service: "Conversion Rate Optimization",
+      message: "Our e-commerce conversion rate has been stagnant for months. We would like a full CRO audit and ongoing optimization support. What tools and methodologies do you use?",
+      status: "Replied",
+    },
+    {
+      name: "James Chen",
+      email: "james.chen@example.com",
+      phone: "+1-555-0109",
+      service: "Analytics & Reporting",
+      message: "We need help setting up a comprehensive analytics dashboard that consolidates data from Google Ads, Meta, Shopify, and our CRM. Is this something you can handle?",
+      status: "New",
+    },
   ],
 };
 
@@ -413,8 +912,8 @@ async function seed() {
     console.log("Connected successfully.\n");
 
     // Check if data already exists
-    const adminCount = await Admin.countDocuments();
-    if (adminCount > 0) {
+    const existingCount = await Services.countDocuments();
+    if (existingCount > 0) {
       console.log("Database already seeded. Skipping.");
       console.log("To re-seed, drop the database first or use --force flag.");
       const force = process.argv.includes("--force");
@@ -432,15 +931,10 @@ async function seed() {
       await Industry.deleteMany();
       await Technology.deleteMany();
       await Services.deleteMany();
-      await Admin.deleteMany();
       console.log("Existing data cleared.\n");
     }
 
     // Tier 1 — Standalone models
-    console.log("Seeding Admin...");
-    const admins = await Admin.create(seedData.admins);
-    console.log(`  Created ${admins.length} admin(s).\n`);
-
     console.log("Seeding Services...");
     const services = await Services.create(seedData.services);
     console.log(`  Created ${services.length} services.\n`);
@@ -495,6 +989,25 @@ async function seed() {
     const james = team.find((t) => t.name === "James Wilson");
     const sofia = team.find((t) => t.name === "Sofia Andersson");
     const alex = team.find((t) => t.name === "Alex Thompson");
+    const xavier = team.find((t) => t.name === "Xavier Dupont");
+    const oliver = team.find((t) => t.name === "Oliver Grant");
+    const bella = team.find((t) => t.name === "Bella Santos");
+
+    const emailService = services.find((s) => s.service_name === "Email Marketing");
+    const analyticsService = services.find((s) => s.service_name === "Analytics & Reporting");
+    const ecomMarketing = services.find((s) => s.service_name === "E-commerce Marketing");
+    const prService = services.find((s) => s.service_name === "Public Relations");
+
+    const dockerTech = technologies.find((t) => t.name === "Docker");
+    const redisTech = technologies.find((t) => t.name === "Redis");
+    const postgresTech = technologies.find((t) => t.name === "PostgreSQL");
+    const firebaseTech = technologies.find((t) => t.name === "Firebase");
+    const graphqlTech = technologies.find((t) => t.name === "GraphQL");
+
+    const educationIndustry = industries.find((i) => i.name === "Education");
+    const travelIndustry = industries.find((i) => i.name === "Travel & Hospitality");
+    const agricultureIndustry = industries.find((i) => i.name === "Agriculture");
+    const foodBeverageIndustry = industries.find((i) => i.name === "Food & Beverage");
 
     console.log("Seeding Projects...");
     const projectData = [
@@ -618,6 +1131,142 @@ async function seed() {
         },
         status: "Published",
       },
+      {
+        project_name: "EduLearn Online Learning Platform",
+        short_description: "An interactive online learning platform with live classes, progress tracking, and AI-powered course recommendations.",
+        description: "EduLearn is a comprehensive online learning platform built for a fast-growing edtech startup. The platform features live interactive classes with real-time collaboration tools, progress tracking with personalized dashboards, AI-powered course recommendations based on learning style and goals, and a content authoring system for instructors. The platform scales to handle thousands of concurrent learners while maintaining low latency for live sessions.",
+        thumbnail: SEED_IMAGES.projectEdulearn,
+        gallery: [SEED_IMAGES.projectEdulearn, img("crawlcrown-edulearn-g2"), img("crawlcrown-edulearn-g3")],
+        services: [webService._id, seoService._id],
+        technologies: [reactTech._id, nodeTech._id, mongoTech._id, dockerTech._id],
+        industries: [educationIndustry._id],
+        team: [david._id, sofia._id, alex._id],
+        client: { name: "Dr. Sarah Mitchell", company: "EduLearn Technologies", website: "https://edulearn.example.com", location: "Austin, TX" },
+        project_url: "https://edulearn.example.com",
+        completion_date: new Date("2026-01-15"),
+        featured: true,
+        seo: { meta_title: "EduLearn Online Learning Platform — EdTech Case Study", meta_description: "How we built a scalable online learning platform with live classes, progress tracking, and AI course recommendations." },
+        status: "Published",
+      },
+      {
+        project_name: "GreenLeaf Sustainable Marketplace",
+        short_description: "A purpose-driven e-commerce platform for eco-friendly products with carbon footprint tracking and ethical sourcing.",
+        description: "GreenLeaf is a sustainable marketplace connecting conscious consumers with verified eco-friendly brands. The platform features product carbon footprint tracking, ethical sourcing verification badges, a transparent supply chain explorer, and a community impact dashboard. Built with accessibility and performance in mind, the platform serves a growing community of environmentally conscious shoppers.",
+        thumbnail: SEED_IMAGES.projectGreenleaf,
+        gallery: [SEED_IMAGES.projectGreenleaf, img("crawlcrown-greenleaf-g2"), img("crawlcrown-greenleaf-g3")],
+        services: [webService._id, ecomMarketing._id],
+        technologies: [nextTech._id, nodeTech._id, tailTech._id, mongoTech._id, dockerTech._id],
+        industries: [ecommerceIndustry._id],
+        team: [emily._id, david._id, james._id, xavier._id],
+        client: { name: "Maya Patel", company: "GreenLeaf Commerce", website: "https://greenleaf.example.com", location: "Portland, OR" },
+        project_url: "https://greenleaf.example.com",
+        completion_date: new Date("2026-02-20"),
+        featured: true,
+        seo: { meta_title: "GreenLeaf Sustainable Marketplace — E-Commerce Case Study", meta_description: "How we built a sustainable e-commerce platform with carbon footprint tracking and ethical sourcing verification." },
+        status: "Published",
+      },
+      {
+        project_name: "MediConnect Patient Portal",
+        short_description: "A unified patient portal consolidating medical records, appointment management, and telemedicine across provider networks.",
+        description: "MediConnect is a patient-centric health platform that unifies medical records from multiple providers into a single view. Features include cross-provider appointment booking, secure messaging with care teams, medication tracking with reminders, and integrated telemedicine visits. The platform serves as a central hub for patients managing complex healthcare across multiple specialists and facilities.",
+        thumbnail: SEED_IMAGES.projectMediconnect,
+        gallery: [SEED_IMAGES.projectMediconnect, img("crawlcrown-mediconnect-g2"), img("crawlcrown-mediconnect-g3")],
+        services: [webService._id, seoService._id],
+        technologies: [reactTech._id, tsTech._id, awsTech._id, dockerTech._id],
+        industries: [healthIndustry._id],
+        team: [michael._id, sofia._id, david._id],
+        client: { name: "Dr. James Carter", company: "MediConnect Health", website: "https://mediconnect.example.com", location: "Chicago, IL" },
+        project_url: "https://mediconnect.example.com",
+        completion_date: new Date("2026-03-10"),
+        featured: false,
+        seo: { meta_title: "MediConnect Patient Portal — Health Tech Case Study", meta_description: "How we built a unified patient portal consolidating medical records and appointments across provider networks." },
+        status: "Published",
+      },
+      {
+        project_name: "DataVault Security Platform",
+        short_description: "An enterprise cybersecurity platform with real-time threat detection, compliance automation, and incident response.",
+        description: "DataVault is a comprehensive cybersecurity platform designed for enterprises managing sensitive data across cloud and on-premise environments. The platform features real-time threat detection powered by machine learning, automated compliance reporting for SOC 2, HIPAA, and GDPR, incident response orchestration, and vulnerability management. The system processes millions of security events daily with real-time alerting and remediation workflows.",
+        thumbnail: SEED_IMAGES.projectDatavault,
+        gallery: [SEED_IMAGES.projectDatavault, img("crawlcrown-datavault-g2"), img("crawlcrown-datavault-g3")],
+        services: [webService._id, prService._id],
+        technologies: [reactTech._id, nodeTech._id, mongoTech._id, dockerTech._id, redisTech._id],
+        industries: [techIndustry._id, financeIndustry._id],
+        team: [michael._id, david._id, oliver._id],
+        client: { name: "Rachel Kim", company: "DataVault Security", website: "https://datavault.example.com", location: "San Jose, CA" },
+        project_url: "https://datavault.example.com",
+        completion_date: new Date("2026-04-05"),
+        featured: false,
+        seo: { meta_title: "DataVault Security Platform — Cybersecurity Case Study", meta_description: "How we built an enterprise cybersecurity platform with ML-powered threat detection and compliance automation." },
+        status: "Published",
+      },
+      {
+        project_name: "BrewHouse POS System",
+        short_description: "A modern point-of-sale and management system for craft breweries with inventory tracking and taproom analytics.",
+        description: "BrewHouse is a specialized POS and management platform built for the craft beverage industry. The system handles taproom sales, online ordering, inventory management with batch tracking, keg lifecycle management, and employee scheduling. Integrated analytics provide insights into pour volumes, peak hours, and customer preferences, helping breweries optimize operations and increase profitability.",
+        thumbnail: SEED_IMAGES.projectBrewhouse,
+        gallery: [SEED_IMAGES.projectBrewhouse, img("crawlcrown-brewhouse-g2"), img("crawlcrown-brewhouse-g3")],
+        services: [webService._id, brandingService._id],
+        technologies: [reactTech._id, nodeTech._id, postgresTech._id, dockerTech._id],
+        industries: [foodBeverageIndustry._id],
+        team: [sofia._id, emily._id, alex._id, bella._id],
+        client: { name: "Tom Walker", company: "BrewHouse Systems", website: "https://brewhouse.example.com", location: "Denver, CO" },
+        project_url: "https://brewhouse.example.com",
+        completion_date: new Date("2026-05-20"),
+        featured: false,
+        seo: { meta_title: "BrewHouse POS System — Food & Beverage Case Study", meta_description: "How we built a modern POS system for craft breweries with inventory tracking, taproom analytics, and keg management." },
+        status: "Published",
+      },
+      {
+        project_name: "FitTrack Wellness App",
+        short_description: "A holistic wellness application combining fitness tracking, nutrition planning, and mental health support.",
+        description: "FitTrack is a comprehensive wellness app that goes beyond step counting. The platform combines workout tracking with video exercise libraries, personalized nutrition planning with recipe databases, meditation and mindfulness sessions, and progress analytics with health metric visualizations. The app integrates with popular wearables and provides AI-driven coaching recommendations based on user goals and activity patterns.",
+        thumbnail: SEED_IMAGES.projectFittrack,
+        gallery: [SEED_IMAGES.projectFittrack, img("crawlcrown-fittrack-g2"), img("crawlcrown-fittrack-g3")],
+        services: [contentService._id, socialService._id],
+        technologies: [reactTech._id, nodeTech._id, mongoTech._id, firebaseTech._id],
+        industries: [healthIndustry._id, techIndustry._id],
+        team: [sarah._id, james._id, rachel._id],
+        client: { name: "Alex Rivera", company: "FitTrack Health", website: "https://fittrack.example.com", location: "Los Angeles, CA" },
+        project_url: "https://fittrack.example.com",
+        completion_date: new Date("2026-06-01"),
+        featured: false,
+        seo: { meta_title: "FitTrack Wellness App — Health & Fitness Case Study", meta_description: "How we built a holistic wellness app combining fitness tracking, nutrition planning, and mental health support." },
+        status: "Published",
+      },
+      {
+        project_name: "TravelBuddy Booking Engine",
+        short_description: "A multi-provider travel booking platform with dynamic pricing, itinerary management, and real-time availability.",
+        description: "TravelBuddy is a comprehensive travel booking platform that aggregates flights, hotels, and experiences from multiple providers into a single search and booking experience. The platform features dynamic pricing with real-time availability checks, interactive itinerary builder with map integration, multi-currency support with live exchange rates, and a recommendation engine based on travel preferences and past bookings. The system handles millions of search queries daily with sub-second response times.",
+        thumbnail: SEED_IMAGES.projectTravelbuddy,
+        gallery: [SEED_IMAGES.projectTravelbuddy, img("crawlcrown-travelbuddy-g2"), img("crawlcrown-travelbuddy-g3")],
+        services: [webService._id, ppcService._id],
+        technologies: [nextTech._id, tsTech._id, mongoTech._id, awsTech._id, dockerTech._id],
+        industries: [travelIndustry._id],
+        team: [david._id, sofia._id, michael._id, alex._id],
+        client: { name: "Sophie Anderson", company: "TravelBuddy Inc.", website: "https://travelbuddy.example.com", location: "New York, NY" },
+        project_url: "https://travelbuddy.example.com",
+        completion_date: new Date("2026-07-15"),
+        featured: true,
+        seo: { meta_title: "TravelBuddy Booking Engine — Travel Tech Case Study", meta_description: "How we built a multi-provider travel booking platform with dynamic pricing and real-time availability." },
+        status: "Published",
+      },
+      {
+        project_name: "AgriSense Analytics Dashboard",
+        short_description: "A precision agriculture platform with IoT sensor integration, crop health monitoring, and yield prediction.",
+        description: "AgriSense is a precision agriculture platform that helps farmers optimize crop yields through data-driven insights. The platform integrates with IoT soil sensors, weather APIs, and satellite imagery to provide real-time crop health monitoring, irrigation recommendations, pest detection alerts, and AI-powered yield predictions. The dashboard visualizes complex agricultural data into actionable insights that help reduce water usage, optimize fertilizer application, and maximize harvest quality.",
+        thumbnail: SEED_IMAGES.projectAgrisense,
+        gallery: [SEED_IMAGES.projectAgrisense, img("crawlcrown-agrisense-g2"), img("crawlcrown-agrisense-g3")],
+        services: [webService._id, analyticsService._id],
+        technologies: [pythonTech._id, tsTech._id, awsTech._id, dockerTech._id, graphqlTech._id],
+        industries: [agricultureIndustry._id, techIndustry._id],
+        team: [michael._id, rachel._id, david._id],
+        client: { name: "John Erikson", company: "AgriSense Analytics", website: "https://agrisense.example.com", location: "Des Moines, IA" },
+        project_url: "https://agrisense.example.com",
+        completion_date: new Date("2026-08-01"),
+        featured: false,
+        seo: { meta_title: "AgriSense Analytics Dashboard — AgTech Case Study", meta_description: "How we built a precision agriculture platform with IoT sensor integration, crop health monitoring, and AI yield prediction." },
+        status: "Published",
+      },
     ];
 
     const projects = await Projects.create(projectData);
@@ -628,66 +1277,163 @@ async function seed() {
     const faqPairs = [
       [
         "How long does it take to see SEO results?",
-        "Most clients begin to see meaningful improvements in organic rankings within 3 to 6 months. However, this timeline can vary depending on the competitiveness of your industry, the current state of your website, and the scope of the SEO strategy. We focus on building sustainable, long-term growth rather than quick fixes that fade.",
+        "Most clients begin to see meaningful improvements in organic rankings within 3 to 6 months. However, this timeline can vary depending on the competitiveness of your industry, the current state of your website, and the scope of the SEO strategy.",
       ],
       [
         "What is included in your SEO audit?",
-        "Our comprehensive SEO audit covers over 200 factors including technical health (crawlability, indexation, Core Web Vitals), on-page optimization (title tags, meta descriptions, heading structure, internal linking), content quality and keyword coverage, backlink profile analysis, and a detailed competitor gap analysis. The audit delivers a prioritized action plan with clear recommendations.",
+        "Our comprehensive SEO audit covers over 200 factors including technical health, on-page optimization, content quality and keyword coverage, backlink profile analysis, and a detailed competitor gap analysis.",
       ],
       [
         "How much should I budget for Google Ads?",
-        "Budgets vary based on your industry, competition, and goals. We typically recommend starting with a minimum monthly ad spend of $2,000 to $5,000, which gives us enough data to optimize campaigns effectively. We charge a separate management fee on top of your ad spend, and we are transparent about all costs from day one.",
+        "Budgets vary based on your industry, competition, and goals. We typically recommend starting with a minimum monthly ad spend of $2,000 to $5,000, which gives us enough data to optimize campaigns effectively.",
       ],
       [
         "Which advertising platforms do you manage?",
-        "We manage campaigns across Google Ads (Search, Display, Shopping, YouTube), Meta Ads (Facebook, Instagram), LinkedIn Ads, and Microsoft Advertising. We select the platforms that best match your target audience and business objectives, ensuring your budget is allocated where it will generate the highest return.",
+        "We manage campaigns across Google Ads, Meta Ads, LinkedIn Ads, and Microsoft Advertising. We select the platforms that best match your target audience and business objectives.",
       ],
       [
         "How do you create social media content?",
-        "Our creative team develops a content strategy based on your brand voice, audience preferences, and industry trends. We produce a mix of branded graphics, short-form videos, carousels, stories, and written captions. Every piece of content is reviewed for brand consistency before publishing, and we maintain an editorial calendar for your approval each month.",
+        "Our creative team develops a content strategy based on your brand voice, audience preferences, and industry trends. We produce branded graphics, short-form videos, carousels, and written captions.",
       ],
       [
         "Which social media platforms should my business be on?",
-        "The right platforms depend on where your audience spends their time. B2B companies typically benefit most from LinkedIn and Twitter, while B2C brands often see strong results on Instagram, Facebook, and TikTok. We help you identify the most relevant platforms and develop a focused strategy rather than spreading your efforts too thin.",
+        "The right platforms depend on where your audience spends their time. B2B companies typically benefit most from LinkedIn, while B2C brands often see strong results on Instagram, Facebook, and TikTok.",
       ],
       [
         "What technologies do you use for web development?",
-        "We primarily use React, Next.js, and Node.js for modern web applications, with MongoDB or PostgreSQL for data storage. For content-heavy sites, we often integrate headless CMS solutions like Strapi or Contentful. All projects are built with responsive design, performance optimization, and SEO best practices as standard.",
+        "We primarily use React, Next.js, and Node.js for modern web applications, with MongoDB or PostgreSQL for data storage. All projects are built with responsive design and performance optimization.",
       ],
       [
         "How long does a typical web development project take?",
-        "A standard corporate website takes 6 to 10 weeks from kickoff to launch. More complex projects like e-commerce platforms or custom web applications typically take 3 to 5 months. We provide a detailed timeline during the proposal phase and keep you updated throughout the development process with regular demos and progress reports.",
+        "A standard corporate website takes 6 to 10 weeks from kickoff to launch. More complex projects like e-commerce platforms typically take 3 to 5 months.",
       ],
       [
         "What does your content marketing service include?",
-        "We handle everything from strategy and keyword research to writing, design, and distribution. deliverables include blog articles, case studies, whitepapers, infographics, email newsletters, and social media content. All content is SEO-optimized and aligned with your marketing funnel to attract, engage, and convert your target audience.",
+        "We handle everything from strategy and keyword research to writing, design, and distribution. deliverables include blog articles, case studies, whitepapers, infographics, and email newsletters.",
       ],
       [
         "How do you measure content marketing success?",
-        "We track a combination of metrics aligned with your business goals, including organic traffic growth, keyword rankings, engagement rates (time on page, bounce rate), lead generation (form fills, downloads), and conversion rates. You receive a detailed monthly report with insights and recommendations for continuous improvement.",
+        "We track organic traffic growth, keyword rankings, engagement rates, lead generation, and conversion rates. You receive a detailed monthly report with insights and recommendations.",
       ],
       [
         "What is included in a branding project?",
-        "A typical branding engagement includes a brand discovery workshop, logo design with multiple concepts, color palette and typography system, brand guidelines document, business card and stationery design, brand messaging and voice guidelines, and a social media brand kit. We refine each element through collaborative feedback rounds until you are completely satisfied.",
+        "A typical branding engagement includes a brand discovery workshop, logo design with multiple concepts, color palette and typography system, brand guidelines, and messaging framework.",
       ],
       [
         "How do you ensure brand consistency across channels?",
-        "We create comprehensive brand guidelines that define exactly how your logo, colors, typography, imagery, and messaging should be used across every touchpoint. This document becomes your single source of truth, ensuring that your website, social media, print materials, and any other channels all present a unified, professional brand experience.",
+        "We create comprehensive brand guidelines that define how your logo, colors, typography, imagery, and messaging should be used across every touchpoint, ensuring a unified brand experience.",
+      ],
+      [
+        "What is email marketing and how does it work?",
+        "Email marketing involves sending targeted messages to your subscribers to nurture leads, promote products, and build customer loyalty. We design automated sequences that deliver the right message at the right time.",
+      ],
+      [
+        "How do you measure email campaign performance?",
+        "We track open rates, click-through rates, conversion rates, bounce rates, and ROI. Our detailed reports show exactly how each campaign performs and where improvements can be made.",
+      ],
+      [
+        "What analytics tools do you use?",
+        "We use Google Analytics 4, Looker Studio, Mixpanel, and custom dashboards to provide a complete view of your digital performance across all channels.",
+      ],
+      [
+        "How often will I receive analytics reports?",
+        "You receive detailed monthly reports with executive summaries and actionable insights. Real-time dashboards are also available for monitoring KPIs at any time.",
+      ],
+      [
+        "What is conversion rate optimization?",
+        "CRO is the systematic process of improving the percentage of website visitors who take a desired action. We use A/B testing, user research, and data analysis to identify and remove friction points.",
+      ],
+      [
+        "How long does it take to see CRO results?",
+        "Some improvements can be seen within weeks of implementing changes. However, a comprehensive optimization program typically shows significant results within 2 to 3 months of continuous testing.",
+      ],
+      [
+        "What types of video content do you produce?",
+        "We produce brand stories, product demos, explainer videos, social media clips, testimonials, animated videos, and live event coverage. Each video is tailored to your audience and platform.",
+      ],
+      [
+        "Do you handle video distribution as well?",
+        "Yes, we optimize and distribute your videos across YouTube, Instagram, LinkedIn, TikTok, and your website. We also manage paid video promotion campaigns.",
+      ],
+      [
+        "How do you find the right influencers for my brand?",
+        "We use a combination of AI-powered discovery tools and manual vetting to identify influencers whose audience, values, and content style align with your brand.",
+      ],
+      [
+        "How do you measure influencer campaign success?",
+        "We track engagement rates, reach, follower growth, website traffic, and conversions attributed to each influencer partnership, providing clear ROI reporting.",
+      ],
+      [
+        "How does affiliate marketing differ from influencer marketing?",
+        "Affiliate marketing is performance-based — partners earn commissions on sales they generate. It is more transactional, while influencer marketing focuses on brand awareness and authentic advocacy.",
+      ],
+      [
+        "What commission structure do you recommend?",
+        "Commission rates vary by industry, typically ranging from 5% to 30%. We help you design a structure that attracts quality affiliates while maintaining healthy profit margins.",
+      ],
+      [
+        "What mobile channels do you work with?",
+        "We manage SMS and MMS campaigns, push notifications for mobile apps, in-app messaging, and mobile-optimized landing pages. Each channel is integrated into a cohesive mobile strategy.",
+      ],
+      [
+        "How do you ensure SMS compliance?",
+        "We ensure all campaigns comply with TCPA, GDPR, and applicable regulations. This includes proper opt-in mechanisms, clear opt-out instructions, and consent management.",
+      ],
+      [
+        "What kind of PR coverage can I expect?",
+        "We target a mix of industry publications, mainstream media, podcasts, and online outlets. Our average client secures 3 to 5 pieces of coverage per campaign cycle.",
+      ],
+      [
+        "How do you handle crisis communication?",
+        "We develop a crisis communication plan that includes rapid response protocols, key message frameworks, and media training. Preparation ensures your brand handles challenges effectively.",
+      ],
+      [
+        "How do you monitor brand mentions?",
+        "We use advanced monitoring tools that track mentions across social media, review sites, news outlets, forums, and blogs. You receive real-time alerts for any significant mentions.",
+      ],
+      [
+        "Can you remove negative reviews?",
+        "We cannot remove legitimate reviews, but we help you respond professionally and resolve underlying issues. Our strategies increase positive review volume to improve overall ratings.",
+      ],
+      [
+        "How is voice search different from regular SEO?",
+        "Voice search queries are longer and more conversational. We optimize for natural language, featured snippets, and local search to capture voice-activated traffic from smart speakers and assistants.",
+      ],
+      [
+        "Is voice search optimization worth it?",
+        "Absolutely. Voice commerce is growing rapidly, and early adopters gain significant competitive advantage. Optimizing now positions your brand for the next wave of search behavior.",
+      ],
+      [
+        "How do you integrate e-commerce marketing across channels?",
+        "We connect your product catalog with PPC, email, social, and SEO campaigns to create a seamless customer journey. Our attribution model shows exactly which channels drive sales.",
+      ],
+      [
+        "Do you work with specific e-commerce platforms?",
+        "Yes, we have deep experience with Shopify, WooCommerce, Magento, BigCommerce, and custom e-commerce solutions. Our strategies are platform-agnostic and tailored to your tech stack.",
+      ],
+      [
+        "What is growth hacking exactly?",
+        "Growth hacking is a data-driven approach to rapid experimentation across channels to identify the most effective ways to grow your business. It combines creative tactics with rigorous analysis.",
+      ],
+      [
+        "How is growth hacking different from traditional marketing?",
+        "Growth hacking focuses on speed, experimentation, and scalability. Rather than big-budget campaigns, we run many small tests to find high-impact, low-cost growth levers.",
       ],
     ];
 
     services.forEach((service, idx) => {
-      const pair = faqPairs[idx];
+      const pair1 = faqPairs[idx];
+      const pair2 = faqPairs[idx + services.length];
       faqData.push({
-        question: pair[0],
-        answer: pair[1],
+        question: pair1[0],
+        answer: pair1[1],
         service: service._id,
         display_order: 1,
         status: "Active",
       });
       faqData.push({
-        question: faqPairs[idx + 6][0],
-        answer: faqPairs[idx + 6][1],
+        question: pair2[0],
+        answer: pair2[1],
         service: service._id,
         display_order: 2,
         status: "Active",
@@ -701,6 +1447,10 @@ async function seed() {
     // Tier 3 — Case Studies (refs: projects)
     const medicareProject = projects.find((p) => p.project_name === "MediCare Health Portal");
     const fintrackProject = projects.find((p) => p.project_name === "FinTrack Analytics Dashboard");
+    const edulearnProject = projects.find((p) => p.project_name === "EduLearn Online Learning Platform");
+    const greenleafProject = projects.find((p) => p.project_name === "GreenLeaf Sustainable Marketplace");
+    const datavaultProject = projects.find((p) => p.project_name === "DataVault Security Platform");
+    const agrisenseProject = projects.find((p) => p.project_name === "AgriSense Analytics Dashboard");
 
     console.log("Seeding Case Studies...");
     const caseStudies = await CaseStudy.create([
@@ -719,149 +1469,185 @@ async function seed() {
           "Design an accessible interface suitable for patients aged 18 to 85",
           "Reduce patient onboarding time from 15 minutes to under 3 minutes",
         ],
-        strategy:
-          "We adopted an agile development approach with bi-weekly sprints and continuous stakeholder feedback. The architecture was designed with microservices to ensure isolation of patient data, and all infrastructure was deployed on HIPAA-eligible AWS services with encryption at rest and in transit.",
-        solution:
-          "The final platform features real-time video consultations powered by WebRTC, secure messaging with end-to-end encryption, an integrated appointment scheduling system, electronic prescription management, and a patient portal that provides access to medical history and test results. The provider dashboard includes patient queue management, consultation notes, and billing integration.",
-        deliverables: [
-          "Patient-facing web application with responsive design",
-          "Healthcare provider dashboard with consultation tools",
-          "Admin panel for system management and reporting",
-          "RESTful APIs for EHR integration",
-          "Mobile-optimized progressive web app",
-          "Comprehensive documentation and training materials",
-        ],
-        timeline: {
-          duration: "5 months",
-          started_at: new Date("2025-06-01"),
-          completed_at: new Date("2025-11-15"),
-        },
+        strategy: "We adopted an agile development approach with bi-weekly sprints and continuous stakeholder feedback. The architecture was designed with microservices to ensure isolation of patient data.",
+        solution: "The final platform features real-time video consultations powered by WebRTC, secure messaging with end-to-end encryption, an integrated appointment scheduling system, and a patient portal.",
+        deliverables: ["Patient-facing web application", "Healthcare provider dashboard", "Admin panel", "RESTful APIs for EHR integration", "Progressive web app", "Documentation and training materials"],
+        timeline: { duration: "5 months", started_at: new Date("2025-06-01"), completed_at: new Date("2025-11-15") },
         development_process: [
-          {
-            title: "Discovery and Architecture Design",
-            description: "Conducted stakeholder interviews, mapped patient and provider workflows, and designed a HIPAA-compliant microservices architecture on AWS. Established security protocols and data encryption standards for the entire project.",
-          },
-          {
-            title: "Core Platform Development",
-            description: "Built the video consultation engine using WebRTC, implemented secure messaging with end-to-end encryption, and developed the appointment scheduling system. Created provider and patient dashboards with real-time notifications and status updates.",
-          },
-          {
-            title: "Integration, Testing, and Launch",
-            description: "Integrated with Epic, Cerner, and Allscripts EHR systems. Conducted extensive security audits, penetration testing, and user acceptance testing with a pilot group of 500 patients. Deployed to production with a phased rollout across 12 states.",
-          },
+          { title: "Discovery and Architecture Design", description: "Conducted stakeholder interviews, mapped patient workflows, and designed a HIPAA-compliant microservices architecture on AWS." },
+          { title: "Core Platform Development", description: "Built the video consultation engine using WebRTC, secure messaging, and appointment scheduling systems." },
+          { title: "Integration, Testing, and Launch", description: "Integrated with Epic and Cerner EHR systems. Conducted security audits and user acceptance testing with 500 patients." },
         ],
         challenges_and_solutions: [
-          {
-            challenge: "HIPAA compliance required strict data isolation and encryption, which complicated the microservices architecture and slowed development velocity.",
-            solution: "We implemented AWS PrivateLink for service-to-service communication and used AWS KMS for centralized key management. This maintained compliance without sacrificing development speed or application performance.",
-          },
-          {
-            challenge: "Video quality degraded significantly for patients in rural areas with limited bandwidth.",
-            solution: "We implemented adaptive bitrate streaming with WebRTC and added a bandwidth detection mechanism that automatically adjusts video quality. A low-bandwidth mode switches to audio-only with shared screen when connection quality drops below threshold.",
-          },
+          { challenge: "HIPAA compliance complicated the microservices architecture.", solution: "We implemented AWS PrivateLink for service-to-service communication and AWS KMS for key management." },
+          { challenge: "Video quality degraded for rural patients with limited bandwidth.", solution: "We implemented adaptive bitrate streaming with WebRTC and a low-bandwidth audio-only mode." },
         ],
         results: [
           { title: "Patient Adoption", value: "42,000+ patients onboarded in first 3 months" },
-          { title: "Consultation Latency", value: "Average 140ms end-to-end (target was 200ms)" },
-          { title: "Patient Satisfaction", value: "4.8 out of 5 average rating across 12,000+ consultations" },
+          { title: "Consultation Latency", value: "Average 140ms end-to-end" },
+          { title: "Patient Satisfaction", value: "4.8 out of 5 average rating" },
         ],
-        gallery: [
-          SEED_IMAGES.caseStudyMedicare,
-          img("crawlcrown-cs-medicare-g2"),
-          img("crawlcrown-cs-medicare-g3"),
-          img("crawlcrown-cs-medicare-g4"),
-        ],
-        client_testimonial: {
-          quote: "This platform has fundamentally changed how we deliver healthcare. Our patients love the ease of use, and our providers can focus on what matters most — patient care. The team delivered a solution that exceeded every expectation we had.",
-          client_name: "Dr. Amanda Lewis",
-          designation: "Chief Medical Officer",
-          company: "MediCare Health Systems",
-        },
+        gallery: [SEED_IMAGES.caseStudyMedicare, img("crawlcrown-cs-medicare-g2"), img("crawlcrown-cs-medicare-g3")],
+        client_testimonial: { quote: "This platform has fundamentally changed how we deliver healthcare.", client_name: "Dr. Amanda Lewis", designation: "Chief Medical Officer", company: "MediCare Health Systems" },
         featured: true,
-        seo: {
-          meta_title: "MediCare Telemedicine Platform Case Study | CrawlCrown",
-          meta_description: "How we built a HIPAA-compliant telemedicine platform serving 42,000+ patients with 140ms average consultation latency.",
-        },
+        seo: { meta_title: "MediCare Telemedicine Case Study | CrawlCrown", meta_description: "HIPAA-compliant telemedicine platform serving 42,000+ patients." },
         status: "Published",
       },
       {
         title: "Real-Time Financial Analytics for a Growing Fintech Startup",
         project: fintrackProject._id,
         hero_image: SEED_IMAGES.caseStudyFintrack,
-        overview:
-          "FinTrack Technologies approached us to build a financial analytics dashboard that could handle real-time market data, provide portfolio tracking with interactive visualizations, and deliver AI-driven investment insights. The platform needed to support thousands of concurrent users while maintaining sub-second response times for critical trading data.",
-        challenge:
-          "The main technical challenge was processing and displaying real-time market data from multiple sources without introducing latency. The platform needed to handle WebSocket connections for live data streaming, compute complex financial calculations on the fly, and present it all in an intuitive interface that both novice and experienced investors could navigate easily. Performance under load was non-negotiable — even brief delays could mean missed trading opportunities.",
+        overview: "FinTrack Technologies needed a financial analytics dashboard handling real-time market data, portfolio tracking, and AI-driven investment insights for thousands of concurrent users.",
+        challenge: "Processing and displaying real-time market data from multiple sources without latency while supporting WebSocket connections and complex financial calculations.",
         objectives: [
-          "Build a real-time dashboard supporting 10,000+ concurrent users",
-          "Display live market data with less than 500ms update latency",
-          "Implement AI-driven investment insights based on historical data",
-          "Create customizable watchlists and portfolio tracking tools",
-          "Ensure 99.9% uptime during market trading hours",
+          "Support 10,000+ concurrent users",
+          "Display live market data with sub-500ms latency",
+          "AI-driven investment insights",
+          "Customizable watchlists and portfolio tracking",
+          "99.9% uptime during trading hours",
         ],
-        strategy:
-          "We chose a WebSocket-first architecture for live data delivery, with Redis caching for frequently accessed market data. The AI insights engine was built using Python-based ML models deployed as microservices, while the frontend used React with optimized rendering to handle rapid data updates without UI jank.",
-        solution:
-          "The resulting platform features a real-time market ticker, interactive charts with 50+ technical indicators, portfolio performance tracking with gain/loss calculations, AI-generated buy/sell signals based on market sentiment analysis, and customizable alert notifications. The admin dashboard provides user analytics, system health monitoring, and content management capabilities.",
-        deliverables: [
-          "Real-time analytics dashboard with WebSocket data streaming",
-          "AI insights engine with ML-powered market analysis",
-          "Portfolio tracking with 50+ technical indicators",
-          "Customizable alerts and notification system",
-          "Admin dashboard with user and system analytics",
-          "Mobile-responsive design for on-the-go access",
-        ],
-        timeline: {
-          duration: "4 months",
-          started_at: new Date("2025-05-20"),
-          completed_at: new Date("2025-09-20"),
-        },
+        strategy: "WebSocket-first architecture with Redis caching. Python-based ML models deployed as microservices. React frontend with optimized rendering.",
+        solution: "Real-time market ticker, interactive charts with 50+ technical indicators, portfolio tracking, AI-generated signals, and customizable alerts.",
+        deliverables: ["Real-time dashboard with WebSocket streaming", "AI insights engine", "Portfolio tracking", "Customizable alerts", "Admin dashboard", "Mobile-responsive design"],
+        timeline: { duration: "4 months", started_at: new Date("2025-05-20"), completed_at: new Date("2025-09-20") },
         development_process: [
-          {
-            title: "Architecture and Data Pipeline Design",
-            description: "Designed a WebSocket-based architecture for real-time data delivery with Redis caching layers. Built a data ingestion pipeline that aggregates market data from multiple financial APIs and normalizes it for consistent display across the platform.",
-          },
-          {
-            title: "Frontend and Visualization Development",
-            description: "Built the React dashboard with D3.js-powered interactive charts, implemented virtual scrolling for large datasets, and created customizable widget layouts. Developed the portfolio tracking engine with real-time P&L calculations and historical performance visualization.",
-          },
-          {
-            title: "AI Integration and Load Testing",
-            description: "Integrated Python-based ML models for market sentiment analysis and trend prediction. Conducted extensive load testing simulating 15,000 concurrent users with real-time data streams. Optimized WebSocket handling and database queries to achieve target latency under peak load.",
-          },
+          { title: "Architecture and Data Pipeline Design", description: "Designed WebSocket-based architecture with Redis caching. Built data ingestion pipelines from multiple financial APIs." },
+          { title: "Frontend and Visualization Development", description: "Built React dashboard with D3.js charts, virtual scrolling, and customizable widget layouts." },
+          { title: "AI Integration and Load Testing", description: "Integrated Python ML models for sentiment analysis. Load tested 15,000 concurrent users." },
         ],
         challenges_and_solutions: [
-          {
-            challenge: "Displaying real-time data for thousands of financial instruments simultaneously caused significant frontend rendering bottlenecks and memory leaks.",
-            solution: "Implemented virtual rendering that only mounts visible chart components, combined with requestAnimationFrame-based update batching. This reduced DOM operations by 80% and eliminated memory leaks during long trading sessions.",
-          },
-          {
-            challenge: "The AI insights engine needed to process large volumes of historical data without impacting real-time dashboard performance.",
-            solution: "Deployed ML model inference as separate microservices with their own compute resources. Results are pre-computed during off-peak hours and cached in Redis, so the dashboard can serve insights with sub-50ms latency without blocking real-time data streams.",
-          },
+          { challenge: "Real-time data for thousands of instruments caused rendering bottlenecks.", solution: "Virtual rendering and requestAnimationFrame-based update batching reduced DOM operations by 80%." },
+          { challenge: "AI insights needed large data processing without impacting dashboard performance.", solution: "ML inference deployed as separate microservices with pre-computed results cached in Redis." },
         ],
         results: [
-          { title: "Concurrent Users", value: "12,500+ simultaneous users at peak load" },
-          { title: "Data Latency", value: "Average 320ms market data update delivery" },
-          { title: "User Retention", value: "78% monthly active user retention rate" },
+          { title: "Concurrent Users", value: "12,500+ simultaneous users" },
+          { title: "Data Latency", value: "Average 320ms delivery" },
+          { title: "User Retention", value: "78% monthly active rate" },
         ],
-        gallery: [
-          SEED_IMAGES.caseStudyFintrack,
-          img("crawlcrown-cs-fintrack-g2"),
-          img("crawlcrown-cs-fintrack-g3"),
-          img("crawlcrown-cs-fintrack-g4"),
-        ],
-        client_testimonial: {
-          quote: "The platform handles real-time data better than solutions costing ten times more. Our users consistently praise the speed and clarity of the dashboard. The AI insights have become one of our most popular features and a key differentiator in the market.",
-          client_name: "Marcus Webb",
-          designation: "Chief Technology Officer",
-          company: "FinTrack Technologies",
-        },
+        gallery: [SEED_IMAGES.caseStudyFintrack, img("crawlcrown-cs-fintrack-g2"), img("crawlcrown-cs-fintrack-g3")],
+        client_testimonial: { quote: "The platform handles real-time data better than solutions costing ten times more.", client_name: "Marcus Webb", designation: "CTO", company: "FinTrack Technologies" },
         featured: true,
-        seo: {
-          meta_title: "FinTrack Financial Analytics Dashboard Case Study | CrawlCrown",
-          meta_description: "How we built a real-time financial analytics dashboard supporting 12,500+ concurrent users with AI-powered investment insights.",
-        },
+        seo: { meta_title: "FinTrack Analytics Dashboard Case Study | CrawlCrown", meta_description: "Real-time financial analytics for 12,500+ concurrent users." },
+        status: "Published",
+      },
+      {
+        title: "Scaling Online Education with an Interactive Learning Platform",
+        project: edulearnProject._id,
+        hero_image: SEED_IMAGES.caseStudyEdulearn,
+        overview: "EduLearn Technologies needed a scalable online learning platform with live classes, progress tracking, and AI-powered recommendations to serve thousands of concurrent learners.",
+        challenge: "Building a platform supporting real-time interactive classes with low latency while handling personalized content delivery and progress tracking at scale.",
+        objectives: ["Support 5,000+ concurrent live learners", "Real-time collaboration tools", "AI-powered course recommendations", "Comprehensive progress tracking", "Content authoring system for instructors"],
+        strategy: "Microservices architecture with WebRTC for live classes. MongoDB for flexible content storage. AI recommendation engine built with Python.",
+        solution: "Live interactive classes with screen sharing and breakout rooms. Personalized learning dashboards. AI course recommendations based on learning patterns.",
+        deliverables: ["Live class platform with WebRTC", "Progress tracking dashboard", "AI recommendation engine", "Content authoring system", "Student and instructor portals", "Analytics and reporting"],
+        timeline: { duration: "4 months", started_at: new Date("2025-09-01"), completed_at: new Date("2026-01-15") },
+        development_process: [
+          { title: "Platform Architecture", description: "Designed scalable microservices architecture with WebRTC infrastructure for live video classes." },
+          { title: "Core Feature Development", description: "Built live class engine, progress tracking, and AI recommendation system." },
+          { title: "Testing and Launch", description: "Load tested 5,000 concurrent users. Launched with pilot group of 20 instructors." },
+        ],
+        challenges_and_solutions: [
+          { challenge: "Low latency for live video across varied internet connections.", solution: "Adaptive bitrate streaming with fallback to audio-only for poor connections." },
+        ],
+        results: [
+          { title: "Active Learners", value: "3,500+ enrolled in first month" },
+          { title: "Course Completion", value: "72% average completion rate" },
+          { title: "Instructor Satisfaction", value: "4.7 out of 5 rating" },
+        ],
+        gallery: [SEED_IMAGES.caseStudyEdulearn, img("crawlcrown-cs-edulearn-g2"), img("crawlcrown-cs-edulearn-g3")],
+        client_testimonial: { quote: "The platform exceeded our expectations. Our instructors love the teaching tools and students are achieving better outcomes.", client_name: "Dr. Sarah Mitchell", designation: "CEO", company: "EduLearn Technologies" },
+        featured: true,
+        seo: { meta_title: "EduLearn Online Learning Platform Case Study | CrawlCrown", meta_description: "Scalable edtech platform with live classes, AI recommendations, and progress tracking." },
+        status: "Published",
+      },
+      {
+        title: "Building a Purpose-Driven Sustainable E-Commerce Marketplace",
+        project: greenleafProject._id,
+        hero_image: SEED_IMAGES.caseStudyGreenleaf,
+        overview: "GreenLeaf Commerce needed a sustainable marketplace connecting conscious consumers with verified eco-friendly brands, featuring carbon footprint tracking and ethical sourcing transparency.",
+        challenge: "Creating an engaging e-commerce experience while accurately tracking and displaying product sustainability metrics across thousands of products.",
+        objectives: ["Carbon footprint tracking for all products", "Ethical sourcing verification badges", "Supply chain explorer", "Community impact dashboard", "Mobile-first shopping experience"],
+        strategy: "Next.js frontend for performance. Node.js backend with MongoDB. Integrated third-party sustainability APIs for carbon footprint calculations.",
+        solution: "Product pages with carbon footprint visualizations. Ethical sourcing badges with blockchain-verified certificates. Community impact dashboard showing collective environmental impact.",
+        deliverables: ["Sustainable marketplace platform", "Carbon footprint calculator", "Verification badge system", "Supply chain transparency explorer", "Impact dashboard", "Mobile-optimized PWA"],
+        timeline: { duration: "5 months", started_at: new Date("2025-10-01"), completed_at: new Date("2026-02-20") },
+        development_process: [
+          { title: "Discovery and Design", description: "Mapped sustainability data models and designed user flows for ethical shopping experience." },
+          { title: "Platform Development", description: "Built product catalog with sustainability metrics, verification system, and impact dashboard." },
+          { title: "Integration and Launch", description: "Integrated sustainability APIs and launched with 200+ verified brands." },
+        ],
+        challenges_and_solutions: [
+          { challenge: "Accurate carbon footprint data required multiple data sources.", solution: "Built aggregation layer that normalizes data from multiple sustainability APIs." },
+        ],
+        results: [
+          { title: "Registered Users", value: "15,000+ in first 2 months" },
+          { title: "Verified Products", value: "2,500+ products with footprint data" },
+          { title: "Community Impact", value: "500+ tons CO2 tracked" },
+        ],
+        gallery: [SEED_IMAGES.caseStudyGreenleaf, img("crawlcrown-cs-greenleaf-g2"), img("crawlcrown-cs-greenleaf-g3")],
+        client_testimonial: { quote: "Our customers love the transparency. GreenLeaf has become the go-to marketplace for conscious consumers.", client_name: "Maya Patel", designation: "CEO", company: "GreenLeaf Commerce" },
+        featured: false,
+        seo: { meta_title: "GreenLeaf Sustainable Marketplace Case Study | CrawlCrown", meta_description: "Sustainable e-commerce platform with carbon footprint tracking and ethical sourcing." },
+        status: "Published",
+      },
+      {
+        title: "Enterprise Cybersecurity with ML-Powered Threat Detection",
+        project: datavaultProject._id,
+        hero_image: SEED_IMAGES.caseStudyDatavault,
+        overview: "DataVault Security needed an enterprise cybersecurity platform with real-time threat detection, compliance automation, and incident response capabilities.",
+        challenge: "Building a system that processes millions of security events daily while providing real-time threat detection and maintaining compliance with multiple regulatory frameworks.",
+        objectives: ["Real-time threat detection with ML", "SOC 2, HIPAA, and GDPR compliance", "Automated incident response", "Vulnerability management", "Security dashboard with analytics"],
+        strategy: "React frontend with Node.js backend. ML models deployed on Kubernetes for threat detection. Redis for real-time event processing.",
+        solution: "ML-powered threat detection engine. Automated compliance reporting. Incident response orchestration with playbooks. Centralized security dashboard.",
+        deliverables: ["Threat detection engine", "Compliance automation platform", "Incident response system", "Vulnerability scanner", "Security analytics dashboard", "Alert and notification system"],
+        timeline: { duration: "6 months", started_at: new Date("2025-10-15"), completed_at: new Date("2026-04-05") },
+        development_process: [
+          { title: "Security Architecture", description: "Designed event processing pipeline and ML infrastructure for real-time threat detection." },
+          { title: "Platform Development", description: "Built threat detection engine, compliance reporting, and incident response automation." },
+          { title: "Security Audits and Launch", description: "Conducted penetration testing and achieved SOC 2 Type II certification." },
+        ],
+        challenges_and_solutions: [
+          { challenge: "Millions of daily security events required high-throughput processing.", solution: "Distributed event pipeline with Kafka and Redis for real-time processing and alerting." },
+        ],
+        results: [
+          { title: "Events Processed", value: "5M+ security events daily" },
+          { title: "Threat Detection", value: "99.2% detection rate" },
+          { title: "Compliance Coverage", value: "3 regulatory frameworks" },
+        ],
+        gallery: [SEED_IMAGES.caseStudyDatavault, img("crawlcrown-cs-datavault-g2"), img("crawlcrown-cs-datavault-g3")],
+        client_testimonial: { quote: "DataVault transformed our security posture. The ML threat detection catches issues we never saw before.", client_name: "Rachel Kim", designation: "CISO", company: "DataVault Security" },
+        featured: false,
+        seo: { meta_title: "DataVault Security Platform Case Study | CrawlCrown", meta_description: "Enterprise cybersecurity with ML-powered threat detection and compliance automation." },
+        status: "Published",
+      },
+      {
+        title: "Precision Agriculture with IoT and AI Analytics",
+        project: agrisenseProject._id,
+        hero_image: SEED_IMAGES.caseStudyAgrisense,
+        overview: "AgriSense Analytics needed a precision agriculture platform integrating IoT sensors, satellite imagery, and AI-powered predictions to help farmers optimize crop yields.",
+        challenge: "Integrating diverse data sources including IoT soil sensors, weather APIs, and satellite imagery into a unified platform with actionable insights for farmers.",
+        objectives: ["IoT sensor data integration", "Crop health monitoring from satellite", "AI-powered yield predictions", "Irrigation recommendations", "Pest detection alerts"],
+        strategy: "Python backend for data processing. TypeScript frontend with interactive maps. GraphQL for flexible data queries. Docker for deployment.",
+        solution: "Interactive dashboard with field maps. Real-time sensor data visualizations. AI yield predictions. Automated irrigation and pest alerts.",
+        deliverables: ["IoT sensor integration platform", "Satellite imagery analytics", "AI yield prediction engine", "Irrigation recommendation system", "Pest detection alerts", "Mobile field app"],
+        timeline: { duration: "5 months", started_at: new Date("2026-03-01"), completed_at: new Date("2026-08-01") },
+        development_process: [
+          { title: "Data Integration Architecture", description: "Designed data pipeline for IoT sensors, weather APIs, and satellite imagery processing." },
+          { title: "Analytics and AI Development", description: "Built yield prediction models and crop health monitoring algorithms." },
+          { title: "Farm Deployment", description: "Deployed with pilot farms and integrated with existing farm management systems." },
+        ],
+        challenges_and_solutions: [
+          { challenge: "IoT sensor data varied across different hardware manufacturers.", solution: "Built universal data adapter layer that normalizes data from 20+ sensor types." },
+        ],
+        results: [
+          { title: "Water Savings", value: "30% reduction in water usage" },
+          { title: "Yield Improvement", value: "22% average crop yield increase" },
+          { title: "Active Farms", value: "150+ farms in pilot program" },
+        ],
+        gallery: [SEED_IMAGES.caseStudyAgrisense, img("crawlcrown-cs-agrisense-g2"), img("crawlcrown-cs-agrisense-g3")],
+        client_testimonial: { quote: "AgriSense has transformed how we farm. The AI insights help us make better decisions every day.", client_name: "John Erikson", designation: "CEO", company: "AgriSense Analytics" },
+        featured: false,
+        seo: { meta_title: "AgriSense Precision Agriculture Case Study | CrawlCrown", meta_description: "Precision agriculture platform with IoT sensors, satellite imagery, and AI yield predictions." },
         status: "Published",
       },
     ]);
@@ -872,7 +1658,6 @@ async function seed() {
     console.log("=".repeat(50));
     console.log("SEED COMPLETE");
     console.log("=".repeat(50));
-    console.log(`  Admins:       ${admins.length}`);
     console.log(`  Services:     ${services.length}`);
     console.log(`  Technologies: ${technologies.length}`);
     console.log(`  Industries:   ${industries.length}`);
@@ -883,8 +1668,6 @@ async function seed() {
     console.log(`  Case Studies: ${caseStudies.length}`);
     console.log(`  Contacts:     ${contacts.length}`);
     console.log("=".repeat(50));
-    console.log("\nAdmin login: admin@example.com / password123");
-
     await mongoose.disconnect();
     console.log("\nDisconnected from MongoDB.");
     process.exit(0);
