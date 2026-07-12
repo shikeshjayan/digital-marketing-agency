@@ -2,16 +2,17 @@ import { useEffect, useState, useRef } from "react";
 import { Link } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
-  faBullseye,
-  faArrowRight,
-  faGlobe,
-  faCheckCircle,
-  faChartLine,
   faBuilding,
   faClock,
   faCogs,
   faChevronLeft,
   faChevronRight,
+  faArrowRight,
+  faChartLine,
+  faBullseye,
+  faGlobe,
+  faCheckCircle,
+  faArrowDown,
 } from "@fortawesome/free-solid-svg-icons";
 import useProjectStore from "../../store/projectStore.js";
 import useSiteContentStore from "../../store/siteContentStore.js";
@@ -44,17 +45,17 @@ const ProjectCard = ({ project }) => {
         </h3>
         <div className="mt-2 flex items-center gap-2 text-xs flex-wrap">
           {project.services?.length > 0 && (
-            <span className="inline-block px-2.5 py-0.5 rounded-sm bg-primary-light text-primary font-semibold">
+            <span className="inline-block px-2.5 py-0.5 rounded-sm bg-primary-light text-primary font-semibold text-xxs">
               {typeof project.services[0] === "object" ? project.services[0].service_name : "Service"}
             </span>
           )}
           {project.industries?.length > 0 && (
-            <span className="inline-block px-2.5 py-0.5 rounded-sm bg-surface text-text font-semibold border border-border">
+            <span className="inline-block px-2.5 py-0.5 rounded-sm bg-surface text-text font-semibold border border-border text-xxs">
               {typeof project.industries[0] === "object" ? project.industries[0].name : "Industry"}
             </span>
           )}
         </div>
-        <div className="mt-3 flex flex-wrap gap-x-4 gap-y-1 text-xs text-muted">
+        <div className="mt-3 flex flex-wrap gap-x-4 gap-y-1 text-xs text-muted text-xxs">
           {project.client?.name && (
             <span className="flex items-center gap-1">
               <FontAwesomeIcon icon={faBuilding} className="text-[10px]" />
@@ -69,7 +70,7 @@ const ProjectCard = ({ project }) => {
           )}
         </div>
         {project.technologies && project.technologies.length > 0 && (
-          <div className="mt-2 flex items-center gap-1 text-xs text-muted">
+          <div className="mt-2 flex items-center gap-1 text-xs text-muted text-xxs">
             <FontAwesomeIcon icon={faCogs} className="text-[10px]" />
             <span className="truncate">{project.technologies.map(t => typeof t === "object" ? t.name : t).join(", ")}</span>
           </div>
@@ -77,7 +78,7 @@ const ProjectCard = ({ project }) => {
         <p className="mt-3 small-text text-text body-text line-clamp-2">
           {project.short_description}
         </p>
-        <div className="mt-auto pt-4 flex items-center gap-4 text-sm font-semibold">
+        <div className="mt-auto pt-4 flex items-center gap-4 text-sm font-semibold button-text">
           <Link
             to={`/projects/${project.slug}`}
             className="text-primary hover:text-primary-hover transition">
@@ -107,7 +108,7 @@ function ProjectStatistics({ stats = [] }) {
         <FadeIn>
           <div className="text-center text-text">
             <h2 className="mt-2 section-heading">
-              <span className="font-headings text-4xl text-primary mr-4">
+              <span className="font-headings text-4xl text-primary mr-4 text-display">
                 Our
               </span>
               Track Record
@@ -119,7 +120,7 @@ function ProjectStatistics({ stats = [] }) {
         </FadeIn>
         <div className="mt-10 grid grid-cols-2 md:grid-cols-4 gap-6">
           {displayStats.map((s, i) => (
-            <FadeIn key={s.key || i} delay={i * 100}>
+            <FadeIn key={s.key || i} delay={i * 40}>
               <div className="bg-white/5 border border-white/10 rounded-lg p-6 text-center hover:bg-white/10 transition">
                 <div className="text-3xl md:text-4xl font-extrabold text-primary">
                   <AnimatedCounter target={s.target} suffix={s.suffix} />
@@ -150,7 +151,7 @@ function FeaturedCaseStudy({ projects }) {
             subtitle="A closer look at one of our most impactful projects."
           />
         </FadeIn>
-        <FadeIn delay={100}>
+        <FadeIn delay={40}>
           <div className="mt-8 bg-background border border-border rounded-lg overflow-hidden hover:shadow-lg transition-shadow duration-300">
             <div className="grid grid-cols-1 lg:grid-cols-2">
               <div className="relative overflow-hidden aspect-[16/10] sm:aspect-[16/9] lg:aspect-auto lg:min-h-[320px] bg-surface">
@@ -164,12 +165,12 @@ function FeaturedCaseStudy({ projects }) {
               <div className="p-5 sm:p-6 lg:p-8 flex flex-col">
                 <div className="flex items-center gap-2 text-xs flex-wrap">
                   {featured.services?.length > 0 && (
-                    <span className="inline-block px-2.5 py-0.5 rounded-sm bg-primary-light text-primary font-semibold">
+                    <span className="inline-block px-2.5 py-0.5 rounded-sm bg-primary-light text-primary font-semibold text-xxs">
                       {typeof featured.services[0] === "object" ? featured.services[0].service_name : "Service"}
                     </span>
                   )}
                   {featured.industries?.length > 0 && (
-                    <span className="inline-block px-2.5 py-0.5 rounded-sm bg-surface text-text font-semibold border border-border">
+                    <span className="inline-block px-2.5 py-0.5 rounded-sm bg-surface text-text font-semibold border border-border text-xxs">
                       {typeof featured.industries[0] === "object" ? featured.industries[0].name : "Industry"}
                     </span>
                   )}
@@ -177,7 +178,7 @@ function FeaturedCaseStudy({ projects }) {
                 <h3 className="mt-3 subheading text-heading">
                   {featured.project_name}
                 </h3>
-                <div className="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-xs text-muted">
+                <div className="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-xs text-muted text-xxs">
                   {featured.client?.name && (
                     <span className="flex items-center gap-1.5">
                       <FontAwesomeIcon
@@ -195,7 +196,7 @@ function FeaturedCaseStudy({ projects }) {
                   )}
                 </div>
                 {featured.technologies && featured.technologies.length > 0 && (
-                  <div className="mt-2 flex items-center gap-1.5 text-xs text-muted">
+                  <div className="mt-2 flex items-center gap-1.5 text-xs text-muted text-xxs">
                     <FontAwesomeIcon icon={faCogs} className="text-[10px]" />
                     <span>{featured.technologies.map(t => typeof t === "object" ? t.name : t).join(", ")}</span>
                   </div>
@@ -207,7 +208,7 @@ function FeaturedCaseStudy({ projects }) {
                   featured.short_description.length > 120 && (
                     <Link
                       to={`/projects/${featured.slug}`}
-                      className="mt-1.5 self-start text-xs font-semibold text-primary hover:text-primary-hover transition">
+                      className="mt-1.5 self-start text-xs font-semibold text-primary hover:text-primary-hover transition text-xxs">
                       Read more
                     </Link>
                   )}
@@ -216,7 +217,7 @@ function FeaturedCaseStudy({ projects }) {
                     href={featured.project_url}
                     target="_blank"
                     rel="noreferrer"
-                    className="inline-flex items-center gap-2 rounded-lg bg-primary text-white px-5 py-2.5 text-sm font-semibold hover:bg-primary-hover transition cursor-pointer">
+                    className="inline-flex items-center gap-2 rounded-lg bg-primary text-white px-5 py-2.5 text-sm font-semibold hover:bg-primary-hover transition cursor-pointer button-text">
                     <span>View Live Project</span>
                     <FontAwesomeIcon icon={faArrowRight} className="text-xs" />
                   </a>
@@ -274,9 +275,9 @@ function ResultsAnalytics({ stats = [] }) {
         </FadeIn>
         <div className="mt-10 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
           {metrics.map((m, i) => (
-            <FadeIn key={m.label} delay={i * 100}>
-              <div className="bg-surface border border-border rounded-lg p-6 text-center h-full hover:shadow-sm transition group">
-                <div className="w-12 h-12 rounded-lg bg-primary-light flex items-center justify-center mx-auto group-hover:bg-primary group-hover:text-white transition">
+            <FadeIn key={m.label} delay={i * 40} className="h-full">
+              <div className="bg-surface border border-border rounded-lg p-6 text-center h-full hover:shadow-sm transition group flex flex-col items-center">
+                <div className="w-12 h-12 rounded-lg bg-primary-light flex items-center justify-center mx-auto group-hover:bg-primary group-hover:text-white transition shrink-0">
                   <FontAwesomeIcon
                     icon={m.icon}
                     className="text-xl text-primary group-hover:text-white transition"
@@ -285,10 +286,12 @@ function ResultsAnalytics({ stats = [] }) {
                 <div className="mt-4 text-3xl font-extrabold text-heading">
                   {m.value}
                 </div>
-                <div className="mt-1 text-sm font-semibold text-heading">
+                <div className="mt-1 text-sm font-semibold text-heading subheading">
                   {m.label}
                 </div>
-                <div className="mt-1 text-xs text-muted">{m.desc}</div>
+                <div className="mt-auto pt-3 text-xs text-muted text-xxs w-full">
+                  {m.desc}
+                </div>
               </div>
             </FadeIn>
           ))}
@@ -313,9 +316,9 @@ function ClientLogos({ logos = [] }) {
         </FadeIn>
         <div className="mt-10 flex flex-wrap justify-center gap-4">
           {logos.map((logo, i) => (
-            <FadeIn key={i} delay={i * 60} className="w-[calc(50%-8px)] sm:w-[calc(33.33%-11px)] md:w-[calc(25%-12px)] lg:w-[calc(20%-12px)] min-w-[140px]">
+            <FadeIn key={i} delay={i * 30} className="w-[calc(50%-8px)] sm:w-[calc(33.33%-11px)] md:w-[calc(25%-12px)] lg:w-[calc(20%-12px)] min-w-[140px]">
               <div className="flex items-center justify-center bg-background border border-border rounded-lg px-4 py-5 hover:shadow-sm hover:border-primary/30 transition-all duration-200 cursor-default h-full w-full">
-                <span className="text-sm font-semibold text-muted text-center">
+                <span className="text-sm font-semibold text-muted text-center small-text">
                   {logo}
                 </span>
               </div>
@@ -348,33 +351,37 @@ function BeforeAfterResults() {
         </FadeIn>
         <div className="mt-10 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
           {beforeAfterData.map((item, i) => (
-            <FadeIn key={item.metric} delay={i * 100}>
-              <div className="bg-surface border border-border rounded-lg p-5 text-center hover:shadow-sm transition h-full flex flex-col">
-                <div className="text-sm font-bold text-heading">
+            <FadeIn key={item.metric} delay={i * 40}>
+              <div className="bg-surface border border-border rounded-lg p-6 text-center hover:shadow-lg transition-all duration-300 h-full flex flex-col justify-between">
+                <div className="text-base font-bold text-heading small-text tracking-wide mb-4">
                   {item.metric}
                 </div>
-                <div className="mt-4 flex items-center justify-center gap-4 flex-1">
-                  <div>
-                    <div className="text-xs text-muted uppercase tracking-wider">
+                
+                {/* Clean unboxed stack structure for the metrics data */}
+                <div className="flex flex-col items-center justify-center gap-1.5 flex-1 w-full">
+                  <div className="w-full">
+                    <div className="text-[10px] text-muted uppercase tracking-wider font-semibold opacity-70">
                       Before
                     </div>
-                    <div className="mt-1 text-lg font-bold text-muted">
+                    <div className="text-lg font-extrabold text-muted/90 subheading truncate px-1">
                       {item.before}
                     </div>
                   </div>
-                  <FontAwesomeIcon
-                    icon={faArrowRight}
-                    className="text-primary text-sm"
-                  />
-                  <div>
-                    <div className="text-xs text-primary uppercase tracking-wider font-semibold">
+                  
+                  <div className="flex items-center justify-center text-primary/70 my-1">
+                    <FontAwesomeIcon icon={faArrowDown} className="text-xs" />
+                  </div>
+                  
+                  <div className="w-full">
+                    <div className="text-[10px] text-primary uppercase tracking-wider font-bold">
                       After
                     </div>
-                    <div className="mt-1 text-lg font-bold text-primary">
+                    <div className="text-xl font-extrabold text-primary subheading truncate px-1">
                       {item.after}
                     </div>
                   </div>
                 </div>
+
               </div>
             </FadeIn>
           ))}
@@ -415,7 +422,6 @@ const Projects = () => {
     fetchServices();
   }, [fetchReviews, fetchPublicSiteContent, fetchServices]);
 
-  // Carousel scroll navigation handling
   const scroll = (direction) => {
     if (scrollContainerRef.current) {
       const scrollAmount = 240;
@@ -427,7 +433,7 @@ const Projects = () => {
   };
 
   return (
-    <div className="bg-background min-h-screen">
+    <div className="bg-background min-h-screen animate-page-fade">
       {/* 1. Hero */}
       <HeroSplit
         title="Projects"
@@ -460,7 +466,6 @@ const Projects = () => {
           
           {/* Categories Carousel Layout */}
           <div className="mt-8 relative max-w-4xl mx-auto flex items-center gap-2">
-            {/* Left Button styled explicitly as a standalone button with a border and shadow */}
             <button
               type="button"
               onClick={() => scroll("left")}
@@ -470,7 +475,6 @@ const Projects = () => {
               <FontAwesomeIcon icon={faChevronLeft} className="text-xs" />
             </button>
 
-            {/* Scrollable Items Container without an outer background shell */}
             <div
               ref={scrollContainerRef}
               className="flex gap-2 overflow-x-auto scroll-smooth py-1 flex-1 no-scrollbar"
@@ -481,7 +485,7 @@ const Projects = () => {
                   key={cat.id}
                   type="button"
                   onClick={() => setActive(cat.id)}
-                  className={`px-4 py-2 rounded-lg text-sm font-semibold border transition cursor-pointer whitespace-nowrap shrink-0 ${
+                  className={`px-4 py-2 rounded-lg text-sm font-semibold border transition cursor-pointer whitespace-nowrap shrink-0 button-text ${
                     active === cat.id
                       ? "bg-primary text-white border-primary"
                       : "bg-background text-text border-border hover:border-primary/50 hover:text-primary"
@@ -491,7 +495,6 @@ const Projects = () => {
               ))}
             </div>
 
-            {/* Right Button styled explicitly as a standalone button with a border and shadow */}
             <button
               type="button"
               onClick={() => scroll("right")}
@@ -510,11 +513,11 @@ const Projects = () => {
             </div>
           ) : error ? (
             <div className="mt-14 text-center">
-              <div className="text-primary font-medium mb-4">{error}</div>
+              <div className="text-primary font-medium mb-4 body-text">{error}</div>
               <button
                 type="button"
                 onClick={() => fetchProjects(active)}
-                className="px-5 py-2.5 text-sm font-semibold text-white bg-primary rounded-lg hover:bg-primary-hover transition cursor-pointer">
+                className="px-5 py-2.5 text-sm font-semibold text-white bg-primary rounded-lg hover:bg-primary-hover transition cursor-pointer button-text">
                 Retry
               </button>
             </div>
@@ -532,17 +535,17 @@ const Projects = () => {
                   d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"
                 />
               </svg>
-              <div className="mt-4 text-lg font-semibold text-heading">
+              <div className="mt-4 text-lg font-semibold text-heading subheading">
                 No projects found
               </div>
-              <div className="mt-2 text-sm text-text">
+              <div className="mt-2 text-sm text-text small-text">
                 No projects available for this category.
               </div>
             </div>
           ) : (
             <div className="mt-10 flex flex-wrap justify-center gap-6">
               {projects.map((p, i) => (
-                <FadeIn key={p._id} delay={i * 100} className="w-full sm:w-[calc(50%-12px)] lg:w-[calc(33.33%-16px)]">
+                <FadeIn key={p._id} delay={i * 40} className="w-full sm:w-[calc(50%-12px)] lg:w-[calc(33.33%-16px)]">
                   <ProjectCard project={p} />
                 </FadeIn>
               ))}
@@ -564,20 +567,24 @@ const Projects = () => {
       <BeforeAfterResults />
 
       {/* 8. Testimonials */}
-      <TestimonialsSection
-        reviews={reviews}
-        loading={reviewsLoading}
-        bg="bg-background-section"
-      />
+      <FadeIn>
+        <TestimonialsSection
+          reviews={reviews}
+          loading={reviewsLoading}
+          bg="bg-background-section"
+        />
+      </FadeIn>
 
       {/* 9. Final CTA */}
-      <FinalCTA
-        title="Have a Project in Mind?"
-        description="Let's bring your vision to life. Get in touch with us today for a free consultation and let's discuss how we can help you achieve your goals."
-        primaryLabel="Start a Project"
-        secondaryLabel="View Services"
-        secondaryTo="/services"
-      />
+      <FadeIn>
+        <FinalCTA
+          title="Have a Project in Mind?"
+          description="Let's bring your vision to life. Get in touch with us today for a free consultation and let's discuss how we can help you achieve your goals."
+          primaryLabel="Start a Project"
+          secondaryLabel="View Services"
+          secondaryTo="/services"
+        />
+      </FadeIn>
     </div>
   );
 };
