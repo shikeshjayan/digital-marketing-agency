@@ -24,7 +24,9 @@ import { slugify } from "../../utils/slugify";
 import resolveImagePath from "../../utils/resolveImagePath";
 import ImageLoader from "../../components/ui/ImageLoader.jsx";
 
-/* ─── Service Card ────────────────────────────────────────── */
+/* ==========================================
+   Service Card Component
+   ========================================== */
 const ServiceCard = ({ service }) => (
   <Link
     to={`/services/${slugify(service.service_name)}`}
@@ -59,7 +61,9 @@ const ServiceCard = ({ service }) => (
   </Link>
 );
 
-/* ─── Introduction ────────────────────────────────────────── */
+/* ==========================================
+   Introduction Section Component
+   ========================================== */
 function Introduction() {
   return (
     <section className="py-16 md:py-20 bg-background">
@@ -78,7 +82,9 @@ function Introduction() {
   );
 }
 
-/* ─── Industries We Serve ─────────────────────────────────── */
+/* ==========================================
+   Industries We Serve Component
+   ========================================== */
 function IndustriesWeServe({ industries = [] }) {
   if (!industries.length) return null;
   return (
@@ -92,19 +98,15 @@ function IndustriesWeServe({ industries = [] }) {
           />
         </FadeIn>
         
-        {/* 12-column grid configuration for exact 4 + 2 centered breakdown on desktop */}
         <div className="mt-10 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-12 gap-6 max-w-5xl mx-auto">
           {industries.slice(0, 6).map((ind, i) => {
-            // Setup layouts: span 3 out of 12 columns per card (4 cards per row)
             let gridClasses = "lg:col-span-3";
             
-            // Adjust the 5th card (index 4) to leave a 3-column gap on the left, centering the row
             if (i === 4) {
               gridClasses = "lg:col-span-3 lg:col-start-4";
             } else if (i === 5) {
               gridClasses = "lg:col-span-3";
             }
-
             return (
               <FadeIn key={ind._id || i} delay={i * 40} className={gridClasses}>
                 <div className="bg-surface border border-border rounded-lg p-5 text-center hover:shadow-md hover:-translate-y-0.5 transition-all duration-300 group cursor-default h-full flex flex-col justify-center">
@@ -127,7 +129,9 @@ function IndustriesWeServe({ industries = [] }) {
   );
 }
 
-/* ─── Featured Case Studies ───────────────────────────────── */
+/* ==========================================
+   Featured Case Studies Component
+   ========================================== */
 function FeaturedCaseStudies({ caseStudies, loading }) {
   return (
     <section className="py-16 md:py-20 bg-background">
@@ -159,7 +163,6 @@ function FeaturedCaseStudies({ caseStudies, loading }) {
           <div className="mt-10 flex flex-wrap justify-center gap-6 items-stretch">
             {caseStudies.map((cs, i) => (
               <FadeIn key={cs._id} delay={i * 40} className="w-full md:basis-[calc(50%-12px)] lg:basis-[calc(33.33%-16px)] max-w-sm lg:max-w-none flex">
-                {/* CHANGED: Removed flex-1 from <p> and added flex-1 to the layout container wrappers below to balance distribution */}
                 <div className="bg-background border border-border rounded-lg p-6 w-full flex flex-col justify-between hover:shadow-md transition group">
                   <div className="flex flex-col flex-1">
                     {cs.hero_image && (
@@ -179,11 +182,10 @@ function FeaturedCaseStudies({ caseStudies, loading }) {
                     
                     {cs.results?.[0] && (
                       <div className="mt-3 text-2xl font-extrabold text-primary">
-                         {cs.results[0].value}
+                        {cs.results[0].value}
                       </div>
                     )}
                     
-                    {/* CHANGED: Swapped flex-1 out for a clean bottom margin structure to give room to the absolute line clamping */}
                     <p 
                       className="mt-2 mb-4 text-sm leading-relaxed text-text break-words"
                       style={{
@@ -214,7 +216,9 @@ function FeaturedCaseStudies({ caseStudies, loading }) {
   );
 }
 
-/* ─── Technologies & Platforms ────────────────────────────── */
+/* ==========================================
+   Technologies & Platforms Component
+   ========================================== */
 function TechnologiesPlatforms({ technologies = [] }) {
   if (!technologies.length) return null;
   return (
@@ -248,7 +252,9 @@ function TechnologiesPlatforms({ technologies = [] }) {
   );
 }
 
-/* ─── Case Studies Stats ──────────────────────────────────── */
+/* ==========================================
+   Proven Results / Our Impact Component
+   ========================================== */
 function ResultsStatistics({ stats = [] }) {
   const displayStats = stats.slice(0, 4);
   if (!displayStats.length) return null;
@@ -262,26 +268,39 @@ function ResultsStatistics({ stats = [] }) {
             subtitle="Numbers that speak louder than words. Our track record of delivering measurable outcomes."
           />
         </FadeIn>
-        <div className="mt-10 grid grid-cols-2 sm:grid-cols-4 gap-6">
-          {displayStats.map((stat, i) => (
-            <FadeIn key={stat.key || i} delay={i * 40}>
-              <div className="bg-surface border border-border rounded-lg p-6 text-center hover:shadow-sm transition">
-                <div className="text-4xl font-extrabold text-primary">
-                  <AnimatedCounter target={stat.target} suffix={stat.suffix || ""} />
-                </div>
-                <div className="mt-2 text-sm font-semibold text-text">
-                  {stat.label}
-                </div>
-              </div>
-            </FadeIn>
-          ))}
-        </div>
+
+        <FadeIn>
+          {({ isInView, ref }) => (
+            <div ref={ref} className="mt-10 grid grid-cols-2 sm:grid-cols-4 gap-6">
+              {displayStats.map((stat, i) => {
+                const numericTarget = Number(String(stat.target || "").replace(/[^0-9.]/g, "")) || 0;
+                
+                return (
+                  <div key={stat.key || i} className="bg-surface border border-border rounded-lg p-6 text-center hover:shadow-sm transition">
+                    <div className="text-4xl font-extrabold text-primary">
+                      <AnimatedCounter 
+                        target={numericTarget} 
+                        suffix={stat.suffix || ""} 
+                        isInView={isInView}
+                      />
+                    </div>
+                    <div className="mt-2 text-sm font-semibold text-text">
+                      {stat.label}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          )}
+        </FadeIn>
       </div>
     </section>
   );
 }
 
-/* ─── Main Services Page ──────────────────────────────────── */
+/* ==========================================
+   Main Services Page Component
+   ========================================== */
 export default function Services() {
   const { services, loading, error, fetchServices } = useServiceStore();
   const { reviews, loading: reviewsLoading, fetchReviews } = useReviewStore();
@@ -301,7 +320,11 @@ export default function Services() {
   const whyChooseUsStats = ['clientRetention', 'support247', 'averageRoi', 'satisfactionGoal']
     .map(key => companyStats.find(s => s.key === key))
     .filter(Boolean)
-    .map(s => ({ value: `${s.target}${s.suffix}`, label: s.label }));
+    .map(s => ({ 
+      target: Number(String(s.target || "").replace(/[^0-9.]/g, "")) || 0, 
+      suffix: s.suffix || "", 
+      label: s.label 
+    }));
 
   useEffect(() => {
     fetchServices();
@@ -322,9 +345,11 @@ export default function Services() {
         />
         <section className="py-14 bg-surface">
           <div className="max-w-6xl mx-auto px-4">
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="flex flex-wrap justify-center gap-6">
               {[...Array(6)].map((_, i) => (
-                <ServiceCardSkeleton key={i} />
+                <div key={i} className="w-full sm:w-[calc(50%-12px)] lg:w-[calc(33.33%-16px)] max-w-sm lg:max-w-none">
+                  <ServiceCardSkeleton />
+                </div>
               ))}
             </div>
           </div>
@@ -408,9 +433,14 @@ export default function Services() {
               </div>
             </div>
           ) : (
-            <div className="mt-10 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            /* CHANGED: Swapped strict 'grid' configuration for a flexible, wrapping structure that centers odd items on the bottom row seamlessly */
+            <div className="mt-10 flex flex-wrap justify-center gap-6">
               {services.map((s, i) => (
-                <FadeIn key={s._id} delay={i * 40}>
+                <FadeIn 
+                  key={s._id} 
+                  delay={i * 40}
+                  className="w-full sm:w-[calc(50%-12px)] lg:w-[calc(33.33%-16px)] max-w-sm lg:max-w-none flex"
+                >
                   <ServiceCard service={s} />
                 </FadeIn>
               ))}
