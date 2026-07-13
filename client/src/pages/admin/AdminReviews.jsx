@@ -1,4 +1,6 @@
 import { useEffect, useState } from "react";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faCheck, faTimes, faTrash } from "@fortawesome/free-solid-svg-icons";
 import useDebounce from "../../hooks/useDebounce.js";
 import { toast } from "sonner";
 import useReviewStore from "../../store/reviewStore.js";
@@ -52,6 +54,7 @@ export default function AdminReviews() {
   const fetchAdminReviews = useReviewStore((s) => s.fetchAdminReviews);
   const approveReview = useReviewStore((s) => s.approveReview);
   const rejectReview = useReviewStore((s) => s.rejectReview);
+  const deleteReview = useReviewStore((s) => s.deleteReview);
   const deleteAllReviews = useReviewStore((s) => s.deleteAllReviews);
 
   const load = async () => {
@@ -118,6 +121,23 @@ export default function AdminReviews() {
       await load();
     } catch (err) {
       const msg = err.response?.data?.message || err.message || "Reject failed";
+      setError(msg);
+      toast.error(msg);
+    } finally {
+      setActionLoading(null);
+    }
+  }
+
+  async function handleDelete(id) {
+    setActionLoading(id);
+    try {
+      await deleteReview(id);
+      setDeleteTarget(null);
+      toast.success("Review deleted permanently.");
+      window.dispatchEvent(new Event("refresh-badges"));
+      await load();
+    } catch (err) {
+      const msg = err.response?.data?.message || err.message || "Delete failed";
       setError(msg);
       toast.error(msg);
     } finally {
@@ -288,7 +308,7 @@ export default function AdminReviews() {
                             type="button"
                             aria-label="Approve"
                             title="Approve"
-                            className="inline-flex items-center justify-center w-9 h-9 min-w-[44px] min-h-[44px] text-success bg-success/10 border border-success/20 rounded hover:bg-success/20 transition cursor-pointer disabled:opacity-50"
+                            className="px-3 py-2 text-sm sm:px-4 sm:py-2 sm:text-sm min-h-[44px] text-success hover:text-green-700 rounded transition cursor-pointer disabled:opacity-50"
                             onClick={() =>
                               setDeleteTarget({
                                 type: "approve",
@@ -316,18 +336,7 @@ export default function AdminReviews() {
                                 />
                               </svg>
                             ) : (
-                              <svg
-                                className="w-4 h-4"
-                                fill="none"
-                                stroke="currentColor"
-                                viewBox="0 0 24 24">
-                                <path
-                                  strokeLinecap="round"
-                                  strokeLinejoin="round"
-                                  strokeWidth={2}
-                                  d="M5 13l4 4L19 7"
-                                />
-                              </svg>
+                              <FontAwesomeIcon icon={faCheck} className="w-4 h-4" />
                             )}
                           </button>
                         )}
@@ -336,7 +345,7 @@ export default function AdminReviews() {
                             type="button"
                             aria-label="Reject"
                             title="Reject"
-                            className="inline-flex items-center justify-center w-9 h-9 min-w-[44px] min-h-[44px] text-danger bg-red-50 border border-red-200 rounded hover:bg-red-100 transition cursor-pointer disabled:opacity-50"
+                            className="px-3 py-2 text-sm sm:px-4 sm:py-2 sm:text-sm min-h-[44px] text-danger hover:text-red-700 rounded transition cursor-pointer disabled:opacity-50"
                             onClick={() =>
                               setDeleteTarget({
                                 type: "reject",
@@ -364,18 +373,44 @@ export default function AdminReviews() {
                                 />
                               </svg>
                             ) : (
+                              <FontAwesomeIcon icon={faTimes} className="w-4 h-4" />
+                            )}
+                          </button>
+                        )}
+                        {r.status === "Rejected" && (
+                          <button
+                            type="button"
+                            aria-label="Delete"
+                            title="Delete"
+                            className="px-3 py-2 text-sm sm:px-4 sm:py-2 sm:text-sm min-h-[44px] text-danger hover:text-red-700 rounded transition cursor-pointer disabled:opacity-50"
+                            onClick={() =>
+                              setDeleteTarget({
+                                type: "delete",
+                                id: r.review_id,
+                              })
+                            }
+                            disabled={actionLoading === r.review_id}>
+                            {actionLoading === r.review_id ? (
                               <svg
-                                className="w-4 h-4"
-                                fill="none"
-                                stroke="currentColor"
-                                viewBox="0 0 24 24">
+                                className="animate-spin w-4 h-4"
+                                viewBox="0 0 24 24"
+                                fill="none">
+                                <circle
+                                  className="opacity-25"
+                                  cx="12"
+                                  cy="12"
+                                  r="10"
+                                  stroke="currentColor"
+                                  strokeWidth="4"
+                                />
                                 <path
-                                  strokeLinecap="round"
-                                  strokeLinejoin="round"
-                                  strokeWidth={2}
-                                  d="M6 18L18 6M6 6l12 12"
+                                  className="opacity-75"
+                                  fill="currentColor"
+                                  d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
                                 />
                               </svg>
+                            ) : (
+                              <FontAwesomeIcon icon={faTrash} className="w-4 h-4" />
                             )}
                           </button>
                         )}
@@ -412,6 +447,8 @@ export default function AdminReviews() {
         onConfirm={() => {
           if (deleteTarget?.type === "approve") {
             handleApprove(deleteTarget.id);
+          } else if (deleteTarget?.type === "delete") {
+            handleDelete(deleteTarget.id);
           } else {
             handleReject(deleteTarget.id);
           }
@@ -419,7 +456,9 @@ export default function AdminReviews() {
         message={
           deleteTarget?.type === "approve"
             ? "This review will be published on the public site. Continue?"
-            : "This review will be rejected and hidden. Continue?"
+            : deleteTarget?.type === "delete"
+              ? "Delete this rejected review permanently? This action cannot be undone."
+              : "This review will be rejected and hidden. Continue?"
         }
       />
       <ConfirmModal

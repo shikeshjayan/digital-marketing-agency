@@ -1,14 +1,12 @@
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
-import PhoneInput from "react-phone-number-input";
-import "react-phone-number-input/style.css";
 import HeroSplit from "../../components/public/HeroSplit.jsx";
 import FadeIn from "../../components/ui/FadeIn.jsx";
 import SectionHeading from "../../components/ui/SectionHeading.jsx";
 import HelpCard from "../../components/public/HelpCard.jsx";
-import useServiceStore from "../../store/serviceStore.js";
+import usePageStore from "../../store/pageStore.js";
 import useContactStore from "../../store/contactStore.js";
-import useBrandSettingsStore from "../../store/brandSettingsStore.js";
+import flags from "country-flag-icons/react/3x2";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faPhone,
@@ -38,19 +36,46 @@ function ContactCard({ title, value, icon }) {
   );
 }
 
+function FlagIcon({ countryCode, className = "w-5 h-auto rounded-sm flex-shrink-0" }) {
+  const Flag = flags[countryCode];
+  return Flag ? <Flag className={className} /> : null;
+}
+
+const countryCodes = [
+  { code: "+91", label: "IN +91", countryCode: "IN" },
+  { code: "+1", label: "US +1", countryCode: "US" },
+  { code: "+44", label: "UK +44", countryCode: "GB" },
+  { code: "+61", label: "AU +61", countryCode: "AU" },
+  { code: "+971", label: "AE +971", countryCode: "AE" },
+  { code: "+81", label: "JP +81", countryCode: "JP" },
+  { code: "+86", label: "CN +86", countryCode: "CN" },
+  { code: "+49", label: "DE +49", countryCode: "DE" },
+  { code: "+33", label: "FR +33", countryCode: "FR" },
+  { code: "+39", label: "IT +39", countryCode: "IT" },
+  { code: "+7", label: "RU +7", countryCode: "RU" },
+  { code: "+82", label: "KR +82", countryCode: "KR" },
+  { code: "+65", label: "SG +65", countryCode: "SG" },
+  { code: "+966", label: "SA +966", countryCode: "SA" },
+  { code: "+92", label: "PK +92", countryCode: "PK" },
+  { code: "+880", label: "BD +880", countryCode: "BD" },
+  { code: "+94", label: "LK +94", countryCode: "LK" },
+  { code: "+977", label: "NP +977", countryCode: "NP" },
+  { code: "+55", label: "BR +55", countryCode: "BR" },
+  { code: "+52", label: "MX +52", countryCode: "MX" },
+];
+
 export default function Contact() {
-  const { services, fetchServices } = useServiceStore();
+  const { contactPage, loading: pageLoading, error: pageError, fetchPageContact } = usePageStore();
   const {
     submitContact,
     error: storeError,
     success: storeSuccess,
-    loading,
+    loading: submitting,
     reset,
   } = useContactStore();
-  const { content: brandContent, fetchBrandSettings } = useBrandSettingsStore();
   const [form, setForm] = useState({
     name: "",
-    phone: "",
+    phone: "+91",
     email: "",
     service: "",
     message: "",
@@ -59,21 +84,26 @@ export default function Contact() {
   const [localError, setLocalError] = useState("");
 
   const [serviceDropdownOpen, setServiceDropdownOpen] = useState(false);
+  const [codeDropdownOpen, setCodeDropdownOpen] = useState(false);
+  const [selectedCode, setSelectedCode] = useState("+91");
+  const [phoneNumber, setPhoneNumber] = useState("");
+
+  const services = contactPage?.services ?? [];
+  const brandSettings = contactPage?.brandSettings ?? {};
+  const contact = brandSettings?.contact ?? {};
+  const socialLinks = brandSettings?.socialLinks ?? [];
 
   useEffect(() => {
-    fetchServices();
-    fetchBrandSettings();
+    fetchPageContact();
     return () => reset();
-  }, [fetchServices, fetchBrandSettings, reset]);
-
-  const contact = brandContent?.contact ?? {};
-  const socialLinks = brandContent?.socialLinks ?? [];
+  }, [fetchPageContact, reset]);
 
   const iconMap = { faFacebookF, faInstagram, faLinkedinIn, faYoutube };
 
   useEffect(() => {
     function handleOutsideClick() {
       setServiceDropdownOpen(false);
+      setCodeDropdownOpen(false);
     }
     window.addEventListener("click", handleOutsideClick);
     return () => window.removeEventListener("click", handleOutsideClick);
@@ -130,12 +160,14 @@ export default function Contact() {
       toast.success("Thanks! Your enquiry has been submitted successfully.");
       setForm({
         name: "",
-        phone: "",
+        phone: "+91",
         email: "",
         service: "",
         message: "",
       });
       setConsent(false);
+      setSelectedCode("+91");
+      setPhoneNumber("");
     }
   }, [storeSuccess]);
 
@@ -144,6 +176,37 @@ export default function Contact() {
       toast.error(storeError);
     }
   }, [storeError]);
+
+  if (pageError)
+    return (
+      <div>
+        <HeroSplit
+          title="Contact Us"
+          titleHighlight="Let's"
+          subtitle="Ready to grow your business? Get in touch with us today for a free consultation and let's discuss how we can help you achieve your goals."
+          primaryCTA={{ label: "Get a Free Quote", to: "#contact-form" }}
+          secondaryCTA={{
+            label: "Call Us Now",
+            to: `tel:${contact.phone || "+918891212323"}`,
+          }}
+          imageSrc="/contact.webp"
+          imageAlt="Contact Us"
+        />
+        <section className="py-14 bg-surface">
+          <div className="max-w-6xl mx-auto px-4 text-center py-20">
+            <div className="text-primary font-medium mb-4">{pageError}</div>
+            <button
+              type="button"
+              onClick={() => fetchPageContact()}
+              className="px-5 py-2.5 text-sm font-semibold text-white bg-primary rounded-lg hover:bg-primary-hover transition cursor-pointer button-text">
+              Retry
+            </button>
+          </div>
+        </section>
+      </div>
+    );
+
+  const selectedCountry = countryCodes.find((c) => c.code === selectedCode);
 
   return (
     <div>
@@ -167,29 +230,45 @@ export default function Contact() {
 
       <section id="contact-form" className="py-12 bg-background">
         <div className="max-w-6xl mx-auto px-4">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <FadeIn delay={0}>
-              <ContactCard
-                title="Phone"
-                value={contact.phone || "+91 8891212323"}
-                icon={faPhone}
-              />
-            </FadeIn>
-            <FadeIn delay={100}>
-              <ContactCard
-                title="Mail"
-                value={contact.email || "crowlcrown@gmail.com"}
-                icon={faEnvelope}
-              />
-            </FadeIn>
-            <FadeIn delay={200}>
-              <ContactCard
-                title="Address"
-                value={contact.address || "Ernakulam, Kochi, Kerala, India"}
-                icon={faLocation}
-              />
-            </FadeIn>
-          </div>
+          {pageLoading ? (
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              {[...Array(3)].map((_, i) => (
+                <div key={i} className="rounded-lg border border-border p-6 bg-background animate-pulse">
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-lg bg-surface-border" />
+                    <div className="space-y-2 flex-1">
+                      <div className="h-4 w-16 bg-surface-border rounded" />
+                      <div className="h-3 w-32 bg-surface-border rounded" />
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <FadeIn delay={0}>
+                <ContactCard
+                  title="Phone"
+                  value={contact.phone || "+91 8891212323"}
+                  icon={faPhone}
+                />
+              </FadeIn>
+              <FadeIn delay={100}>
+                <ContactCard
+                  title="Mail"
+                  value={contact.email || "crowlcrown@gmail.com"}
+                  icon={faEnvelope}
+                />
+              </FadeIn>
+              <FadeIn delay={200}>
+                <ContactCard
+                  title="Address"
+                  value={contact.address || "Ernakulam, Kochi, Kerala, India"}
+                  icon={faLocation}
+                />
+              </FadeIn>
+            </div>
+          )}
 
           <div className="mt-10 grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
             <FadeIn direction="left">
@@ -197,23 +276,27 @@ export default function Contact() {
                 <HelpCard contact={contact} />
                 {socialLinks.length > 0 && (
                   <FadeIn direction="none" delay={150}>
-                  <div className="bg-secondary text-white rounded-lg p-8">
-                    <div className="text-sm font-semibold text-primary">Follow Us</div>
-                    <div className="mt-4 flex w-full gap-3">
-                      {socialLinks.map((social) => (
-                        <a
-                          key={social.platform}
-                          href={social.url}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="flex-1 h-12 rounded-xl bg-white/10 flex items-center justify-center hover:bg-primary-hover hover:text-white transition-all duration-200"
-                          aria-label={social.platform}
-                        >
-                          <FontAwesomeIcon icon={iconMap[social.icon]} className="text-lg" />
-                        </a>
-                      ))}
+                    <div className="bg-secondary text-white rounded-lg p-8">
+                      <div className="text-sm font-semibold text-primary">
+                        Follow Us
+                      </div>
+                      <div className="mt-4 flex w-full gap-3">
+                        {socialLinks.map((social) => (
+                          <a
+                            key={social.platform}
+                            href={social.url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="flex-1 h-12 rounded-xl bg-white/10 flex items-center justify-center hover:bg-primary-hover hover:text-white transition-all duration-200"
+                            aria-label={social.platform}>
+                            <FontAwesomeIcon
+                              icon={iconMap[social.icon]}
+                              className="text-lg"
+                            />
+                          </a>
+                        ))}
+                      </div>
                     </div>
-                  </div>
                   </FadeIn>
                 )}
               </div>
@@ -238,7 +321,7 @@ export default function Contact() {
                       }
                       className="mt-2 w-full rounded-ip border border-border px-4 py-2 outline-none focus:ring-2 focus:ring-primary-light bg-background text-sm text-heading"
                       placeholder="Your name"
-                      disabled={loading}
+                      disabled={submitting}
                     />
                   </div>
 
@@ -246,14 +329,64 @@ export default function Contact() {
                     <label className="text-sm font-semibold text-heading">
                       Phone Number
                     </label>
-                    <PhoneInput
-                      international
-                      defaultCountry="IN"
-                      value={form.phone}
-                      onChange={(value) => setForm((f) => ({ ...f, phone: value || "" }))}
-                      disabled={loading}
-                      className="mt-2"
-                    />
+                    <div className="mt-2 flex">
+                      <div className="relative" onClick={(e) => e.stopPropagation()}>
+                        <button
+                          type="button"
+                          disabled={submitting}
+                          onClick={() => {
+                            setCodeDropdownOpen(!codeDropdownOpen);
+                            setServiceDropdownOpen(false);
+                          }}
+                          className="flex items-center justify-between gap-1 h-full rounded-l-lg border border-border px-3 py-[9px] text-sm text-heading outline-none focus:ring-2 focus:ring-primary-light bg-background cursor-pointer disabled:opacity-50"
+                        >
+                          <FlagIcon countryCode={selectedCountry?.countryCode} />
+                          <span className="font-medium">{selectedCode}</span>
+                          <svg className={`w-3 h-3 text-muted transition ${codeDropdownOpen ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                          </svg>
+                        </button>
+                        {codeDropdownOpen && (
+                          <div className="absolute left-0 mt-1 bg-background border border-border rounded-lg shadow-lg z-20 p-2 space-y-1 max-h-60 overflow-y-auto overscroll-contain scrollbar-custom min-w-[140px]">
+                            {countryCodes.map((c) => (
+                              <button
+                                key={c.code + c.label}
+                                type="button"
+                                onClick={() => {
+                                  setSelectedCode(c.code);
+                                  setPhoneNumber("");
+                                  setForm((f) => ({ ...f, phone: c.code }));
+                                  setCodeDropdownOpen(false);
+                                }}
+                                className={`w-full text-left px-3 py-2 rounded-lg text-sm transition cursor-pointer ${
+                                  selectedCode === c.code
+                                    ? "bg-primary-light text-primary font-semibold"
+                                    : "text-text hover:bg-surface"
+                                }`}
+                              >
+                                <div className="flex items-center gap-2">
+                                  <FlagIcon countryCode={c.countryCode} />
+                                  <span>{c.label}</span>
+                                </div>
+                              </button>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                      <input
+                        type="tel"
+                        value={phoneNumber}
+                        onChange={(e) => {
+                          const digits = e.target.value.replace(/\D/g, "");
+                          setPhoneNumber(digits);
+                          setForm((f) => ({ ...f, phone: selectedCode + digits }));
+                        }}
+                        disabled={submitting}
+                        className="-ml-px flex-1 min-w-0 rounded-r-lg border border-border px-4 py-[9px] text-sm text-heading outline-none focus:ring-2 focus:ring-primary-light bg-background"
+                        placeholder="Phone number"
+                        inputMode="numeric"
+                      />
+                    </div>
                   </div>
 
                   <div>
@@ -268,7 +401,7 @@ export default function Contact() {
                       className="mt-2 w-full rounded-lg border border-border px-4 py-2 text-sm text-heading outline-none focus:ring-2 focus:ring-primary-light bg-background"
                       placeholder="name@example.com"
                       inputMode="email"
-                      disabled={loading}
+                      disabled={submitting}
                     />
                   </div>
 
@@ -280,7 +413,7 @@ export default function Contact() {
                     </label>
                     <button
                       type="button"
-                      disabled={loading}
+                      disabled={submitting}
                       onClick={() => {
                         setServiceDropdownOpen(!serviceDropdownOpen);
                         setCodeDropdownOpen(false);
@@ -294,7 +427,7 @@ export default function Contact() {
                       </span>
                     </button>
                     {serviceDropdownOpen && (
-                      <div className="absolute left-0 right-0 mt-1 bg-background border border-border rounded-lg shadow-lg z-20 p-2 space-y-1">
+                      <div className="absolute left-0 right-0 mt-1 bg-background border border-border rounded-lg shadow-lg z-20 p-2 space-y-1 max-h-60 overflow-y-auto overscroll-contain scrollbar-custom">
                         <button
                           type="button"
                           onClick={() => {
@@ -340,7 +473,7 @@ export default function Contact() {
                       rows={4}
                       className="mt-2 w-full rounded-lg border border-border px-4 py-2 text-sm text-heading outline-none focus:ring-2 focus:ring-primary-light bg-background resize-none"
                       placeholder="How can we help?"
-                      disabled={loading}
+                      disabled={submitting}
                     />
                   </div>
 
@@ -350,7 +483,7 @@ export default function Contact() {
                       id="consent"
                       checked={consent}
                       onChange={(e) => setConsent(e.target.checked)}
-                      disabled={loading}
+                      disabled={submitting}
                       className="mt-1 h-4 w-4 rounded border-border accent-primary-hover text-primary focus:ring-primary cursor-pointer"
                     />
                     <label
@@ -377,7 +510,9 @@ export default function Contact() {
 
                   {(localError || storeError) && (
                     <FadeIn direction="none">
-                      <div className="text-sm text-primary text-center" style={{ fontSize: "12.5px" }}>
+                      <div
+                        className="text-sm text-primary text-center"
+                        style={{ fontSize: "12.5px" }}>
                         {localError || storeError}
                       </div>
                     </FadeIn>
@@ -385,46 +520,45 @@ export default function Contact() {
 
                   <button
                     type="submit"
-                    disabled={loading}
+                    disabled={submitting}
                     className="w-full rounded-lg bg-primary text-white py-3 font-extrabold hover:bg-primary-hover transition cursor-pointer disabled:opacity-50">
-                    {loading ? "Submitting..." : "Submit"}
+                    {submitting ? "Submitting..." : "Submit"}
                   </button>
                 </form>
               </div>
             </FadeIn>
           </div>
-
         </div>
       </section>
 
       <section className="py-14 bg-background-section">
         <div className="max-w-6xl mx-auto px-4">
           <FadeIn>
-          <SectionHeading
-            eyebrow="Location"
-            title="Visit Our Office"
-            subtitle=""
-          />
-          <div className="mt-10 rounded-lg border border-border overflow-hidden bg-background">
-            <div className="flex items-center justify-between px-5 py-4 border-b border-border">
-              <div className="font-semibold text-heading">Location Map</div>
-              <a
-                href="https://www.google.com/maps?q=Kochi"
-                target="_blank"
-                rel="noreferrer"
-                className="text-sm font-semibold text-primary hover:text-primary-hover cursor-pointer">
-                Open in Maps
-              </a>
+            <SectionHeading
+              eyebrow="Location"
+              title="Visit Our Office"
+              subtitle=""
+            />
+            <div className="mt-10 rounded-lg border border-border overflow-hidden bg-background">
+              <div className="flex items-center justify-between px-5 py-4 border-b border-border">
+                <div className="font-semibold text-heading">Location Map</div>
+                <a
+                  href="https://www.google.com/maps?q=Kochi"
+                  target="_blank"
+                  rel="noreferrer"
+                  className="text-sm font-semibold text-primary hover:text-primary-hover cursor-pointer">
+                  Open in Maps
+                </a>
+              </div>
+              <div className="w-full h-75">
+                <iframe
+                  title="Office Location Map - Kochi, Kerala, India"
+                  className="w-full h-full"
+                  src="https://www.google.com/maps?q=Kochi&output=embed"
+                  loading="lazy"
+                />
+              </div>
             </div>
-            <div className="w-full h-75">
-              <iframe
-                title="Office Location Map - Kochi, Kerala, India"
-                className="w-full h-full"
-                src="https://www.google.com/maps?q=Kochi&output=embed"
-                loading="lazy"
-              />
-            </div>
-          </div>
           </FadeIn>
         </div>
       </section>

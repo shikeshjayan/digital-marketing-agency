@@ -83,7 +83,7 @@ export default function NotificationDropdown() {
     setLoading(true);
     try {
       const [enquiriesRes, reviewsRes] = await Promise.all([
-        apiService.get("/admin/contact/enquiries", {
+        apiService.get("/admin/contact", {
           params: { limit: 10, status: "New" },
         }),
         apiService.get("/admin/reviews", {
@@ -125,8 +125,8 @@ export default function NotificationDropdown() {
           },
         }),
       );
-    } catch {
-      // ignore
+    } catch (err) {
+      console.error("Failed to fetch notifications:", err);
     } finally {
       setLoading(false);
     }

@@ -119,6 +119,9 @@ const projectsSchema = new mongoose.Schema(
   },
 );
 
+projectsSchema.index({ status: 1, createdAt: -1 });
+projectsSchema.index({ status: 1, services: 1 });
+
 // Auto-generate slug from project_name before saving
 projectsSchema.pre("save", async function () {
   if (!this.isModified("project_name")) return;

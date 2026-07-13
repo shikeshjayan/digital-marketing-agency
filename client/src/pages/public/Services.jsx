@@ -13,13 +13,7 @@ import FAQSection from "../../components/public/FAQSection.jsx";
 import FinalCTA from "../../components/public/FinalCTA.jsx";
 import TestimonialsSection from "../../components/public/TestimonialsSection.jsx";
 import LogoMarquee from "../../components/public/LogoMarquee.jsx";
-import useServiceStore from "../../store/serviceStore";
-import useReviewStore from "../../store/reviewStore.js";
-import useCaseStudyStore from "../../store/caseStudyStore";
-import useIndustryStore from "../../store/industryStore.js";
-import useTechnologyStore from "../../store/technologyStore.js";
-import useFaqStore from "../../store/faqStore.js";
-import useSiteContentStore from "../../store/siteContentStore.js";
+import usePageStore from "../../store/pageStore";
 import { slugify } from "../../utils/slugify";
 import resolveImagePath from "../../utils/resolveImagePath";
 import ImageLoader from "../../components/ui/ImageLoader.jsx";
@@ -112,7 +106,7 @@ function IndustriesWeServe({ industries = [] }) {
                 <div className="bg-surface border border-border rounded-lg p-5 text-center hover:shadow-md hover:-translate-y-0.5 transition-all duration-300 group cursor-default h-full flex flex-col justify-center">
                   <div className="w-12 h-12 mx-auto rounded-lg bg-primary-light flex items-center justify-center group-hover:bg-primary transition-colors">
                     {ind.iconType === "image" && ind.icon ? (
-                      <img src={resolveImagePath(ind.icon)} alt={ind.name} className="w-6 h-6 object-contain group-hover:brightness-0 group-hover:invert transition-all" />
+                      <img src={resolveImagePath(ind.icon)} alt={ind.name} loading="lazy" decoding="async" className="w-6 h-6 object-contain group-hover:brightness-0 group-hover:invert transition-all" />
                     ) : (
                       <FontAwesomeIcon icon={faBuilding} className="text-primary text-xl group-hover:text-white transition-colors" />
                     )}
@@ -170,6 +164,8 @@ function FeaturedCaseStudies({ caseStudies, loading }) {
                         <img
                           src={resolveImagePath(cs.hero_image)}
                           alt={cs.title}
+                          loading="lazy"
+                          decoding="async"
                           className="w-full h-40 object-cover"
                         />
                       </div>
@@ -237,7 +233,7 @@ function TechnologiesPlatforms({ technologies = [] }) {
               <div className="flex items-center gap-3 bg-surface border border-border rounded-lg px-4 py-3 hover:shadow-sm hover:border-primary/30 transition-all duration-200 cursor-default">
                 <div className="w-9 h-9 rounded-md bg-primary-light flex items-center justify-center shrink-0">
                   {tech.iconType === "image" && tech.icon ? (
-                    <img src={resolveImagePath(tech.icon)} alt={tech.name} className="w-5 h-5 object-contain" />
+                    <img src={resolveImagePath(tech.icon)} alt={tech.name} loading="lazy" decoding="async" className="w-5 h-5 object-contain" />
                   ) : (
                     <FontAwesomeIcon icon={faMicrochip} className="text-primary text-sm" />
                   )}
@@ -302,14 +298,16 @@ function ResultsStatistics({ stats = [] }) {
    Main Services Page Component
    ========================================== */
 export default function Services() {
-  const { services, loading, error, fetchServices } = useServiceStore();
-  const { reviews, loading: reviewsLoading, fetchReviews } = useReviewStore();
-  const { caseStudies, loading: caseStudiesLoading, fetchCaseStudies } = useCaseStudyStore();
-  const { industries, fetchIndustries } = useIndustryStore();
-  const { technologies, fetchTechnologies } = useTechnologyStore();
-  const { faqs, fetchFAQs } = useFaqStore();
-  const { content, fetchPublicSiteContent } = useSiteContentStore();
+  const { servicesPage, loading, error, fetchPageServices } = usePageStore();
 
+  const services = servicesPage?.services ?? [];
+  const reviews = servicesPage?.reviews ?? [];
+  const caseStudies = servicesPage?.caseStudies ?? [];
+  const caseStudiesLoading = loading;
+  const industries = servicesPage?.industries ?? [];
+  const technologies = servicesPage?.technologies ?? [];
+  const faqs = servicesPage?.faqs ?? [];
+  const content = servicesPage?.siteContent ?? null;
   const companyStats = content?.companyStats ?? [];
 
   const getStat = (key) => {
@@ -327,14 +325,8 @@ export default function Services() {
     }));
 
   useEffect(() => {
-    fetchServices();
-    fetchReviews();
-    fetchCaseStudies({ featured: true, limit: 3 });
-    fetchIndustries();
-    fetchTechnologies();
-    fetchFAQs();
-    fetchPublicSiteContent();
-  }, [fetchServices, fetchReviews, fetchCaseStudies, fetchIndustries, fetchTechnologies, fetchFAQs, fetchPublicSiteContent]);
+    fetchPageServices();
+  }, [fetchPageServices]);
 
   if (loading)
     return (
@@ -370,7 +362,7 @@ export default function Services() {
               <div className="text-primary font-medium mb-4">{error}</div>
               <button
                 type="button"
-                onClick={() => fetchServices()}
+                onClick={() => fetchPageServices()}
                 className="px-5 py-2.5 text-sm font-semibold text-white bg-primary rounded-lg hover:bg-primary-hover transition cursor-pointer button-text">
                 Retry
               </button>
@@ -473,7 +465,7 @@ export default function Services() {
 
       {/* 10. Client Testimonials */}
       <FadeIn>
-        <TestimonialsSection reviews={reviews} loading={reviewsLoading} bg="bg-background" />
+        <TestimonialsSection reviews={reviews} loading={loading} bg="bg-background" />
       </FadeIn>
 
       {/* 11. FAQ */}

@@ -19,8 +19,6 @@
   --color-heading: #111827;
   --color-text: #2B2A2A;
   --color-muted: #6B7280;
-  --color-dark: #262626;
-
   /* Footer */
   --color-footer: #1A1A1A;
 
@@ -71,8 +69,6 @@
 
   /* Letter Spacing */
   --letter-spacing-h: -0.02em;
-  --letter-spacing-b: 0;
-
 
   /* Border Radius */
   --radius-sm: 0.125rem;
@@ -93,6 +89,8 @@
   --radius-sb: 9999px;
   /* modals */
   --radius-m: 1rem;
+  /* Toast notifications */
+  --radius-toast: 0.5rem;
 
   /* Font Weights */
   --font-weight-bold: 700;
@@ -105,65 +103,6 @@
   --font-size-sm: 0.75rem;
   --font-size-xxs: 0.6875rem;
   --font-size-display: 8.75rem;
-}
-
-/* ─── Token Utilities ───────────────────────────────────────── */
-
-@layer utilities {
-
-  /* Font Weight Utilities */
-  .font-hh {
-    font-weight: var(--font-weight-hh);
-  }
-
-  .font-sh {
-    font-weight: var(--font-weight-sh);
-  }
-
-  .font-sb {
-    font-weight: var(--font-weight-sb);
-  }
-
-  .font-bt {
-    font-weight: var(--font-weight-bt);
-  }
-
-  .font-st {
-    font-weight: var(--font-weight-st);
-  }
-
-  .font-b {
-    font-weight: var(--font-weight-b);
-  }
-
-  .font-bold {
-    font-weight: var(--font-weight-bold);
-  }
-
-  .font-semibold {
-    font-weight: var(--font-weight-semibold);
-  }
-
-  .font-medium {
-    font-weight: var(--font-weight-medium);
-  }
-
-  .font-extrabold {
-    font-weight: var(--font-weight-extrabold);
-  }
-
-  /* Font Size Utilities */
-  .text-xs {
-    font-size: var(--font-size-xs);
-  }
-
-  .text-xxs {
-    font-size: var(--font-size-xxs);
-  }
-
-  .text-display {
-    font-size: var(--font-size-display);
-  }
 }
 
 /* ─────────────────────────────────────────────────────────── */
@@ -232,6 +171,11 @@
 
 .radius-m {
   border-radius: var(--radius-m);
+}
+
+/* Sonner toast radius */
+[data-sonner-toast] {
+  border-radius: var(--radius-toast) !important;
 }
 
 @layer base {
@@ -361,56 +305,3 @@ textarea::-webkit-scrollbar-thumb:hover {
   scrollbar-color: var(--color-primary) var(--color-surface);
 }
 
-/* ─── PhoneInput (react-phone-number-input) ──────────────────── */
-.PhoneInput {
-  --PhoneInputCountryFlag-borderColor: var(--color-border);
-  --PhoneInputCountrySelectArrow-color: var(--color-muted);
-  display: flex;
-  border-radius: 0.5rem;
-  overflow: hidden;
-}
-
-.PhoneInput > .PhoneInputCountry {
-  padding: 0.5rem 0.75rem;
-  background: var(--color-surface);
-  border: 1px solid var(--color-border);
-  border-right: none;
-  cursor: pointer;
-}
-
-.PhoneInput > .PhoneInputInput {
-  width: 100%;
-  padding: 0.5rem 1rem;
-  font-size: 0.875rem;
-  color: var(--color-heading);
-  background: var(--color-background);
-  border: 1px solid var(--color-border);
-  border-radius: 0;
-  outline: none;
-  min-height: 40px;
-}
-
-.PhoneInput > .PhoneInputInput:focus {
-  border-color: transparent;
-  box-shadow: none;
-}
-
-.PhoneInput:focus-within {
-  box-shadow: 0 0 0 2px var(--color-primary-light);
-}
-
-.PhoneInput:focus-within > .PhoneInputCountry {
-  border-color: var(--color-primary-light);
-}
-
-.PhoneInput:focus-within > .PhoneInputInput {
-  border-color: var(--color-primary-light);
-}
-
-.PhoneInput > .PhoneInputInput::placeholder {
-  color: var(--color-muted);
-}
-
-.PhoneInputCountryIcon {
-  border-radius: 2px;
-}

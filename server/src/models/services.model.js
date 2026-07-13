@@ -60,6 +60,8 @@ const servicesSchema = new mongoose.Schema(
   { timestamps: true },
 );
 
+servicesSchema.index({ status: 1, display_order: 1, createdAt: -1 });
+
 // Auto-generate slug from service_name before saving
 servicesSchema.pre("save", async function () {
   if (!this.isModified("service_name")) return;

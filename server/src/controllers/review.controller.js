@@ -113,6 +113,18 @@ export const deleteAllReviews = asyncHandler(async (req, res) => {
   });
 });
 
+// Delete a single review permanently (admin only)
+export const deleteSingleReview = asyncHandler(async (req, res) => {
+  const review = await Review.findByIdAndDelete(req.params.id);
+  if (!review) {
+    return res.status(404).json({ success: false, message: "Review not found" });
+  }
+  res.status(200).json({
+    success: true,
+    message: "Review deleted permanently.",
+  });
+});
+
 // Get only approved reviews to show on the public website
 export const getPublicReviews = asyncHandler(async (req, res) => {
   const reviews = await Review.find({ status: "Approved" }).sort({ createdAt: -1 });

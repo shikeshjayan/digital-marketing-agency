@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faBullseye,
@@ -20,8 +20,7 @@ import WhyChooseUs from "../../components/public/WhyChooseUs.jsx";
 import LogoMarquee from "../../components/public/LogoMarquee.jsx";
 import TestimonialsSection from "../../components/public/TestimonialsSection.jsx";
 import FinalCTA from "../../components/public/FinalCTA.jsx";
-import useReviewStore from "../../store/reviewStore.js";
-import useSiteContentStore from "../../store/siteContentStore.js";
+import usePageStore from "../../store/pageStore.js";
 
 /* ─── Section: Who We Are ─────────────────────────────────── */
 function WhoWeAre({ stats = [] }) {
@@ -80,7 +79,7 @@ function WhoWeAre({ stats = [] }) {
                     </div>
                     <div
                       className="text-muted mt-1"
-                      style={{ "font-size": "12px" }}>
+                      style={{ fontSize: "12px" }}>
                       {stat.label}
                     </div>
                   </div>
@@ -239,16 +238,16 @@ function MeetOurTeam() {
 
 /* ─── Main About Page ─────────────────────────────────────── */
 export default function About() {
-  const { reviews, loading: reviewsLoading, fetchReviews } = useReviewStore();
-  const { content, fetchPublicSiteContent } = useSiteContentStore();
+  const { aboutPage, loading, error, fetchPageAbout } = usePageStore();
 
-  useEffect(() => {
-    fetchReviews();
-    fetchPublicSiteContent();
-  }, [fetchReviews, fetchPublicSiteContent]);
-
+  const reviews = aboutPage?.reviews ?? [];
+  const content = aboutPage?.siteContent ?? null;
   const companyStats = content?.companyStats ?? [];
   const trustMarqueeLogos = content?.trustMarqueeLogos ?? [];
+
+  useEffect(() => {
+    fetchPageAbout();
+  }, [fetchPageAbout]);
 
   const getStat = (key) => {
     const s = companyStats.find((st) => st.key === key);
@@ -273,6 +272,32 @@ export default function About() {
     .map((key) => companyStats.find((s) => s.key === key))
     .filter(Boolean)
     .map((s) => ({ target: s.target, suffix: s.suffix || "", label: s.label }));
+
+  if (error)
+    return (
+      <div>
+        <HeroSplit
+          title="Us"
+          titleHighlight="About"
+          subtitle="We are a team of designers, developers, and strategists dedicated to helping businesses grow through innovative digital solutions and measurable results."
+          primaryCTA={{ label: "Meet Our Team", to: "/team" }}
+          secondaryCTA={{ label: "Our Services", to: "/services" }}
+          imageSrc="/aboutus.webp"
+          imageAlt="About Us"
+        />
+        <section className="py-14 bg-surface">
+          <div className="max-w-6xl mx-auto px-4 text-center py-20">
+            <div className="text-primary font-medium mb-4">{error}</div>
+            <button
+              type="button"
+              onClick={() => fetchPageAbout()}
+              className="px-5 py-2.5 text-sm font-semibold text-white bg-primary rounded-lg hover:bg-primary-hover transition cursor-pointer button-text">
+              Retry
+            </button>
+          </div>
+        </section>
+      </div>
+    );
 
   return (
     <div>
@@ -331,7 +356,31 @@ export default function About() {
       </section>
 
       {/* 3. Who We Are */}
-      <WhoWeAre stats={aboutStats} />
+      {loading ? (
+        <section className="py-12 md:py-16 bg-background-section">
+          <div className="max-w-6xl mx-auto px-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-10 md:gap-16 items-center">
+              <div className="space-y-4 animate-pulse">
+                <div className="h-4 w-20 bg-surface-border rounded" />
+                <div className="h-8 w-3/4 bg-surface-border rounded" />
+                <div className="h-4 w-full bg-surface-border rounded" />
+                <div className="h-4 w-5/6 bg-surface-border rounded" />
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                {[...Array(4)].map((_, i) => (
+                  <div key={i} className="rounded-lg p-6 bg-surface-border animate-pulse">
+                    <div className="w-8 h-8 bg-surface rounded mx-auto" />
+                    <div className="mt-3 h-6 w-12 bg-surface rounded mx-auto" />
+                    <div className="mt-1 h-3 w-16 bg-surface rounded mx-auto" />
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </section>
+      ) : (
+        <WhoWeAre stats={aboutStats} />
+      )}
 
       {/* 4. Mission | Vision */}
       <MissionVision />
@@ -351,12 +400,24 @@ export default function About() {
       {/* 9. Client Testimonials */}
       <TestimonialsSection
         reviews={reviews}
-        loading={reviewsLoading}
+        loading={loading}
         bg="bg-background"
       />
 
       {/* 10. Trusted By */}
-      <LogoMarquee logos={trustMarqueeLogos} bg="bg-background-section" />
+      {loading ? (
+        <section className="py-12 md:py-16 bg-background-section">
+          <div className="max-w-6xl mx-auto px-4">
+            <div className="flex flex-wrap justify-center gap-4">
+              {[...Array(5)].map((_, i) => (
+                <div key={i} className="w-[calc(20%-12px)] min-w-[140px] h-16 bg-surface border border-border rounded-lg animate-pulse" />
+              ))}
+            </div>
+          </div>
+        </section>
+      ) : (
+        <LogoMarquee logos={trustMarqueeLogos} bg="bg-background-section" />
+      )}
 
       {/* 11. Final CTA */}
       <FinalCTA />

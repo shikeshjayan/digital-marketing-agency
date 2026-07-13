@@ -33,6 +33,7 @@ import siteContentRoutes from "./routes/siteContent.routes.js";
 import adminSiteContentRoutes from "./routes/adminSiteContent.routes.js";
 import brandSettingsRoutes from "./routes/brandSettings.routes.js";
 import adminBrandSettingsRoutes from "./routes/adminBrandSettings.routes.js";
+import pageRoutes from "./routes/page.routes.js";
 import errorHandler from "./middleware/errorHandler.js";
 
 const app = express();
@@ -110,6 +111,7 @@ app.use("/api/v1/site-content", siteContentRoutes);
 app.use("/api/v1/admin/site-content", adminSiteContentRoutes);
 app.use("/api/v1/brand-settings", brandSettingsRoutes);
 app.use("/api/v1/admin/brand-settings", adminBrandSettingsRoutes);
+app.use("/api/v1/page", pageRoutes);
 
 // Health check — exposes env status and DB state for debugging
 app.get("/api/v1/health", (req, res) => {
