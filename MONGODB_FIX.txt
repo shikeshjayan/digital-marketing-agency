@@ -1,0 +1,48 @@
+PROBLEM: MongoDB Atlas Connection Fails with Node.js v24+
+=========================================================
+
+ERRORS:
+1. "Error: querySrv ECONNREFUSED _mongodb._tcp.cluster1.onlgise.mongodb.net"
+2. "Could not connect to any servers in your MongoDB Atlas cluster"
+3. "bad auth : Authentication failed"
+
+ROOT CAUSE:
+-----------
+Node.js v24+ has a bug where its built-in DNS SRV resolver fails with ECONNREFUSED
+on Windows, even though the DNS records resolve correctly via system tools (nslookup).
+
+This breaks the mongodb+srv:// connection string because it relies on DNS SRV lookup
+to discover cluster hosts and configuration (replica set name, auth source, TLS).
+
+SOLUTION:
+---------
+Switch from mongodb+srv:// to mongodb:// with explicit parameters.
+
+Step 1: Look up SRV records (terminal):
+  nslookup -type=SRV _mongodb._tcp.<cluster-hostname>
+
+Step 2: Look up TXT records (for replica set and auth):
+  nslookup -type=TXT <cluster-hostname>
+
+Step 3: Update .env with explicit mongodb:// connection string:
+  MONGO_URL=mongodb://<user>:<password>@<host1>:27017,<host2>:27017,<host3>:27017/<dbname>?authSource=admin&replicaSet=<replicaSet>&retryWrites=true&w=majority&tls=true
+
+KEY PARAMETERS REQUIRED (from DNS TXT record):
+  - replicaSet    : Identifies the Atlas replica set (e.g. atlas-wzizyl-shard-0)
+  - authSource    : Usually "admin" for Atlas
+  - tls           : "true" (Atlas requires encrypted connections)
+  - retryWrites   : "true"
+  - w             : "majority"
+
+ALTERNATIVE FIX:
+  Downgrade Node.js to v22 LTS (nvm install 22 && nvm use 22)
+  which handles DNS SRV resolution correctly.
+
+VERIFY CONNECTION:
+  node --input-type=module -e "
+  import mongoose from 'mongoose';
+  const conn = await mongoose.connect('<your-mongodb-url>');
+  console.log('Connected to:', conn.connection.host);
+  await mongoose.disconnect();
+  process.exit(0);
+  "
