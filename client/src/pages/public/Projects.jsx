@@ -44,12 +44,12 @@ const ProjectCard = ({ project }) => {
         </h3>
         <div className="mt-2 flex items-center gap-2 text-xs flex-wrap">
           {project.services?.length > 0 && (
-            <span className="inline-block px-2.5 py-0.5 rounded-sm bg-primary-light text-primary font-semibold text-xxs">
+            <span className="inline-block px-2.5 py-0.5 rounded-sb bg-primary-light text-primary font-semibold text-xxs">
               {typeof project.services[0] === "object" ? project.services[0].service_name : "Service"}
             </span>
           )}
           {project.industries?.length > 0 && (
-            <span className="inline-block px-2.5 py-0.5 rounded-sm bg-surface text-text font-semibold border border-border text-xxs">
+            <span className="inline-block px-2.5 py-0.5 rounded-sb bg-surface text-text font-semibold border border-border text-xxs">
               {typeof project.industries[0] === "object" ? project.industries[0].name : "Industry"}
             </span>
           )}
@@ -180,12 +180,12 @@ function FeaturedCaseStudy({ projects }) {
               <div className="p-5 sm:p-6 lg:p-8 flex flex-col">
                 <div className="flex items-center gap-2 text-xs flex-wrap">
                   {featured.services?.length > 0 && (
-                    <span className="inline-block px-2.5 py-0.5 rounded-sm bg-primary-light text-primary font-semibold text-xxs">
+                    <span className="inline-block px-2.5 py-0.5 rounded-sb bg-primary-light text-primary font-semibold text-xxs">
                       {typeof featured.services[0] === "object" ? featured.services[0].service_name : "Service"}
                     </span>
                   )}
                   {featured.industries?.length > 0 && (
-                    <span className="inline-block px-2.5 py-0.5 rounded-sm bg-surface text-text font-semibold border border-border text-xxs">
+                    <span className="inline-block px-2.5 py-0.5 rounded-sb bg-surface text-text font-semibold border border-border text-xxs">
                       {typeof featured.industries[0] === "object" ? featured.industries[0].name : "Industry"}
                     </span>
                   )}
