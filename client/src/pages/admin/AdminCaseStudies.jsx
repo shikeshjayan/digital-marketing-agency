@@ -80,7 +80,9 @@ export default function AdminCaseStudies() {
   }
 
   useEffect(() => {
-    galleryUrlsRef.current = form.gallery.filter((i) => i?.url).map((i) => i.url);
+    galleryUrlsRef.current = form.gallery
+      .filter((i) => i?.url)
+      .map((i) => i.url);
   }, [form.gallery]);
 
   useEffect(() => {
@@ -102,7 +104,10 @@ export default function AdminCaseStudies() {
       setItems(result?.items ?? []);
       setPagination(result?.pagination ?? { total: 0, page: 1, pages: 1 });
     } catch (err) {
-      const msg = err?.response?.data?.message || err?.message || "Failed to load case studies.";
+      const msg =
+        err?.response?.data?.message ||
+        err?.message ||
+        "Failed to load case studies.";
       setError(msg);
       toast.error(msg);
     } finally {
@@ -141,7 +146,10 @@ export default function AdminCaseStudies() {
     const img = form.gallery[index];
     if (img?.url) URL.revokeObjectURL(img.url);
     if (galleryRef.current) galleryRef.current.value = "";
-    setForm((f) => ({ ...f, gallery: f.gallery.filter((_, i) => i !== index) }));
+    setForm((f) => ({
+      ...f,
+      gallery: f.gallery.filter((_, i) => i !== index),
+    }));
   }
 
   function addArrayItem(field) {
@@ -166,7 +174,10 @@ export default function AdminCaseStudies() {
         return { ...f, [field]: [...f[field], { title: "", description: "" }] };
       }
       if (field === "challenges_and_solutions") {
-        return { ...f, [field]: [...f[field], { challenge: "", solution: "" }] };
+        return {
+          ...f,
+          [field]: [...f[field], { challenge: "", solution: "" }],
+        };
       }
       if (field === "results") {
         return { ...f, [field]: [...f[field], { title: "", value: "" }] };
@@ -192,7 +203,12 @@ export default function AdminCaseStudies() {
     setError("");
     setSubmitting(true);
 
-    if (!form.title.trim() || !form.overview.trim() || !form.challenge.trim() || !form.solution.trim()) {
+    if (
+      !form.title.trim() ||
+      !form.overview.trim() ||
+      !form.challenge.trim() ||
+      !form.solution.trim()
+    ) {
       setError("Please fill Title, Overview, Challenge, and Solution.");
       setSubmitting(false);
       return;
@@ -232,21 +248,36 @@ export default function AdminCaseStudies() {
     payload.append("solution", form.solution.trim());
     payload.append("objectives", JSON.stringify(form.objectives));
     payload.append("deliverables", JSON.stringify(form.deliverables));
-    payload.append("development_process", JSON.stringify(form.development_process));
-    payload.append("challenges_and_solutions", JSON.stringify(form.challenges_and_solutions));
+    payload.append(
+      "development_process",
+      JSON.stringify(form.development_process),
+    );
+    payload.append(
+      "challenges_and_solutions",
+      JSON.stringify(form.challenges_and_solutions),
+    );
     payload.append("results", JSON.stringify(form.results));
     payload.append("timeline_duration", form.timeline_duration);
     payload.append("timeline_started_at", form.timeline_started_at || "");
     payload.append("timeline_completed_at", form.timeline_completed_at || "");
     payload.append("client_testimonial_quote", form.client_testimonial_quote);
     payload.append("client_testimonial_name", form.client_testimonial_name);
-    payload.append("client_testimonial_designation", form.client_testimonial_designation);
-    payload.append("client_testimonial_company", form.client_testimonial_company);
+    payload.append(
+      "client_testimonial_designation",
+      form.client_testimonial_designation,
+    );
+    payload.append(
+      "client_testimonial_company",
+      form.client_testimonial_company,
+    );
     payload.append("featured", form.featured);
-    payload.append("seo", JSON.stringify({
-      meta_title: form.seo_meta_title.trim(),
-      meta_description: form.seo_meta_description.trim(),
-    }));
+    payload.append(
+      "seo",
+      JSON.stringify({
+        meta_title: form.seo_meta_title.trim(),
+        meta_description: form.seo_meta_description.trim(),
+      }),
+    );
     payload.append("status", form.status);
 
     try {
@@ -261,7 +292,8 @@ export default function AdminCaseStudies() {
       setForm(EMPTY_FORM);
       await load();
     } catch (err) {
-      const msg = err?.response?.data?.message || err?.message || "Operation failed.";
+      const msg =
+        err?.response?.data?.message || err?.message || "Operation failed.";
       setError(msg);
       toast.error(msg);
     } finally {
@@ -282,8 +314,12 @@ export default function AdminCaseStudies() {
       solution: cs.solution ?? "",
       deliverables: cs.deliverables ?? [],
       timeline_duration: cs.timeline?.duration ?? "",
-      timeline_started_at: cs.timeline?.started_at ? cs.timeline.started_at.slice(0, 10) : "",
-      timeline_completed_at: cs.timeline?.completed_at ? cs.timeline.completed_at.slice(0, 10) : "",
+      timeline_started_at: cs.timeline?.started_at
+        ? cs.timeline.started_at.slice(0, 10)
+        : "",
+      timeline_completed_at: cs.timeline?.completed_at
+        ? cs.timeline.completed_at.slice(0, 10)
+        : "",
       development_process: cs.development_process ?? [],
       challenges_and_solutions: cs.challenges_and_solutions ?? [],
       results: cs.results ?? [],
@@ -366,26 +402,39 @@ export default function AdminCaseStudies() {
             {form.case_study_id ? "Edit Case Study" : "Add New Case Study"}
           </div>
 
-          <form onSubmit={onSubmit} className="mt-4 flex flex-col flex-1 justify-between gap-3">
+          <form
+            onSubmit={onSubmit}
+            className="mt-4 flex flex-col flex-1 justify-between gap-3">
             <div className="space-y-3">
               <FormField
                 label="Title"
                 value={form.title}
-                onChange={(e) => setForm((f) => ({ ...f, title: e.target.value }))}
+                onChange={(e) =>
+                  setForm((f) => ({ ...f, title: e.target.value }))
+                }
                 placeholder="e.g. E-commerce Growth Strategy"
               />
 
               <div>
-                <label className="block text-sm font-medium text-heading mb-1">Project *</label>
+                <label className="block text-sm font-medium text-heading mb-1">
+                  Project *
+                </label>
                 <Select
                   value={form.project}
                   onChange={(val) => setForm((f) => ({ ...f, project: val }))}
                   options={[
                     { value: "", label: "Select a project" },
-                    ...projects.map((p) => ({ value: p._id, label: p.project_name }))
+                    ...projects.map((p) => ({
+                      value: p._id,
+                      label: p.project_name,
+                    })),
                   ]}
                 />
-                {projects.length === 0 && <p className="text-sm text-muted mt-1">No projects found. Create projects first.</p>}
+                {projects.length === 0 && (
+                  <p className="text-sm text-muted mt-1">
+                    No projects found. Create projects first.
+                  </p>
+                )}
               </div>
 
               <FormField
@@ -393,7 +442,9 @@ export default function AdminCaseStudies() {
                 textarea
                 rows={3}
                 value={form.overview}
-                onChange={(e) => setForm((f) => ({ ...f, overview: e.target.value }))}
+                onChange={(e) =>
+                  setForm((f) => ({ ...f, overview: e.target.value }))
+                }
                 placeholder="Brief overview of the case study"
               />
 
@@ -402,7 +453,9 @@ export default function AdminCaseStudies() {
                 textarea
                 rows={3}
                 value={form.challenge}
-                onChange={(e) => setForm((f) => ({ ...f, challenge: e.target.value }))}
+                onChange={(e) =>
+                  setForm((f) => ({ ...f, challenge: e.target.value }))
+                }
                 placeholder="What challenge did the client face?"
               />
 
@@ -411,7 +464,9 @@ export default function AdminCaseStudies() {
                 textarea
                 rows={2}
                 value={form.strategy}
-                onChange={(e) => setForm((f) => ({ ...f, strategy: e.target.value }))}
+                onChange={(e) =>
+                  setForm((f) => ({ ...f, strategy: e.target.value }))
+                }
                 placeholder="High-level strategy overview"
               />
 
@@ -420,7 +475,9 @@ export default function AdminCaseStudies() {
                 textarea
                 rows={3}
                 value={form.solution}
-                onChange={(e) => setForm((f) => ({ ...f, solution: e.target.value }))}
+                onChange={(e) =>
+                  setForm((f) => ({ ...f, solution: e.target.value }))
+                }
                 placeholder="How did you solve the problem?"
               />
 
@@ -440,12 +497,16 @@ export default function AdminCaseStudies() {
                       <input
                         type="checkbox"
                         checked={form.featured}
-                        onChange={(e) => setForm((f) => ({ ...f, featured: e.target.checked }))}
+                        onChange={(e) =>
+                          setForm((f) => ({ ...f, featured: e.target.checked }))
+                        }
                         className="sr-only peer"
                       />
                       <div className="w-9 h-5 bg-border rounded-full peer peer-checked:bg-primary peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all" />
                     </label>
-                    <span className="text-sm font-semibold text-heading">Featured</span>
+                    <span className="text-sm font-semibold text-heading">
+                      Featured
+                    </span>
                   </div>
                 </div>
               </div>
@@ -454,14 +515,20 @@ export default function AdminCaseStudies() {
                 label="Hero Image"
                 required
                 file={form.hero_image instanceof File ? form.hero_image : null}
-                existingUrl={typeof form.hero_image === "string" ? resolveImagePath(form.hero_image) : ""}
+                existingUrl={
+                  typeof form.hero_image === "string"
+                    ? resolveImagePath(form.hero_image)
+                    : ""
+                }
                 onChange={onPickHeroImage}
                 onRemove={() => setForm((f) => ({ ...f, hero_image: "" }))}
                 confirmText="Remove hero image?"
               />
 
               <div>
-                <label className="block text-sm font-medium text-heading mb-1">Gallery Images</label>
+                <label className="block text-sm font-medium text-heading mb-1">
+                  Gallery Images
+                </label>
                 <input
                   ref={galleryRef}
                   type="file"
@@ -473,7 +540,9 @@ export default function AdminCaseStudies() {
                 {form.gallery.length > 0 && (
                   <div className="mt-2 flex flex-wrap gap-2">
                     {form.gallery.map((img, idx) => (
-                      <div key={idx} className="relative w-16 h-16 border border-border rounded overflow-hidden">
+                      <div
+                        key={idx}
+                        className="relative w-16 h-16 border border-border rounded overflow-hidden">
                         <img
                           src={getGallerySrc(img)}
                           alt=""
@@ -481,7 +550,12 @@ export default function AdminCaseStudies() {
                         />
                         <button
                           type="button"
-                          onClick={() => setConfirmItemDelete({ type: "gallery", index: idx })}
+                          onClick={() =>
+                            setConfirmItemDelete({
+                              type: "gallery",
+                              index: idx,
+                            })
+                          }
                           className="absolute top-0 right-0 bg-danger text-white w-4 h-4 flex items-center justify-center text-sm cursor-pointer">
                           <FontAwesomeIcon icon={faTrash} className="w-3 h-3" />
                         </button>
@@ -494,19 +568,35 @@ export default function AdminCaseStudies() {
               {/* Objectives */}
               <div className="border-t border-border pt-3">
                 <div className="flex items-center justify-between mb-2">
-                  <span className="text-sm font-bold text-heading">Objectives</span>
-                  <button type="button" onClick={() => addArrayItem("objectives")} className="text-sm text-primary hover:text-primary-hover cursor-pointer">+ Add</button>
+                  <span className="text-sm font-bold text-heading">
+                    Objectives
+                  </span>
+                  <button
+                    type="button"
+                    onClick={() => addArrayItem("objectives")}
+                    className="text-sm text-primary hover:text-primary-hover cursor-pointer">
+                    + Add
+                  </button>
                 </div>
                 {form.objectives.map((item, idx) => (
                   <div key={idx} className="flex gap-2 mb-2">
                     <input
                       type="text"
                       value={item}
-                      onChange={(e) => updateArrayItem("objectives", idx, e.target.value)}
+                      onChange={(e) =>
+                        updateArrayItem("objectives", idx, e.target.value)
+                      }
                       className="flex-1 rounded-lg border border-border bg-background px-3 py-2 text-sm text-heading focus:border-primary focus:ring-1 focus:ring-primary-light outline-none"
                       placeholder="Objective"
                     />
-                    <button type="button" onClick={() => setConfirmItemDelete({ type: "objectives", index: idx })} className="text-danger hover:text-red-700 cursor-pointer"><FontAwesomeIcon icon={faTrash} className="w-3.5 h-3.5" /></button>
+                    <button
+                      type="button"
+                      onClick={() =>
+                        setConfirmItemDelete({ type: "objectives", index: idx })
+                      }
+                      className="text-danger hover:text-red-700 cursor-pointer">
+                      <FontAwesomeIcon icon={faTrash} className="w-3.5 h-3.5" />
+                    </button>
                   </div>
                 ))}
               </div>
@@ -514,31 +604,57 @@ export default function AdminCaseStudies() {
               {/* Deliverables */}
               <div className="border-t border-border pt-3">
                 <div className="flex items-center justify-between mb-2">
-                  <span className="text-sm font-bold text-heading">Deliverables</span>
-                  <button type="button" onClick={() => addArrayItem("deliverables")} className="text-sm text-primary hover:text-primary-hover cursor-pointer">+ Add</button>
+                  <span className="text-sm font-bold text-heading">
+                    Deliverables
+                  </span>
+                  <button
+                    type="button"
+                    onClick={() => addArrayItem("deliverables")}
+                    className="text-sm text-primary hover:text-primary-hover cursor-pointer">
+                    + Add
+                  </button>
                 </div>
                 {form.deliverables.map((item, idx) => (
                   <div key={idx} className="flex gap-2 mb-2">
                     <input
                       type="text"
                       value={item}
-                      onChange={(e) => updateArrayItem("deliverables", idx, e.target.value)}
+                      onChange={(e) =>
+                        updateArrayItem("deliverables", idx, e.target.value)
+                      }
                       className="flex-1 rounded-lg border border-border bg-background px-3 py-2 text-sm text-heading focus:border-primary focus:ring-1 focus:ring-primary-light outline-none"
                       placeholder="Deliverable"
                     />
-                    <button type="button" onClick={() => setConfirmItemDelete({ type: "deliverables", index: idx })} className="text-danger hover:text-red-700 cursor-pointer"><FontAwesomeIcon icon={faTrash} className="w-3.5 h-3.5" /></button>
+                    <button
+                      type="button"
+                      onClick={() =>
+                        setConfirmItemDelete({
+                          type: "deliverables",
+                          index: idx,
+                        })
+                      }
+                      className="text-danger hover:text-red-700 cursor-pointer">
+                      <FontAwesomeIcon icon={faTrash} className="w-3.5 h-3.5" />
+                    </button>
                   </div>
                 ))}
               </div>
 
               {/* Timeline */}
               <div className="border-t border-border pt-3">
-                <div className="text-sm font-bold text-heading mb-2">Timeline</div>
+                <div className="text-sm font-bold text-heading mb-2">
+                  Timeline
+                </div>
                 <div className="space-y-3">
                   <FormField
                     label="Duration"
                     value={form.timeline_duration}
-                    onChange={(e) => setForm((f) => ({ ...f, timeline_duration: e.target.value }))}
+                    onChange={(e) =>
+                      setForm((f) => ({
+                        ...f,
+                        timeline_duration: e.target.value,
+                      }))
+                    }
                     placeholder="e.g. 3 months"
                   />
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -546,13 +662,23 @@ export default function AdminCaseStudies() {
                       label="Start Date"
                       type="date"
                       value={form.timeline_started_at}
-                      onChange={(e) => setForm((f) => ({ ...f, timeline_started_at: e.target.value }))}
+                      onChange={(e) =>
+                        setForm((f) => ({
+                          ...f,
+                          timeline_started_at: e.target.value,
+                        }))
+                      }
                     />
                     <FormField
                       label="Completion Date"
                       type="date"
                       value={form.timeline_completed_at}
-                      onChange={(e) => setForm((f) => ({ ...f, timeline_completed_at: e.target.value }))}
+                      onChange={(e) =>
+                        setForm((f) => ({
+                          ...f,
+                          timeline_completed_at: e.target.value,
+                        }))
+                      }
                     />
                   </div>
                 </div>
@@ -561,26 +687,59 @@ export default function AdminCaseStudies() {
               {/* Development Process */}
               <div className="border-t border-border pt-3">
                 <div className="flex items-center justify-between mb-2">
-                  <span className="text-sm font-bold text-heading">Development Process</span>
-                  <button type="button" onClick={() => addObjectItem("development_process")} className="text-sm text-primary hover:text-primary-hover cursor-pointer">+ Add</button>
+                  <span className="text-sm font-bold text-heading">
+                    Development Process
+                  </span>
+                  <button
+                    type="button"
+                    onClick={() => addObjectItem("development_process")}
+                    className="text-sm text-primary hover:text-primary-hover cursor-pointer">
+                    + Add
+                  </button>
                 </div>
                 {form.development_process.map((item, idx) => (
-                  <div key={idx} className="border border-border rounded p-2 mb-2 space-y-2">
+                  <div
+                    key={idx}
+                    className="border border-border rounded p-2 mb-2 space-y-2">
                     <input
                       type="text"
                       value={item.title}
-                      onChange={(e) => updateObjectItem("development_process", idx, "title", e.target.value)}
+                      onChange={(e) =>
+                        updateObjectItem(
+                          "development_process",
+                          idx,
+                          "title",
+                          e.target.value,
+                        )
+                      }
                       className="w-full rounded border border-border bg-background px-3 py-2 text-sm text-heading focus:border-primary focus:ring-1 focus:ring-primary-light outline-none"
                       placeholder="Step title"
                     />
                     <textarea
                       value={item.description}
-                      onChange={(e) => updateObjectItem("development_process", idx, "description", e.target.value)}
+                      onChange={(e) =>
+                        updateObjectItem(
+                          "development_process",
+                          idx,
+                          "description",
+                          e.target.value,
+                        )
+                      }
                       rows={2}
                       className="w-full rounded border border-border bg-background px-3 py-2 text-sm text-heading focus:border-primary focus:ring-1 focus:ring-primary-light outline-none"
                       placeholder="Step description"
                     />
-                    <button type="button" onClick={() => setConfirmItemDelete({ type: "development_process", index: idx })} className="text-danger hover:text-red-700 cursor-pointer"><FontAwesomeIcon icon={faTrash} className="w-3.5 h-3.5" /></button>
+                    <button
+                      type="button"
+                      onClick={() =>
+                        setConfirmItemDelete({
+                          type: "development_process",
+                          index: idx,
+                        })
+                      }
+                      className="text-danger hover:text-red-700 cursor-pointer">
+                      <FontAwesomeIcon icon={faTrash} className="w-3.5 h-3.5" />
+                    </button>
                   </div>
                 ))}
               </div>
@@ -588,26 +747,59 @@ export default function AdminCaseStudies() {
               {/* Challenges & Solutions */}
               <div className="border-t border-border pt-3">
                 <div className="flex items-center justify-between mb-2">
-                  <span className="text-sm font-bold text-heading">Challenges & Solutions</span>
-                  <button type="button" onClick={() => addObjectItem("challenges_and_solutions")} className="text-sm text-primary hover:text-primary-hover cursor-pointer">+ Add</button>
+                  <span className="text-sm font-bold text-heading">
+                    Challenges & Solutions
+                  </span>
+                  <button
+                    type="button"
+                    onClick={() => addObjectItem("challenges_and_solutions")}
+                    className="text-sm text-primary hover:text-primary-hover cursor-pointer">
+                    + Add
+                  </button>
                 </div>
                 {form.challenges_and_solutions.map((item, idx) => (
-                  <div key={idx} className="border border-border rounded p-2 mb-2 space-y-2">
+                  <div
+                    key={idx}
+                    className="border border-border rounded p-2 mb-2 space-y-2">
                     <textarea
                       value={item.challenge}
-                      onChange={(e) => updateObjectItem("challenges_and_solutions", idx, "challenge", e.target.value)}
+                      onChange={(e) =>
+                        updateObjectItem(
+                          "challenges_and_solutions",
+                          idx,
+                          "challenge",
+                          e.target.value,
+                        )
+                      }
                       rows={2}
                       className="w-full rounded border border-border bg-background px-3 py-2 text-sm text-heading focus:border-primary focus:ring-1 focus:ring-primary-light outline-none"
                       placeholder="Challenge"
                     />
                     <textarea
                       value={item.solution}
-                      onChange={(e) => updateObjectItem("challenges_and_solutions", idx, "solution", e.target.value)}
+                      onChange={(e) =>
+                        updateObjectItem(
+                          "challenges_and_solutions",
+                          idx,
+                          "solution",
+                          e.target.value,
+                        )
+                      }
                       rows={2}
                       className="w-full rounded border border-border bg-background px-3 py-2 text-sm text-heading focus:border-primary focus:ring-1 focus:ring-primary-light outline-none"
                       placeholder="Solution"
                     />
-                    <button type="button" onClick={() => setConfirmItemDelete({ type: "challenges_and_solutions", index: idx })} className="text-danger hover:text-red-700 cursor-pointer"><FontAwesomeIcon icon={faTrash} className="w-3.5 h-3.5" /></button>
+                    <button
+                      type="button"
+                      onClick={() =>
+                        setConfirmItemDelete({
+                          type: "challenges_and_solutions",
+                          index: idx,
+                        })
+                      }
+                      className="text-danger hover:text-red-700 cursor-pointer">
+                      <FontAwesomeIcon icon={faTrash} className="w-3.5 h-3.5" />
+                    </button>
                   </div>
                 ))}
               </div>
@@ -615,15 +807,29 @@ export default function AdminCaseStudies() {
               {/* Results */}
               <div className="border-t border-border pt-3">
                 <div className="flex items-center justify-between mb-2">
-                  <span className="text-sm font-bold text-heading">Results</span>
-                  <button type="button" onClick={() => addObjectItem("results")} className="text-sm text-primary hover:text-primary-hover cursor-pointer">+ Add</button>
+                  <span className="text-sm font-bold text-heading">
+                    Results
+                  </span>
+                  <button
+                    type="button"
+                    onClick={() => addObjectItem("results")}
+                    className="text-sm text-primary hover:text-primary-hover cursor-pointer">
+                    + Add
+                  </button>
                 </div>
                 {form.results.map((item, idx) => (
                   <div key={idx} className="flex flex-col gap-2 mb-2">
                     <input
                       type="text"
                       value={item.title}
-                      onChange={(e) => updateObjectItem("results", idx, "title", e.target.value)}
+                      onChange={(e) =>
+                        updateObjectItem(
+                          "results",
+                          idx,
+                          "title",
+                          e.target.value,
+                        )
+                      }
                       className="rounded border border-border bg-background px-3 py-2 text-sm text-heading focus:border-primary focus:ring-1 focus:ring-primary-light outline-none"
                       placeholder="Metric name"
                     />
@@ -631,11 +837,28 @@ export default function AdminCaseStudies() {
                       <input
                         type="text"
                         value={item.value}
-                        onChange={(e) => updateObjectItem("results", idx, "value", e.target.value)}
+                        onChange={(e) =>
+                          updateObjectItem(
+                            "results",
+                            idx,
+                            "value",
+                            e.target.value,
+                          )
+                        }
                         className="flex-1 rounded border border-border bg-background px-3 py-2 text-sm text-heading focus:border-primary focus:ring-1 focus:ring-primary-light outline-none"
                         placeholder="Value"
                       />
-                      <button type="button" onClick={() => setConfirmItemDelete({ type: "results", index: idx })} className="text-danger hover:text-red-700 cursor-pointer"><FontAwesomeIcon icon={faTrash} className="w-3.5 h-3.5" /></button>
+                      <button
+                        type="button"
+                        onClick={() =>
+                          setConfirmItemDelete({ type: "results", index: idx })
+                        }
+                        className="text-danger hover:text-red-700 cursor-pointer">
+                        <FontAwesomeIcon
+                          icon={faTrash}
+                          className="w-3.5 h-3.5"
+                        />
+                      </button>
                     </div>
                   </div>
                 ))}
@@ -643,33 +866,55 @@ export default function AdminCaseStudies() {
 
               {/* Client Testimonial */}
               <div className="border-t border-border pt-3">
-                <div className="text-sm font-bold text-heading mb-2">Client Testimonial</div>
+                <div className="text-sm font-bold text-heading mb-2">
+                  Client Testimonial
+                </div>
                 <div className="space-y-3">
                   <FormField
                     label="Quote"
                     textarea
                     rows={2}
                     value={form.client_testimonial_quote}
-                    onChange={(e) => setForm((f) => ({ ...f, client_testimonial_quote: e.target.value }))}
+                    onChange={(e) =>
+                      setForm((f) => ({
+                        ...f,
+                        client_testimonial_quote: e.target.value,
+                      }))
+                    }
                     placeholder="Client testimonial quote"
                   />
                   <FormField
                     label="Client Name"
                     value={form.client_testimonial_name}
-                    onChange={(e) => setForm((f) => ({ ...f, client_testimonial_name: e.target.value }))}
+                    onChange={(e) =>
+                      setForm((f) => ({
+                        ...f,
+                        client_testimonial_name: e.target.value,
+                      }))
+                    }
                     placeholder="e.g. John Smith"
                   />
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <FormField
                       label="Designation"
                       value={form.client_testimonial_designation}
-                      onChange={(e) => setForm((f) => ({ ...f, client_testimonial_designation: e.target.value }))}
+                      onChange={(e) =>
+                        setForm((f) => ({
+                          ...f,
+                          client_testimonial_designation: e.target.value,
+                        }))
+                      }
                       placeholder="e.g. CEO"
                     />
                     <FormField
                       label="Company"
                       value={form.client_testimonial_company}
-                      onChange={(e) => setForm((f) => ({ ...f, client_testimonial_company: e.target.value }))}
+                      onChange={(e) =>
+                        setForm((f) => ({
+                          ...f,
+                          client_testimonial_company: e.target.value,
+                        }))
+                      }
                       placeholder="e.g. Acme Corp"
                     />
                   </div>
@@ -683,7 +928,9 @@ export default function AdminCaseStudies() {
                   <FormField
                     label="Meta Title"
                     value={form.seo_meta_title}
-                    onChange={(e) => setForm((f) => ({ ...f, seo_meta_title: e.target.value }))}
+                    onChange={(e) =>
+                      setForm((f) => ({ ...f, seo_meta_title: e.target.value }))
+                    }
                     placeholder="SEO title for the case study page"
                   />
                   <FormField
@@ -691,7 +938,12 @@ export default function AdminCaseStudies() {
                     textarea
                     rows={2}
                     value={form.seo_meta_description}
-                    onChange={(e) => setForm((f) => ({ ...f, seo_meta_description: e.target.value }))}
+                    onChange={(e) =>
+                      setForm((f) => ({
+                        ...f,
+                        seo_meta_description: e.target.value,
+                      }))
+                    }
                     placeholder="SEO description for the case study page"
                   />
                 </div>
@@ -706,7 +958,9 @@ export default function AdminCaseStudies() {
                 editId={form.case_study_id}
                 onSubmit={onSubmit}
                 onReset={() => setForm(EMPTY_FORM)}
-                submitLabel={form.case_study_id ? "Update Case Study" : "Create Case Study"}
+                submitLabel={
+                  form.case_study_id ? "Update Case Study" : "Create Case Study"
+                }
               />
             </div>
           </form>
@@ -737,9 +991,13 @@ export default function AdminCaseStudies() {
                   <TableSkeleton rows={5} cols={5} />
                 ) : (
                   items.map((cs) => (
-                    <tr key={cs._id} className="border-t border-border align-top">
+                    <tr
+                      key={cs._id}
+                      className="border-t border-border align-top">
                       <td className="py-3 pr-3 text-text hidden sm:table-cell">
-                        <span className="block max-w-20 truncate" title={cs._id}>
+                        <span
+                          className="block max-w-20 truncate"
+                          title={cs._id}>
                           {cs._id}
                         </span>
                       </td>
@@ -769,7 +1027,9 @@ export default function AdminCaseStudies() {
                       </td>
                       <td className="py-3 pr-3">
                         <span className="text-sm text-text">
-                          {typeof cs.project === "object" ? cs.project.project_name : "N/A"}
+                          {typeof cs.project === "object"
+                            ? cs.project.project_name
+                            : "N/A"}
                         </span>
                       </td>
                       <td className="py-3 pr-3">
@@ -798,7 +1058,10 @@ export default function AdminCaseStudies() {
                             title="Delete"
                             aria-label="Delete"
                             onClick={() => setDeleteTarget(cs._id)}>
-                            <FontAwesomeIcon icon={faTrash} className="w-4 h-4" />
+                            <FontAwesomeIcon
+                              icon={faTrash}
+                              className="w-4 h-4"
+                            />
                           </button>
                         </div>
                       </td>
@@ -845,7 +1108,8 @@ export default function AdminCaseStudies() {
           if (!confirmItemDelete) return;
           const { type, index } = confirmItemDelete;
           if (type === "gallery") removeGalleryImage(index);
-          else if (type === "objectives" || type === "deliverables") removeArrayItem(type, index);
+          else if (type === "objectives" || type === "deliverables")
+            removeArrayItem(type, index);
           else removeObjectItem(type, index);
           setConfirmItemDelete(null);
         }}

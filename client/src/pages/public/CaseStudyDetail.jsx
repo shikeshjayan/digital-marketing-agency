@@ -111,7 +111,7 @@ export default function CaseStudyDetail() {
 
                 <div className="flex flex-wrap gap-3 mt-6 justify-center lg:justify-start">
                   {project.project_name && (
-                    <span className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-white/10 text-white/80 text-xs rounded-sm text-xxs">
+                    <span className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-white/10 text-white/80 text-xs rounded-sb text-xxs">
                       {project.project_name}
                     </span>
                   )}
@@ -120,13 +120,13 @@ export default function CaseStudyDetail() {
                     // FIX: Automatically catch and drop any raw database ID values from rendering as badges
                     if (!targetName || isObjectId(targetName)) return null;
                     return (
-                      <span key={i} className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-white/10 text-white/80 text-xs rounded-sm text-xxs">
+                      <span key={i} className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-white/10 text-white/80 text-xs rounded-sb text-xxs">
                         {targetName}
                       </span>
                     );
                   })}
                   {cs.timeline?.duration && (
-                    <span className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-white/10 text-white/80 text-xs rounded-sm text-xxs">
+                    <span className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-white/10 text-white/80 text-xs rounded-sb text-xxs">
                       <FontAwesomeIcon icon={faClock} className="text-[10px]" />
                       {cs.timeline.duration}
                     </span>
