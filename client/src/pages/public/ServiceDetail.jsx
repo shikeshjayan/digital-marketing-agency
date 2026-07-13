@@ -355,7 +355,7 @@ export default function ServiceDetail() {
                         {project.industries?.length > 0 && (
                           <div className="flex flex-wrap gap-2">
                             {project.industries.slice(0, 2).map((ind, idx) => (
-                              <span key={idx} className="text-xs px-2 py-0.5 rounded-sm bg-primary-light/40 text-primary font-medium text-xxs">
+                              <span key={idx} className="text-xs px-2 py-0.5 rounded-sb bg-primary-light/40 text-primary font-medium text-xxs">
                                 {typeof ind === "object" ? ind.name : ind}
                               </span>
                             ))}
@@ -365,7 +365,7 @@ export default function ServiceDetail() {
                         {project.technologies?.length > 0 && (
                           <div className="mt-2 flex flex-wrap gap-1.5">
                             {project.technologies.slice(0, 3).map((t, idx) => (
-                              <span key={idx} className="text-xs px-2 py-0.5 rounded-sm bg-surface border border-border text-muted text-xxs">
+                              <span key={idx} className="text-xs px-2 py-0.5 rounded-sb bg-surface border border-border text-muted text-xxs">
                                 {typeof t === "object" ? t.name : t}
                               </span>
                             ))}
@@ -425,17 +425,19 @@ export default function ServiceDetail() {
                       />
                     </div>
                     <div className="flex flex-col items-center text-center p-5 flex-1">
-                      {rs.icon && (
-                        <img
-                          src={resolveImagePath(rs.icon)}
-                          alt=""
-                          className="w-10 h-10 mb-3 object-contain"
-                          onError={(e) => { e.target.style.display = "none"; }}
-                        />
-                      )}
-                      <h3 className="text-lg font-extrabold text-heading subheading text-sm">{rs.service_name}</h3>
-                      <p className="mt-3 text-sm text-text leading-relaxed line-clamp-2 small-text">{rs.short_description}</p>
-                      <span className="mt-4 mt-auto inline-flex items-center rounded-lg bg-primary text-white px-5 py-2.5 text-sm font-semibold hover:bg-primary-hover transition button-text">
+                      <div className="flex-1">
+                        {rs.icon && (
+                          <img
+                            src={resolveImagePath(rs.icon)}
+                            alt=""
+                            className="w-10 h-10 mb-3 object-contain"
+                            onError={(e) => { e.target.style.display = "none"; }}
+                          />
+                        )}
+                        <h3 className="text-sm font-extrabold text-heading subheading">{rs.service_name}</h3>
+                        <p className="mt-3 text-sm text-text leading-relaxed line-clamp-2 small-text">{rs.short_description}</p>
+                      </div>
+                      <span className="mt-4 inline-flex items-center rounded-lg bg-primary text-white px-5 py-2.5 text-sm font-semibold hover:bg-primary-hover transition button-text">
                         Read More
                       </span>
                     </div>

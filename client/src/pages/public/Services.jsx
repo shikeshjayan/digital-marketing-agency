@@ -170,7 +170,7 @@ function FeaturedCaseStudies({ caseStudies, loading }) {
                         />
                       </div>
                     )}
-                    <span className="text-xs font-semibold text-primary bg-primary-light px-2.5 py-1 rounded w-fit text-xxs">
+                    <span className="text-xs font-semibold text-primary bg-primary-light px-2.5 py-1 rounded-sb w-fit text-xxs">
                       {cs.results?.[0]?.title || "Case Study"}
                     </span>
                     

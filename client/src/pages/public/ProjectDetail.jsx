@@ -107,17 +107,17 @@ export default function ProjectDetail() {
 
                 <div className="flex flex-wrap gap-3 mt-6">
                   {project.services?.slice(0, 2).map((s, i) => (
-                    <span key={i} className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-white/10 text-white/80 text-xs rounded-sm text-xxs">
+                    <span key={i} className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-white/10 text-white/80 text-xs rounded-sb text-xxs">
                       {typeof s === "object" ? s.service_name : "Service"}
                     </span>
                   ))}
                   {project.industries?.[0] && (
-                    <span key="ind-hero" className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-white/10 text-white/80 text-xs rounded-sm text-xxs">
+                    <span key="ind-hero" className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-white/10 text-white/80 text-xs rounded-sb text-xxs">
                       {typeof project.industries[0] === "object" ? project.industries[0].name : project.industries[0]}
                     </span>
                   )}
                   {project.completion_date && (
-                    <span className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-white/10 text-white/80 text-xs rounded-sm text-xxs">
+                    <span className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-white/10 text-white/80 text-xs rounded-sb text-xxs">
                       <FontAwesomeIcon icon={faCalendar} className="text-[10px]" />
                       {formatDate(project.completion_date)}
                     </span>
@@ -474,18 +474,20 @@ export default function ProjectDetail() {
                       />
                     </div>
                     <div className="flex flex-col p-5 flex-1">
-                      <h3 className="text-lg font-extrabold text-heading subheading text-sm">{rp.project_name}</h3>
-                      <p className="mt-2 text-sm text-text leading-relaxed line-clamp-2 small-text">{rp.short_description}</p>
-                      {rp.industries?.length > 0 && (
-                        <div className="mt-3 flex flex-wrap gap-2">
-                          {rp.industries.slice(0, 2).map((ind, idx) => (
-                            <span key={idx} className="text-xs px-2 py-0.5 bg-primary-light/40 text-primary font-medium rounded-sm text-xxs">
-                              {typeof ind === "object" ? ind.name : ind}
-                            </span>
-                          ))}
-                        </div>
-                      )}
-                      <span className="mt-4 inline-flex items-center gap-1.5 text-sm font-semibold text-primary button-text">
+                      <div className="flex-1">
+                        <h3 className="text-lg font-extrabold text-heading subheading text-sm">{rp.project_name}</h3>
+                        <p className="mt-2 text-sm text-text leading-relaxed line-clamp-2 small-text">{rp.short_description}</p>
+                        {rp.industries?.length > 0 && (
+                          <div className="mt-3 flex flex-wrap gap-2">
+                            {rp.industries.slice(0, 2).map((ind, idx) => (
+                              <span key={idx} className="text-xs px-2 py-0.5 bg-primary-light/40 text-primary font-medium rounded-sb text-xxs">
+                                {typeof ind === "object" ? ind.name : ind}
+                              </span>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                      <span className="mt-5 inline-flex items-center gap-1.5 text-sm font-semibold text-primary button-text">
                         View Project <FontAwesomeIcon icon={faArrowRight} className="text-xs" />
                       </span>
                     </div>
