@@ -68,7 +68,8 @@ export const getAllServices = asyncHandler(async (req, res) => {
   const services = await Services.find(filter)
     .sort({ display_order: 1, createdAt: -1 })
     .skip(skip)
-    .limit(Number(limit));
+    .limit(Number(limit))
+    .lean();
 
   res.status(200).json({
     success: true,
@@ -84,7 +85,7 @@ export const getAllServices = asyncHandler(async (req, res) => {
 
 // Get a single service by slug (public)
 export const getServiceBySlug = asyncHandler(async (req, res) => {
-  const service = await Services.findOne({ slug: req.params.slug, status: "Active" });
+  const service = await Services.findOne({ slug: req.params.slug, status: "Active" }).lean();
   if (!service) {
     return res.status(404).json({ success: false, message: "Service not found" });
   }
@@ -92,14 +93,15 @@ export const getServiceBySlug = asyncHandler(async (req, res) => {
   const projects = await Projects.find({ services: service._id, status: "Published" })
     .populate("technologies", "name slug")
     .populate("industries", "name slug")
-    .select("project_name slug thumbnail short_description featured");
+    .select("project_name slug thumbnail short_description featured")
+    .lean();
 
-  res.status(200).json({ success: true, data: { ...service.toObject(), projects } });
+  res.status(200).json({ success: true, data: { ...service, projects } });
 });
 
 // Get a single service by ID (public — used for related services)
 export const getServiceById = asyncHandler(async (req, res) => {
-  const service = await Services.findById(req.params.id);
+  const service = await Services.findById(req.params.id).lean();
   if (!service) {
     return res.status(404).json({ success: false, message: "Service not found" });
   }
@@ -107,9 +109,10 @@ export const getServiceById = asyncHandler(async (req, res) => {
   const projects = await Projects.find({ services: service._id, status: "Published" })
     .populate("technologies", "name slug")
     .populate("industries", "name slug")
-    .select("project_name slug thumbnail short_description featured");
+    .select("project_name slug thumbnail short_description featured")
+    .lean();
 
-  res.status(200).json({ success: true, data: { ...service.toObject(), projects } });
+  res.status(200).json({ success: true, data: { ...service, projects } });
 });
 
 // Update an existing service (admin only)
@@ -200,7 +203,7 @@ export const getRelatedServices = asyncHandler(async (req, res) => {
   const { id } = req.params;
   const { limit = 3 } = req.query;
 
-  const currentService = await Services.findById(id);
+  const currentService = await Services.findById(id).lean();
   if (!currentService) {
     return res.status(404).json({ success: false, message: "Service not found" });
   }
@@ -210,7 +213,8 @@ export const getRelatedServices = asyncHandler(async (req, res) => {
     _id: { $ne: id },
   })
     .sort({ display_order: 1 })
-    .limit(Number(limit));
+    .limit(Number(limit))
+    .lean();
 
   res.status(200).json({
     success: true,

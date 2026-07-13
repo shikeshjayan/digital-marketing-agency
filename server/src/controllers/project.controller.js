@@ -76,10 +76,10 @@ export const getAllProjects = asyncHandler(async (req, res) => {
     .populate("services", "service_name slug")
     .populate("technologies", "name slug")
     .populate("industries", "name slug")
-    .populate("team", "name designation photo")
     .sort({ createdAt: -1 })
     .skip(skip)
-    .limit(Number(limit));
+    .limit(Number(limit))
+    .lean();
 
   res.status(200).json({
     success: true,
@@ -99,16 +99,18 @@ export const getProjectById = asyncHandler(async (req, res) => {
     .populate("services", "service_name slug short_description")
     .populate("technologies", "name slug")
     .populate("industries", "name slug icon description")
-    .populate("team", "name designation photo linkedin email");
+    .populate("team", "name designation photo linkedin email")
+    .lean();
 
   if (!project) {
     return res.status(404).json({ success: false, message: "Project not found" });
   }
 
   const caseStudy = await CaseStudy.findOne({ project: project._id, status: "Published" })
-    .select("title slug hero_image overview challenge solution featured results");
+    .select("title slug hero_image overview challenge solution featured results")
+    .lean();
 
-  res.status(200).json({ success: true, data: { ...project.toObject(), caseStudy: caseStudy || null } });
+  res.status(200).json({ success: true, data: { ...project, caseStudy: caseStudy || null } });
 });
 
 // Get a single project by slug (public)
@@ -117,16 +119,18 @@ export const getProjectBySlug = asyncHandler(async (req, res) => {
     .populate("services", "service_name slug short_description")
     .populate("technologies", "name slug")
     .populate("industries", "name slug icon description")
-    .populate("team", "name designation photo linkedin email");
+    .populate("team", "name designation photo linkedin email")
+    .lean();
 
   if (!project) {
     return res.status(404).json({ success: false, message: "Project not found" });
   }
 
   const caseStudy = await CaseStudy.findOne({ project: project._id, status: "Published" })
-    .select("title slug hero_image overview challenge solution featured results");
+    .select("title slug hero_image overview challenge solution featured results")
+    .lean();
 
-  res.status(200).json({ success: true, data: { ...project.toObject(), caseStudy: caseStudy || null } });
+  res.status(200).json({ success: true, data: { ...project, caseStudy: caseStudy || null } });
 });
 
 // Update an existing project (admin only)
@@ -240,7 +244,8 @@ export const getAllAdminProjects = asyncHandler(async (req, res) => {
     .populate("team", "name")
     .sort({ createdAt: -1 })
     .skip(skip)
-    .limit(Number(limit));
+    .limit(Number(limit))
+    .lean();
 
   res.status(200).json({
     success: true,
