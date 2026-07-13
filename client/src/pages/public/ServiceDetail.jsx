@@ -16,7 +16,6 @@ import {
   faIndustry,
 } from "@fortawesome/free-solid-svg-icons";
 import useServiceStore from "../../store/serviceStore";
-import useProjectStore from "../../store/projectStore";
 import useFaqStore from "../../store/faqStore";
 import FadeIn from "../../components/ui/FadeIn.jsx";
 import SectionHeading from "../../components/ui/SectionHeading.jsx";
@@ -53,7 +52,6 @@ export default function ServiceDetail() {
   const { slug } = useParams();
   const { selectedService, loading, fetchServiceBySlug, relatedServices, fetchRelatedServices } =
     useServiceStore();
-  const { fetchRelatedProjects } = useProjectStore();
   const { faqs, fetchFAQsByService } = useFaqStore();
   const [error, setError] = useState(null);
 
@@ -66,10 +64,9 @@ export default function ServiceDetail() {
   useEffect(() => {
     if (service?._id) {
       fetchRelatedServices(service._id, 3);
-      fetchRelatedProjects(service._id, 10);
       fetchFAQsByService(service._id);
     }
-  }, [service?._id, fetchRelatedServices, fetchRelatedProjects, fetchFAQsByService]);
+  }, [service?._id, fetchRelatedServices, fetchFAQsByService]);
 
   useEffect(() => {
     if (service?.seo?.meta_title) {
@@ -170,10 +167,7 @@ export default function ServiceDetail() {
                 </div>
               )}
               <h1 className="hero-heading text-white">
-                {service.service_name.split(" ").slice(0, 2).join(" ")}{" "}
-                <span className="text-primary-hover">
-                  {service.service_name.split(" ").slice(2).join(" ")}
-                </span>
+                {service.service_name}
               </h1>
               <div className="mt-4 text-white/70 leading-relaxed max-w-prose mx-auto md:mx-0 body-text">
                 <p className="text-lg text-justify md:text-left">

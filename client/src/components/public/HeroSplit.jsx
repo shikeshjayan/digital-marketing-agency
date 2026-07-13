@@ -21,6 +21,11 @@ export default function HeroSplit({
   const [loaded, setLoaded] = useState(false);
   const [trustRef, trustInView] = useInView();
 
+  function parseNumericValue(value) {
+    const m = String(value ?? "").match(/^(\d+(?:\.\d+)?)(.*)$/);
+    return m ? { target: parseFloat(m[1]), suffix: m[2] } : null;
+  }
+
   function handleCTA(to) {
     if (!to) return;
     if (to.startsWith("#")) {
@@ -119,20 +124,25 @@ export default function HeroSplit({
                 className={`transition-all duration-700 ease-out ${loaded ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"}`}
                 style={{ transitionDelay: "450ms" }}>
                 <div className="mt-8 flex flex-col items-center gap-3 md:flex-row md:items-center md:justify-start md:gap-6">
-                  {trustIndicators.map((item, i) => (
-                    <div key={i} className="flex items-center gap-2 whitespace-nowrap">
-                      <span className="text-xl md:text-2xl font-extrabold text-white tabular-nums">
-                        {item.target != null ? (
-                          <AnimatedCounter target={item.target} suffix={item.suffix || ""} isInView={trustInView} />
-                        ) : (
-                          item.value
-                        )}
-                      </span>
-                      <span className="small-text text-white/60 leading-tight">
-                        {item.label}
-                      </span>
-                    </div>
-                  ))}
+                  {trustIndicators.map((item, i) => {
+                    const parsed = item.target != null
+                      ? { target: item.target, suffix: item.suffix || "" }
+                      : parseNumericValue(item.value);
+                    return (
+                      <div key={i} className="flex items-center gap-2 whitespace-nowrap">
+                        <span className="text-xl md:text-2xl font-extrabold text-white tabular-nums">
+                          {parsed ? (
+                            <AnimatedCounter target={parsed.target} suffix={parsed.suffix} isInView={trustInView} />
+                          ) : (
+                            item.value
+                          )}
+                        </span>
+                        <span className="small-text text-white/60 leading-tight">
+                          {item.label}
+                        </span>
+                      </div>
+                    );
+                  })}
                 </div>
               </div>
             )}

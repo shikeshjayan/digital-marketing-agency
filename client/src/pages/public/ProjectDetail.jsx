@@ -94,12 +94,13 @@ export default function ProjectDetail() {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
             <FadeIn>
               <div>
-                {/* Fixed structure to always display FEATURED PROJECT label */}
-                <div className="w-full flex justify-start mb-3">
-                  <div className="text-sm font-bold tracking-widest uppercase inline-block px-3 py-1 rounded bg-white/10 text-white text-xxs">
-                    FEATURED PROJECT
+                {project.featured && (
+                  <div className="w-full flex justify-start mb-3">
+                    <div className="text-sm font-bold tracking-widest uppercase inline-block px-3 py-1 rounded bg-white/10 text-white text-xxs">
+                      FEATURED PROJECT
+                    </div>
                   </div>
-                </div>
+                )}
 
                 <h1 className="hero-heading text-white">{project.project_name}</h1>
                 <p className="mt-4 text-white/70 text-lg leading-relaxed body-text">{project.short_description}</p>
@@ -227,7 +228,7 @@ export default function ProjectDetail() {
                 <FadeIn key={i} delay={i * 30}>
                   <img
                     src={resolveImagePath(img)}
-                    alt={`Gallery ${i + 1}`}
+                    alt=""
                     className="w-full aspect-video object-cover border border-border rounded-sm"
                     loading="lazy"
                   />

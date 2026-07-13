@@ -8,9 +8,7 @@ import LogoMarquee from "../../components/public/LogoMarquee.jsx";
 import FinalCTA from "../../components/public/FinalCTA.jsx";
 import TestimonialsSection from "../../components/public/TestimonialsSection.jsx";
 import apiService from "../../services/apiService.js";
-import { Link } from "react-router-dom";
-import useBrandSettingsStore from "../../store/brandSettingsStore.js";
-import useSiteContentStore from "../../store/siteContentStore.js";
+import usePageStore from "../../store/pageStore.js";
 
 function StarPicker({ value, onChange }) {
   return (
@@ -34,8 +32,8 @@ function StarPicker({ value, onChange }) {
 }
 
 export default function Testimonials() {
-  const [reviews, setReviews] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const { testimonialsPage, loading, error, fetchPageTestimonials } =
+    usePageStore();
   const [form, setForm] = useState({
     name: "",
     location: "",
@@ -46,13 +44,13 @@ export default function Testimonials() {
   const [formError, setFormError] = useState("");
   const [success, setSuccess] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const { content: brandContent, fetchBrandSettings } = useBrandSettingsStore();
-  const { content: siteContent, fetchPublicSiteContent } =
-    useSiteContentStore();
 
+  const reviews = testimonialsPage?.reviews ?? [];
+  const siteContent = testimonialsPage?.siteContent ?? {};
+  const brandSettings = testimonialsPage?.brandSettings ?? {};
   const testimonials = siteContent?.testimonials ?? {};
   const companyStats = siteContent?.companyStats ?? [];
-  const contact = brandContent?.contact ?? {};
+  const contact = brandSettings?.contact ?? {};
   const trustMarqueeLogos = siteContent?.trustMarqueeLogos ?? [];
 
   const getStat = (key) => {
@@ -61,27 +59,8 @@ export default function Testimonials() {
   };
 
   useEffect(() => {
-    let isMounted = true;
-    setLoading(true);
-    apiService
-      .get("/reviews")
-      .then((res) => {
-        if (isMounted) {
-          setReviews(res.data.data ?? []);
-          setLoading(false);
-        }
-      })
-      .catch(() => {
-        if (isMounted) {
-          setLoading(false);
-        }
-      });
-    fetchBrandSettings();
-    fetchPublicSiteContent();
-    return () => {
-      isMounted = false;
-    };
-  }, [fetchBrandSettings, fetchPublicSiteContent]);
+    fetchPageTestimonials();
+  }, [fetchPageTestimonials]);
 
   async function onSubmit(e) {
     e.preventDefault();
@@ -122,8 +101,7 @@ export default function Testimonials() {
       setForm({ name: "", location: "", rating: 5, review_text: "" });
       setConsent(false);
 
-      const latest = await apiService.get("/reviews");
-      setReviews(latest.data.data ?? []);
+      fetchPageTestimonials();
     } catch (err) {
       const msg = err.response?.data?.message ?? "Failed to submit.";
       setFormError(msg);
@@ -132,6 +110,41 @@ export default function Testimonials() {
       setIsSubmitting(false);
     }
   }
+
+  if (error)
+    return (
+      <div>
+        <HeroSplit
+          title={testimonials.heroTitle || "Testimonials"}
+          titleHighlight={testimonials.heroTitleHighlight || "Client"}
+          subtitle={
+            testimonials.heroSubtitle ||
+            "Real feedback from businesses we've helped grow. See what our clients say about working with us."
+          }
+          primaryCTA={{
+            label: testimonials.heroPrimaryCTA || "Leave a Review",
+            to: "#review-form",
+          }}
+          secondaryCTA={{
+            label: testimonials.heroSecondaryCTA || "View Our Work",
+            to: "/projects",
+          }}
+          imageSrc="/testimonials.webp"
+          imageAlt="Client Testimonials"
+        />
+        <section className="py-14 bg-surface">
+          <div className="max-w-6xl mx-auto px-4 text-center py-20">
+            <div className="text-primary font-medium mb-4">{error}</div>
+            <button
+              type="button"
+              onClick={() => fetchPageTestimonials()}
+              className="px-5 py-2.5 text-sm font-semibold text-white bg-primary rounded-lg hover:bg-primary-hover transition cursor-pointer button-text">
+              Retry
+            </button>
+          </div>
+        </section>
+      </div>
+    );
 
   return (
     <div className="bg-background min-h-screen">
@@ -299,7 +312,7 @@ export default function Testimonials() {
                     <FadeIn direction="none">
                       <div
                         className="text-sm text-primary text-center"
-                        style={{ "font-size": "12.5px" }}>
+                        style={{ fontSize: "12.5px" }}>
                         {formError}
                       </div>
                     </FadeIn>
@@ -332,8 +345,36 @@ export default function Testimonials() {
         bg="bg-background"
       />
 
-      <StatsSection stats={companyStats} bg="bg-background-section" />
-      <LogoMarquee logos={trustMarqueeLogos} bg="bg-background" />
+      {loading && !testimonialsPage ? (
+        <section className="py-12 md:py-16 bg-background-section">
+          <div className="max-w-6xl mx-auto px-4">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+              {[...Array(4)].map((_, i) => (
+                <div key={i} className="bg-surface border border-border rounded-lg p-6 text-center animate-pulse">
+                  <div className="w-10 h-10 bg-surface-border rounded-lg mx-auto" />
+                  <div className="mt-3 h-8 w-16 bg-surface-border rounded mx-auto" />
+                  <div className="mt-1 h-4 w-20 bg-surface-border rounded mx-auto" />
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+      ) : (
+        <StatsSection stats={companyStats} bg="bg-background-section" />
+      )}
+      {loading && !testimonialsPage ? (
+        <section className="py-12 bg-background">
+          <div className="max-w-6xl mx-auto px-4">
+            <div className="flex flex-wrap justify-center gap-4">
+              {[...Array(5)].map((_, i) => (
+                <div key={i} className="w-[calc(20%-12px)] min-w-[140px] h-16 bg-surface border border-border rounded-lg animate-pulse" />
+              ))}
+            </div>
+          </div>
+        </section>
+      ) : (
+        <LogoMarquee logos={trustMarqueeLogos} bg="bg-background" />
+      )}
       <FinalCTA />
     </div>
   );

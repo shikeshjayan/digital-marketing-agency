@@ -92,7 +92,7 @@ export default function WhyChooseUs({
                     </h3>
                     <p
                       className="mt-1.5 text-sm text-text leading-relaxed"
-                      style={{ "font-size": "12px" }}>
+                      style={{ fontSize: "12px" }}>
                       {r.desc}
                     </p>
                   </div>
@@ -124,7 +124,7 @@ export default function WhyChooseUs({
                       </div>
                       <div
                         className="mt-1 text-xs text-muted"
-                        style={{ "font-size": "12px" }}>
+                        style={{ fontSize: "12px" }}>
                         {stat.label}
                       </div>
                     </div>

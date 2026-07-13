@@ -7,9 +7,7 @@ import FadeIn from "../../components/ui/FadeIn.jsx";
 import LogoMarquee from "../../components/public/LogoMarquee.jsx";
 import StatsSection from "../../components/public/StatsSection.jsx";
 import TestimonialsSection from "../../components/public/TestimonialsSection.jsx";
-import useServiceStore from "../../store/serviceStore.js";
-import useReviewStore from "../../store/reviewStore.js";
-import useSiteContentStore from "../../store/siteContentStore.js";
+import usePageStore from "../../store/pageStore.js";
 
 function HeroCarousel() {
   const slides = useMemo(
@@ -331,28 +329,105 @@ function TechnologyStack({ items = [] }) {
 }
 
 export default function Home() {
-  const { services, fetchServices } = useServiceStore();
-  const { reviews, loading: reviewsLoading, fetchReviews } = useReviewStore();
-  const { content, fetchPublicSiteContent } = useSiteContentStore();
+  const { homePage, loading, error, fetchPageHome } = usePageStore();
   const navigate = useNavigate();
 
-  useEffect(() => {
-    fetchServices();
-    fetchReviews();
-    fetchPublicSiteContent();
-  }, [fetchServices, fetchReviews, fetchPublicSiteContent]);
-
+  const services = homePage?.services ?? [];
+  const reviews = homePage?.reviews ?? [];
+  const content = homePage?.siteContent ?? null;
   const techItems = content?.technologyStackItems ?? [];
   const companyStats = content?.companyStats ?? [];
   const trustLogos = content?.trustMarqueeLogos ?? [];
 
+  useEffect(() => {
+    fetchPageHome();
+  }, [fetchPageHome]);
+
+  if (error)
+    return (
+      <div>
+        <HeroCarousel />
+        <section className="py-14 bg-surface">
+          <div className="max-w-6xl mx-auto px-4 text-center py-20">
+            <div className="text-primary font-medium mb-4">{error}</div>
+            <button
+              type="button"
+              onClick={() => fetchPageHome()}
+              className="px-5 py-2.5 text-sm font-semibold text-white bg-primary rounded-lg hover:bg-primary-hover transition cursor-pointer button-text">
+              Retry
+            </button>
+          </div>
+        </section>
+      </div>
+    );
+
   return (
     <div>
       <HeroCarousel />
-      <StatsSection stats={companyStats} />
-      <ServicesCarousel services={services} />
-      <TechnologyStack items={techItems} />
-      <LogoMarquee logos={trustLogos} bg="bg-background" />
+
+      {loading ? (
+        <section className="py-12 md:py-16 bg-background-section">
+          <div className="max-w-6xl mx-auto px-4">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+              {[...Array(4)].map((_, i) => (
+                <div key={i} className="bg-surface border border-border rounded-lg p-6 text-center animate-pulse">
+                  <div className="w-10 h-10 bg-surface-border rounded-lg mx-auto" />
+                  <div className="mt-3 h-8 w-16 bg-surface-border rounded mx-auto" />
+                  <div className="mt-1 h-4 w-20 bg-surface-border rounded mx-auto" />
+                </div>
+              ))}
+            </div>
+            <div className="mt-10 grid grid-cols-1 md:grid-cols-3 gap-6">
+              {[...Array(3)].map((_, i) => (
+                <div key={i} className="bg-background border border-border rounded-lg p-6 min-h-[250px] animate-pulse">
+                  <div className="h-5 w-3/4 bg-surface-border rounded" />
+                  <div className="mt-3 space-y-2">
+                    <div className="h-3 w-full bg-surface-border rounded" />
+                    <div className="h-3 w-5/6 bg-surface-border rounded" />
+                    <div className="h-3 w-4/6 bg-surface-border rounded" />
+                  </div>
+                  <div className="mt-5 pt-4 border-t border-border">
+                    <div className="h-9 w-24 bg-surface-border rounded" />
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+      ) : (
+        <>
+          <StatsSection stats={companyStats} />
+          <ServicesCarousel services={services} />
+        </>
+      )}
+
+      {loading ? (
+        <section className="bg-secondary py-14">
+          <div className="max-w-6xl mx-auto px-4">
+            <div className="flex flex-wrap justify-center gap-6">
+              {[...Array(6)].map((_, i) => (
+                <div key={i} className="w-28 h-28 bg-white/10 rounded-lg animate-pulse" />
+              ))}
+            </div>
+          </div>
+        </section>
+      ) : (
+        <TechnologyStack items={techItems} />
+      )}
+
+      {loading ? (
+        <section className="py-12 bg-background">
+          <div className="max-w-6xl mx-auto px-4">
+            <div className="flex flex-wrap justify-center gap-4">
+              {[...Array(5)].map((_, i) => (
+                <div key={i} className="w-[calc(20%-12px)] min-w-[140px] h-16 bg-surface border border-border rounded-lg animate-pulse" />
+              ))}
+            </div>
+          </div>
+        </section>
+      ) : (
+        <LogoMarquee logos={trustLogos} bg="bg-background" />
+      )}
 
       {/* Team teaser */}
       <section className="bg-secondary py-16 text-white">
@@ -384,7 +459,7 @@ export default function Home() {
 
       <TestimonialsSection
         reviews={reviews}
-        loading={reviewsLoading}
+        loading={loading}
         eyebrow="Feedback"
         title="That Speaks"
         bg="bg-background-section"

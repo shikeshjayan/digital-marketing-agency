@@ -14,10 +14,7 @@ import {
   faCheckCircle,
   faArrowDown,
 } from "@fortawesome/free-solid-svg-icons";
-import useProjectStore from "../../store/projectStore.js";
-import useSiteContentStore from "../../store/siteContentStore.js";
-import useServiceStore from "../../store/serviceStore.js";
-import useReviewStore from "../../store/reviewStore.js";
+import usePageStore from "../../store/pageStore";
 import HeroSplit from "../../components/public/HeroSplit.jsx";
 import FadeIn from "../../components/ui/FadeIn.jsx";
 import SectionHeading from "../../components/ui/SectionHeading.jsx";
@@ -112,7 +109,7 @@ function ProjectStatistics({ stats = [] }) {
         <FadeIn>
           <div className="text-center text-text">
             <h2 className="mt-2 section-heading">
-              <span className="font-headings text-4xl text-primary mr-4 text-display">
+              <span className="font-headings text-primary mr-4">
                 Our
               </span>
               Track Record
@@ -307,7 +304,7 @@ function ResultsAnalytics({ stats = [] }) {
         <FadeIn>
           {({ isInView, ref }) => (
             <div ref={ref} className="mt-10 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-              {metrics.map((m, i) => (
+              {metrics.map((m) => (
                 <div key={m.label} className="bg-surface border border-border rounded-lg p-6 text-center h-full hover:shadow-sm transition group flex flex-col items-center">
                   <div className="w-12 h-12 rounded-lg bg-primary-light flex items-center justify-center mx-auto group-hover:bg-primary group-hover:text-white transition shrink-0">
                     <FontAwesomeIcon
@@ -435,10 +432,12 @@ function BeforeAfterResults() {
    ========================================== */
 const Projects = () => {
   const [active, setActive] = useState("All");
-  const { projects, loading, error, fetchProjects } = useProjectStore();
-  const { reviews, loading: reviewsLoading, fetchReviews } = useReviewStore();
-  const { content, fetchPublicSiteContent } = useSiteContentStore();
-  const { services, fetchServices } = useServiceStore();
+  const { projectsPage, loading, error, fetchPageProjects } = usePageStore();
+
+  const projects = projectsPage?.projects ?? [];
+  const reviews = projectsPage?.reviews ?? [];
+  const services = projectsPage?.services ?? [];
+  const content = projectsPage?.siteContent ?? null;
   const scrollContainerRef = useRef(null);
 
   const categoryFilters = [
@@ -453,14 +452,8 @@ const Projects = () => {
   };
 
   useEffect(() => {
-    fetchProjects(active);
-  }, [active, fetchProjects]);
-
-  useEffect(() => {
-    fetchReviews();
-    fetchPublicSiteContent();
-    fetchServices();
-  }, [fetchReviews, fetchPublicSiteContent, fetchServices]);
+    fetchPageProjects(active);
+  }, [active, fetchPageProjects]);
 
   const scroll = (direction) => {
     if (scrollContainerRef.current) {
@@ -499,7 +492,7 @@ const Projects = () => {
           <FadeIn>
             <SectionHeading
               eyebrow="Portfolio"
-              title="Our Our Projects"
+              title="Our Projects"
               subtitle="Browse through our work filtered by category."
             />
           </FadeIn>
@@ -552,7 +545,7 @@ const Projects = () => {
               <div className="text-primary font-medium mb-4 body-text">{error}</div>
               <button
                 type="button"
-                onClick={() => fetchProjects(active)}
+                onClick={() => fetchPageProjects(active)}
                 className="px-5 py-2.5 text-sm font-semibold text-white bg-primary rounded-lg hover:bg-primary-hover transition cursor-pointer button-text">
                 Retry
               </button>
@@ -606,7 +599,7 @@ const Projects = () => {
       <FadeIn>
         <TestimonialsSection
           reviews={reviews}
-          loading={reviewsLoading}
+          loading={loading}
           bg="bg-background-section"
         />
       </FadeIn>

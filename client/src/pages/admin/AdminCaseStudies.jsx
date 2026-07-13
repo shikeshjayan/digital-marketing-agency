@@ -97,7 +97,7 @@ export default function AdminCaseStudies() {
         search: search || undefined,
         status: status || undefined,
         page,
-        limit: 9,
+        limit: 7,
       });
       setItems(result?.items ?? []);
       setPagination(result?.pagination ?? { total: 0, page: 1, pages: 1 });

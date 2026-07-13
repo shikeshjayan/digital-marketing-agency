@@ -9,11 +9,16 @@ const apiService = axios.create({
   withCredentials: true,
 });
 
-// On 401, redirect to login page (skip for login/register requests)
+// On 401 for admin routes, redirect to login page
 apiService.interceptors.response.use(
   (res) => res,
   (err) => {
-    if (err.response?.status === 401 && !err.config?.url?.includes('/admin/login') && !err.config?.url?.includes('/admin/register')) {
+    if (
+      err.response?.status === 401 &&
+      err.config?.url?.startsWith('/admin/') &&
+      !err.config?.url?.includes('/admin/login') &&
+      !err.config?.url?.includes('/admin/register')
+    ) {
       window.location.href = "/admin/login";
     }
     return Promise.reject(err);
