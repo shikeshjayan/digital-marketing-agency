@@ -46,6 +46,7 @@ const servicesSchema = new mongoose.Schema(
     display_order: {
       type: Number,
       default: 0,
+      min: 0,
     },
     seo: {
       meta_title: { type: String, trim: true, default: "" },

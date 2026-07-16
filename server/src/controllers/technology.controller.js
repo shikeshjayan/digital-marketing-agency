@@ -17,6 +17,13 @@ export const createTechnology = asyncHandler(async (req, res) => {
     return res.status(409).json({ success: false, message: "Technology already exists" });
   }
 
+  if (display_order !== undefined) {
+    const orderTaken = await Technology.findOne({ display_order: Number(display_order) });
+    if (orderTaken) {
+      return res.status(409).json({ success: false, message: "Display order already in use by another technology" });
+    }
+  }
+
   const technology = await Technology.create({
     name,
     description,
@@ -73,6 +80,13 @@ export const getTechnologyById = asyncHandler(async (req, res) => {
 // Update an existing technology (admin only)
 export const updateTechnology = asyncHandler(async (req, res) => {
   const { name, description, icon, iconType, display_order, status, removeIcon } = req.body;
+
+  if (display_order !== undefined) {
+    const orderTaken = await Technology.findOne({ display_order: Number(display_order), _id: { $ne: req.params.id } });
+    if (orderTaken) {
+      return res.status(409).json({ success: false, message: "Display order already in use by another technology" });
+    }
+  }
 
   const update = {};
   if (name !== undefined) update.name = name;

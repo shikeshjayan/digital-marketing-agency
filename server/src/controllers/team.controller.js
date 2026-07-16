@@ -14,6 +14,13 @@ export const createMember = asyncHandler(async (req, res) => {
     return res.status(400).json({ success: false, message: "Missing required fields" });
   }
 
+  if (display_order !== undefined) {
+    const orderTaken = await Team.findOne({ display_order: Number(display_order) });
+    if (orderTaken) {
+      return res.status(409).json({ success: false, message: "Display order already in use by another member" });
+    }
+  }
+
   const member = await Team.create({ photo, name, designation, description, linkedin, email, display_order, status });
 
   res.status(201).json({
@@ -58,6 +65,13 @@ export const updateMember = asyncHandler(async (req, res) => {
 
   if (!name && !designation && !description && !linkedin && !email && !display_order && !status) {
     return res.status(400).json({ success: false, message: "Invalid data type fields" });
+  }
+
+  if (display_order !== undefined) {
+    const orderTaken = await Team.findOne({ display_order: Number(display_order), _id: { $ne: req.params.id } });
+    if (orderTaken) {
+      return res.status(409).json({ success: false, message: "Display order already in use by another member" });
+    }
   }
 
   const update = { name, designation, description, linkedin, email, display_order, status };

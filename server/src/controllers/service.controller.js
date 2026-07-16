@@ -30,6 +30,13 @@ export const createService = asyncHandler(async (req, res) => {
     return res.status(409).json({ success: false, message: "Service already exists" });
   }
 
+  if (display_order !== undefined) {
+    const orderTaken = await Services.findOne({ display_order: Number(display_order) });
+    if (orderTaken) {
+      return res.status(409).json({ success: false, message: "Display order already in use by another service" });
+    }
+  }
+
   const service = await Services.create({
     service_name,
     short_description,
@@ -129,6 +136,13 @@ export const updateService = asyncHandler(async (req, res) => {
   const deliverables = parseJsonField(req.body.deliverables);
   const benefits = parseJsonField(req.body.benefits);
   const seo = parseJsonObject(req.body.seo);
+
+  if (display_order !== undefined) {
+    const orderTaken = await Services.findOne({ display_order: Number(display_order), _id: { $ne: req.params.id } });
+    if (orderTaken) {
+      return res.status(409).json({ success: false, message: "Display order already in use by another service" });
+    }
+  }
 
   const update = {
     service_name,
