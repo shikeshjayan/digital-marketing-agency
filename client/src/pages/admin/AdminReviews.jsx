@@ -14,6 +14,7 @@ import SearchInput from "../../components/ui/SearchInput.jsx";
 import { TableSkeleton } from "../../components/ui/Skeleton.jsx";
 import TableEmptyState from "../../components/ui/TableEmptyState.jsx";
 import ReviewDetailModal from "../../components/ui/ReviewDetailModal.jsx";
+import Select from "../../components/ui/Select.jsx";
 
 function Stars({ rating }) {
   const full = Math.round(rating);
@@ -168,6 +169,11 @@ export default function AdminReviews() {
     { key: "All", label: "All", count: null },
   ];
 
+  const filterOptions = tabs.map((t) => ({
+    value: t.key,
+    label: `${t.label}${t.count != null ? ` (${t.count})` : ""}`,
+  }));
+
   return (
     <div>
       <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-3">
@@ -179,31 +185,14 @@ export default function AdminReviews() {
 
       <div className="mt-6 bg-background border border-border rounded p-5 shadow-xs">
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-          <div className="flex flex-wrap gap-2">
-            {tabs.map((t) => (
-              <button
-                key={t.key}
-                type="button"
-                className={`px-4 py-2.5 min-h-[44px] rounded-lg text-sm font-semibold border transition cursor-pointer ${
-                  tab === t.key
-                    ? "bg-primary text-white border-primary"
-                    : "bg-background text-text border-border hover:text-primary hover:bg-primary-light"
-                }`}
-                onClick={() => setTab(t.key)}>
-                {t.label}
-                {t.count != null && (
-                  <span
-                    className={`ml-1.5 inline-flex items-center justify-center w-5 h-5 text-sm rounded-lg ${
-                      tab === t.key
-                        ? "bg-primary-hover/20 text-white"
-                        : "bg-surface text-muted"
-                    }`}>
-                    {t.count}
-                  </span>
-                )}
-              </button>
-            ))}
-          </div>
+          <Select
+            id="tab-filter"
+            value={tab}
+            onChange={setTab}
+            options={filterOptions}
+            placeholder="All Statuses"
+            className="md:w-48"
+          />
 
           <SearchInput
             value={search}
@@ -229,7 +218,7 @@ export default function AdminReviews() {
           <table className="w-full text-sm block sm:table">
             <thead className="hidden sm:table-header-group">
               <tr className="text-left text-text">
-                <th className="py-2 pr-3 whitespace-nowrap">Name / User</th>
+                <th className="py-2 pr-3 pl-3 whitespace-nowrap">Name / User</th>
                 <th className="py-2 pr-3 whitespace-nowrap hidden sm:table-cell">Rating</th>
                 <th className="py-2 pr-3 whitespace-nowrap">Review Comment</th>
                 <th className="py-2 pr-3 whitespace-nowrap hidden md:table-cell">Date / Time</th>
@@ -245,7 +234,7 @@ export default function AdminReviews() {
                   <tr
                     key={r.review_id}
                     className="block sm:table-row border sm:border-t border-border mb-3 sm:mb-0 p-3 sm:p-0 rounded-lg sm:rounded-none bg-surface/50 sm:bg-transparent">
-                    <td className="block sm:table-cell py-1 sm:py-3 pr-0 sm:pr-3">
+                    <td className="block sm:table-cell py-1 sm:py-3 pl-0 sm:pl-3 pr-0 sm:pr-3">
                         <span className="text-xs font-semibold text-muted uppercase tracking-wide block sm:hidden mb-1">Name / User</span>
                       <div className="flex items-center gap-2">
                         {(() => {
@@ -288,7 +277,7 @@ export default function AdminReviews() {
                         {r.review_text.length > 150 && (
                           <button
                             type="button"
-                            className="text-primary hover:text-primary-hover text-sm font-medium whitespace-nowrap flex-shrink-0 cursor-pointer"
+                            className="hidden sm:inline text-primary hover:text-primary-hover text-sm font-medium whitespace-nowrap flex-shrink-0 cursor-pointer"
                             onClick={() => setSelectedReview(r)}>
                             Read more
                           </button>

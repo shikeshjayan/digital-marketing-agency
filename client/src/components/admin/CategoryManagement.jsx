@@ -358,11 +358,11 @@ export default function CategoryManagement({ config }) {
             label={labelPlural}
           />
 
-          <div className="mt-4 overflow-auto flex-1">
+          <div className="mt-4 sm:overflow-auto overflow-y-auto flex-1 min-h-0">
             <table className="w-full text-sm block sm:table">
               <thead className="hidden sm:table-header-group">
                 <tr className="text-left text-text">
-                  <th className="py-2 pr-3 hidden sm:table-cell">ID</th>
+                  <th className="py-2 pr-3 pl-3 hidden sm:table-cell">ID</th>
                   <th className="py-2 pr-3">Name</th>
                   <th className="py-2 pr-3">Order</th>
                   <th className="py-2 pr-3">Status</th>
@@ -375,7 +375,7 @@ export default function CategoryManagement({ config }) {
                 ) : (
                   items.map((item) => (
                     <tr key={item._id} className="block sm:table-row border sm:border-t border-border mb-3 sm:mb-0 p-3 sm:p-0 rounded-lg sm:rounded-none bg-surface/50 sm:bg-transparent">
-                      <td className="block sm:table-cell py-1 sm:py-3 pr-0 sm:pr-3 text-text">
+                      <td className="block sm:table-cell py-1 sm:py-3 pl-0 sm:pl-3 pr-0 sm:pr-3 text-text">
                         <span className="text-xs font-semibold text-muted uppercase tracking-wide block sm:hidden mb-1">ID</span>
                         <span className="block break-all sm:truncate sm:max-w-[80px]" title={item._id}>
                           {item._id}
@@ -441,11 +441,13 @@ export default function CategoryManagement({ config }) {
               </tbody>
             </table>
           </div>
-          <Pagination
-            page={pagination.page}
-            pages={pagination.pages}
-            onPageChange={setPage}
-          />
+          <div className="pb-3">
+            <Pagination
+              page={pagination.page}
+              pages={pagination.pages}
+              onPageChange={setPage}
+            />
+          </div>
         </div>
       </div>
 

@@ -489,7 +489,7 @@ export default function AdminServices() {
             <table className="w-full text-sm block sm:table">
               <thead className="hidden sm:table-header-group">
                 <tr className="text-left text-text">
-                  <th className="py-2 pr-3 hidden sm:table-cell">ID</th>
+                  <th className="py-2 pr-3 pl-3 hidden sm:table-cell">ID</th>
                   <th className="py-2 pr-3">Service</th>
                   <th className="py-2 pr-3 hidden md:table-cell">Featured</th>
                   <th className="py-2 pr-3">Status</th>
@@ -504,7 +504,7 @@ export default function AdminServices() {
                     <tr
                       key={s._id}
                       className="block sm:table-row border sm:border-t border-border mb-3 sm:mb-0 p-3 sm:p-0 rounded-lg sm:rounded-none bg-surface/50 sm:bg-transparent">
-                      <td className="block sm:table-cell py-1 sm:py-3 pr-0 sm:pr-3 text-text">
+                      <td className="block sm:table-cell py-1 sm:py-3 pl-0 sm:pl-3 pr-0 sm:pr-3 text-text">
                         <span className="text-xs font-semibold text-muted uppercase tracking-wide block sm:hidden mb-1">ID</span>
                         <span
                           className="block break-all sm:truncate sm:max-w-[80px]"
