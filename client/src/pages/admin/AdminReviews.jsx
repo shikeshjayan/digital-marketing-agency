@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCheck, faTimes, faTrash } from "@fortawesome/free-solid-svg-icons";
 import useDebounce from "../../hooks/useDebounce.js";
+import useIsMobile from "../../hooks/useIsMobile.js";
 import { toast } from "sonner";
 import useReviewStore from "../../store/reviewStore.js";
 import ConfirmModal from "../../components/ui/ConfirmModal.jsx";
@@ -39,6 +40,8 @@ function statusChip(status) {
 }
 
 export default function AdminReviews() {
+  const isMobile = useIsMobile();
+
   const [tab, setTab] = useState("Pending");
   const [search, setSearch] = useState("");
   const [items, setItems] = useState([]);
@@ -66,7 +69,7 @@ export default function AdminReviews() {
         status: tab === "All" ? undefined : tab,
         search: search || undefined,
         page,
-        limit: 10,
+        limit: isMobile ? 200 : 10,
       });
       setItems(result.reviews);
       setCounters(result.counters);
@@ -205,7 +208,7 @@ export default function AdminReviews() {
 
       <ErrorBanner message={error} className="mt-4" />
 
-      <div className="mt-4 bg-background border border-border rounded p-5 shadow-xs">
+      <div className="mt-4 bg-background border border-border rounded p-5 shadow-xs flex flex-col sm:max-h-none max-h-[70vh]">
         <AdminListFooter
           loading={loading}
           total={pagination.total}
@@ -214,7 +217,7 @@ export default function AdminReviews() {
           label="Reviews"
         />
 
-        <div className="mt-4 overflow-auto">
+        <div className="mt-4 overflow-y-auto flex-1 min-h-0">
           <table className="w-full text-sm block sm:table">
             <thead className="hidden sm:table-header-group">
               <tr className="text-left text-text">
@@ -226,7 +229,7 @@ export default function AdminReviews() {
                 <th className="py-2 whitespace-nowrap">Actions</th>
               </tr>
             </thead>
-            <tbody>
+            <tbody className="block sm:table-row-group">
               {loading && !items.length ? (
                 <TableSkeleton rows={5} cols={6} />
               ) : (
@@ -428,11 +431,13 @@ export default function AdminReviews() {
             </tbody>
           </table>
         </div>
-        <Pagination
-          page={pagination.page}
-          pages={pagination.pages}
-          onPageChange={setPage}
-        />
+        <div className="hidden sm:block">
+          <Pagination
+            page={pagination.page}
+            pages={pagination.pages}
+            onPageChange={setPage}
+          />
+        </div>
       </div>
 
       <ConfirmModal

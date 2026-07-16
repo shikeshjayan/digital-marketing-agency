@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import useDebounce from "../../hooks/useDebounce.js";
+import useIsMobile from "../../hooks/useIsMobile.js";
 import { toast } from "sonner";
 import useContactStore from "../../store/contactStore.js";
 import ConfirmModal from "../../components/ui/ConfirmModal.jsx";
@@ -34,6 +35,8 @@ export default function AdminMessages() {
     deleteAllEnquiries,
   } = useContactStore();
 
+  const isMobile = useIsMobile();
+
   const [items, setItems] = useState([]);
   const [counters, setCounters] = useState(null);
   const [search, setSearch] = useState("");
@@ -57,7 +60,7 @@ export default function AdminMessages() {
         status: status || undefined,
         date: date || undefined,
         page,
-        limit: 10,
+        limit: isMobile ? 200 : 10,
       });
       setItems(res.enquiries ?? []);
       setCounters(res.counters ?? null);
@@ -205,7 +208,7 @@ export default function AdminMessages() {
 
       <ErrorBanner message={error} className="mt-4" />
 
-      <div className="mt-4 bg-background border border-border rounded p-5 shadow-xs">
+      <div className="mt-4 bg-background border border-border rounded p-5 shadow-xs flex flex-col sm:max-h-none max-h-[70vh]">
         <AdminListFooter
           loading={loading}
           total={pagination.total}
@@ -214,7 +217,7 @@ export default function AdminMessages() {
           label="Enquiries"
         />
 
-        <div className="mt-4 overflow-auto">
+        <div className="mt-4 overflow-y-auto flex-1 min-h-0">
           <table className="w-full text-sm block sm:table">
             <thead className="hidden sm:table-header-group">
               <tr className="text-left text-text">
@@ -226,7 +229,7 @@ export default function AdminMessages() {
                 <th className="py-2">Actions</th>
               </tr>
             </thead>
-            <tbody>
+            <tbody className="block sm:table-row-group">
               {loading && !items.length ? (
                 <TableSkeleton rows={5} cols={6} />
               ) : (
@@ -330,11 +333,13 @@ export default function AdminMessages() {
             </tbody>
           </table>
         </div>
-        <Pagination
-          page={pagination.page}
-          pages={pagination.pages}
-          onPageChange={setPage}
-        />
+        <div className="hidden sm:block">
+          <Pagination
+            page={pagination.page}
+            pages={pagination.pages}
+            onPageChange={setPage}
+          />
+        </div>
       </div>
 
       <EnquiryDetailModal

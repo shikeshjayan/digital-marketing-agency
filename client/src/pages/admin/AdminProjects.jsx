@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import useDebounce from "../../hooks/useDebounce.js";
+import useIsMobile from "../../hooks/useIsMobile.js";
 import { toast } from "sonner";
 import useProjectStore from "../../store/projectStore.js";
 import useServiceStore from "../../store/serviceStore.js";
@@ -61,6 +62,8 @@ export default function AdminProjects() {
   const { fetchAdminIndustries, adminIndustries } = useIndustryStore();
   const { fetchAdminTeam, adminTeam } = useTeamStore();
 
+  const isMobile = useIsMobile();
+
   const [items, setItems] = useState([]);
   const [search, setSearch] = useState("");
   const [status, setStatus] = useState("");
@@ -100,7 +103,7 @@ export default function AdminProjects() {
         search: search || undefined,
         status: status || undefined,
         page,
-        limit: 7,
+        limit: isMobile ? 200 : 7,
       });
       setItems(result?.items ?? []);
       setPagination(result?.pagination ?? { total: 0, page: 1, pages: 1 });
@@ -289,7 +292,7 @@ export default function AdminProjects() {
         />
       </div>
 
-      <div className="mt-6 bg-background border border-border rounded p-5 shadow-xs">
+      <div className="mt-6 bg-background border border-border rounded p-5 shadow-xs hidden md:block">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
           <SearchInput
             value={search}
@@ -532,7 +535,29 @@ export default function AdminProjects() {
           </form>
         </div>
 
-        <div className="lg:col-span-3 bg-background border border-border rounded p-5 shadow-xs flex flex-col lg:h-[80vh]">
+        <div className="md:hidden">
+          <div className="bg-background border border-border rounded p-5 shadow-xs">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+              <SearchInput
+                value={search}
+                onChange={setSearch}
+                placeholder="Search by project name..."
+              />
+              <Select
+                value={status}
+                onChange={setStatus}
+                placeholder="All statuses"
+                options={[
+                  { value: "", label: "All statuses" },
+                  { value: "Draft", label: "Draft" },
+                  { value: "Published", label: "Published" },
+                ]}
+              />
+            </div>
+          </div>
+        </div>
+
+        <div className="lg:col-span-3 bg-background border border-border rounded p-5 shadow-xs flex flex-col sm:max-h-none max-h-[70vh] lg:h-[80vh]">
           <AdminListFooter
             loading={loading}
             total={pagination.total}
@@ -552,9 +577,9 @@ export default function AdminProjects() {
                   <th className="py-2">Actions</th>
                 </tr>
               </thead>
-              <tbody>
-                {loading && !items.length ? (
-                  <TableSkeleton rows={5} cols={5} />
+                    <tbody className="block sm:table-row-group">
+                      {loading && !items.length ? (
+                        <TableSkeleton rows={5} cols={5} />
                 ) : (
                   items.map((p) => (
                     <tr key={p._id} className="block sm:table-row border sm:border-t border-border mb-3 sm:mb-0 p-3 sm:p-0 rounded-lg sm:rounded-none bg-surface/50 sm:bg-transparent">
@@ -647,11 +672,13 @@ export default function AdminProjects() {
               </tbody>
             </table>
           </div>
-          <Pagination
-            page={pagination.page}
-            pages={pagination.pages}
-            onPageChange={setPage}
-          />
+          <div className="hidden sm:block">
+            <Pagination
+              page={pagination.page}
+              pages={pagination.pages}
+              onPageChange={setPage}
+            />
+          </div>
         </div>
       </div>
 

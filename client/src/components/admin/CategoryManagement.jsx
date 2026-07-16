@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
+import useIsMobile from "../../hooks/useIsMobile.js";
 import ConfirmModal from "../ui/ConfirmModal.jsx";
 import Select from "../ui/Select.jsx";
 import Pagination from "../ui/Pagination.jsx";
@@ -48,6 +49,8 @@ export default function CategoryManagement({ config }) {
   const deleteItem = store[deleteKey];
   const deleteAllItems = store[deleteAllKey];
 
+  const isMobile = useIsMobile();
+
   const [items, setItems] = useState([]);
   const [search, setSearch] = useState("");
   const [status, setStatus] = useState("");
@@ -72,7 +75,7 @@ export default function CategoryManagement({ config }) {
         search: search || undefined,
         status: status || undefined,
         page,
-        limit: 5,
+        limit: isMobile ? 200 : 5,
       });
       setItems(result?.items ?? []);
       setPagination(result?.pagination ?? { total: 0, page: 1, pages: 1 });
@@ -212,7 +215,7 @@ export default function CategoryManagement({ config }) {
         />
       </div>
 
-      <div className="mt-6 bg-background border border-border rounded p-5 shadow-xs">
+      <div className="mt-6 bg-background border border-border rounded p-5 shadow-xs hidden md:block">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
           <SearchInput
             value={search}
@@ -348,7 +351,29 @@ export default function CategoryManagement({ config }) {
           </form>
         </div>
 
-        <div className="lg:col-span-3 bg-background border border-border rounded p-5 shadow-xs flex flex-col lg:overflow-y-auto"
+        <div className="md:hidden">
+          <div className="bg-background border border-border rounded p-5 shadow-xs">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+              <SearchInput
+                value={search}
+                onChange={setSearch}
+                placeholder={searchPlaceholder}
+              />
+              <Select
+                value={status}
+                onChange={setStatus}
+                placeholder="All statuses"
+                options={[
+                  { value: "", label: "All statuses" },
+                  { value: "Active", label: "Active" },
+                  { value: "Inactive", label: "Inactive" },
+                ]}
+              />
+            </div>
+          </div>
+        </div>
+
+        <div className="lg:col-span-3 bg-background border border-border rounded p-5 shadow-xs flex flex-col sm:max-h-none max-h-[70vh]"
           style={leftHeight ? { height: leftHeight } : undefined}>
           <AdminListFooter
             loading={loading}
@@ -369,7 +394,7 @@ export default function CategoryManagement({ config }) {
                   <th className="py-2">Actions</th>
                 </tr>
               </thead>
-              <tbody>
+              <tbody className="block sm:table-row-group">
                 {loading && !items.length ? (
                   <TableSkeleton rows={5} cols={5} />
                 ) : (
@@ -441,7 +466,7 @@ export default function CategoryManagement({ config }) {
               </tbody>
             </table>
           </div>
-          <div className="pb-3">
+          <div className="hidden sm:block pb-3">
             <Pagination
               page={pagination.page}
               pages={pagination.pages}
