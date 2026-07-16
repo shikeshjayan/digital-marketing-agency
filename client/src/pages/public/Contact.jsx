@@ -347,7 +347,7 @@ export default function Contact() {
                           </svg>
                         </button>
                         {codeDropdownOpen && (
-                          <div className="absolute left-0 mt-1 bg-background border border-border rounded-lg shadow-lg z-20 p-2 space-y-1 max-h-60 overflow-y-auto overscroll-contain scrollbar-custom min-w-[140px]">
+                          <div className="absolute left-0 mt-1 bg-background border border-border rounded-lg  z-20 p-2 space-y-1 max-h-60 overflow-y-auto overscroll-contain scrollbar-custom min-w-[140px]">
                             {countryCodes.map((c) => (
                               <button
                                 key={c.code + c.label}
@@ -427,7 +427,7 @@ export default function Contact() {
                       </span>
                     </button>
                     {serviceDropdownOpen && (
-                      <div className="absolute left-0 right-0 mt-1 bg-background border border-border rounded-lg shadow-lg z-20 p-2 space-y-1 max-h-60 overflow-y-auto overscroll-contain scrollbar-custom">
+                      <div className="absolute left-0 right-0 mt-1 bg-background border border-border rounded-lg  z-20 p-2 space-y-1 max-h-60 overflow-y-auto overscroll-contain scrollbar-custom">
                         <button
                           type="button"
                           onClick={() => {

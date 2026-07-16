@@ -286,7 +286,7 @@ export default function ServiceDetail() {
             <div className="mt-10 flex flex-wrap justify-center gap-3">
               {uniqueTechnologies.map((tech, i) => (
                 <FadeIn key={tech.id} delay={i * 30}>
-                  <span className="inline-flex items-center gap-2 px-4 py-2 rounded-sm bg-background-section border border-border text-heading text-sm font-semibold hover:border-primary/40 transition small-text font-semibold">
+                  <span className="inline-flex items-center gap-2 px-4 py-2 rounded-sm bg-background-section border border-border text-heading text-sm font-semibold hover:border-primary/40 transition small-text font-semibold card-shadow">
                     {tech.name}
                   </span>
                 </FadeIn>
@@ -365,7 +365,7 @@ export default function ServiceDetail() {
                         {project.technologies?.length > 0 && (
                           <div className="mt-2 flex flex-wrap gap-1.5">
                             {project.technologies.slice(0, 3).map((t, idx) => (
-                              <span key={idx} className="text-xs px-2 py-0.5 rounded-sb bg-surface border border-border text-muted text-xxs">
+                              <span key={idx} className="text-xs px-2 py-0.5 rounded-sb bg-surface border border-border text-muted text-xxs card-shadow">
                                 {typeof t === "object" ? t.name : t}
                               </span>
                             ))}

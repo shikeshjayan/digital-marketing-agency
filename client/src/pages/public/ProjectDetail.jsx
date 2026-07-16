@@ -159,7 +159,7 @@ export default function ProjectDetail() {
             <div className="mt-10 grid grid-cols-2 sm:grid-cols-4 gap-4">
               {client.name && (
                 <FadeIn delay={20}>
-                  <div className="bg-background-section border border-border rounded-lg p-4 text-center">
+                  <div className="bg-background-section border border-border rounded-lg p-4 text-center card-shadow">
                     <FontAwesomeIcon icon={faBuilding} className="text-primary text-lg" />
                     <div className="mt-2 text-xs text-muted uppercase tracking-wider text-xxs">Client</div>
                     <div className="mt-1 text-sm font-semibold text-heading truncate subheading text-sm">{client.name}</div>
@@ -168,7 +168,7 @@ export default function ProjectDetail() {
               )}
               {project.industries?.length > 0 && (
                 <FadeIn delay={40}>
-                  <div className="bg-background-section border border-border rounded-lg p-4 text-center">
+                  <div className="bg-background-section border border-border rounded-lg p-4 text-center card-shadow">
                     <FontAwesomeIcon icon={faIndustry} className="text-primary text-lg" />
                     <div className="mt-2 text-xs text-muted uppercase tracking-wider text-xxs">Industry</div>
                     <div className="mt-1 text-sm font-semibold text-heading truncate subheading text-sm">
@@ -179,7 +179,7 @@ export default function ProjectDetail() {
               )}
               {client.location && (
                 <FadeIn delay={60}>
-                  <div className="bg-background-section border border-border rounded-lg p-4 text-center">
+                  <div className="bg-background-section border border-border rounded-lg p-4 text-center card-shadow">
                     <FontAwesomeIcon icon={faMapMarkerAlt} className="text-primary text-lg" />
                     <div className="mt-2 text-xs text-muted uppercase tracking-wider text-xxs">Location</div>
                     <div className="mt-1 text-sm font-semibold text-heading truncate subheading text-sm">{client.location}</div>
@@ -188,7 +188,7 @@ export default function ProjectDetail() {
               )}
               {project.completion_date && (
                 <FadeIn delay={80}>
-                  <div className="bg-background-section border border-border rounded-lg p-4 text-center">
+                  <div className="bg-background-section border border-border rounded-lg p-4 text-center card-shadow">
                     <FontAwesomeIcon icon={faCalendar} className="text-primary text-lg" />
                     <div className="mt-2 text-xs text-muted uppercase tracking-wider text-xxs">Completed</div>
                     <div className="mt-1 text-sm font-semibold text-heading truncate subheading text-sm">{formatDate(project.completion_date)}</div>
@@ -249,7 +249,7 @@ export default function ProjectDetail() {
             <div className="mt-10 flex flex-wrap justify-center gap-3">
               {project.services.map((s, i) => (
                 <FadeIn key={i} delay={i * 20}>
-                  <span className="px-4 py-2 bg-background border border-border text-text text-sm rounded-sm small-text">
+                  <span className="px-4 py-2 bg-background border border-border text-text text-sm rounded-sm small-text card-shadow">
                     {typeof s === "object" ? s.service_name : "Service"}
                   </span>
                 </FadeIn>
@@ -275,7 +275,7 @@ export default function ProjectDetail() {
                 const name = typeof tech === "object" ? tech.name : tech;
                 return (
                   <FadeIn key={i} delay={i * 30}>
-                    <span className="inline-flex items-center gap-2 px-4 py-2 rounded-sm bg-background-section border border-border text-heading text-sm font-semibold hover:border-primary/40 transition small-text font-bold">
+                    <span className="inline-flex items-center gap-2 px-4 py-2 rounded-sm bg-background-section border border-border text-heading text-sm font-semibold hover:border-primary/40 transition small-text font-bold card-shadow">
                       {name}
                     </span>
                   </FadeIn>
@@ -296,7 +296,7 @@ export default function ProjectDetail() {
             <div className="mt-10 flex flex-wrap justify-center gap-4">
               {project.industries.map((ind, i) => (
                 <FadeIn key={ind._id || i} delay={i * 30} className="w-[calc(50%-8px)] sm:w-[calc(33.33%-11px)] lg:w-[calc(25%-12px)] min-w-[140px]">
-                  <div className="bg-background border border-border rounded-lg p-5 flex flex-col items-center text-center hover:shadow-sm transition h-full w-full">
+                  <div className="bg-background border border-border rounded-lg p-5 flex flex-col items-center text-center hover: transition h-full w-full card-shadow">
                     {ind.icon ? (
                       <img
                         src={resolveImagePath(ind.icon)}
@@ -347,7 +347,7 @@ export default function ProjectDetail() {
               <SectionHeading eyebrow="About" title="Client Information" />
             </FadeIn>
             <FadeIn delay={40}>
-              <div className="mt-8 bg-background p-6 border border-border/60 rounded-lg body-text">
+              <div className="mt-8 bg-background p-6 border border-border/60 rounded-lg body-text card-shadow">
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-3">
                   {client.name && (
                     <div className="text-sm text-text">
@@ -410,7 +410,7 @@ export default function ProjectDetail() {
             <div className="mt-10 flex flex-wrap justify-center gap-4">
               {caseStudy.results.map((r, i) => (
                 <FadeIn key={i} delay={i * 30} className="w-[calc(50%-8px)] md:w-[calc(25%-12px)] min-w-[140px]">
-                  <div className="h-full flex flex-col justify-between bg-background-section border border-border rounded-lg p-5 text-center hover:shadow-sm transition">
+                  <div className="h-full flex flex-col justify-between bg-background-section border border-border rounded-lg p-5 text-center hover: transition card-shadow">
                     <div>
                       <div className="text-2xl font-bold text-primary">{r.value}</div>
                     </div>
@@ -433,7 +433,7 @@ export default function ProjectDetail() {
               <SectionHeading eyebrow="Read More" title="Featured Case Study" />
             </FadeIn>
             <FadeIn delay={40}>
-              <div className="mt-8 bg-background p-6 border border-border rounded-lg">
+              <div className="mt-8 bg-background p-6 border border-border rounded-lg card-shadow">
                 <p className="text-text leading-relaxed body-text mb-4">{caseStudy.overview || caseStudy.challenge}</p>
                 <Link
                   to={`/case-studies/${caseStudy.slug}`}

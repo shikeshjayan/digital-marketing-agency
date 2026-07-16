@@ -23,7 +23,7 @@ export default function InternalDataPolicies() {
       <section className="py-14 bg-surface animate-page-fade">
         <div className="max-w-4xl mx-auto px-4">
           <FadeIn>
-            <div className="bg-background border border-border rounded-lg p-6 md:p-10 space-y-8 text-text">
+            <div className="bg-background border border-border rounded-lg p-6 md:p-10 space-y-8 text-text card-shadow">
 
               <div className="flex items-center gap-3 pb-4 border-b border-border">
                 <img

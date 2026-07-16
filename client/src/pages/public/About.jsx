@@ -108,7 +108,7 @@ function MissionVision() {
 
         <div className="mt-10 grid grid-cols-1 md:grid-cols-2 gap-8">
           <FadeIn direction="left">
-            <div className="bg-background border border-border rounded-lg p-8 h-full hover:shadow-sm transition">
+            <div className="bg-background border border-border rounded-lg p-8 h-full hover: transition card-shadow">
               <div className="w-14 h-14 rounded-lg bg-primary-light flex items-center justify-center">
                 <FontAwesomeIcon
                   icon={faBullseye}
@@ -127,7 +127,7 @@ function MissionVision() {
           </FadeIn>
 
           <FadeIn direction="right">
-            <div className="bg-background border border-border rounded-lg p-8 h-full hover:shadow-sm transition">
+            <div className="bg-background border border-border rounded-lg p-8 h-full hover: transition card-shadow">
               <div className="w-14 h-14 rounded-lg bg-primary-light flex items-center justify-center">
                 <FontAwesomeIcon
                   icon={faEye}
@@ -188,7 +188,7 @@ function OurValues() {
         <div className="mt-10 grid grid-cols-1 sm:grid-cols-2 gap-6">
           {valuesData.map((v, i) => (
             <FadeIn key={v.title} delay={i * 100}>
-              <div className="bg-surface border border-border rounded-lg p-6 h-full hover:shadow-sm transition group">
+              <div className="bg-surface border border-border rounded-lg p-6 h-full hover: transition group card-shadow">
                 <div className="w-12 h-12 rounded-lg bg-primary-light flex items-center justify-center group-hover:bg-primary group-hover:text-white transition">
                   <FontAwesomeIcon
                     icon={v.icon}
@@ -332,13 +332,12 @@ export default function About() {
                 Hello, <span className="text-primary">Welcome</span> to Digital
                 Marketing
               </h2>
-              <div className="mt-4 small-text text-text leading-relaxed max-w-3xl mx-auto md:text-center space-y-3">
+              <div className="mt-4 small-text text-text leading-relaxed max-w-7xl mx-auto text-justify space-y-3">
                 <p className="small-text text-text body-text">
                   We help brands navigate and scale modern digital landscapes by
                   executing high-performance web engineering alongside robust
                   marketing strategy. Our engineering principles cut out
-                  unnecessary layers to zero in on real results: identifying
-                  exact business goals, transforming concepts into scalable
+                  unnecessary layers to zero in on real results: transforming concepts into scalable
                   customer pipelines, building platforms with structural
                   cleanliness, and monitoring active engagement behaviours.
                 </p>
@@ -410,7 +409,7 @@ export default function About() {
           <div className="max-w-6xl mx-auto px-4">
             <div className="flex flex-wrap justify-center gap-4">
               {[...Array(5)].map((_, i) => (
-                <div key={i} className="w-[calc(20%-12px)] min-w-[140px] h-16 bg-surface border border-border rounded-lg animate-pulse" />
+                <div key={i} className="w-[calc(20%-12px)] min-w-[140px] h-16 bg-surface border border-border rounded-lg animate-pulse card-shadow" />
               ))}
             </div>
           </div>

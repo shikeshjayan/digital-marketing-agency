@@ -123,7 +123,7 @@ function Departments() {
           <div className="mt-10 flex flex-wrap justify-center gap-6">
             {departments.map((dept, i) => (
               <FadeIn key={dept.name} delay={i * 40} className="w-full sm:basis-[calc(50%-12px)] lg:basis-[calc(33.33%-16px)] xl:basis-[calc(25%-18px)] max-w-sm">
-                <div className="bg-surface border border-border rounded-lg p-6 h-full hover:shadow-sm transition group">
+                <div className="bg-surface border border-border rounded-lg p-6 h-full hover: transition group card-shadow">
                   <div className="w-12 h-12 rounded-lg bg-primary-light flex items-center justify-center group-hover:bg-primary group-hover:text-white transition text-primary">
                     {dept.icon}
                   </div>
@@ -164,7 +164,7 @@ function TeamStatistics({ stats = [] }) {
                 const numericTarget = Number(String(stat.target || "").replace(/[^0-9.]/g, "")) || 0;
 
                 return (
-                  <div key={stat.key || i} className="bg-background border border-border rounded-lg p-6 text-center hover:shadow-sm transition">
+                  <div key={stat.key || i} className="bg-background border border-border rounded-lg p-6 text-center hover: transition card-shadow">
                     <div className="text-3xl md:text-4xl font-extrabold text-primary">
                       <AnimatedCounter 
                         target={numericTarget} 
@@ -200,7 +200,7 @@ function OurCulture() {
           <div className="mt-10 grid grid-cols-1 sm:grid-cols-2 gap-6">
             {cultureValues.map((item, i) => (
               <FadeIn key={item.title} delay={i * 40}>
-                <div className="bg-surface border border-border rounded-lg p-6 h-full hover:shadow-sm transition group">
+                <div className="bg-surface border border-border rounded-lg p-6 h-full hover: transition group card-shadow">
                   <div className="flex items-center gap-3">
                     <div className="w-2.5 h-2.5 rounded-full bg-primary shrink-0" />
                     <h3 className="subheading text-heading">{item.title}</h3>
@@ -232,7 +232,7 @@ function Certifications() {
           <div className="mt-10 flex flex-wrap justify-center gap-3">
             {certifications.map((cert, i) => (
               <FadeIn key={cert} delay={i * 30}>
-                <div className="inline-flex items-center gap-2 px-4 py-2.5 bg-background border border-border rounded-lg hover:shadow-sm transition">
+                <div className="inline-flex items-center gap-2 px-4 py-2.5 bg-background border border-border rounded-lg hover: transition card-shadow">
                   <svg className="w-4 h-4 text-primary shrink-0" fill="currentColor" viewBox="0 0 20 20">
                     <path fillRule="evenodd" d="M6.267 3.455a3.066 3.066 0 001.745-.723 3.066 3.066 0 013.976 0 3.066 3.066 0 001.745.723 3.066 3.066 0 012.812 2.812c.051.643.304 1.254.723 1.745a3.066 3.066 0 010 3.976 3.066 3.066 0 00-.723 1.745 3.066 3.066 0 01-2.812 2.812 3.066 3.066 0 00-1.745.723 3.066 3.066 0 01-3.976 0 3.066 3.066 0 00-1.745-.723 3.066 3.066 0 01-2.812-2.812 3.066 3.066 0 00-.723-1.745 3.066 3.066 0 012.812-2.812zm7.44 5.252a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
                   </svg>
