@@ -428,7 +428,7 @@ export default function AdminSidebar() {
             className="absolute inset-0 bg-black/40 backdrop-blur-sm transition-opacity duration-200"
             onClick={closeMobileMenu}
           />
-          <div className="absolute left-0 top-0 bottom-0 max-w-[85vw] transition-transform duration-200 ease-out">
+          <div className="absolute left-0 top-0 bottom-0 max-w-[80vw] transition-transform duration-200 ease-out">
             {sidebar}
           </div>
         </div>

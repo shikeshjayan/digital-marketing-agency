@@ -251,13 +251,13 @@ export default function AdminServices() {
       <div className="mt-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
         <div
           ref={formRef}
-          className="lg:col-span-2 bg-background border border-border rounded p-4 shadow-xs lg:h-[80vh] lg:overflow-y-auto flex flex-col scrollbar-custom">
-          <div className="font-extrabold text-heading">
+          className="lg:col-span-2 bg-background border border-border rounded p-4 shadow-xs lg:h-[80vh] flex flex-col">
+          <div className="font-extrabold text-heading shrink-0">
             {form.service_id ? "Edit Service" : "Add New Service"}
           </div>
 
-          <form onSubmit={onSubmit} className="mt-4 flex flex-col flex-1 justify-between gap-3">
-            <div className="space-y-3">
+          <form onSubmit={onSubmit} className="mt-4 flex flex-col flex-1 min-h-0 gap-3">
+            <div className="flex-1 overflow-y-auto space-y-3">
               <FormField
                 label="Service Name"
                 value={form.service_name}
@@ -314,9 +314,10 @@ export default function AdminServices() {
                   onChange={(e) =>
                     setForm((f) => ({
                       ...f,
-                      display_order: Number(e.target.value),
+                      display_order: Math.max(0, Number(e.target.value)),
                     }))
                   }
+                  min={0}
                   placeholder="0"
                 />
               </div>
@@ -459,7 +460,7 @@ export default function AdminServices() {
               </div>
             </div>
 
-            <div>
+            <div className="shrink-0">
               <ErrorBanner message={error} />
 
               <FormActions
@@ -485,8 +486,8 @@ export default function AdminServices() {
           />
 
           <div className="mt-4 overflow-auto flex-1">
-            <table className="w-full text-sm">
-              <thead>
+            <table className="w-full text-sm block sm:table">
+              <thead className="hidden sm:table-header-group">
                 <tr className="text-left text-text">
                   <th className="py-2 pr-3 hidden sm:table-cell">ID</th>
                   <th className="py-2 pr-3">Service</th>
@@ -502,30 +503,34 @@ export default function AdminServices() {
                   items.map((s) => (
                     <tr
                       key={s._id}
-                      className="border-t border-border align-top">
-                      <td className="py-3 pr-3 text-text hidden sm:table-cell">
+                      className="block sm:table-row border sm:border-t border-border mb-3 sm:mb-0 p-3 sm:p-0 rounded-lg sm:rounded-none bg-surface/50 sm:bg-transparent">
+                      <td className="block sm:table-cell py-1 sm:py-3 pr-0 sm:pr-3 text-text">
+                        <span className="text-xs font-semibold text-muted uppercase tracking-wide block sm:hidden mb-1">ID</span>
                         <span
-                          className="block max-w-[80px] truncate"
+                          className="block break-all sm:truncate sm:max-w-[80px]"
                           title={s._id}>
                           {s._id}
                         </span>
                       </td>
-                      <td className="py-3 pr-3">
-                        <div className="font-bold text-heading truncate max-w-[200px]">
+                      <td className="block sm:table-cell py-1 sm:py-3 pr-0 sm:pr-3">
+                        <span className="text-xs font-semibold text-muted uppercase tracking-wide block sm:hidden mb-1">Service</span>
+                        <div className="font-bold text-heading sm:truncate sm:max-w-[200px]">
                           {s.service_name}
                         </div>
-                        <div className="text-muted text-sm sm:text-sm truncate max-w-[200px]">
+                        <div className="text-muted text-sm sm:truncate sm:max-w-[200px]">
                           {s.short_description}
                         </div>
                       </td>
-                      <td className="py-3 pr-3 hidden md:table-cell">
+                      <td className="block sm:table-cell py-1 sm:py-3 pr-0 sm:pr-3">
+                        <span className="text-xs font-semibold text-muted uppercase tracking-wide block sm:hidden mb-1">Featured</span>
                         {s.featured && (
                           <span className="inline-flex items-center rounded-full px-3 py-1 text-sm font-semibold border bg-info/10 text-info border-info/20">
                             Featured
                           </span>
                         )}
                       </td>
-                      <td className="py-3 pr-3">
+                      <td className="block sm:table-cell py-1 sm:py-3 pr-0 sm:pr-3">
+                        <span className="text-xs font-semibold text-muted uppercase tracking-wide block sm:hidden mb-1">Status</span>
                         <span
                           className={`inline-flex items-center rounded-full px-3 py-1 text-sm font-semibold border ${
                             s.status === "Active"
@@ -535,7 +540,8 @@ export default function AdminServices() {
                           {s.status}
                         </span>
                       </td>
-                      <td className="py-3">
+                      <td className="block sm:table-cell py-1 sm:py-3">
+                        <span className="text-xs font-semibold text-muted uppercase tracking-wide block sm:hidden mb-1">Actions</span>
                         <div className="flex gap-2 flex-wrap">
                           <button
                             type="button"

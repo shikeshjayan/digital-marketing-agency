@@ -43,12 +43,7 @@ export const loginSchema = yup.object().shape({
     .matches(emailRegex, "Please enter a valid email address"),
   password: yup
     .string()
-    .required("Password is required")
-    .min(8, "Password must be at least 8 characters")
-    .matches(
-      passwordRegex,
-      "Password must be at least 8 characters long and contain at least one uppercase letter, one lowercase letter, one number, and one special character",
-    ),
+    .required("Password is required"),
 });
 
 export const changePasswordSchema = yup.object().shape({

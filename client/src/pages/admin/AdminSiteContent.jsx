@@ -311,35 +311,39 @@ export default function AdminSiteContent() {
 
         <div className="mt-4 space-y-4">
           {companyStats.map((stat, i) => (
-            <div key={i} className="flex flex-wrap items-center gap-2">
-              <input
-                className="flex-1 min-w-[80px] sm:w-24 sm:flex-none rounded border border-border bg-surface px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-primary-light"
-                placeholder="Target (e.g. 8)"
-                type="number"
-                step="any"
-                value={stat.target}
-                onChange={(e) => updateCompanyStat(i, "target", e.target.value)}
-              />
-              <input
-                className="w-20 rounded border border-border bg-surface px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-primary-light"
-                placeholder="Suffix (e.g. +)"
-                value={stat.suffix}
-                onChange={(e) => updateCompanyStat(i, "suffix", e.target.value)}
-              />
-              <input
-                className="w-full sm:flex-1 rounded border border-border bg-surface px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-primary-light"
-                placeholder="Label (e.g. Years of Experience)"
-                value={stat.label}
-                onChange={(e) => updateCompanyStat(i, "label", e.target.value)}
-              />
-              {!DEFAULT_STAT_KEYS.has(stat.key) && (
-                <button
-                  type="button"
-                  onClick={() => setConfirmStatIdx(i)}
-                  className="p-2 text-danger hover:text-red-700 hover:bg-red-50 rounded transition cursor-pointer">
-                  <FontAwesomeIcon icon={faTrash} className="w-4 h-4" />
-                </button>
-              )}
+            <div key={i} className="flex flex-col sm:flex-row sm:flex-wrap items-stretch sm:items-center gap-2">
+              <div className="flex items-center gap-2 w-full sm:w-auto">
+                <input
+                  className="flex-1 sm:w-24 sm:flex-none rounded border border-border bg-surface px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-primary-light"
+                  placeholder="Target"
+                  type="number"
+                  step="any"
+                  value={stat.target}
+                  onChange={(e) => updateCompanyStat(i, "target", e.target.value)}
+                />
+                <input
+                  className="w-20 rounded border border-border bg-surface px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-primary-light"
+                  placeholder="Suffix"
+                  value={stat.suffix}
+                  onChange={(e) => updateCompanyStat(i, "suffix", e.target.value)}
+                />
+              </div>
+              <div className="flex items-center gap-2 flex-1 w-full sm:flex-1 sm:min-w-0">
+                <input
+                  className="flex-1 rounded border border-border bg-surface px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-primary-light"
+                  placeholder="Label (e.g. Years of Experience)"
+                  value={stat.label}
+                  onChange={(e) => updateCompanyStat(i, "label", e.target.value)}
+                />
+                {!DEFAULT_STAT_KEYS.has(stat.key) && (
+                  <button
+                    type="button"
+                    onClick={() => setConfirmStatIdx(i)}
+                    className="p-2 text-danger hover:text-red-700 hover:bg-red-50 rounded transition cursor-pointer shrink-0">
+                    <FontAwesomeIcon icon={faTrash} className="w-4 h-4" />
+                  </button>
+                )}
+              </div>
             </div>
           ))}
         </div>

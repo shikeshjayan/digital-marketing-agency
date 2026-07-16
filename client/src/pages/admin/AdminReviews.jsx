@@ -226,8 +226,8 @@ export default function AdminReviews() {
         />
 
         <div className="mt-4 overflow-auto">
-          <table className="w-full text-sm">
-            <thead>
+          <table className="w-full text-sm block sm:table">
+            <thead className="hidden sm:table-header-group">
               <tr className="text-left text-text">
                 <th className="py-2 pr-3 whitespace-nowrap">Name / User</th>
                 <th className="py-2 pr-3 whitespace-nowrap hidden sm:table-cell">Rating</th>
@@ -244,8 +244,9 @@ export default function AdminReviews() {
                 items.map((r) => (
                   <tr
                     key={r.review_id}
-                    className="border-t border-border align-top">
-                    <td className="py-3 pr-3">
+                    className="block sm:table-row border sm:border-t border-border mb-3 sm:mb-0 p-3 sm:p-0 rounded-lg sm:rounded-none bg-surface/50 sm:bg-transparent">
+                    <td className="block sm:table-cell py-1 sm:py-3 pr-0 sm:pr-3">
+                        <span className="text-xs font-semibold text-muted uppercase tracking-wide block sm:hidden mb-1">Name / User</span>
                       <div className="flex items-center gap-2">
                         {(() => {
                           const isDefault = !r.user_avatar || (r.user_avatar.includes("data:image/svg+xml") && r.user_avatar.includes("%3F"));
@@ -263,23 +264,25 @@ export default function AdminReviews() {
                           );
                         })()}
                         <div className="min-w-0">
-                          <div className="font-bold text-heading truncate max-w-[130px]">
+                          <div className="font-bold text-heading sm:truncate sm:max-w-[130px]">
                             {r.name}
                           </div>
                           {r.location && (
-                            <div className="text-sm text-muted truncate max-w-[130px]">
+                            <div className="text-sm text-muted sm:truncate sm:max-w-[130px]">
                               {r.location}
                             </div>
                           )}
                         </div>
                       </div>
                     </td>
-                    <td className="py-3 pr-3 hidden sm:table-cell">
+                    <td className="block sm:table-cell py-1 sm:py-3 pr-0 sm:pr-3">
+                        <span className="text-xs font-semibold text-muted uppercase tracking-wide block sm:hidden mb-1">Rating</span>
                       <Stars rating={r.rating} />
                     </td>
-                    <td className="py-3 pr-3 max-w-[240px] min-w-[160px]">
+                    <td className="block sm:table-cell py-1 sm:py-3 pr-0 sm:pr-3 sm:max-w-[240px] sm:min-w-[160px]">
+                        <span className="text-xs font-semibold text-muted uppercase tracking-wide block sm:hidden mb-1">Review Comment</span>
                       <div className="flex items-start gap-1">
-                        <span className="truncate text-sm text-text" title={r.review_text}>
+                        <span className="sm:truncate text-sm text-text" title={r.review_text}>
                           {r.review_text}
                         </span>
                         {r.review_text.length > 150 && (
@@ -292,17 +295,20 @@ export default function AdminReviews() {
                         )}
                       </div>
                     </td>
-                    <td className="py-3 pr-3 text-sm text-muted hidden md:table-cell whitespace-nowrap">
+                    <td className="block sm:table-cell py-1 sm:py-3 pr-0 sm:pr-3 text-sm text-muted sm:whitespace-nowrap">
+                        <span className="text-xs font-semibold text-muted uppercase tracking-wide block sm:hidden mb-1">Date / Time</span>
                       {relativeTime(r.date)}
                     </td>
-                    <td className="py-3 pr-3 hidden sm:table-cell">
+                    <td className="block sm:table-cell py-1 sm:py-3 pr-0 sm:pr-3">
+                        <span className="text-xs font-semibold text-muted uppercase tracking-wide block sm:hidden mb-1">Status</span>
                       <span
                         className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium border ${statusChip(r.status)}`}>
                         {r.status}
                       </span>
                     </td>
-                    <td className="py-3">
-                      <div className="flex gap-1.5 items-center">
+                    <td className="block sm:table-cell py-1 sm:py-3">
+                        <span className="text-xs font-semibold text-muted uppercase tracking-wide block sm:hidden mb-1">Actions</span>
+                      <div className="flex gap-1.5 items-center flex-wrap">
                         {r.status !== "Approved" && (
                           <button
                             type="button"

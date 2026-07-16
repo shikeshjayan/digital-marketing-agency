@@ -70,7 +70,7 @@ export default function AdminTeam() {
         search: search || undefined,
         status: status || undefined,
         page,
-        limit: 8,
+        limit: 5,
       });
       setItems(result?.items ?? []);
       setPagination(result?.pagination ?? { total: 0, page: 1, pages: 1 });
@@ -208,7 +208,7 @@ export default function AdminTeam() {
       <div className="mt-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
         <div
           ref={formRef}
-          className="lg:col-span-2 bg-background border border-border rounded p-4 shadow-xs lg:h-[80vh] lg:overflow-y-auto flex flex-col">
+          className="lg:col-span-2 bg-background border border-border rounded p-4 shadow-xs lg:h-[78vh] lg:overflow-y-auto flex flex-col">
           <div className="font-extrabold text-heading">
             {form._id ? "Edit Member" : "Add New Member"}
           </div>
@@ -276,9 +276,10 @@ export default function AdminTeam() {
                   onChange={(e) =>
                     setForm((f) => ({
                       ...f,
-                      display_order: Number(e.target.value),
+                      display_order: Math.max(0, Number(e.target.value)),
                     }))
                   }
+                  min={0}
                 />
                 <FormField
                   label="Status"
@@ -306,7 +307,7 @@ export default function AdminTeam() {
           </form>
         </div>
 
-        <div className="lg:col-span-3 bg-background border border-border rounded p-5 shadow-xs flex flex-col lg:h-[80vh]">
+        <div className="lg:col-span-3 bg-background border border-border rounded p-5 shadow-xs flex flex-col lg:h-[78vh]">
           <AdminListFooter
             loading={loading}
             total={pagination.total}
@@ -316,8 +317,8 @@ export default function AdminTeam() {
           />
 
           <div className="mt-4 overflow-auto flex-1">
-            <table className="w-full text-sm">
-              <thead>
+            <table className="w-full text-sm block sm:table">
+              <thead className="hidden sm:table-header-group">
                 <tr className="text-left text-text">
                   <th className="py-2 pr-3 hidden sm:table-cell">ID</th>
                   <th className="py-2 pr-3">Member</th>
@@ -333,15 +334,17 @@ export default function AdminTeam() {
                   items.map((m) => (
                     <tr
                       key={m._id}
-                      className="border-t border-border align-top">
-                      <td className="py-3 pr-3 text-text hidden sm:table-cell">
+                      className="block sm:table-row border sm:border-t border-border mb-3 sm:mb-0 p-3 sm:p-0 rounded-lg sm:rounded-none bg-surface/50 sm:bg-transparent">
+                      <td className="block sm:table-cell py-1 sm:py-3 pr-0 sm:pr-3 text-text">
+                        <span className="text-xs font-semibold text-muted uppercase tracking-wide block sm:hidden mb-1">ID</span>
                         <span
-                          className="block max-w-[80px] truncate"
+                          className="block break-all sm:truncate sm:max-w-[80px]"
                           title={m._id}>
                           {m._id}
                         </span>
                       </td>
-                      <td className="py-3 pr-3">
+                      <td className="block sm:table-cell py-1 sm:py-3 pr-0 sm:pr-3">
+                        <span className="text-xs font-semibold text-muted uppercase tracking-wide block sm:hidden mb-1">Member</span>
                         <div className="flex items-center gap-3">
                           <div className="w-10 h-10 rounded bg-surface border border-border overflow-hidden flex items-center justify-center shrink-0">
                             {m.photo ? (
@@ -357,7 +360,7 @@ export default function AdminTeam() {
                             )}
                           </div>
                           <div>
-                            <div className="font-bold text-heading truncate max-w-[150px]">
+                            <div className="font-bold text-heading sm:truncate sm:max-w-[150px]">
                               {m.name}
                             </div>
                             <div className="text-sm text-muted">
@@ -366,10 +369,12 @@ export default function AdminTeam() {
                           </div>
                         </div>
                       </td>
-                      <td className="py-3 pr-3 text-text truncate max-w-[150px]">
+                      <td className="block sm:table-cell py-1 sm:py-3 pr-0 sm:pr-3 text-text sm:truncate sm:max-w-[150px]">
+                        <span className="text-xs font-semibold text-muted uppercase tracking-wide block sm:hidden mb-1">Designation</span>
                         {m.designation}
                       </td>
-                      <td className="py-3 pr-3">
+                      <td className="block sm:table-cell py-1 sm:py-3 pr-0 sm:pr-3">
+                        <span className="text-xs font-semibold text-muted uppercase tracking-wide block sm:hidden mb-1">Status</span>
                         <span
                           className={`inline-flex items-center rounded-full px-3 py-1 text-sm font-semibold border ${
                             m.status === "Active"
@@ -379,7 +384,8 @@ export default function AdminTeam() {
                           {m.status}
                         </span>
                       </td>
-                      <td className="py-3">
+                      <td className="block sm:table-cell py-1 sm:py-3">
+                        <span className="text-xs font-semibold text-muted uppercase tracking-wide block sm:hidden mb-1">Actions</span>
                         <div className="flex gap-2 flex-wrap">
                           <button
                             type="button"

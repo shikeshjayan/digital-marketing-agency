@@ -9,6 +9,7 @@ import { TableSkeleton } from "../../components/ui/Skeleton.jsx";
 import AdminPageHeader from "../../components/ui/AdminPageHeader.jsx";
 import AdminListFooter from "../../components/ui/AdminListFooter.jsx";
 import SearchInput from "../../components/ui/SearchInput.jsx";
+import DatePicker from "../../components/ui/DatePicker.jsx";
 import TableEmptyState from "../../components/ui/TableEmptyState.jsx";
 import ErrorBanner from "../../components/ui/ErrorBanner.jsx";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -156,9 +157,7 @@ export default function AdminMessages() {
               { value: "Spam", label: "Spam" },
             ]}
           />
-          <input
-            type="date"
-            className="rounded border border-border bg-surface px-4 py-2 outline-none focus:ring-2 focus:ring-primary-light"
+          <DatePicker
             value={date}
             onChange={(e) => setDate(e.target.value)}
           />
@@ -216,8 +215,8 @@ export default function AdminMessages() {
         />
 
         <div className="mt-4 overflow-auto">
-          <table className="w-full text-sm">
-            <thead>
+          <table className="w-full text-sm block sm:table">
+            <thead className="hidden sm:table-header-group">
               <tr className="text-left text-text">
                 <th className="py-2 pr-3 hidden sm:table-cell">ID</th>
                 <th className="py-2 pr-3">Sender</th>
@@ -234,35 +233,41 @@ export default function AdminMessages() {
                 items.map((e) => (
                   <tr
                     key={e.enquiry_id}
-                    className="border-t border-border align-top">
-                    <td className="py-3 pr-3 text-text hidden sm:table-cell">
+                    className="block sm:table-row border sm:border-t border-border mb-3 sm:mb-0 p-3 sm:p-0 rounded-lg sm:rounded-none bg-surface/50 sm:bg-transparent">
+                    <td className="block sm:table-cell py-1 sm:py-3 pr-0 sm:pr-3 text-text">
+                        <span className="text-xs font-semibold text-muted uppercase tracking-wide block sm:hidden mb-1">ID</span>
                       <span
-                        className="block max-w-20 truncate"
+                        className="block break-all sm:truncate sm:max-w-20"
                         title={e.enquiry_id}>
                         {e.enquiry_id}
                       </span>
                     </td>
-                    <td className="py-3 pr-3">
-                      <div className="font-bold text-heading truncate max-w-[150px]">
+                    <td className="block sm:table-cell py-1 sm:py-3 pr-0 sm:pr-3">
+                        <span className="text-xs font-semibold text-muted uppercase tracking-wide block sm:hidden mb-1">Sender</span>
+                      <div className="font-bold text-heading sm:truncate sm:max-w-[150px]">
                         {e.name}
                       </div>
-                      <div className="text-sm text-muted truncate max-w-[150px]">
+                      <div className="text-sm text-muted sm:truncate sm:max-w-[150px]">
                         {e.email}
                       </div>
                     </td>
-                    <td className="py-3 pr-3 text-text hidden md:table-cell truncate max-w-[120px]">
+                    <td className="block sm:table-cell py-1 sm:py-3 pr-0 sm:pr-3 text-text sm:truncate sm:max-w-[120px]">
+                        <span className="text-xs font-semibold text-muted uppercase tracking-wide block sm:hidden mb-1">Service</span>
                       {e.service}
                     </td>
-                    <td className="py-3 pr-3">
+                    <td className="block sm:table-cell py-1 sm:py-3 pr-0 sm:pr-3">
+                        <span className="text-xs font-semibold text-muted uppercase tracking-wide block sm:hidden mb-1">Status</span>
                       <span
                         className={`inline-flex items-center rounded-full px-3 py-1 text-sm font-semibold border ${statusChip(e.status)}`}>
                         {e.status}
                       </span>
                     </td>
-                    <td className="py-3 pr-3 text-sm text-muted hidden sm:table-cell">
+                    <td className="block sm:table-cell py-1 sm:py-3 pr-0 sm:pr-3 text-sm text-muted">
+                        <span className="text-xs font-semibold text-muted uppercase tracking-wide block sm:hidden mb-1">Date</span>
                       {new Date(e.date).toLocaleDateString()}
                     </td>
-                    <td className="py-3">
+                    <td className="block sm:table-cell py-1 sm:py-3">
+                        <span className="text-xs font-semibold text-muted uppercase tracking-wide block sm:hidden mb-1">Actions</span>
                       <div className="flex gap-2 flex-wrap">
                           <button
                             type="button"
@@ -277,7 +282,7 @@ export default function AdminMessages() {
                             type="button"
                             className="px-3 py-2 text-sm sm:px-4 sm:py-2 sm:text-sm min-h-[44px] text-text hover:text-heading rounded transition cursor-pointer"
                             onClick={() => transition(e.enquiry_id, "Replied")}>
-                            Mark Replied
+                            <span className="hidden sm:inline">Mark </span>Replied
                           </button>
                         )}
                         {e.status !== "Spam" && (
@@ -285,7 +290,7 @@ export default function AdminMessages() {
                             type="button"
                             className="px-3 py-2 text-sm sm:px-4 sm:py-2 sm:text-sm min-h-[44px] text-warning hover:text-warning/80 rounded transition cursor-pointer"
                             onClick={() => setSpamTarget(e.enquiry_id)}>
-                            Mark Spam
+                            <span className="hidden sm:inline">Mark </span>Spam
                           </button>
                         )}
                         <button
