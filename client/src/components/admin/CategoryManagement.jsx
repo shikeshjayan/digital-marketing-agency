@@ -72,7 +72,7 @@ export default function CategoryManagement({ config }) {
         search: search || undefined,
         status: status || undefined,
         page,
-        limit: 4,
+        limit: 5,
       });
       setItems(result?.items ?? []);
       setPagination(result?.pagination ?? { total: 0, page: 1, pages: 1 });
@@ -107,6 +107,7 @@ export default function CategoryManagement({ config }) {
     setLeftHeight(el.offsetHeight);
     return () => ro.disconnect();
   }, []);
+
 
   async function onSubmit(e) {
     e.preventDefault();
@@ -320,8 +321,9 @@ export default function CategoryManagement({ config }) {
                 type="number"
                 value={form.display_order}
                 onChange={(e) =>
-                  setForm((f) => ({ ...f, display_order: Number(e.target.value) }))
+                  setForm((f) => ({ ...f, display_order: Math.max(0, Number(e.target.value)) }))
                 }
+                min={0}
               />
               <FormField
                 label="Status"
@@ -357,8 +359,8 @@ export default function CategoryManagement({ config }) {
           />
 
           <div className="mt-4 overflow-auto flex-1">
-            <table className="w-full text-sm">
-              <thead>
+            <table className="w-full text-sm block sm:table">
+              <thead className="hidden sm:table-header-group">
                 <tr className="text-left text-text">
                   <th className="py-2 pr-3 hidden sm:table-cell">ID</th>
                   <th className="py-2 pr-3">Name</th>
@@ -372,24 +374,30 @@ export default function CategoryManagement({ config }) {
                   <TableSkeleton rows={5} cols={5} />
                 ) : (
                   items.map((item) => (
-                    <tr key={item._id} className="border-t border-border align-top">
-                      <td className="py-3 pr-3 text-text hidden sm:table-cell">
-                        <span className="block max-w-[80px] truncate" title={item._id}>
+                    <tr key={item._id} className="block sm:table-row border sm:border-t border-border mb-3 sm:mb-0 p-3 sm:p-0 rounded-lg sm:rounded-none bg-surface/50 sm:bg-transparent">
+                      <td className="block sm:table-cell py-1 sm:py-3 pr-0 sm:pr-3 text-text">
+                        <span className="text-xs font-semibold text-muted uppercase tracking-wide block sm:hidden mb-1">ID</span>
+                        <span className="block break-all sm:truncate sm:max-w-[80px]" title={item._id}>
                           {item._id}
                         </span>
                       </td>
-                      <td className="py-3 pr-3">
-                        <div className="font-bold text-heading truncate max-w-[200px]">
+                      <td className="block sm:table-cell py-1 sm:py-3 pr-0 sm:pr-3">
+                        <span className="text-xs font-semibold text-muted uppercase tracking-wide block sm:hidden mb-1">Name</span>
+                        <div className="font-bold text-heading sm:truncate sm:max-w-[200px]">
                           {item.name}
                         </div>
                         {item.description && (
-                          <div className="text-sm text-muted truncate max-w-[200px]">
+                          <div className="text-sm text-muted sm:truncate sm:max-w-[200px]">
                             {item.description}
                           </div>
                         )}
                       </td>
-                      <td className="py-3 pr-3 text-text">{item.display_order}</td>
-                      <td className="py-3 pr-3">
+                      <td className="block sm:table-cell py-1 sm:py-3 pr-0 sm:pr-3 text-text">
+                        <span className="text-xs font-semibold text-muted uppercase tracking-wide block sm:hidden mb-1">Order</span>
+                        {item.display_order}
+                      </td>
+                      <td className="block sm:table-cell py-1 sm:py-3 pr-0 sm:pr-3">
+                        <span className="text-xs font-semibold text-muted uppercase tracking-wide block sm:hidden mb-1">Status</span>
                         <span
                           className={`inline-flex items-center rounded-full px-3 py-1 text-sm font-semibold border ${
                             item.status === "Active"
@@ -399,7 +407,8 @@ export default function CategoryManagement({ config }) {
                           {item.status}
                         </span>
                       </td>
-                      <td className="py-3">
+                      <td className="block sm:table-cell py-1 sm:py-3">
+                        <span className="text-xs font-semibold text-muted uppercase tracking-wide block sm:hidden mb-1">Actions</span>
                         <div className="flex gap-2 flex-wrap">
                           <button
                             type="button"

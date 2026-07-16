@@ -11,7 +11,7 @@ export default function FormActions({
       {editId && (
         <button
           type="button"
-          className="flex-1 rounded border border-border py-2.5 small-text font-semibold text-text hover:bg-surface transition cursor-pointer"
+          className="flex-1 rounded border border-border py-2.5 small-text font-semibold text-text hover:border-primary transition cursor-pointer"
           onClick={onReset}>
           {resetLabel}
         </button>

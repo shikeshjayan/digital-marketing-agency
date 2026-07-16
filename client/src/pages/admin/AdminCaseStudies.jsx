@@ -394,18 +394,16 @@ export default function AdminCaseStudies() {
         </div>
       </div>
 
-      <div className="mt-6 grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div className="mt-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
         <div
           ref={formRef}
-          className="lg:col-span-1 bg-background border border-border rounded p-4 shadow-xs lg:h-[80vh] lg:overflow-y-auto flex flex-col scrollbar-custom">
-          <div className="font-extrabold text-heading">
+          className="lg:col-span-2 bg-background border border-border rounded p-4 shadow-xs lg:h-[80vh] flex flex-col">
+          <div className="font-extrabold text-heading shrink-0">
             {form.case_study_id ? "Edit Case Study" : "Add New Case Study"}
           </div>
 
-          <form
-            onSubmit={onSubmit}
-            className="mt-4 flex flex-col flex-1 justify-between gap-3">
-            <div className="space-y-3">
+          <form onSubmit={onSubmit} className="mt-4 flex flex-col flex-1 min-h-0 gap-3">
+            <div className="flex-1 overflow-y-auto space-y-3">
               <FormField
                 label="Title"
                 value={form.title}
@@ -950,7 +948,7 @@ export default function AdminCaseStudies() {
               </div>
             </div>
 
-            <div>
+            <div className="shrink-0">
               <ErrorBanner message={error} />
 
               <FormActions
@@ -966,7 +964,7 @@ export default function AdminCaseStudies() {
           </form>
         </div>
 
-        <div className="lg:col-span-2 bg-background border border-border rounded p-5 shadow-xs flex flex-col lg:h-[80vh]">
+        <div className="lg:col-span-3 bg-background border border-border rounded p-5 shadow-xs flex flex-col lg:h-[80vh]">
           <AdminListFooter
             loading={loading}
             total={pagination.total}
@@ -976,8 +974,8 @@ export default function AdminCaseStudies() {
           />
 
           <div className="mt-4 overflow-auto flex-1">
-            <table className="w-full text-sm">
-              <thead>
+            <table className="w-full text-sm block sm:table">
+              <thead className="hidden sm:table-header-group">
                 <tr className="text-left text-text">
                   <th className="py-2 pr-3 hidden sm:table-cell">ID</th>
                   <th className="py-2 pr-3">Title</th>
@@ -993,15 +991,17 @@ export default function AdminCaseStudies() {
                   items.map((cs) => (
                     <tr
                       key={cs._id}
-                      className="border-t border-border align-top">
-                      <td className="py-3 pr-3 text-text hidden sm:table-cell">
+                      className="block sm:table-row border sm:border-t border-border mb-3 sm:mb-0 p-3 sm:p-0 rounded-lg sm:rounded-none bg-surface/50 sm:bg-transparent">
+                      <td className="block sm:table-cell py-1 sm:py-3 pr-0 sm:pr-3 text-text">
+                        <span className="text-xs font-semibold text-muted uppercase tracking-wide block sm:hidden mb-1">ID</span>
                         <span
-                          className="block max-w-20 truncate"
+                          className="block break-all sm:truncate sm:max-w-20"
                           title={cs._id}>
                           {cs._id}
                         </span>
                       </td>
-                      <td className="py-3 pr-3">
+                      <td className="block sm:table-cell py-1 sm:py-3 pr-0 sm:pr-3">
+                        <span className="text-xs font-semibold text-muted uppercase tracking-wide block sm:hidden mb-1">Title</span>
                         <div className="flex items-center gap-3">
                           {cs.hero_image && (
                             <img
@@ -1011,10 +1011,10 @@ export default function AdminCaseStudies() {
                             />
                           )}
                           <div>
-                            <div className="font-bold text-heading truncate max-w-50">
+                            <div className="font-bold text-heading sm:truncate sm:max-w-50">
                               {cs.title}
                             </div>
-                            <div className="text-muted text-sm truncate max-w-50">
+                            <div className="text-muted text-sm sm:truncate sm:max-w-50">
                               {cs.overview}
                             </div>
                             {cs.featured && (
@@ -1025,14 +1025,16 @@ export default function AdminCaseStudies() {
                           </div>
                         </div>
                       </td>
-                      <td className="py-3 pr-3">
+                      <td className="block sm:table-cell py-1 sm:py-3 pr-0 sm:pr-3">
+                        <span className="text-xs font-semibold text-muted uppercase tracking-wide block sm:hidden mb-1">Project</span>
                         <span className="text-sm text-text">
                           {typeof cs.project === "object"
                             ? cs.project.project_name
                             : "N/A"}
                         </span>
                       </td>
-                      <td className="py-3 pr-3">
+                      <td className="block sm:table-cell py-1 sm:py-3 pr-0 sm:pr-3">
+                        <span className="text-xs font-semibold text-muted uppercase tracking-wide block sm:hidden mb-1">Status</span>
                         <span
                           className={`inline-flex items-center rounded-full px-3 py-1 text-sm font-semibold border ${
                             cs.status === "Published"
@@ -1042,7 +1044,8 @@ export default function AdminCaseStudies() {
                           {cs.status}
                         </span>
                       </td>
-                      <td className="py-3 whitespace-nowrap">
+                      <td className="block sm:table-cell py-1 sm:py-3">
+                        <span className="text-xs font-semibold text-muted uppercase tracking-wide block sm:hidden mb-1">Actions</span>
                         <div className="flex gap-2">
                           <button
                             type="button"

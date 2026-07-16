@@ -17,6 +17,13 @@ export const createIndustry = asyncHandler(async (req, res) => {
     return res.status(409).json({ success: false, message: "Industry already exists" });
   }
 
+  if (display_order !== undefined) {
+    const orderTaken = await Industry.findOne({ display_order: Number(display_order) });
+    if (orderTaken) {
+      return res.status(409).json({ success: false, message: "Display order already in use by another industry" });
+    }
+  }
+
   const industry = await Industry.create({
     name,
     description,
@@ -73,6 +80,13 @@ export const getIndustryById = asyncHandler(async (req, res) => {
 // Update an existing industry (admin only)
 export const updateIndustry = asyncHandler(async (req, res) => {
   const { name, description, icon, iconType, display_order, status, removeIcon } = req.body;
+
+  if (display_order !== undefined) {
+    const orderTaken = await Industry.findOne({ display_order: Number(display_order), _id: { $ne: req.params.id } });
+    if (orderTaken) {
+      return res.status(409).json({ success: false, message: "Display order already in use by another industry" });
+    }
+  }
 
   const update = {};
   if (name !== undefined) update.name = name;

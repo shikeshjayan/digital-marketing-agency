@@ -162,9 +162,9 @@ export default function AdminBrandSettings() {
 
         <div className="mt-4 space-y-3">
           {socialLinks.map((link, i) => (
-            <div key={i} className="flex flex-wrap items-center gap-2">
+            <div key={i} className="flex flex-col sm:flex-row sm:flex-wrap items-stretch sm:items-center gap-2">
               <input
-                className="flex-1 min-w-[120px] rounded border border-border bg-surface px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-primary-light"
+                className="w-full sm:flex-1 sm:min-w-[120px] rounded border border-border bg-surface px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-primary-light"
                 placeholder="Platform (e.g. Facebook)"
                 value={link.platform}
                 onChange={(e) => {
@@ -174,7 +174,7 @@ export default function AdminBrandSettings() {
                 }}
               />
               <input
-                className="flex-[2] min-w-[200px] rounded border border-border bg-surface px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-primary-light"
+                className="w-full sm:flex-[2] sm:min-w-[200px] rounded border border-border bg-surface px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-primary-light"
                 placeholder="URL (e.g. https://facebook.com/crawlcrown)"
                 value={link.url}
                 onChange={(e) => {
@@ -183,22 +183,24 @@ export default function AdminBrandSettings() {
                   setSocialLinks(next);
                 }}
               />
-              <input
-                className="w-28 rounded border border-border bg-surface px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-primary-light"
-                placeholder="Icon (e.g. faFacebookF)"
-                value={link.icon}
-                onChange={(e) => {
-                  const next = [...socialLinks];
-                  next[i] = { ...next[i], icon: e.target.value };
-                  setSocialLinks(next);
-                }}
-              />
-              <button
-                type="button"
-                onClick={() => setConfirmSocialIdx(i)}
-                className="p-2 text-danger hover:text-red-700 hover:bg-red-50 rounded transition cursor-pointer">
-                <FontAwesomeIcon icon={faTrash} className="w-4 h-4" />
-              </button>
+              <div className="flex items-center gap-2 w-full sm:w-auto">
+                <input
+                  className="flex-1 sm:w-28 sm:shrink-0 rounded border border-border bg-surface px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-primary-light"
+                  placeholder="Icon (e.g. faFacebookF)"
+                  value={link.icon}
+                  onChange={(e) => {
+                    const next = [...socialLinks];
+                    next[i] = { ...next[i], icon: e.target.value };
+                    setSocialLinks(next);
+                  }}
+                />
+                <button
+                  type="button"
+                  onClick={() => setConfirmSocialIdx(i)}
+                  className="p-2 text-danger hover:text-red-700 hover:bg-red-50 rounded transition cursor-pointer shrink-0">
+                  <FontAwesomeIcon icon={faTrash} className="w-4 h-4" />
+                </button>
+              </div>
             </div>
           ))}
         </div>
@@ -292,9 +294,9 @@ export default function AdminBrandSettings() {
 
         <div className="mt-4 space-y-3">
           {companyLinks.map((link, i) => (
-            <div key={i} className="flex flex-wrap items-center gap-2">
+            <div key={i} className="flex flex-col sm:flex-row sm:flex-wrap items-stretch sm:items-center gap-2">
               <input
-                className="flex-1 min-w-[160px] rounded border border-border bg-surface px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-primary-light"
+                className="w-full sm:flex-1 sm:min-w-[160px] rounded border border-border bg-surface px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-primary-light"
                 placeholder="Label (e.g. About)"
                 value={link.label}
                 onChange={(e) => {
@@ -303,22 +305,24 @@ export default function AdminBrandSettings() {
                   setCompanyLinks(next);
                 }}
               />
-              <input
-                className="flex-1 min-w-[160px] rounded border border-border bg-surface px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-primary-light"
-                placeholder="Path (e.g. /about)"
-                value={link.path}
-                onChange={(e) => {
-                  const next = [...companyLinks];
-                  next[i] = { ...next[i], path: e.target.value };
-                  setCompanyLinks(next);
-                }}
-              />
-              <button
-                type="button"
-                onClick={() => setConfirmCompanyLinkIdx(i)}
-                className="p-2 text-danger hover:text-red-700 hover:bg-red-50 rounded transition cursor-pointer">
-                <FontAwesomeIcon icon={faTrash} className="w-4 h-4" />
-              </button>
+              <div className="flex items-center gap-2 w-full sm:flex-1">
+                <input
+                  className="flex-1 sm:min-w-[160px] rounded border border-border bg-surface px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-primary-light"
+                  placeholder="Path (e.g. /about)"
+                  value={link.path}
+                  onChange={(e) => {
+                    const next = [...companyLinks];
+                    next[i] = { ...next[i], path: e.target.value };
+                    setCompanyLinks(next);
+                  }}
+                />
+                <button
+                  type="button"
+                  onClick={() => setConfirmCompanyLinkIdx(i)}
+                  className="p-2 text-danger hover:text-red-700 hover:bg-red-50 rounded transition cursor-pointer shrink-0">
+                  <FontAwesomeIcon icon={faTrash} className="w-4 h-4" />
+                </button>
+              </div>
             </div>
           ))}
         </div>
