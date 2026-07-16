@@ -52,11 +52,11 @@ export default function Footer() {
   }
 
   return (
-    <footer className="text-white mt-14 relative flex flex-col items-center bg-footer">
-      <div className="w-full max-w-7xl">
+    <footer className="text-white mt-14 relative bg-footer">
+      <div className="max-w-7xl mx-auto px-4">
         <FadeIn>
-          <div className="px-4 py-12">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
+          <div className="py-12">
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-10">
               
               {/* Company Brand Block */}
               <div>
@@ -83,42 +83,41 @@ export default function Footer() {
                 </div>
               </div>
 
-              {/* Directory Links Column Group */}
-              <div className="grid grid-cols-2 gap-6">
-                <div>
-                  <div className="text-sm font-semibold mb-4 text-white">Services</div>
-                  <ul className="space-y-2.5 text-sm text-white/70">
-                    {activeServices.length > 0 ? (
-                      activeServices.map((service) => (
-                        <li key={service._id}>
-                          <Link 
-                            to={`/services/${service.slug}`} 
-                            className="cursor-pointer hover:text-primary transition-colors"
-                          >
-                            {service.service_name}
-                          </Link>
-                        </li>
-                      ))
-                    ) : (
-                      <div className="text-xs text-white/40 italic">No active services</div>
-                    )}
-                  </ul>
-                </div>
-                
-                <div>
-                  <div className="text-sm font-semibold mb-4 text-white">Company</div>
-                  <ul className="space-y-2.5 text-sm text-white/70">
-                    {companyLinks.length > 0 ? (
-                      companyLinks.map((link) => (
-                        <li key={link.path}>
-                          <Link to={link.path} className="cursor-pointer hover:text-primary transition-colors">{link.label}</Link>
-                        </li>
-                      ))
-                    ) : (
-                      <div className="text-xs text-white/40 italic">No links</div>
-                    )}
-                  </ul>
-                </div>
+              {/* Services Column */}
+              <div>
+                <div className="text-sm font-semibold mb-4 text-white">Services</div>
+                <ul className="space-y-2.5 text-sm text-white/70">
+                  {activeServices.length > 0 ? (
+                    activeServices.map((service) => (
+                      <li key={service._id}>
+                        <Link 
+                          to={`/services/${service.slug}`} 
+                          className="cursor-pointer hover:text-primary transition-colors"
+                        >
+                          {service.service_name}
+                        </Link>
+                      </li>
+                    ))
+                  ) : (
+                    <div className="text-xs text-white/40 italic">No active services</div>
+                  )}
+                </ul>
+              </div>
+              
+              {/* Company Column */}
+              <div>
+                <div className="text-sm font-semibold mb-4 text-white">Company</div>
+                <ul className="space-y-2.5 text-sm text-white/70">
+                  {companyLinks.length > 0 ? (
+                    companyLinks.map((link) => (
+                      <li key={link.path}>
+                        <Link to={link.path} className="cursor-pointer hover:text-primary transition-colors">{link.label}</Link>
+                      </li>
+                    ))
+                  ) : (
+                    <div className="text-xs text-white/40 italic">No links</div>
+                  )}
+                </ul>
               </div>
 
               {/* Synchronized Contact Block */}

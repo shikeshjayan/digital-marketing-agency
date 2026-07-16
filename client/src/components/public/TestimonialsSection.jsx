@@ -28,7 +28,7 @@ export default function TestimonialsSection({
             {[...Array(3)].map((_, i) => (
               <div
                 key={i}
-                className="border border-border rounded-lg px-6 py-8 bg-surface text-center">
+                className="border border-border rounded-lg px-6 py-8 bg-surface text-center card-shadow">
                 <div className="mx-auto w-14 h-14 rounded-full bg-surface animate-pulse" />
                 <div className="mt-3 h-2 w-16 bg-surface rounded mx-auto animate-pulse" />
                 <div className="mt-3 h-4 w-24 bg-surface rounded mx-auto animate-pulse" />
@@ -73,14 +73,14 @@ export default function TestimonialsSection({
               <button
                 type="button"
                 onClick={prev}
-                className="w-10 h-10 rounded-lg bg-surface border border-border flex items-center justify-center text-primary hover:bg-primary hover:text-white transition cursor-pointer"
+                className="w-10 h-10 rounded-lg bg-surface border border-border flex items-center justify-center text-primary hover:bg-primary hover:text-white transition cursor-pointer card-shadow"
                 aria-label="Previous reviews">
                 <FontAwesomeIcon icon={faAngleLeft} className="text-sm" />
               </button>
               <button
                 type="button"
                 onClick={next}
-                className="w-10 h-10 rounded-lg bg-surface border border-border flex items-center justify-center text-primary hover:bg-primary hover:text-white transition cursor-pointer"
+                className="w-10 h-10 rounded-lg bg-surface border border-border flex items-center justify-center text-primary hover:bg-primary hover:text-white transition cursor-pointer card-shadow"
                 aria-label="Next reviews">
                 <FontAwesomeIcon icon={faAngleRight} className="text-sm" />
               </button>

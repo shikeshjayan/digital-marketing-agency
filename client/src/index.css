@@ -1,5 +1,11 @@
 @import "tailwindcss";
 
+@layer components {
+  .card-shadow {
+    @apply shadow-xl/20;
+  }
+}
+
 /* ─── Design Tokens ─────────────────────────────────────────── */
 @theme {
   /* Brand */
@@ -235,6 +241,22 @@ textarea::-webkit-scrollbar-thumb:hover {
 
 .animate-page-fade {
   animation: page-fade-in 0.35s ease-out both;
+}
+
+@keyframes scroll-effect {
+  from {
+    transform: translateX(100px);
+    opacity: 0;
+  }
+
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+.animate-scroll-effect {
+  animation: scroll-effect 0.45s ease-out both;
 }
 
 @keyframes wave {

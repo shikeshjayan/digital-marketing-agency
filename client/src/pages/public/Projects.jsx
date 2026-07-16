@@ -29,7 +29,7 @@ import ImageLoader from "../../components/ui/ImageLoader.jsx";
    ========================================== */
 const ProjectCard = ({ project }) => {
   return (
-    <div className="group block bg-background border border-border rounded-lg overflow-hidden hover:shadow-lg hover:border-primary transition-all duration-300 h-full flex flex-col w-full">
+    <div className="group block bg-background border border-border rounded-lg overflow-hidden hover: hover:border-primary transition-all duration-300 h-full flex flex-col w-full card-shadow">
       <div className="relative overflow-hidden aspect-[16/10] w-full bg-surface">
         <ImageLoader
           src={project.thumbnail || project.image}
@@ -49,7 +49,7 @@ const ProjectCard = ({ project }) => {
             </span>
           )}
           {project.industries?.length > 0 && (
-            <span className="inline-block px-2.5 py-0.5 rounded-sb bg-surface text-text font-semibold border border-border text-xxs">
+            <span className="inline-block px-2.5 py-0.5 rounded-sb bg-surface text-text font-semibold border border-border text-xxs card-shadow">
               {typeof project.industries[0] === "object" ? project.industries[0].name : "Industry"}
             </span>
           )}
@@ -167,7 +167,7 @@ function FeaturedCaseStudy({ projects }) {
           />
         </FadeIn>
         <FadeIn delay={40}>
-          <div className="mt-8 bg-background border border-border rounded-lg overflow-hidden hover:shadow-lg transition-shadow duration-300">
+          <div className="mt-8 bg-background border border-border rounded-lg overflow-hidden hover: transition-shadow duration-300 card-shadow">
             <div className="grid grid-cols-1 lg:grid-cols-2">
               <div className="relative overflow-hidden aspect-[16/10] sm:aspect-[16/9] lg:aspect-auto lg:min-h-[320px] bg-surface">
                 <ImageLoader
@@ -185,7 +185,7 @@ function FeaturedCaseStudy({ projects }) {
                     </span>
                   )}
                   {featured.industries?.length > 0 && (
-                    <span className="inline-block px-2.5 py-0.5 rounded-sb bg-surface text-text font-semibold border border-border text-xxs">
+                    <span className="inline-block px-2.5 py-0.5 rounded-sb bg-surface text-text font-semibold border border-border text-xxs card-shadow">
                       {typeof featured.industries[0] === "object" ? featured.industries[0].name : "Industry"}
                     </span>
                   )}
@@ -305,7 +305,7 @@ function ResultsAnalytics({ stats = [] }) {
           {({ isInView, ref }) => (
             <div ref={ref} className="mt-10 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
               {metrics.map((m) => (
-                <div key={m.label} className="bg-surface border border-border rounded-lg p-6 text-center h-full hover:shadow-sm transition group flex flex-col items-center">
+                <div key={m.label} className="bg-surface border border-border rounded-lg p-6 text-center h-full hover: transition group flex flex-col items-center card-shadow">
                   <div className="w-12 h-12 rounded-lg bg-primary-light flex items-center justify-center mx-auto group-hover:bg-primary group-hover:text-white transition shrink-0">
                     <FontAwesomeIcon
                       icon={m.icon}
@@ -353,7 +353,7 @@ function ClientLogos({ logos = [] }) {
         <div className="mt-10 flex flex-wrap justify-center gap-4">
           {logos.map((logo, i) => (
             <FadeIn key={i} delay={i * 30} className="w-[calc(50%-8px)] sm:w-[calc(33.33%-11px)] md:w-[calc(25%-12px)] lg:w-[calc(20%-12px)] min-w-[140px]">
-              <div className="flex items-center justify-center bg-background border border-border rounded-lg px-4 py-5 hover:shadow-sm hover:border-primary/30 transition-all duration-200 cursor-default h-full w-full">
+              <div className="flex items-center justify-center bg-background border border-border rounded-lg px-4 py-5 hover: hover:border-primary/30 transition-all duration-200 cursor-default h-full w-full card-shadow">
                 <span className="text-sm font-semibold text-muted text-center small-text">
                   {logo}
                 </span>
@@ -390,7 +390,7 @@ function BeforeAfterResults() {
         <div className="mt-10 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
           {beforeAfterData.map((item, i) => (
             <FadeIn key={item.metric} delay={i * 40}>
-              <div className="bg-surface border border-border rounded-lg p-6 text-center hover:shadow-lg transition-all duration-300 h-full flex flex-col justify-between">
+              <div className="bg-surface border border-border rounded-lg p-6 text-center hover: transition-all duration-300 h-full flex flex-col justify-between card-shadow">
                 <div className="text-base font-bold text-heading small-text tracking-wide mb-4">
                   {item.metric}
                 </div>
@@ -501,7 +501,7 @@ const Projects = () => {
             <button
               type="button"
               onClick={() => scroll("left")}
-              className="w-9 h-9 flex items-center justify-center text-text bg-background border border-border rounded-lg shadow-2xs hover:text-primary hover:border-primary/50 transition shrink-0 z-10 cursor-pointer"
+              className="w-9 h-9 flex items-center justify-center text-text bg-background border border-border rounded-lg -2xs hover:text-primary hover:border-primary/50 transition shrink-0 z-10 cursor-pointer card-shadow"
               aria-label="Scroll Left"
             >
               <FontAwesomeIcon icon={faChevronLeft} className="text-xs" />
@@ -528,7 +528,7 @@ const Projects = () => {
             <button
               type="button"
               onClick={() => scroll("right")}
-              className="w-9 h-9 flex items-center justify-center text-text bg-background border border-border rounded-lg shadow-2xs hover:text-primary hover:border-primary/50 transition shrink-0 z-10 cursor-pointer"
+              className="w-9 h-9 flex items-center justify-center text-text bg-background border border-border rounded-lg -2xs hover:text-primary hover:border-primary/50 transition shrink-0 z-10 cursor-pointer card-shadow"
               aria-label="Scroll Right"
             >
               <FontAwesomeIcon icon={faChevronRight} className="text-xs" />

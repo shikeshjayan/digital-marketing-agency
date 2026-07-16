@@ -15,7 +15,7 @@ export default function TeamCard({ member }) {
   const hasEmail = member.email && member.email.trim() !== "";
 
   return (
-    <div className="flex flex-col bg-background border border-border rounded-lg overflow-hidden w-[300px] max-w-full">
+    <div className="flex flex-col bg-background border border-border rounded-lg overflow-hidden w-[300px] max-w-full card-shadow">
       <div className="relative w-full aspect-[3/4] overflow-hidden">
         {hasPhoto ? (
           <img

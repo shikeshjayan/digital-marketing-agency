@@ -81,7 +81,7 @@ export default function OurProcess({ steps = defaultSteps, bg = "bg-background-s
                     {/* Cleaned layout: Removed "md:text-right md:pr-12" for left-side boxes so text stays left-aligned internally */}
                     <div
                       className={`text-left ${isLeft ? "md:pr-12" : "md:col-start-2 md:pl-12"}`}>
-                      <div className="bg-surface border border-border rounded-lg p-6 hover:shadow-sm transition">
+                      <div className="bg-surface border border-border rounded-lg p-6 hover: transition card-shadow">
                         
                         {/* Cleaned wrapper: Removed "md:justify-end" condition so icon and title are always cleanly on the left side of the card */}
                         <div className="flex items-center gap-3">

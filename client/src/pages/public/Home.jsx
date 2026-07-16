@@ -192,7 +192,7 @@ function ServicesCarousel({ services }) {
     return (
       <section className="py-12 bg-background-section">
         <div className="max-w-6xl mx-auto px-4">
-          <div className="bg-background rounded-lg shadow-sm border border-border overflow-hidden">
+          <div className="bg-background rounded-lg  border border-border overflow-hidden card-shadow">
             <div className="px-6 py-12 md:px-10 text-center">
               <p className="text-muted body-text font-body">No featured services available at the moment.</p>
             </div>
@@ -221,16 +221,16 @@ function ServicesCarousel({ services }) {
               onTouchStart={handleTouchStart}
               onTouchEnd={handleTouchEnd}>
               
-              <div key={index} className="grid grid-cols-1 md:grid-cols-3 gap-6 items-stretch animate-page-fade">
+              <div key={index} className="grid grid-cols-1 md:grid-cols-3 gap-6 items-stretch animate-scroll-effect">
                 {currentChunk.map((item, i) => (
-                  <FadeIn key={item._id} delay={i * 100}>
                   <div 
-                    className="bg-background rounded-lg shadow-sm border border-border overflow-hidden flex flex-col justify-between p-6 h-full min-h-[250px]"
+                    key={item._id}
+                    className="bg-background rounded-lg  border border-border overflow-hidden flex flex-col justify-between p-6 h-full min-h-[250px] card-shadow"
                   >
                     <div className="flex-1 flex flex-col">
                       <h3 className="subheading text-heading line-clamp-1">
                         {item.service_name.split(" ").slice(0, 2).join(" ")}{" "}
-                        <span className="text-primary-hover">
+                        <span className="text-heading">
                           {item.service_name.split(" ").slice(2).join(" ")}
                         </span>
                       </h3>
@@ -247,7 +247,6 @@ function ServicesCarousel({ services }) {
                       </Link>
                     </div>
                   </div>
-                  </FadeIn>
                 ))}
               </div>
             </div>
@@ -257,7 +256,7 @@ function ServicesCarousel({ services }) {
                 <div className="hidden md:block absolute left-0 -translate-x-1/2 top-1/2 -translate-y-1/2 z-10">
                   <button
                     type="button"
-                    className="w-12 h-12 rounded-full bg-background border border-border shadow-sm hover:bg-surface flex items-center justify-center cursor-pointer"
+                    className="w-12 h-12 rounded-full bg-background border border-border  hover:bg-surface flex items-center justify-center cursor-pointer card-shadow"
                     onClick={() => go((index - 1 + chunks.length) % chunks.length)}
                     aria-label="Previous slide layer">
                     <FontAwesomeIcon icon={faAngleLeft} />
@@ -266,7 +265,7 @@ function ServicesCarousel({ services }) {
                 <div className="hidden md:block absolute right-0 translate-x-1/2 top-1/2 -translate-y-1/2 z-10">
                   <button
                     type="button"
-                    className="w-12 h-12 rounded-full bg-background border border-border shadow-sm hover:bg-surface flex items-center justify-center cursor-pointer"
+                    className="w-12 h-12 rounded-full bg-background border border-border  hover:bg-surface flex items-center justify-center cursor-pointer card-shadow"
                     onClick={() => go((index + 1) % chunks.length)}
                     aria-label="Next slide layer">
                     <FontAwesomeIcon icon={faAngleRight} />
@@ -304,7 +303,7 @@ function TechnologyStack({ items = [] }) {
       <div className="max-w-6xl mx-auto px-4">
         <FadeIn>
           <div className="text-center text-white">
-            <div className="font-headings text-4xl text-primary">Our</div>
+            <div className="font-headings text-4xl  font-bold text-primary">Our</div>
             <h2 className="mt-2 section-heading">Technology Stack</h2>
           </div>
         </FadeIn>
@@ -370,7 +369,7 @@ export default function Home() {
           <div className="max-w-6xl mx-auto px-4">
             <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
               {[...Array(4)].map((_, i) => (
-                <div key={i} className="bg-surface border border-border rounded-lg p-6 text-center animate-pulse">
+                <div key={i} className="bg-surface border border-border rounded-lg p-6 text-center animate-pulse card-shadow">
                   <div className="w-10 h-10 bg-surface-border rounded-lg mx-auto" />
                   <div className="mt-3 h-8 w-16 bg-surface-border rounded mx-auto" />
                   <div className="mt-1 h-4 w-20 bg-surface-border rounded mx-auto" />
@@ -379,7 +378,7 @@ export default function Home() {
             </div>
             <div className="mt-10 grid grid-cols-1 md:grid-cols-3 gap-6">
               {[...Array(3)].map((_, i) => (
-                <div key={i} className="bg-background border border-border rounded-lg p-6 min-h-[250px] animate-pulse">
+                <div key={i} className="bg-background border border-border rounded-lg p-6 min-h-[250px] animate-pulse card-shadow">
                   <div className="h-5 w-3/4 bg-surface-border rounded" />
                   <div className="mt-3 space-y-2">
                     <div className="h-3 w-full bg-surface-border rounded" />
@@ -420,7 +419,7 @@ export default function Home() {
           <div className="max-w-6xl mx-auto px-4">
             <div className="flex flex-wrap justify-center gap-4">
               {[...Array(5)].map((_, i) => (
-                <div key={i} className="w-[calc(20%-12px)] min-w-[140px] h-16 bg-surface border border-border rounded-lg animate-pulse" />
+                <div key={i} className="w-[calc(20%-12px)] min-w-[140px] h-16 bg-surface border border-border rounded-lg animate-pulse card-shadow" />
               ))}
             </div>
           </div>

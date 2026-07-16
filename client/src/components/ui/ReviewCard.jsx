@@ -10,7 +10,7 @@ export default function ReviewCard({ review, onReadMore }) {
     : review.review_text;
 
   return (
-    <div className="h-full bg-surface border border-border rounded-lg p-6 flex flex-col justify-between hover:shadow-md transition">
+    <div className="h-full bg-surface border border-border rounded-lg p-6 flex flex-col justify-between hover:shadow-md transition card-shadow">
       <div>
         <div className="flex items-center gap-3 w-full min-w-0">
           <div className="w-12 h-12 rounded-full bg-primary-light/40 border border-primary/20 flex items-center justify-center shrink-0 overflow-hidden shadow-inner">

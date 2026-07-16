@@ -27,7 +27,7 @@ export default function FAQSection({
           {items.map((item, i) => (
             <div
               key={i}
-              className="bg-background border border-border rounded-lg overflow-hidden">
+              className="bg-background border border-border rounded-lg overflow-hidden card-shadow">
               <button
                 type="button"
                 aria-expanded={activeIndex === i}

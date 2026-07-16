@@ -80,7 +80,7 @@ export default function WhyChooseUs({
                   direction="up"
                   className="h-full">
                   {/* Fixed: Changed rounded-c to rounded-sm to adopt the 0.125rem radius cleanly */}
-                  <div className="h-full bg-background border border-border rounded-sm p-5 hover:shadow-md hover:-translate-y-0.5 transition-all duration-300 group">
+                  <div className="h-full bg-background border border-border rounded-sm p-5 hover: hover:-translate-y-0.5 transition-all duration-300 group card-shadow">
                     <div className="w-10 h-10 bg-primary-light flex items-center justify-center shrink-0 group-hover:bg-primary transition-colors rounded-sm">
                       <FontAwesomeIcon
                         icon={r.icon}
@@ -92,7 +92,7 @@ export default function WhyChooseUs({
                     </h3>
                     <p
                       className="mt-1.5 text-sm text-text leading-relaxed"
-                      style={{ fontSize: "12px" }}>
+                      style={{ fontSize: "14px" }}>
                       {r.desc}
                     </p>
                   </div>
@@ -124,7 +124,7 @@ export default function WhyChooseUs({
                       </div>
                       <div
                         className="mt-1 text-xs text-muted"
-                        style={{ fontSize: "12px" }}>
+                        style={{ fontSize: "14px" }}>
                         {stat.label}
                       </div>
                     </div>

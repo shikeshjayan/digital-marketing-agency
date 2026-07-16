@@ -12,7 +12,7 @@ export default function StatsSection({ stats = [], bg = "bg-background" }) {
           <FadeIn direction="left">
             <div className="flex flex-col items-center lg:items-start">
               <div className="w-full max-w-md">
-                <div className="inline-flex items-center gap-3 px-4 py-2 rounded-full bg-background border border-border">
+                <div className="inline-flex items-center gap-3 px-4 py-2 rounded-full bg-background border border-border card-shadow">
                   <div className="w-2.5 h-2.5 rounded-full bg-primary animate-pulse" />
                   <span className="text-sm font-semibold text-heading">
                     Innovation meets execution
@@ -40,7 +40,7 @@ export default function StatsSection({ stats = [], bg = "bg-background" }) {
             {displayStats.map((stat, i) => (
               <FadeIn key={stat.key || i} delay={(i + 1) * 100} className="h-full">
                 {({ isInView, ref }) => (
-                <div ref={ref} className="bg-background border border-border rounded-lg p-6 text-center shadow-sm flex flex-col items-center justify-center h-full min-h-[120px]">
+                <div ref={ref} className="bg-background border border-border rounded-lg p-6 text-center  flex flex-col items-center justify-center h-full min-h-[120px] card-shadow">
                   <div className="text-4xl font-extrabold text-heading">
                     <AnimatedCounter target={stat.target} suffix={stat.suffix || ""} isInView={isInView} />
                   </div>
