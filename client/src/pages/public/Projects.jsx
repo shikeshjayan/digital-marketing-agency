@@ -22,6 +22,7 @@ import AnimatedCounter from "../../components/ui/AnimatedCounter.jsx";
 import { ProjectCardSkeleton } from "../../components/ui/Skeleton.jsx";
 import FinalCTA from "../../components/public/FinalCTA.jsx";
 import TestimonialsSection from "../../components/public/TestimonialsSection.jsx";
+import resolveImagePath from "../../utils/resolveImagePath";
 import ImageLoader from "../../components/ui/ImageLoader.jsx";
 
 /* ==========================================
@@ -187,108 +188,96 @@ function ProjectStatistics({ stats = [] }) {
 }
 
 /* ==========================================
-   Featured Case Study Component
+   Featured Case Studies Component
    ========================================== */
-function FeaturedCaseStudy({ projects }) {
-  const featured =
-    projects.find((p) => p.status === "Published") || projects[0];
-  if (!featured) return null;
+function FeaturedCaseStudies({ caseStudies, loading }) {
   return (
-    <section className="py-12 md:py-16 bg-background-section">
+    <section className="py-16 md:py-20 bg-background-section">
       <div className="max-w-6xl mx-auto px-4">
         <FadeIn>
           <SectionHeading
-            eyebrow="Featured Work"
-            title="Case Study"
-            subtitle="A closer look at one of our most impactful projects."
+            eyebrow="Success Stories"
+            title="Featured Case Studies"
+            subtitle="Real challenges. Strategic solutions. Measurable outcomes."
           />
         </FadeIn>
-        <FadeIn delay={40}>
-          <div className="mt-8 bg-background border border-border rounded-lg overflow-hidden hover: transition-shadow duration-300 card-shadow">
-            <div className="grid grid-cols-1 lg:grid-cols-2">
-              <div className="relative overflow-hidden aspect-[16/10] sm:aspect-[16/9] lg:aspect-auto lg:min-h-[320px] bg-surface">
-                <ImageLoader
-                  src={featured.thumbnail || featured.image}
-                  alt={featured.project_name}
-                  type="project"
-                  className="w-full h-full"
-                />
+        {loading ? (
+          <div className="mt-10 flex flex-wrap justify-center gap-6">
+            {[...Array(3)].map((_, i) => (
+              <div
+                key={i}
+                className="bg-background border border-border rounded-lg p-6 h-64 w-full md:w-[calc(33.33%-16px)] animate-pulse card-shadow">
+                <div className="h-4 w-20 bg-surface rounded" />
+                <div className="h-5 w-40 bg-surface rounded mt-4" />
+                <div className="h-8 w-32 bg-surface rounded mt-3" />
+                <div className="h-4 w-full bg-surface rounded mt-3" />
+                <div className="h-4 w-2/3 bg-surface rounded mt-2" />
               </div>
-              <div className="p-5 sm:p-6 lg:p-8 flex flex-col">
-                <div className="flex items-center gap-2 text-xs flex-wrap">
-                  {featured.services?.length > 0 && (
-                    <span className="inline-block px-2.5 py-0.5 rounded-sb bg-primary-light text-primary font-semibold text-xxs">
-                      {typeof featured.services[0] === "object"
-                        ? featured.services[0].service_name
-                        : "Service"}
-                    </span>
-                  )}
-                  {featured.industries?.length > 0 && (
-                    <span className="inline-block px-2.5 py-0.5 rounded-sb bg-surface text-text font-semibold border border-border text-xxs card-shadow">
-                      {typeof featured.industries[0] === "object"
-                        ? featured.industries[0].name
-                        : "Industry"}
-                    </span>
-                  )}
-                </div>
-                <h3 className="mt-3 subheading text-heading">
-                  {featured.project_name}
-                </h3>
-                <div className="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-xs text-muted text-xxs">
-                  {featured.client?.name && (
-                    <span className="flex items-center gap-1.5">
-                      <FontAwesomeIcon
-                        icon={faBuilding}
-                        className="text-[10px]"
-                      />
-                      {featured.client.name}
-                    </span>
-                  )}
-                  {featured.completion_date && (
-                    <span className="flex items-center gap-1.5">
-                      <FontAwesomeIcon icon={faClock} className="text-[10px]" />
-                      {new Date(featured.completion_date).toLocaleDateString(
-                        "en-US",
-                        { year: "numeric", month: "short" },
-                      )}
-                    </span>
-                  )}
-                </div>
-                {featured.technologies && featured.technologies.length > 0 && (
-                  <div className="mt-2 flex items-center gap-1.5 text-xs text-muted text-xxs">
-                    <FontAwesomeIcon icon={faCogs} className="text-[10px]" />
-                    <span>
-                      {featured.technologies
-                        .map((t) => (typeof t === "object" ? t.name : t))
-                        .join(", ")}
-                    </span>
-                  </div>
-                )}
-                <p className="mt-4 text-text small-text leading-relaxed break-words">
-                  {featured.short_description}
-                </p>
-                {featured.short_description &&
-                  featured.short_description.length > 120 && (
-                    <Link
-                      to={`/projects/${featured.slug}`}
-                      className="mt-1.5 self-start text-xs font-semibold text-primary hover:text-primary-hover transition text-xxs">
-                      Read more
-                    </Link>
-                  )}
-                <div className="mt-auto pt-5">
-                  <a
-                    href={featured.project_url}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="inline-flex items-center gap-2 rounded-lg bg-primary text-white px-5 py-2.5 text-sm font-semibold hover:bg-primary-hover transition cursor-pointer button-text">
-                    <span>View Live Project</span>
-                    <FontAwesomeIcon icon={faArrowRight} className="text-xs" />
-                  </a>
-                </div>
-              </div>
-            </div>
+            ))}
           </div>
-        </FadeIn>
+        ) : (!caseStudies || caseStudies.length === 0) ? (
+          <div className="mt-10 text-center py-12">
+            <p className="text-muted">
+              No featured case studies available yet.
+            </p>
+          </div>
+        ) : (
+          <div className="mt-10 flex flex-wrap justify-center gap-6 items-stretch">
+            {caseStudies.map((cs, i) => (
+              <FadeIn
+                key={cs._id}
+                delay={i * 40}
+                className="w-full md:basis-[calc(50%-12px)] lg:basis-[calc(33.33%-16px)] max-w-sm lg:max-w-none flex min-w-0">
+                <div className="bg-background border border-border rounded-lg p-6 w-full flex flex-col justify-between hover: transition group card-shadow min-w-0">
+                  <div className="flex flex-col flex-1 min-w-0">
+                    {cs.hero_image && (
+                      <div className="-mx-6 -mt-6 mb-4 overflow-hidden rounded-t-lg bg-surface shrink-0 min-w-0 h-40 relative">
+                        <ImageLoader
+                          src={cs.hero_image}
+                          alt={cs.title}
+                          type="case-study"
+                          className="w-full h-full object-cover"
+                        />
+                      </div>
+                    )}
+                    <span className="text-xs font-semibold text-primary bg-primary-light px-2.5 py-1 rounded-sb w-fit text-xxs truncate max-w-full">
+                      {cs.results?.[0]?.title || "Case Study"}
+                    </span>
+
+                    <h3 className="mt-3 text-base font-bold text-heading line-clamp-1 break-words">
+                      {cs.title}
+                    </h3>
+
+                    {cs.results?.[0] && (
+                      <div className="mt-3 text-2xl font-extrabold text-primary">
+                        {cs.results[0].value}
+                      </div>
+                    )}
+
+                    <p
+                      className="mt-2 mb-4 text-sm leading-relaxed text-text break-words"
+                      style={{
+                        display: "-webkit-box",
+                        WebkitLineClamp: 3,
+                        WebkitBoxOrient: "vertical",
+                        overflow: "hidden",
+                      }}>
+                      {cs.overview}
+                    </p>
+                  </div>
+
+                  <div className="mt-auto pt-2">
+                    <Link
+                      to={`/case-studies/${cs.slug}`}
+                      className="inline-flex items-center gap-2 text-sm font-semibold text-primary group-hover:gap-3 transition-all button-text">
+                      Read Case Study <FontAwesomeIcon icon={faArrowRight} />
+                    </Link>
+                  </div>
+                </div>
+              </FadeIn>
+            ))}
+          </div>
+        )}
       </div>
     </section>
   );
@@ -493,6 +482,7 @@ const Projects = () => {
   const reviews = projectsPage?.reviews ?? [];
   const services = projectsPage?.services ?? [];
   const content = projectsPage?.siteContent ?? null;
+  const caseStudies = projectsPage?.caseStudies ?? [];
   const scrollContainerRef = useRef(null);
 
   const categoryFilters = [
@@ -655,8 +645,8 @@ const Projects = () => {
         </div>
       </section>
 
-      {/* 4. Featured Case Study */}
-      <FeaturedCaseStudy projects={projects} />
+      {/* 4. Featured Case Studies */}
+      <FeaturedCaseStudies caseStudies={caseStudies} loading={loading} />
 
       {/* 5. Results & Analytics */}
       <ResultsAnalytics stats={companyStats} />

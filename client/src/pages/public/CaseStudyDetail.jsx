@@ -89,7 +89,7 @@ export default function CaseStudyDetail() {
             <span className="text-white/30">/</span>
             <Link to={project?.slug ? `/projects/${project.slug}` : "/projects"} className="hover:text-white transition-colors truncate max-w-[200px]">{project?.project_name || "Project"}</Link>
             <span className="text-white/30">/</span>
-            <span className="text-white truncate">
+            <span className="text-white truncate max-w-[200px]">
               {displayTitle}
             </span>
           </nav>
@@ -111,7 +111,7 @@ export default function CaseStudyDetail() {
 
                 <div className="flex flex-wrap gap-3 mt-6 justify-center lg:justify-start">
                   {project.project_name && (
-                    <span className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-white/10 text-white/80 text-xs rounded-sb text-xxs">
+                    <span className="inline-block align-middle px-3 py-1.5 bg-white/10 text-white/80 text-xs rounded-sb text-xxs truncate max-w-[200px]" title={project.project_name}>
                       {project.project_name}
                     </span>
                   )}
