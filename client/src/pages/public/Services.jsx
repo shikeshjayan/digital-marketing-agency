@@ -1,7 +1,13 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faBuilding, faMicrochip, faArrowRight, faAngleLeft, faAngleRight } from "@fortawesome/free-solid-svg-icons";
+import {
+  faBuilding,
+  faMicrochip,
+  faArrowRight,
+  faAngleLeft,
+  faAngleRight,
+} from "@fortawesome/free-solid-svg-icons";
 import HeroSplit from "../../components/public/HeroSplit";
 import FadeIn from "../../components/ui/FadeIn.jsx";
 import SectionHeading from "../../components/ui/SectionHeading.jsx";
@@ -24,33 +30,32 @@ import ImageLoader from "../../components/ui/ImageLoader.jsx";
 const ServiceCard = ({ service }) => (
   <Link
     to={`/services/${slugify(service.service_name)}`}
-    className="flex flex-col bg-background border border-border rounded-lg h-full overflow-hidden group hover:-translate-y-1 hover: transition-all duration-300 card-shadow">
-    <div className="h-48 overflow-hidden">
+    className="flex flex-col bg-background border border-border rounded-lg h-full w-full overflow-hidden group hover:-translate-y-1 transition-all duration-300 card-shadow">
+    {/* Image Container */}
+    <div className="h-48 w-full overflow-hidden shrink-0">
       <ImageLoader
         src={service.hero_image}
         alt={service.service_name}
         type="service"
-        className="w-full h-full transition-transform duration-500 group-hover:scale-110"
+        className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
       />
     </div>
-    <div className="flex flex-col items-center text-center p-6 flex-1">
-      <h3 className="subheading text-heading">
+
+    {/* Content Container */}
+    <div className="flex flex-col p-6 flex-1 min-w-0">
+      <h3 className="subheading text-heading text-center font-bold line-clamp-1 break-words px-1">
         {service.service_name}
       </h3>
-      <p
-        className="mt-3 small-text text-text body-text"
-        style={{
-          display: '-webkit-box',
-          WebkitLineClamp: 3,
-          WebkitBoxOrient: 'vertical',
-          overflow: 'hidden'
-        }}
-      >
+
+      <p className="mt-3 small-text text-text body-text text-center line-clamp-3 wrap-break-word break-words flex-1">
         {service.short_description}
       </p>
-      <span className="mt-auto pt-6 inline-flex items-center gap-2 text-sm font-semibold text-primary group-hover:gap-3 transition-all button-text">
-        Learn More <FontAwesomeIcon icon={faArrowRight} />
-      </span>
+
+      <div className="mt-6 pt-4 border-t border-border/50 text-center">
+        <span className="inline-flex items-center gap-2 text-sm font-semibold text-primary group-hover:gap-3 transition-all button-text">
+          Learn More <FontAwesomeIcon icon={faArrowRight} />
+        </span>
+      </div>
     </div>
   </Link>
 );
@@ -64,11 +69,12 @@ function Introduction() {
       <div className="max-w-4xl mx-auto px-4 text-center">
         <FadeIn>
           <p className="body-text md:subheading text-text">
-            We are a full-service digital marketing agency dedicated to helping businesses
-            of all sizes grow their online presence and achieve measurable results. From
-            custom web development and SEO to social media management and brand strategy,
-            our team crafts tailored solutions that solve real business problems and drive
-            long-term success.
+            We are a full-service digital marketing agency dedicated to helping
+            businesses of all sizes grow their online presence and achieve
+            measurable results. From custom web development and SEO to social
+            media management and brand strategy, our team crafts tailored
+            solutions that solve real business problems and drive long-term
+            success.
           </p>
         </FadeIn>
       </div>
@@ -99,13 +105,26 @@ function IndustriesWeServe({ industries = [] }) {
                 <div className="bg-surface w-full border border-border rounded-lg p-5 text-center hover: hover:-translate-y-0.5 transition-all duration-300 group cursor-default h-full flex flex-col justify-center card-shadow">
                   <div className="w-12 h-12 mx-auto rounded-lg bg-primary-light flex items-center justify-center group-hover:bg-primary transition-colors">
                     {ind.iconType === "image" && ind.icon ? (
-                      <img src={resolveImagePath(ind.icon)} alt={ind.name} loading="lazy" decoding="async" className="w-6 h-6 object-contain group-hover:brightness-0 group-hover:invert transition-all" />
+                      <img
+                        src={resolveImagePath(ind.icon)}
+                        alt={ind.name}
+                        loading="lazy"
+                        decoding="async"
+                        className="w-6 h-6 object-contain group-hover:brightness-0 group-hover:invert transition-all"
+                      />
                     ) : (
-                      <FontAwesomeIcon icon={faBuilding} className="text-primary text-xl group-hover:text-white transition-colors" />
+                      <FontAwesomeIcon
+                        icon={faBuilding}
+                        className="text-primary text-xl group-hover:text-white transition-colors"
+                      />
                     )}
                   </div>
-                  <h3 className="mt-3 small-text font-bold text-heading">{ind.name}</h3>
-                  <p className="mt-1.5 text-sm text-text leading-relaxed">{ind.description}</p>
+                  <h3 className="mt-3 small-text font-bold text-heading">
+                    {ind.name}
+                  </h3>
+                  <p className="mt-1.5 text-sm text-text leading-relaxed">
+                    {ind.description}
+                  </p>
                 </div>
               </FadeIn>
             );
@@ -133,7 +152,9 @@ function FeaturedCaseStudies({ caseStudies, loading }) {
         {loading ? (
           <div className="mt-10 flex flex-wrap justify-center gap-6">
             {[...Array(3)].map((_, i) => (
-              <div key={i} className="bg-background border border-border rounded-lg p-6 h-64 w-full md:w-[calc(33.33%-16px)] animate-pulse card-shadow">
+              <div
+                key={i}
+                className="bg-background border border-border rounded-lg p-6 h-64 w-full md:w-[calc(33.33%-16px)] animate-pulse card-shadow">
                 <div className="h-4 w-20 bg-surface rounded" />
                 <div className="h-5 w-40 bg-surface rounded mt-4" />
                 <div className="h-8 w-32 bg-surface rounded mt-3" />
@@ -144,12 +165,17 @@ function FeaturedCaseStudies({ caseStudies, loading }) {
           </div>
         ) : caseStudies.length === 0 ? (
           <div className="mt-10 text-center py-12">
-            <p className="text-muted">No featured case studies available yet.</p>
+            <p className="text-muted">
+              No featured case studies available yet.
+            </p>
           </div>
         ) : (
           <div className="mt-10 flex flex-wrap justify-center gap-6 items-stretch">
             {caseStudies.map((cs, i) => (
-              <FadeIn key={cs._id} delay={i * 40} className="w-full md:basis-[calc(50%-12px)] lg:basis-[calc(33.33%-16px)] max-w-sm lg:max-w-none flex">
+              <FadeIn
+                key={cs._id}
+                delay={i * 40}
+                className="w-full md:basis-[calc(50%-12px)] lg:basis-[calc(33.33%-16px)] max-w-sm lg:max-w-none flex">
                 <div className="bg-background border border-border rounded-lg p-6 w-full flex flex-col justify-between hover: transition group card-shadow">
                   <div className="flex flex-col flex-1">
                     {cs.hero_image && (
@@ -167,7 +193,9 @@ function FeaturedCaseStudies({ caseStudies, loading }) {
                       {cs.results?.[0]?.title || "Case Study"}
                     </span>
 
-                    <h3 className="mt-3 text-base font-bold text-heading line-clamp-1">{cs.title}</h3>
+                    <h3 className="mt-3 text-base font-bold text-heading line-clamp-1">
+                      {cs.title}
+                    </h3>
 
                     {cs.results?.[0] && (
                       <div className="mt-3 text-2xl font-extrabold text-primary">
@@ -178,12 +206,11 @@ function FeaturedCaseStudies({ caseStudies, loading }) {
                     <p
                       className="mt-2 mb-4 text-sm leading-relaxed text-text break-words"
                       style={{
-                        display: '-webkit-box',
+                        display: "-webkit-box",
                         WebkitLineClamp: 3,
-                        WebkitBoxOrient: 'vertical',
-                        overflow: 'hidden'
-                      }}
-                    >
+                        WebkitBoxOrient: "vertical",
+                        overflow: "hidden",
+                      }}>
                       {cs.overview}
                     </p>
                   </div>
@@ -226,12 +253,23 @@ function TechnologiesPlatforms({ technologies = [] }) {
               <div className="flex items-center gap-3 bg-surface border border-border rounded-lg px-4 py-3 hover: hover:border-primary/30 transition-all duration-200 cursor-default card-shadow">
                 <div className="w-9 h-9 rounded-md bg-primary-light flex items-center justify-center shrink-0">
                   {tech.iconType === "image" && tech.icon ? (
-                    <img src={resolveImagePath(tech.icon)} alt={tech.name} loading="lazy" decoding="async" className="w-5 h-5 object-contain" />
+                    <img
+                      src={resolveImagePath(tech.icon)}
+                      alt={tech.name}
+                      loading="lazy"
+                      decoding="async"
+                      className="w-5 h-5 object-contain"
+                    />
                   ) : (
-                    <FontAwesomeIcon icon={faMicrochip} className="text-primary text-sm" />
+                    <FontAwesomeIcon
+                      icon={faMicrochip}
+                      className="text-primary text-sm"
+                    />
                   )}
                 </div>
-                <span className="small-text font-semibold text-heading">{tech.name}</span>
+                <span className="small-text font-semibold text-heading">
+                  {tech.name}
+                </span>
               </div>
             </FadeIn>
           ))}
@@ -260,12 +298,18 @@ function ResultsStatistics({ stats = [] }) {
 
         <FadeIn>
           {({ isInView, ref }) => (
-            <div ref={ref} className="mt-10 grid grid-cols-2 sm:grid-cols-4 gap-6">
+            <div
+              ref={ref}
+              className="mt-10 grid grid-cols-2 sm:grid-cols-4 gap-6">
               {displayStats.map((stat, i) => {
-                const numericTarget = Number(String(stat.target || "").replace(/[^0-9.]/g, "")) || 0;
+                const numericTarget =
+                  Number(String(stat.target || "").replace(/[^0-9.]/g, "")) ||
+                  0;
 
                 return (
-                  <div key={stat.key || i} className="bg-surface border border-border rounded-lg p-6 text-center hover: transition card-shadow">
+                  <div
+                    key={stat.key || i}
+                    className="bg-surface border border-border rounded-lg p-6 text-center hover: transition card-shadow">
                     <div className="text-4xl font-extrabold text-primary">
                       <AnimatedCounter
                         target={numericTarget}
@@ -339,7 +383,6 @@ function PaginatedServicesSection({ services = [] }) {
   return (
     <section className="py-16 md:py-20 bg-background-section">
       <div className="max-w-6xl mx-auto px-4">
-        
         <FadeIn>
           <div className="text-center sm:text-left">
             <SectionHeading
@@ -371,9 +414,11 @@ function PaginatedServicesSection({ services = [] }) {
           </FadeIn>
         )}
 
-        <div key={page} className="mt-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 animate-page-fade">
+        <div
+          key={page}
+          className="mt-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 animate-page-fade">
           {visible.map((s, i) => (
-            <FadeIn key={s._id} delay={i * 100} className="flex">
+            <FadeIn key={s._id} delay={i * 100} className="flex w-full">
               <ServiceCard service={s} />
             </FadeIn>
           ))}
@@ -404,13 +449,18 @@ export default function Services() {
     return s ? `${s.target}${s.suffix}` : "";
   };
 
-  const whyChooseUsStats = ['clientRetention', 'support247', 'averageRoi', 'satisfactionGoal']
-    .map(key => companyStats.find(s => s.key === key))
+  const whyChooseUsStats = [
+    "clientRetention",
+    "support247",
+    "averageRoi",
+    "satisfactionGoal",
+  ]
+    .map((key) => companyStats.find((s) => s.key === key))
     .filter(Boolean)
-    .map(s => ({
+    .map((s) => ({
       target: Number(String(s.target || "").replace(/[^0-9.]/g, "")) || 0,
       suffix: s.suffix || "",
-      label: s.label
+      label: s.label,
     }));
 
   useEffect(() => {
@@ -428,7 +478,9 @@ export default function Services() {
           <div className="max-w-6xl mx-auto px-4">
             <div className="flex flex-wrap justify-center gap-6">
               {[...Array(6)].map((_, i) => (
-                <div key={i} className="w-full sm:w-[calc(50%-12px)] lg:w-[calc(33.33%-16px)] max-w-sm lg:max-w-none">
+                <div
+                  key={i}
+                  className="w-full sm:w-[calc(50%-12px)] lg:w-[calc(33.33%-16px)] max-w-sm lg:max-w-none">
                   <ServiceCardSkeleton />
                 </div>
               ))}
@@ -473,9 +525,18 @@ export default function Services() {
         imageSrc="/services.webp"
         imageAlt="Our Services"
         trustIndicators={[
-          { value: getStat("projectsCompleted") || "500+", label: "Projects\nCompleted" },
-          { value: getStat("clientRetention") || "98%", label: "Client\nSatisfaction" },
-          { value: getStat("yearsExperience") || "10+", label: "Years\nExperience" },
+          {
+            value: getStat("projectsCompleted") || "500+",
+            label: "Projects\nCompleted",
+          },
+          {
+            value: getStat("clientRetention") || "98%",
+            label: "Client\nSatisfaction",
+          },
+          {
+            value: getStat("yearsExperience") || "10+",
+            label: "Years\nExperience",
+          },
         ]}
       />
 
@@ -502,19 +563,29 @@ export default function Services() {
       <TechnologiesPlatforms technologies={technologies} />
 
       {/* 8. Featured Case Studies */}
-      <FeaturedCaseStudies caseStudies={caseStudies} loading={caseStudiesLoading} />
+      <FeaturedCaseStudies
+        caseStudies={caseStudies}
+        loading={caseStudiesLoading}
+      />
 
       {/* 9. Results & Statistics */}
       <ResultsStatistics stats={content?.companyStats} />
 
       {/* 10. Client Testimonials */}
       <FadeIn>
-        <TestimonialsSection reviews={reviews} loading={loading} bg="bg-background" />
+        <TestimonialsSection
+          reviews={reviews}
+          loading={loading}
+          bg="bg-background"
+        />
       </FadeIn>
 
       {/* 11. FAQ */}
       <FadeIn>
-        <FAQSection items={faqs.map((f) => ({ q: f.question, a: f.answer }))} bg="bg-background-section" />
+        <FAQSection
+          items={faqs.map((f) => ({ q: f.question, a: f.answer }))}
+          bg="bg-background-section"
+        />
       </FadeIn>
 
       {/* 12. Final CTA */}

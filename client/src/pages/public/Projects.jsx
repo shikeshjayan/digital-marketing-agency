@@ -29,67 +29,100 @@ import ImageLoader from "../../components/ui/ImageLoader.jsx";
    ========================================== */
 const ProjectCard = ({ project }) => {
   return (
-    <div className="group block bg-background border border-border rounded-lg overflow-hidden hover: hover:border-primary transition-all duration-300 h-full flex flex-col w-full card-shadow">
-      <div className="relative overflow-hidden aspect-[16/10] w-full bg-surface">
+    <div className="group block bg-background border border-border rounded-lg overflow-hidden hover:border-primary transition-all duration-300 h-full flex flex-col w-full card-shadow min-w-0">
+      {/* Image Container with fixed aspect ratio */}
+      <div className="relative overflow-hidden aspect-[16/10] w-full bg-surface shrink-0">
         <ImageLoader
           src={project.thumbnail || project.image}
           alt={project.project_name}
           type="project"
-          className="w-full h-full group-hover:scale-105 transition-transform duration-500"
+          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
         />
       </div>
-      <div className="p-5 flex-1 flex flex-col">
-        <h3 className="subheading text-heading group-hover:text-primary transition-colors duration-300 line-clamp-1">
+
+      {/* Content Container (min-w-0 is vital for child truncations to work) */}
+      <div className="p-5 flex-1 flex flex-col min-w-0">
+        {/* Title clamping */}
+        <h3 className="subheading text-heading group-hover:text-primary transition-colors duration-300 line-clamp-1 break-words">
           {project.project_name}
         </h3>
-        <div className="mt-2 flex items-center gap-2 text-xs flex-wrap">
+
+        {/* Categories / Badges (flex-wrap with truncation) */}
+        <div className="mt-2 flex items-center gap-2 text-xs flex-wrap min-w-0">
           {project.services?.length > 0 && (
-            <span className="inline-block px-2.5 py-0.5 rounded-sb bg-primary-light text-primary font-semibold text-xxs">
-              {typeof project.services[0] === "object" ? project.services[0].service_name : "Service"}
+            <span className="inline-block px-2.5 py-0.5 rounded-sb bg-primary-light text-primary font-semibold text-xxs truncate max-w-[150px]">
+              {typeof project.services[0] === "object"
+                ? project.services[0].service_name
+                : "Service"}
             </span>
           )}
           {project.industries?.length > 0 && (
-            <span className="inline-block px-2.5 py-0.5 rounded-sb bg-surface text-text font-semibold border border-border text-xxs card-shadow">
-              {typeof project.industries[0] === "object" ? project.industries[0].name : "Industry"}
+            <span className="inline-block px-2.5 py-0.5 rounded-sb bg-surface text-text font-semibold border border-border text-xxs card-shadow truncate max-w-[150px]">
+              {typeof project.industries[0] === "object"
+                ? project.industries[0].name
+                : "Industry"}
             </span>
           )}
         </div>
-        <div className="mt-3 flex flex-wrap gap-x-4 gap-y-1 text-xs text-muted text-xxs">
+
+        {/* Client & Date Meta */}
+        <div className="mt-3 flex flex-wrap gap-x-4 gap-y-1 text-xs text-muted text-xxs min-w-0">
           {project.client?.name && (
-            <span className="flex items-center gap-1">
-              <FontAwesomeIcon icon={faBuilding} className="text-[10px]" />
-              {project.client.name}
+            <span className="flex items-center gap-1 min-w-0 max-w-[140px]">
+              <FontAwesomeIcon
+                icon={faBuilding}
+                className="text-[10px] shrink-0"
+              />
+              <span className="truncate">{project.client.name}</span>
             </span>
           )}
           {project.completion_date && (
-            <span className="flex items-center gap-1">
-              <FontAwesomeIcon icon={faClock} className="text-[10px]" />
-              {new Date(project.completion_date).toLocaleDateString("en-US", { year: "numeric", month: "short" })}
+            <span className="flex items-center gap-1 shrink-0">
+              <FontAwesomeIcon
+                icon={faClock}
+                className="text-[10px] shrink-0"
+              />
+              <span>
+                {new Date(project.completion_date).toLocaleDateString("en-US", {
+                  year: "numeric",
+                  month: "short",
+                })}
+              </span>
             </span>
           )}
         </div>
+
+        {/* Technologies List */}
         {project.technologies && project.technologies.length > 0 && (
-          <div className="mt-2 flex items-center gap-1 text-xs text-muted text-xxs">
-            <FontAwesomeIcon icon={faCogs} className="text-[10px]" />
-            <span className="truncate">{project.technologies.map(t => typeof t === "object" ? t.name : t).join(", ")}</span>
+          <div className="mt-2 flex items-center gap-1.5 text-xs text-muted text-xxs min-w-0">
+            <FontAwesomeIcon icon={faCogs} className="text-[10px] shrink-0" />
+            <span className="truncate w-full">
+              {project.technologies
+                .map((t) => (typeof t === "object" ? t.name : t))
+                .join(", ")}
+            </span>
           </div>
         )}
-        <p className="mt-3 small-text text-text body-text line-clamp-2">
+
+        {/* Description line clamping */}
+        <p className="mt-3 small-text text-text body-text line-clamp-2 break-words">
           {project.short_description}
         </p>
-        <div className="mt-auto pt-4 flex items-center gap-4 text-sm font-semibold button-text">
+
+        {/* Bottom Call to Action buttons */}
+        <div className="mt-auto pt-5 flex items-center justify-between gap-4 text-sm font-semibold button-text shrink-0">
           <Link
             to={`/projects/${project.slug}`}
-            className="text-primary hover:text-primary-hover transition">
+            className="text-primary hover:text-primary-hover transition shrink-0">
             Read more
           </Link>
           <a
             href={project.project_url}
             target="_blank"
             rel="noreferrer"
-            className="inline-flex items-center gap-2 text-primary hover:text-primary-hover hover:gap-3 transition-all duration-300">
-            <span>View Project</span>
-            <FontAwesomeIcon icon={faArrowRight} className="text-xs" />
+            className="inline-flex items-center gap-2 text-primary hover:text-primary-hover hover:gap-3 transition-all duration-300 truncate max-w-[180px]">
+            <span className="truncate">View Project</span>
+            <FontAwesomeIcon icon={faArrowRight} className="text-xs shrink-0" />
           </a>
         </div>
       </div>
@@ -109,9 +142,7 @@ function ProjectStatistics({ stats = [] }) {
         <FadeIn>
           <div className="text-center text-text">
             <h2 className="mt-2 section-heading">
-              <span className="font-headings text-primary mr-4">
-                Our
-              </span>
+              <span className="font-headings text-primary mr-4">Our</span>
               Track Record
             </h2>
             <p className="mt-3 text-text max-w-xl mx-auto small-text md:body-text">
@@ -123,17 +154,22 @@ function ProjectStatistics({ stats = [] }) {
         {/* Dynamic scroll tracking added for Track Record numbers */}
         <FadeIn>
           {({ isInView, ref }) => (
-            <div ref={ref} className="mt-10 grid grid-cols-2 md:grid-cols-4 gap-6">
+            <div
+              ref={ref}
+              className="mt-10 grid grid-cols-2 md:grid-cols-4 gap-6">
               {displayStats.map((s, i) => {
-                const numericTarget = Number(String(s.target || "").replace(/[^0-9.]/g, "")) || 0;
+                const numericTarget =
+                  Number(String(s.target || "").replace(/[^0-9.]/g, "")) || 0;
 
                 return (
-                  <div key={s.key || i} className="bg-white/5 border border-white/10 rounded-lg p-6 text-center hover:bg-white/10 transition">
+                  <div
+                    key={s.key || i}
+                    className="bg-white/5 border border-white/10 rounded-lg p-6 text-center hover:bg-white/10 transition">
                     <div className="text-3xl md:text-4xl font-extrabold text-primary">
-                      <AnimatedCounter 
-                        target={numericTarget} 
-                        suffix={s.suffix || ""} 
-                        isInView={isInView} 
+                      <AnimatedCounter
+                        target={numericTarget}
+                        suffix={s.suffix || ""}
+                        isInView={isInView}
                       />
                     </div>
                     <div className="mt-2 small-text md:body-text text-text/70">
@@ -154,7 +190,8 @@ function ProjectStatistics({ stats = [] }) {
    Featured Case Study Component
    ========================================== */
 function FeaturedCaseStudy({ projects }) {
-  const featured = projects.find((p) => p.status === "Published") || projects[0];
+  const featured =
+    projects.find((p) => p.status === "Published") || projects[0];
   if (!featured) return null;
   return (
     <section className="py-12 md:py-16 bg-background-section">
@@ -181,12 +218,16 @@ function FeaturedCaseStudy({ projects }) {
                 <div className="flex items-center gap-2 text-xs flex-wrap">
                   {featured.services?.length > 0 && (
                     <span className="inline-block px-2.5 py-0.5 rounded-sb bg-primary-light text-primary font-semibold text-xxs">
-                      {typeof featured.services[0] === "object" ? featured.services[0].service_name : "Service"}
+                      {typeof featured.services[0] === "object"
+                        ? featured.services[0].service_name
+                        : "Service"}
                     </span>
                   )}
                   {featured.industries?.length > 0 && (
                     <span className="inline-block px-2.5 py-0.5 rounded-sb bg-surface text-text font-semibold border border-border text-xxs card-shadow">
-                      {typeof featured.industries[0] === "object" ? featured.industries[0].name : "Industry"}
+                      {typeof featured.industries[0] === "object"
+                        ? featured.industries[0].name
+                        : "Industry"}
                     </span>
                   )}
                 </div>
@@ -206,17 +247,24 @@ function FeaturedCaseStudy({ projects }) {
                   {featured.completion_date && (
                     <span className="flex items-center gap-1.5">
                       <FontAwesomeIcon icon={faClock} className="text-[10px]" />
-                      {new Date(featured.completion_date).toLocaleDateString("en-US", { year: "numeric", month: "short" })}
+                      {new Date(featured.completion_date).toLocaleDateString(
+                        "en-US",
+                        { year: "numeric", month: "short" },
+                      )}
                     </span>
                   )}
                 </div>
                 {featured.technologies && featured.technologies.length > 0 && (
                   <div className="mt-2 flex items-center gap-1.5 text-xs text-muted text-xxs">
                     <FontAwesomeIcon icon={faCogs} className="text-[10px]" />
-                    <span>{featured.technologies.map(t => typeof t === "object" ? t.name : t).join(", ")}</span>
+                    <span>
+                      {featured.technologies
+                        .map((t) => (typeof t === "object" ? t.name : t))
+                        .join(", ")}
+                    </span>
                   </div>
                 )}
-                <p className="mt-4 text-text small-text leading-relaxed">
+                <p className="mt-4 text-text small-text leading-relaxed break-words">
                   {featured.short_description}
                 </p>
                 {featured.short_description &&
@@ -253,7 +301,7 @@ function ResultsAnalytics({ stats = [] }) {
   const getStat = (key, type) => {
     const s = stats.find((st) => st.key === key);
     if (!s) return type === "target" ? 0 : "";
-    return type === "target" 
+    return type === "target"
       ? Number(String(s.target || "").replace(/[^0-9.]/g, "")) || 0
       : s.suffix || "";
   };
@@ -303,9 +351,13 @@ function ResultsAnalytics({ stats = [] }) {
         {/* Dynamic scroll tracking wrapper added for Results metrics */}
         <FadeIn>
           {({ isInView, ref }) => (
-            <div ref={ref} className="mt-10 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div
+              ref={ref}
+              className="mt-10 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
               {metrics.map((m) => (
-                <div key={m.label} className="bg-surface border border-border rounded-lg p-6 text-center h-full hover: transition group flex flex-col items-center card-shadow">
+                <div
+                  key={m.label}
+                  className="bg-surface border border-border rounded-lg p-6 text-center h-full hover: transition group flex flex-col items-center card-shadow">
                   <div className="w-12 h-12 rounded-lg bg-primary-light flex items-center justify-center mx-auto group-hover:bg-primary group-hover:text-white transition shrink-0">
                     <FontAwesomeIcon
                       icon={m.icon}
@@ -313,10 +365,10 @@ function ResultsAnalytics({ stats = [] }) {
                     />
                   </div>
                   <div className="mt-4 text-3xl font-extrabold text-heading">
-                    <AnimatedCounter 
-                      target={m.target} 
-                      suffix={m.suffix} 
-                      isInView={isInView} 
+                    <AnimatedCounter
+                      target={m.target}
+                      suffix={m.suffix}
+                      isInView={isInView}
                     />
                   </div>
                   <div className="mt-1 text-sm font-semibold text-heading subheading">
@@ -352,7 +404,10 @@ function ClientLogos({ logos = [] }) {
         </FadeIn>
         <div className="mt-10 flex flex-wrap justify-center gap-4">
           {logos.map((logo, i) => (
-            <FadeIn key={i} delay={i * 30} className="w-[calc(50%-8px)] sm:w-[calc(33.33%-11px)] md:w-[calc(25%-12px)] lg:w-[calc(20%-12px)] min-w-[140px]">
+            <FadeIn
+              key={i}
+              delay={i * 30}
+              className="w-[calc(50%-8px)] sm:w-[calc(33.33%-11px)] md:w-[calc(25%-12px)] lg:w-[calc(20%-12px)] min-w-[140px]">
               <div className="flex items-center justify-center bg-background border border-border rounded-lg px-4 py-5 hover: hover:border-primary/30 transition-all duration-200 cursor-default h-full w-full card-shadow">
                 <span className="text-sm font-semibold text-muted text-center small-text">
                   {logo}
@@ -394,7 +449,7 @@ function BeforeAfterResults() {
                 <div className="text-base font-bold text-heading small-text tracking-wide mb-4">
                   {item.metric}
                 </div>
-                
+
                 <div className="flex flex-col items-center justify-center gap-1.5 flex-1 w-full">
                   <div className="w-full">
                     <div className="text-[10px] text-muted uppercase tracking-wider font-semibold opacity-70">
@@ -404,11 +459,11 @@ function BeforeAfterResults() {
                       {item.before}
                     </div>
                   </div>
-                  
+
                   <div className="flex items-center justify-center text-primary/70 my-1">
                     <FontAwesomeIcon icon={faArrowDown} className="text-xs" />
                   </div>
-                  
+
                   <div className="w-full">
                     <div className="text-[10px] text-primary uppercase tracking-wider font-bold">
                       After
@@ -477,9 +532,18 @@ const Projects = () => {
         imageSrc="/projects.webp"
         imageAlt="Our Projects"
         trustIndicators={[
-          { value: getStat("projectsCompleted") || "500+", label: "Projects\nCompleted" },
-          { value: getStat("satisfiedClients") || "100+", label: "Happy\nClients" },
-          { value: getStat("clientRetention") || "98%", label: "Client\nRetention" },
+          {
+            value: getStat("projectsCompleted") || "500+",
+            label: "Projects\nCompleted",
+          },
+          {
+            value: getStat("satisfiedClients") || "100+",
+            label: "Happy\nClients",
+          },
+          {
+            value: getStat("clientRetention") || "98%",
+            label: "Client\nRetention",
+          },
         ]}
       />
 
@@ -496,41 +560,44 @@ const Projects = () => {
               subtitle="Browse through our work filtered by category."
             />
           </FadeIn>
-          
+
           <div className="mt-8 relative max-w-4xl mx-auto flex items-center gap-2">
+            {/* Left Arrow Button */}
             <button
               type="button"
               onClick={() => scroll("left")}
-              className="w-9 h-9 flex items-center justify-center text-text bg-background border border-border rounded-lg -2xs hover:text-primary hover:border-primary/50 transition shrink-0 z-10 cursor-pointer card-shadow"
-              aria-label="Scroll Left"
-            >
+              className="w-9 h-9 flex items-center justify-center text-text bg-background border border-border rounded-lg hover:text-primary hover:border-primary/50 transition shrink-0 z-10 cursor-pointer card-shadow"
+              aria-label="Scroll Left">
               <FontAwesomeIcon icon={faChevronLeft} className="text-xs" />
             </button>
+
+            {/* Category Filter Scroll Area */}
             <div
               ref={scrollContainerRef}
-              className="flex gap-2 overflow-x-auto scroll-smooth py-1 flex-1 no-scrollbar"
-              style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
-            >
+              className="flex flex-nowrap gap-2 overflow-x-auto scroll-smooth py-1.5 flex-1 no-scrollbar max-w-full min-w-0"
+              style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}>
               {categoryFilters.map((cat) => (
                 <button
                   key={cat.id}
                   type="button"
                   onClick={() => setActive(cat.id)}
-                  className={`px-4 py-2 rounded-lg text-sm font-semibold border transition cursor-pointer whitespace-nowrap shrink-0 button-text ${
+                  className={`px-4 py-2 rounded-lg text-sm font-semibold border transition cursor-pointer whitespace-nowrap shrink-0 max-w-[200px] truncate button-text ${
                     active === cat.id
                       ? "bg-primary text-white border-primary"
                       : "bg-background text-text border-border hover:border-primary/50 hover:text-primary"
-                  }`}>
+                  }`}
+                  title={cat.label}>
                   {cat.label}
                 </button>
               ))}
             </div>
+
+            {/* Right Arrow Button */}
             <button
               type="button"
               onClick={() => scroll("right")}
-              className="w-9 h-9 flex items-center justify-center text-text bg-background border border-border rounded-lg -2xs hover:text-primary hover:border-primary/50 transition shrink-0 z-10 cursor-pointer card-shadow"
-              aria-label="Scroll Right"
-            >
+              className="w-9 h-9 flex items-center justify-center text-text bg-background border border-border rounded-lg hover:text-primary hover:border-primary/50 transition shrink-0 z-10 cursor-pointer card-shadow"
+              aria-label="Scroll Right">
               <FontAwesomeIcon icon={faChevronRight} className="text-xs" />
             </button>
           </div>
@@ -542,7 +609,9 @@ const Projects = () => {
             </div>
           ) : error ? (
             <div className="mt-14 text-center">
-              <div className="text-primary font-medium mb-4 body-text">{error}</div>
+              <div className="text-primary font-medium mb-4 body-text">
+                {error}
+              </div>
               <button
                 type="button"
                 onClick={() => fetchPageProjects(active)}
@@ -574,7 +643,10 @@ const Projects = () => {
           ) : (
             <div className="mt-10 flex flex-wrap justify-center gap-6">
               {projects.map((p, i) => (
-                <FadeIn key={p._id} delay={i * 40} className="w-full sm:w-[calc(50%-12px)] lg:w-[calc(33.33%-16px)]">
+                <FadeIn
+                  key={p._id}
+                  delay={i * 40}
+                  className="w-full sm:w-[calc(50%-12px)] lg:w-[calc(33.33%-16px)]">
                   <ProjectCard project={p} />
                 </FadeIn>
               ))}

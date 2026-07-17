@@ -2,7 +2,7 @@
 
 @layer components {
   .card-shadow {
-    @apply shadow-xl/20;
+    @apply shadow-sm/20;
   }
 }
 
@@ -325,5 +325,10 @@ textarea::-webkit-scrollbar-thumb:hover {
 .scrollbar-custom {
   scrollbar-width: thin;
   scrollbar-color: var(--color-primary) var(--color-surface);
+}
+
+.wrap-break-word {
+  overflow-wrap: break-word;
+  word-wrap: break-word;
 }
 

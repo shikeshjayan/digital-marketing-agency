@@ -170,7 +170,7 @@ export default function ServiceDetail() {
                 {service.service_name}
               </h1>
               <div className="mt-4 text-white/70 leading-relaxed max-w-prose mx-auto md:mx-0 body-text">
-                <p className="text-lg text-justify md:text-left">
+                <p className="text-lg text-justify md:text-left break-words">
                   {service.description}
                 </p>
               </div>
@@ -213,7 +213,7 @@ export default function ServiceDetail() {
             <SectionHeading eyebrow="Overview" title={`About ${service.service_name}`} />
           </FadeIn>
           <FadeIn delay={40}>
-            <div className="mt-8 text-text leading-relaxed text-sm md:text-base text-justify body-text">
+            <div className="mt-8 text-text leading-relaxed text-sm md:text-base text-justify body-text break-words">
               {service.description}
             </div>
           </FadeIn>
@@ -234,7 +234,7 @@ export default function ServiceDetail() {
                     <div className="flex items-center justify-center h-9 w-9 rounded-sm bg-primary-light text-primary font-extrabold text-sm shrink-0">
                       {i + 1}
                     </div>
-                    <p className="text-text leading-relaxed text-sm md:text-base body-text">{item}</p>
+                    <p className="text-text leading-relaxed text-sm md:text-base body-text break-words">{item}</p>
                   </div>
                 </FadeIn>
               ))}
@@ -255,7 +255,7 @@ export default function ServiceDetail() {
                 <FadeIn key={i} delay={i * 30}>
                   <div className="bg-[#FAFAFA] border border-border rounded-sm p-5 flex items-start gap-3 hover:shadow-sm transition h-full">
                     <FontAwesomeIcon icon={faCheckCircle} className="text-primary mt-0.5 shrink-0" />
-                    <p className="text-text leading-relaxed text-sm md:text-base body-text">{item}</p>
+                    <p className="text-text leading-relaxed text-sm md:text-base body-text break-words">{item}</p>
                   </div>
                 </FadeIn>
               ))}
@@ -410,7 +410,7 @@ export default function ServiceDetail() {
                 <FadeIn key={rs._id} delay={i * 40} className="w-full sm:basis-[calc(50%-12px)] lg:basis-[calc(33.33%-16px)]">
                   <Link
                     to={`/services/${rs.slug}`}
-                    className="flex flex-col bg-[#FAFAFA] border border-border rounded-sm h-full overflow-hidden cursor-pointer hover:-translate-y-1 transition-all duration-300">
+                    className="flex flex-col bg-[#FAFAFA] border border-border rounded-sm h-full w-full overflow-hidden cursor-pointer hover:-translate-y-1 transition-all duration-300">
                     <div className="h-40 overflow-hidden">
                       <img
                         src={resolveImagePath(rs.hero_image)}

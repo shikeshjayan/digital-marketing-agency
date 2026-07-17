@@ -227,7 +227,7 @@ function ServicesCarousel({ services }) {
                     key={item._id}
                     className="bg-background rounded-lg  border border-border overflow-hidden flex flex-col justify-between p-6 h-full min-h-[250px] card-shadow"
                   >
-                    <div className="flex-1 flex flex-col">
+                    <div className="flex-1 flex flex-col overflow-hidden">
                       <h3 className="subheading text-heading line-clamp-1">
                         {item.service_name.split(" ").slice(0, 2).join(" ")}{" "}
                         <span className="text-heading">

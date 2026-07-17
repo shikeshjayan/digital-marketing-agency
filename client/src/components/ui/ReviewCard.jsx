@@ -10,7 +10,7 @@ export default function ReviewCard({ review, onReadMore }) {
     : review.review_text;
 
   return (
-    <div className="h-full bg-surface border border-border rounded-lg p-6 flex flex-col justify-between hover:shadow-md transition card-shadow">
+    <div className="h-full bg-surface border border-border rounded-lg p-6 flex flex-col justify-between hover:shadow-md transition card-shadow overflow-hidden">
       <div>
         <div className="flex items-center gap-3 w-full min-w-0">
           <div className="w-12 h-12 rounded-full bg-primary-light/40 border border-primary/20 flex items-center justify-center shrink-0 overflow-hidden shadow-inner">
@@ -36,7 +36,7 @@ export default function ReviewCard({ review, onReadMore }) {
           <StarRow rating={review.rating} />
         </div>
 
-        <div className="mt-4 text-text text-sm leading-relaxed wrap-break-word w-full italic text-left">
+        <div className="mt-4 text-text text-sm leading-relaxed wrap-break-word break-words w-full italic text-left">
           <span className="inline">&ldquo;{shortText}</span>
           {isLongText ? (
             <span className="inline">

@@ -1,4 +1,5 @@
 import axios from "axios";
+import { extractError } from "../utils/errorMessages.js";
 
 // Create an axios instance with cookie support
 // The httpOnly cookie is sent automatically by the browser
@@ -9,10 +10,21 @@ const apiService = axios.create({
   withCredentials: true,
 });
 
-// On 401 for admin routes, redirect to login page
+// Transform all errors with user-friendly messages + redirect 401 admin routes
 apiService.interceptors.response.use(
   (res) => res,
   (err) => {
+    // Attach a user-friendly message so stores/pages can use it
+    err.friendlyMessage = extractError(err);
+
+    // Override the backend message so stores' existing pattern picks it up
+    if (err.response?.data) {
+      err.response.data.message = err.friendlyMessage;
+    } else if (!err.response) {
+      err.message = err.friendlyMessage;
+    }
+
+    // On 401 for admin routes, redirect to login page
     if (
       err.response?.status === 401 &&
       err.config?.url?.startsWith('/admin/') &&
@@ -21,6 +33,7 @@ apiService.interceptors.response.use(
     ) {
       window.location.href = "/admin/login";
     }
+
     return Promise.reject(err);
   },
 );
