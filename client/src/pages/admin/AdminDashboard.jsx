@@ -171,10 +171,10 @@ export default function AdminDashboard() {
       const team = teamResult?.items ?? [];
 
       setStats({
-        total_services: services.length,
-        total_projects: projects.length,
-        total_enquiries: enquiries.length,
-        total_team_members: team.length,
+        total_services: servicesResult?.pagination?.total ?? services.length,
+        total_projects: projectsResult?.pagination?.total ?? projects.length,
+        total_enquiries: enquiriesResult?.pagination?.total ?? enquiries.length,
+        total_team_members: teamResult?.pagination?.total ?? team.length,
       });
 
       setRecentEnquiries(
