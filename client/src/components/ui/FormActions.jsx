@@ -1,7 +1,6 @@
 export default function FormActions({
   submitting,
   editId,
-  onSubmit,
   onReset,
   submitLabel = "Submit",
   resetLabel = "Cancel",

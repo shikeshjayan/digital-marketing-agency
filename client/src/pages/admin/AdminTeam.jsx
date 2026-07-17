@@ -90,6 +90,7 @@ export default function AdminTeam() {
   }, []);
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setPage(1);
   }, [search, status]);
 
@@ -141,10 +142,6 @@ export default function AdminTeam() {
     } finally {
       setSubmitting(false);
     }
-  }
-
-  async function onDelete(id) {
-    setDeleteTarget(id);
   }
 
   async function onConfirmDelete() {

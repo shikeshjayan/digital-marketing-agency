@@ -158,6 +158,7 @@ export default function Contact() {
   useEffect(() => {
     if (storeSuccess) {
       toast.success("Thanks! Your enquiry has been submitted successfully.");
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setForm({
         name: "",
         phone: "+91",

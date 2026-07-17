@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -29,11 +29,9 @@ function isObjectId(str) {
 export default function CaseStudyDetail() {
   const { slug } = useParams();
   const { fetchCaseStudyBySlug, selectedCaseStudy, loading, error } = useCaseStudyStore();
-  const [loaded, setLoaded] = useState(false);
 
   useEffect(() => {
-    setLoaded(false);
-    fetchCaseStudyBySlug(slug).then(() => setLoaded(true));
+    fetchCaseStudyBySlug(slug);
   }, [slug, fetchCaseStudyBySlug]);
 
   useEffect(() => {

@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faEnvelope, faPhone, faComments, faCompass } from "@fortawesome/free-solid-svg-icons";
+import { faEnvelope, faComments, faCompass } from "@fortawesome/free-solid-svg-icons";
 import FadeIn from "../ui/FadeIn.jsx";
 
 export default function FinalCTA({

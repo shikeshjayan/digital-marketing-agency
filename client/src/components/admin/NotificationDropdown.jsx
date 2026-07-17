@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useCallback } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import apiService from "../../services/apiService.js";
 
@@ -79,64 +79,64 @@ export default function NotificationDropdown() {
   const [lastViewed, setLastViewedState] = useState(() => getLastViewed());
   const dropdownRef = useRef(null);
 
-  const fetchNotifications = useCallback(async () => {
-    setLoading(true);
-    try {
-      const [enquiriesRes, reviewsRes] = await Promise.all([
-        apiService.get("/admin/contact", {
-          params: { limit: 10, status: "New" },
-        }),
-        apiService.get("/admin/reviews", {
-          params: { limit: 10, status: "Pending" },
-        }),
-      ]);
-
-      const enquiries = (enquiriesRes.data.data ?? []).map((e) => ({
-        id: e.enquiry_id,
-        type: "message",
-        title: e.name,
-        subtitle: e.email,
-        preview: e.message?.slice(0, 60),
-        time: e.date,
-        status: e.status,
-      }));
-
-      const reviews = (reviewsRes.data.data ?? []).map((r) => ({
-        id: r.review_id,
-        type: "review",
-        title: r.name,
-        subtitle: `${r.rating}.0 rating`,
-        preview: r.review_text?.slice(0, 60),
-        time: r.date,
-        status: r.status,
-      }));
-
-      const combined = [...enquiries, ...reviews]
-        .sort((a, b) => new Date(b.time).getTime() - new Date(a.time).getTime())
-        .slice(0, 10);
-
-      setNotifications(combined);
-
-      window.dispatchEvent(
-        new CustomEvent("badge-update", {
-          detail: {
-            messages: enquiriesRes.data.counters?.new || 0,
-            reviews: reviewsRes.data.counters?.pending || 0,
-          },
-        }),
-      );
-    } catch (err) {
-      console.error("Failed to fetch notifications:", err);
-    } finally {
-      setLoading(false);
-    }
-  }, []);
-
   useEffect(() => {
+    async function fetchNotifications() {
+      setLoading(true);
+      try {
+        const [enquiriesRes, reviewsRes] = await Promise.all([
+          apiService.get("/admin/contact", {
+            params: { limit: 10, status: "New" },
+          }),
+          apiService.get("/admin/reviews", {
+            params: { limit: 10, status: "Pending" },
+          }),
+        ]);
+
+        const enquiries = (enquiriesRes.data.data ?? []).map((e) => ({
+          id: e.enquiry_id,
+          type: "message",
+          title: e.name,
+          subtitle: e.email,
+          preview: e.message?.slice(0, 60),
+          time: e.date,
+          status: e.status,
+        }));
+
+        const reviews = (reviewsRes.data.data ?? []).map((r) => ({
+          id: r.review_id,
+          type: "review",
+          title: r.name,
+          subtitle: `${r.rating}.0 rating`,
+          preview: r.review_text?.slice(0, 60),
+          time: r.date,
+          status: r.status,
+        }));
+
+        const combined = [...enquiries, ...reviews]
+          .sort((a, b) => new Date(b.time).getTime() - new Date(a.time).getTime())
+          .slice(0, 10);
+
+        setNotifications(combined);
+
+        window.dispatchEvent(
+          new CustomEvent("badge-update", {
+            detail: {
+              messages: enquiriesRes.data.counters?.new || 0,
+              reviews: reviewsRes.data.counters?.pending || 0,
+            },
+          }),
+        );
+      } catch (err) {
+        console.error("Failed to fetch notifications:", err);
+      } finally {
+        setLoading(false);
+      }
+    }
+
     fetchNotifications();
     const interval = setInterval(fetchNotifications, 30000);
     return () => clearInterval(interval);
-  }, [fetchNotifications]);
+  }, []);
 
   useEffect(() => {
     function handleClickOutside(e) {

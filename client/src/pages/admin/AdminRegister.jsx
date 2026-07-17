@@ -65,7 +65,7 @@ export default function AdminRegister() {
     }
 
     try {
-      const userData = await register({ name, email, password });
+      await register({ name, email, password });
       toast.success("Registration successful!");
       navigate("/admin/login", { replace: true });
     } catch (err) {

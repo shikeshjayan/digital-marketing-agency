@@ -64,7 +64,7 @@ export default function AdminLogin() {
     }
 
     try {
-      const userData = await login({ email, password, rememberMe });
+      await login({ email, password, rememberMe });
       toast.success("Login successful!");
       navigate("/admin", { replace: true });
     } catch (err) {

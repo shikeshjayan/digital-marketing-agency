@@ -33,6 +33,7 @@ export default function AdminSiteContent() {
 
   useEffect(() => {
     if (content) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setTechItems(content.technologyStackItems ?? []);
       setMarqueeLogos(content.trustMarqueeLogos ?? []);
       setCompanyStats(content.companyStats ?? []);

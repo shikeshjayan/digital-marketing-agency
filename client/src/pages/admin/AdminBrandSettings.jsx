@@ -27,6 +27,7 @@ export default function AdminBrandSettings() {
 
   useEffect(() => {
     if (content) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setBrand(content.brand ?? { name: "", logo: "", tagline: "" });
       setSocialLinks(content.socialLinks ?? []);
       setContact(content.contact ?? { phone: "", email: "", address: "", whatsapp: "", working_hours: "", location: "" });

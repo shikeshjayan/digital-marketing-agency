@@ -75,6 +75,7 @@ export default function AdminMessages() {
   }, []);
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setPage(1);
   }, [search, status, date]);
 

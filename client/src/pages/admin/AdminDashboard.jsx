@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -153,7 +153,7 @@ export default function AdminDashboard() {
   const fetchAdminEnquiries = useContactStore((s) => s.fetchAdminEnquiries);
   const fetchAdminTeam = useTeamStore((s) => s.fetchAdminTeam);
 
-  const load = useCallback(async () => {
+  async function load() {
     setLoading(true);
     setError(null);
     try {
@@ -198,16 +198,13 @@ export default function AdminDashboard() {
     } finally {
       setLoading(false);
     }
-  }, [
-    fetchAdminServices,
-    fetchAdminProjects,
-    fetchAdminEnquiries,
-    fetchAdminTeam,
-  ]);
+  }
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     load();
-  }, [load]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const actions = [
     {

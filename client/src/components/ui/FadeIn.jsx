@@ -23,6 +23,7 @@ export default function FadeIn({
   const visible = 'opacity-100 translate-x-0 translate-y-0'
 
   const child = typeof children === 'function'
+    // eslint-disable-next-line react-hooks/refs
     ? children({ isInView, ref })
     : (
       <Tag

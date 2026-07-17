@@ -12,7 +12,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTrash, faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
 
 export default function AdminSettings() {
-  const { loading, updateProfile, profile } = useSettingsStore();
+  const { loading, updateProfile } = useSettingsStore();
   const user = useAuthStore((s) => s.user);
   const [form, setForm] = useState({
     name: "",
@@ -26,6 +26,7 @@ export default function AdminSettings() {
   useEffect(() => {
     if (imageFile) {
       const url = URL.createObjectURL(imageFile);
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setPhotoUrl(url);
       return () => URL.revokeObjectURL(url);
     }
@@ -65,6 +66,7 @@ export default function AdminSettings() {
 
   useEffect(() => {
     if (user) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setOriginalName(user.name ?? "");
       setForm((f) => ({
         ...f,
