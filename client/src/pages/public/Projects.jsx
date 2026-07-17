@@ -553,7 +553,7 @@ const Projects = () => {
   };
 
   return (
-    <div className="bg-background min-h-screen animate-page-fade">
+    <div className="bg-background min-h-screen">
       {/* 1. Hero */}
       <HeroSplit
         title="Projects"

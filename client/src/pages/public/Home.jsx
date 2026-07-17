@@ -10,6 +10,7 @@ import TestimonialsSection from "../../components/public/TestimonialsSection.jsx
 import usePageStore from "../../store/pageStore.js";
 
 function HeroCarousel() {
+  const navigate = useNavigate();
   const slides = useMemo(
     () => [
       {
@@ -94,7 +95,7 @@ function HeroCarousel() {
             />
             <div className="absolute -bottom-8 -right-8 -z-10 h-36 w-36 rounded-full bg-white/10 blur-3xl" />
           </div>
-          <div className="text-white min-h-[12.5rem] lg:min-h-[14rem]" key={index}>
+          <div className="text-white text-center lg:text-left min-h-[12.5rem] lg:min-h-[14rem]" key={index}>
             <div className="animate-page-fade">
               <div className="small-text font-bold tracking-widest uppercase inline-block px-3 py-1 rounded">
                 DIGITAL MARKETING AGENCY
@@ -105,6 +106,20 @@ function HeroCarousel() {
                <p className="mt-4 body-text text-white/90 max-w-prose">
                  {slides[index].description}
                </p>
+            </div>
+            <div className="mt-8 flex flex-wrap gap-4 justify-center lg:justify-start">
+              <button
+                type="button"
+                className="inline-flex items-center rounded-lg bg-background text-primary px-6 py-3 text-sm font-bold hover:bg-primary-hover hover:text-background transition cursor-pointer"
+                onClick={() => navigate("/contact")}>
+                Get Started
+              </button>
+              <button
+                type="button"
+                className="inline-flex items-center rounded-lg border border-white px-6 py-3 text-sm font-bold text-white hover:bg-white/10 transition cursor-pointer"
+                onClick={() => navigate("/services")}>
+                Our Services
+              </button>
             </div>
           </div>
         </div>

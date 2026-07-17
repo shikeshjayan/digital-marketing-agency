@@ -128,8 +128,12 @@ export default function AdminBrandSettings() {
               className="mt-2 w-full rounded border border-border bg-surface px-4 py-2 text-sm text-heading outline-none transition focus:border-primary focus:bg-background focus:ring-2 focus:ring-primary-light placeholder:text-muted"
               placeholder="CrawlCrown"
               value={brand.name}
-              onChange={(e) => setBrand((prev) => ({ ...prev, name: e.target.value }))}
-              maxLength={100}
+              onChange={(e) => {
+                const val = e.target.value;
+                if (val.split(/\s+/).filter(Boolean).length > 6) return;
+                setBrand((prev) => ({ ...prev, name: val }));
+              }}
+              maxLength={50}
             />
           </div>
           <div className="w-[100px]">
@@ -150,8 +154,12 @@ export default function AdminBrandSettings() {
               className="mt-2 w-full rounded border border-border bg-surface px-4 py-2 text-sm text-heading outline-none transition focus:border-primary focus:bg-background focus:ring-2 focus:ring-primary-light placeholder:text-muted resize-none"
               placeholder="Full-service digital marketing agency..."
               value={brand.tagline}
-              onChange={(e) => setBrand((prev) => ({ ...prev, tagline: e.target.value }))}
-              maxLength={300}
+              onChange={(e) => {
+                const val = e.target.value;
+                if (val.split(/\s+/).filter(Boolean).length > 25) return;
+                setBrand((prev) => ({ ...prev, tagline: val }));
+              }}
+              maxLength={150}
             />
           </div>
         </div>
@@ -262,7 +270,7 @@ export default function AdminBrandSettings() {
               placeholder="Ernakulam, Kochi, Kerala, India"
               value={contact.address}
               onChange={(e) => setContact((prev) => ({ ...prev, address: e.target.value }))}
-              maxLength={200}
+              maxLength={150}
             />
           </div>
           <div>
@@ -282,7 +290,7 @@ export default function AdminBrandSettings() {
               placeholder="Mon – Sat: 10:00 AM – 6:00 PM"
               value={contact.working_hours}
               onChange={(e) => setContact((prev) => ({ ...prev, working_hours: e.target.value }))}
-              maxLength={200}
+              maxLength={100}
             />
           </div>
           <div>
@@ -315,7 +323,7 @@ export default function AdminBrandSettings() {
                   next[i] = { ...next[i], label: e.target.value };
                   setCompanyLinks(next);
                 }}
-                maxLength={100}
+                maxLength={60}
               />
               <div className="flex items-center gap-2 w-full sm:flex-1">
                 <input

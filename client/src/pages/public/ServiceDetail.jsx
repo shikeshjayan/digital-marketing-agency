@@ -124,7 +124,7 @@ export default function ServiceDetail() {
 
   if (error)
     return (
-      <div className="text-center py-24 md:py-32 px-4 bg-background animate-page-fade">
+      <div className="text-center py-24 md:py-32 px-4 bg-background">
         <p className="text-primary font-medium body-text">{error}</p>
         <Link
           to="/services"
@@ -136,7 +136,7 @@ export default function ServiceDetail() {
 
   if (!service)
     return (
-      <div className="text-center py-24 md:py-32 px-4 bg-background animate-page-fade">
+      <div className="text-center py-24 md:py-32 px-4 bg-background">
         <h2 className="text-2xl font-bold text-heading section-heading">Service Not Found</h2>
         <p className="mt-3 text-text body-text">No service found for this URL.</p>
         <Link
@@ -148,7 +148,7 @@ export default function ServiceDetail() {
     );
 
   return (
-    <div className="bg-background animate-page-fade">
+    <div className="bg-background">
       {/* 1. Hero Section   */}
       <section className="bg-secondary text-white relative overflow-hidden py-16">
         <div className="absolute inset-0 pointer-events-none">

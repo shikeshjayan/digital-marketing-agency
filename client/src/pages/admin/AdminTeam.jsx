@@ -220,7 +220,8 @@ export default function AdminTeam() {
                 label="Name"
                 value={form.name}
                 onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))}
-                maxLength={100}
+                maxLength={60}
+                maxWords={6}
                 showWordCount
                 placeholder="e.g. John Doe"
               />
@@ -231,6 +232,7 @@ export default function AdminTeam() {
                   setForm((f) => ({ ...f, designation: e.target.value }))
                 }
                 maxLength={100}
+                maxWords={12}
                 showWordCount
                 placeholder="e.g. Frontend Developer"
               />
@@ -242,7 +244,8 @@ export default function AdminTeam() {
                 onChange={(e) =>
                   setForm((f) => ({ ...f, description: e.target.value }))
                 }
-                maxLength={1000}
+                maxLength={500}
+                maxWords={80}
                 showWordCount
                 placeholder="Brief bio or details about the member"
               />

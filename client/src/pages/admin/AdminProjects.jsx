@@ -345,7 +345,8 @@ export default function AdminProjects() {
                 onChange={(e) =>
                   setForm((f) => ({ ...f, project_name: e.target.value }))
                 }
-                maxLength={200}
+                maxLength={80}
+                maxWords={10}
                 showWordCount
                 placeholder="e.g. E-commerce Website"
               />
@@ -355,9 +356,10 @@ export default function AdminProjects() {
                 onChange={(e) =>
                   setForm((f) => ({ ...f, short_description: e.target.value }))
                 }
-                maxLength={200}
+                maxLength={160}
+                maxWords={25}
                 showWordCount
-                placeholder="Brief summary (max 200 chars)"
+                placeholder="Brief summary (max 160 chars)"
               />
               <FormField
                 label="Description"
@@ -367,7 +369,8 @@ export default function AdminProjects() {
                 onChange={(e) =>
                   setForm((f) => ({ ...f, description: e.target.value }))
                 }
-                maxLength={5000}
+                maxLength={2000}
+                maxWords={300}
                 showWordCount
                 placeholder="Detailed description of the project"
               />
@@ -512,7 +515,8 @@ export default function AdminProjects() {
                     onChange={(e) =>
                       setForm((f) => ({ ...f, client_name: e.target.value }))
                     }
-                    maxLength={100}
+                    maxLength={60}
+                    maxWords={8}
                     showWordCount
                     placeholder="e.g. John Smith"
                   />
@@ -522,7 +526,8 @@ export default function AdminProjects() {
                     onChange={(e) =>
                       setForm((f) => ({ ...f, client_company: e.target.value }))
                     }
-                    maxLength={100}
+                    maxLength={60}
+                    maxWords={8}
                     showWordCount
                     placeholder="e.g. Acme Corp"
                   />
@@ -549,7 +554,8 @@ export default function AdminProjects() {
                           client_location: e.target.value,
                         }))
                       }
-                      maxLength={100}
+                      maxLength={60}
+                      maxWords={8}
                       showWordCount
                       placeholder="e.g. New York, USA"
                     />
@@ -600,7 +606,8 @@ export default function AdminProjects() {
                     onChange={(e) =>
                       setForm((f) => ({ ...f, seo_meta_title: e.target.value }))
                     }
-                    maxLength={70}
+                    maxLength={60}
+                    maxWords={10}
                     showWordCount
                     placeholder="SEO title for the project page"
                   />
@@ -615,7 +622,8 @@ export default function AdminProjects() {
                         seo_meta_description: e.target.value,
                       }))
                     }
-                    maxLength={160}
+                    maxLength={155}
+                    maxWords={25}
                     showWordCount
                     placeholder="SEO description for the project page"
                   />

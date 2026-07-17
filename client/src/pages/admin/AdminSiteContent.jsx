@@ -235,14 +235,14 @@ export default function AdminSiteContent() {
                 placeholder="Name (e.g. WordPress)"
                 value={item.name}
                 onChange={(e) => updateTechItem(i, "name", e.target.value)}
-                maxLength={100}
+                maxLength={30}
               />
               <input
 className="w-24 max-w-full rounded border border-border bg-surface px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-primary-light"
               placeholder="Code (e.g. WP)"
                 value={item.code}
                 onChange={(e) => updateTechItem(i, "code", e.target.value)}
-                maxLength={20}
+                maxLength={10}
               />
               <button
                 type="button"
@@ -290,7 +290,7 @@ className="w-24 max-w-full rounded border border-border bg-surface px-3 py-2 tex
                 placeholder="Brand name (e.g. NovaTech)"
                 value={logo}
                 onChange={(e) => updateMarqueeLogo(i, e.target.value)}
-                maxLength={100}
+                maxLength={50}
               />
               <button
                 type="button"

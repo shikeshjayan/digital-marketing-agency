@@ -279,7 +279,7 @@ export default function Team() {
   const nextTeam = () => setTeamPage((v) => (v + 1) % totalTeamPages)
 
   return (
-    <div className="bg-background min-h-screen animate-page-fade">
+    <div className="bg-background min-h-screen">
       <HeroSplit
         title="Our Team"
         titleHighlight="Meet"
