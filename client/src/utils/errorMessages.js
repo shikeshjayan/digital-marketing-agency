@@ -23,12 +23,28 @@ const technicalPatterns = [
   { pattern: /^connect (econnrefused|etimedout)/i, replacement: "Unable to connect to the server. Please check your internet connection." },
 ];
 
+const friendlyOverrides = [
+  { pattern: /bad request/i, replacement: "Please check your input and try again." },
+  { pattern: /not authorized|not found|forbidden/i, replacement: "Something went wrong. Please try again." },
+  { pattern: /target.*not found/i, replacement: "The item you're looking for could not be found." },
+  { pattern: /record.*not found/i, replacement: "The item you're looking for could not be found." },
+  { pattern: /invalid credentials/i, replacement: "The email or password you entered is incorrect. Please try again." },
+  { pattern: /invalid otp|invalid code/i, replacement: "The code you entered is incorrect. Please try again." },
+  { pattern: /too many requests|rate limit/i, replacement: "Too many requests. Please wait a moment and try again." },
+  { pattern: /already (approved|rejected)/i, replacement: "This action has already been completed." },
+];
+
 function isTechnicalMessage(msg) {
   return technicalPatterns.some(({ pattern }) => pattern.test(msg));
 }
 
 function getFriendlyForTechnical(msg) {
   const match = technicalPatterns.find(({ pattern }) => pattern.test(msg));
+  return match ? match.replacement : null;
+}
+
+function getFriendlyOverride(msg) {
+  const match = friendlyOverrides.find(({ pattern }) => pattern.test(msg));
   return match ? match.replacement : null;
 }
 
@@ -39,6 +55,8 @@ export function extractError(err) {
   const backendMessage = data?.message;
 
   if (backendMessage && !isTechnicalMessage(backendMessage)) {
+    const friendlyOverride = getFriendlyOverride(backendMessage);
+    if (friendlyOverride) return friendlyOverride;
     return backendMessage;
   }
 

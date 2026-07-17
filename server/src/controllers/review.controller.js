@@ -59,11 +59,11 @@ export const approveReview = asyncHandler(async (req, res) => {
   const review = await Review.findById(req.params.id);
 
   if (!review) {
-    return res.status(404).json({ success: false, message: "Review ID Not Found" });
+    return res.status(404).json({ success: false, message: "We couldn't find this review. It may have been removed." });
   }
 
   if (review.status === "Approved") {
-    return res.status(400).json({ success: false, message: "Review Already Approved" });
+    return res.status(400).json({ success: false, message: "This review has already been approved." });
   }
 
   review.status = "Approved";
@@ -84,11 +84,11 @@ export const rejectReview = asyncHandler(async (req, res) => {
   const review = await Review.findById(req.params.id);
 
   if (!review) {
-    return res.status(404).json({ success: false, message: "Review ID Not Found" });
+    return res.status(404).json({ success: false, message: "We couldn't find this review. It may have been removed." });
   }
 
   if (review.status === "Rejected") {
-    return res.status(400).json({ success: false, message: "Review Already Rejected" });
+    return res.status(400).json({ success: false, message: "This review has already been rejected." });
   }
 
   review.status = "Rejected";
@@ -117,7 +117,7 @@ export const deleteAllReviews = asyncHandler(async (req, res) => {
 export const deleteSingleReview = asyncHandler(async (req, res) => {
   const review = await Review.findByIdAndDelete(req.params.id);
   if (!review) {
-    return res.status(404).json({ success: false, message: "Review not found" });
+    return res.status(404).json({ success: false, message: "We couldn't find this review. It may have been removed." });
   }
   res.status(200).json({
     success: true,
@@ -150,13 +150,13 @@ export const submitReview = asyncHandler(async (req, res) => {
 
   // Validate required fields
   if (!name || !location || !rating || !review_text) {
-    return res.status(400).json({ success: false, message: "Bad Request (Validation failed: missing fields, invalid rating scale)" });
+    return res.status(400).json({ success: false, message: "Please provide a rating between 1 and 5, and fill in your name, location, and review." });
   }
 
   // Rating must be a number between 1 and 5
   const ratingNum = Number(rating);
   if (isNaN(ratingNum) || ratingNum < 1 || ratingNum > 5) {
-    return res.status(400).json({ success: false, message: "Bad Request (Validation failed: missing fields, invalid rating scale)" });
+    return res.status(400).json({ success: false, message: "Please choose a rating between 1 and 5." });
   }
 
   await Review.create({

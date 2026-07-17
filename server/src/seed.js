@@ -1379,46 +1379,6 @@ async function seed() {
         "How do you ensure SMS compliance?",
         "We ensure all campaigns comply with TCPA, GDPR, and applicable regulations. This includes proper opt-in mechanisms, clear opt-out instructions, and consent management.",
       ],
-      [
-        "What kind of PR coverage can I expect?",
-        "We target a mix of industry publications, mainstream media, podcasts, and online outlets. Our average client secures 3 to 5 pieces of coverage per campaign cycle.",
-      ],
-      [
-        "How do you handle crisis communication?",
-        "We develop a crisis communication plan that includes rapid response protocols, key message frameworks, and media training. Preparation ensures your brand handles challenges effectively.",
-      ],
-      [
-        "How do you monitor brand mentions?",
-        "We use advanced monitoring tools that track mentions across social media, review sites, news outlets, forums, and blogs. You receive real-time alerts for any significant mentions.",
-      ],
-      [
-        "Can you remove negative reviews?",
-        "We cannot remove legitimate reviews, but we help you respond professionally and resolve underlying issues. Our strategies increase positive review volume to improve overall ratings.",
-      ],
-      [
-        "How is voice search different from regular SEO?",
-        "Voice search queries are longer and more conversational. We optimize for natural language, featured snippets, and local search to capture voice-activated traffic from smart speakers and assistants.",
-      ],
-      [
-        "Is voice search optimization worth it?",
-        "Absolutely. Voice commerce is growing rapidly, and early adopters gain significant competitive advantage. Optimizing now positions your brand for the next wave of search behavior.",
-      ],
-      [
-        "How do you integrate e-commerce marketing across channels?",
-        "We connect your product catalog with PPC, email, social, and SEO campaigns to create a seamless customer journey. Our attribution model shows exactly which channels drive sales.",
-      ],
-      [
-        "Do you work with specific e-commerce platforms?",
-        "Yes, we have deep experience with Shopify, WooCommerce, Magento, BigCommerce, and custom e-commerce solutions. Our strategies are platform-agnostic and tailored to your tech stack.",
-      ],
-      [
-        "What is growth hacking exactly?",
-        "Growth hacking is a data-driven approach to rapid experimentation across channels to identify the most effective ways to grow your business. It combines creative tactics with rigorous analysis.",
-      ],
-      [
-        "How is growth hacking different from traditional marketing?",
-        "Growth hacking focuses on speed, experimentation, and scalability. Rather than big-budget campaigns, we run many small tests to find high-impact, low-cost growth levers.",
-      ],
     ];
 
     services.forEach((service, idx) => {

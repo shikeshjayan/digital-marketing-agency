@@ -14,7 +14,6 @@ import TableEmptyState from "../../components/ui/TableEmptyState.jsx";
 import FormField from "../../components/ui/FormField.jsx";
 import FileUploadField from "../../components/ui/FileUploadField.jsx";
 import FormActions from "../../components/ui/FormActions.jsx";
-import ErrorBanner from "../../components/ui/ErrorBanner.jsx";
 import resolveImagePath from "../../utils/resolveImagePath.js";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTrash, faPen } from "@fortawesome/free-solid-svg-icons";
@@ -59,7 +58,6 @@ export default function AdminTeam() {
   const [pagination, setPagination] = useState({ total: 0, page: 1, pages: 1 });
 
   const [form, setForm] = useState(EMPTY_FORM);
-  const [error, setError] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const formRef = useRef(null);
   const [deleteTarget, setDeleteTarget] = useState(null);
@@ -67,7 +65,6 @@ export default function AdminTeam() {
 
   const load = async () => {
     setLoading(true);
-    setError("");
     try {
       const result = await fetchAdminTeam({
         search: search || undefined,
@@ -78,9 +75,7 @@ export default function AdminTeam() {
       setItems(result?.items ?? []);
       setPagination(result?.pagination ?? { total: 0, page: 1, pages: 1 });
     } catch (err) {
-      const msg = err?.response?.data?.message || err?.message || "Failed to load team members.";
-      setError(msg);
-      toast.error(msg);
+      toast.error(err?.response?.data?.message || err?.message || "Failed to load team members.");
     } finally {
       setLoading(false);
     }
@@ -104,11 +99,10 @@ export default function AdminTeam() {
 
   async function onSubmit(e) {
     e.preventDefault();
-    setError("");
     setSubmitting(true);
 
     if (!form.name.trim() || !form.designation.trim()) {
-      setError("Please fill member name and designation.");
+      toast.error("Please fill member name and designation.");
       setSubmitting(false);
       return;
     }
@@ -138,9 +132,7 @@ export default function AdminTeam() {
       setForm(EMPTY_FORM);
       await load();
     } catch (err) {
-      const msg = err?.message || "Operation failed.";
-      setError(msg);
-      toast.error(msg);
+      toast.error(err?.message || "Operation failed.");
     } finally {
       setSubmitting(false);
     }
@@ -158,9 +150,7 @@ export default function AdminTeam() {
       setDeleteTarget(null);
       await load();
     } catch (err) {
-      const msg = err?.message || "Delete failed.";
-      setError(msg);
-      toast.error(msg);
+      toast.error(err?.message || "Delete failed.");
       setDeleteTarget(null);
     }
   }
@@ -172,9 +162,7 @@ export default function AdminTeam() {
       setDeleteAllTarget(false);
       await load();
     } catch (err) {
-      const msg = err?.message || "Delete all failed.";
-      setError(msg);
-      toast.error(msg);
+      toast.error(err?.message || "Delete all failed.");
       setDeleteAllTarget(false);
     }
   }
@@ -308,8 +296,6 @@ export default function AdminTeam() {
             </div>
 
             <div>
-              <ErrorBanner message={error} />
-
               <FormActions
                 submitting={submitting}
                 editId={form._id}

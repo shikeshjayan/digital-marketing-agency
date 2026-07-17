@@ -11,13 +11,13 @@ export const createMember = asyncHandler(async (req, res) => {
 
   // Validate required fields
   if (!name || !designation) {
-    return res.status(400).json({ success: false, message: "Missing required fields" });
+    return res.status(400).json({ success: false, message: "Please fill in at least the name and designation." });
   }
 
   if (display_order !== undefined) {
     const orderTaken = await Team.findOne({ display_order: Number(display_order) });
     if (orderTaken) {
-      return res.status(409).json({ success: false, message: "Display order already in use by another member" });
+      return res.status(409).json({ success: false, message: "This display order is already taken by another member. Please choose a different number." });
     }
   }
 
@@ -64,13 +64,13 @@ export const updateMember = asyncHandler(async (req, res) => {
   const { name, designation, description, linkedin, email, display_order, status, removePhoto } = req.body;
 
   if (!name && !designation && !description && !linkedin && !email && !display_order && !status) {
-    return res.status(400).json({ success: false, message: "Invalid data type fields" });
+    return res.status(400).json({ success: false, message: "Please provide at least one field to update." });
   }
 
   if (display_order !== undefined) {
     const orderTaken = await Team.findOne({ display_order: Number(display_order), _id: { $ne: req.params.id } });
     if (orderTaken) {
-      return res.status(409).json({ success: false, message: "Display order already in use by another member" });
+      return res.status(409).json({ success: false, message: "This display order is already taken by another member. Please choose a different number." });
     }
   }
 
@@ -87,7 +87,7 @@ export const updateMember = asyncHandler(async (req, res) => {
     { new: true, runValidators: true },
   );
   if (!member) {
-    return res.status(404).json({ success: false, message: "Target member profile not found" });
+    return res.status(404).json({ success: false, message: "We couldn't find this team member. They may have been removed." });
   }
   res.status(200).json({
     success: true,
@@ -100,11 +100,11 @@ export const updateMember = asyncHandler(async (req, res) => {
 export const deleteMember = asyncHandler(async (req, res) => {
   const member = await Team.findByIdAndDelete(req.params.id);
   if (!member) {
-    return res.status(404).json({ success: false, message: "Target member not found" });
+    return res.status(404).json({ success: false, message: "We couldn't find this team member. They may have been removed." });
   }
   res.status(200).json({
     success: true,
-    message: "Team member has been permanently removed from the dashboard system directory.",
+    message: "Team member deleted successfully.",
   });
 });
 

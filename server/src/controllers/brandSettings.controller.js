@@ -48,7 +48,7 @@ export const updateBrandSettings = asyncHandler(async (req, res) => {
   const hasBrandKeys = brand && Object.keys(brand).length > 0;
   const hasContactKeys = contact && Object.keys(contact).length > 0;
   if (!hasBrandKeys && !socialLinks?.length && !hasContactKeys && !companyLinks?.length) {
-    return res.status(400).json({ success: false, message: "At least one brand field is required" });
+    return res.status(400).json({ success: false, message: "Please provide at least one brand setting to update." });
   }
 
   let logo = req.files?.brand_logo?.[0]?.url ?? req.body.brand_logo;

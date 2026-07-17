@@ -15,7 +15,7 @@ export const checkAdminExists = asyncHandler(async (req, res) => {
 export const checkEmailExists = asyncHandler(async (req, res) => {
   const { email } = req.body;
   if (!email) {
-    return res.status(400).json({ success: false, message: "Email is required" });
+    return res.status(400).json({ success: false, message: "Please enter your email address." });
   }
   const admin = await Admin.findOne({ email });
   res.status(200).json({ success: true, data: { exists: !!admin } });
@@ -64,7 +64,7 @@ export const registerAdmin = asyncHandler(async (req, res) => {
   if (adminCount > 0) {
     return res
       .status(403)
-      .json({ success: false, message: "Registration is closed. Admin already exists." });
+      .json({ success: false, message: "Sorry, admin registration is already complete. You cannot create another admin account." });
   }
 
   const admin = await Admin.create({ name, email, password });
@@ -99,7 +99,7 @@ export const loginAdmin = asyncHandler(async (req, res) => {
   if (!admin) {
     return res
       .status(401)
-      .json({ success: false, message: "Invalid credentials" });
+      .json({ success: false, message: "The email or password you entered is incorrect. Please try again." });
   }
 
   // Check if the password matches the stored hash
@@ -107,7 +107,7 @@ export const loginAdmin = asyncHandler(async (req, res) => {
   if (!isMatch) {
     return res
       .status(401)
-      .json({ success: false, message: "Invalid credentials" });
+      .json({ success: false, message: "The email or password you entered is incorrect. Please try again." });
   }
 
   sendTokenResponse(admin, 200, res, rememberMe);
@@ -132,7 +132,7 @@ export const updateAdminProfile = asyncHandler(async (req, res) => {
 
   const admin = await Admin.findById(req.admin._id).select("+password");
   if (!admin) {
-    return res.status(404).json({ success: false, message: "Admin not found" });
+    return res.status(404).json({ success: false, message: "We couldn't find your account. Please contact support." });
   }
 
   if (name) admin.name = name;
@@ -149,16 +149,16 @@ export const updateAdminProfile = asyncHandler(async (req, res) => {
     if (!isMatch) {
       return res
         .status(400)
-        .json({ success: false, message: "Current password is incorrect" });
+        .json({ success: false, message: "The password you entered is not correct. Please try again." });
     }
     admin.password = newPassword;
   } else if (newPassword && !currentPassword) {
     return res
       .status(400)
-      .json({
-        success: false,
-        message: "Current password is required to set a new password",
-      });
+        .json({
+          success: false,
+          message: "Please enter your current password before setting a new one.",
+        });
   }
 
   const updatedAdmin = await admin.save();
@@ -240,13 +240,13 @@ export const verifyOTP = asyncHandler(async (req, res) => {
 
   // Compare OTP from token with user-submitted OTP
   if (decoded.otp !== otp.trim()) {
-    return res.status(400).json({ success: false, message: "Invalid OTP" });
+    return res.status(400).json({ success: false, message: "The code you entered is incorrect. Please try again or request a new one." });
   }
 
   // Find admin and reset password
   const admin = await Admin.findOne({ email: decoded.email }).select("+password");
   if (!admin) {
-    return res.status(400).json({ success: false, message: "Admin not found" });
+    return res.status(400).json({ success: false, message: "We couldn't find an account with this email. Please contact support." });
   }
 
   // Reject if new password matches the old one

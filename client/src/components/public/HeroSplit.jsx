@@ -46,7 +46,7 @@ export default function HeroSplit({
       <div className="absolute -top-32 -left-32 h-80 w-80 rounded-full bg-primary/20 blur-3xl" />
       <div className="absolute -bottom-32 -right-32 h-96 w-96 rounded-full bg-primary/20 blur-3xl" />
 
-      <div className="relative mx-auto max-w-7xl px-4 py-16 md:py-20 lg:py-24 -translate-x-[80px]">
+      <div className="relative mx-auto max-w-7xl px-4 py-16 md:py-20 lg:py-24 translate-x-0 lg:-translate-x-[80px]">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-center">
           <div
             className={`relative transition-all duration-700 ease-out ${loaded ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"}`}>

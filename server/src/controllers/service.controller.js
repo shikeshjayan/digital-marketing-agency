@@ -22,18 +22,18 @@ export const createService = asyncHandler(async (req, res) => {
   const seo = parseJsonObject(req.body.seo);
 
   if (!service_name || !short_description || !description || !hero_image) {
-    return res.status(400).json({ success: false, message: "Missing required fields" });
+    return res.status(400).json({ success: false, message: "Please fill in all required fields before saving." });
   }
 
   const existing = await Services.findOne({ service_name });
   if (existing) {
-    return res.status(409).json({ success: false, message: "Service already exists" });
+    return res.status(409).json({ success: false, message: "A service with this name already exists. Please choose a different name." });
   }
 
   if (display_order !== undefined) {
     const orderTaken = await Services.findOne({ display_order: Number(display_order) });
     if (orderTaken) {
-      return res.status(409).json({ success: false, message: "Display order already in use by another service" });
+      return res.status(409).json({ success: false, message: "This display order is already taken by another service. Please choose a different number." });
     }
   }
 
@@ -94,7 +94,7 @@ export const getAllServices = asyncHandler(async (req, res) => {
 export const getServiceBySlug = asyncHandler(async (req, res) => {
   const service = await Services.findOne({ slug: req.params.slug, status: "Active" }).lean();
   if (!service) {
-    return res.status(404).json({ success: false, message: "Service not found" });
+    return res.status(404).json({ success: false, message: "We couldn't find this service. It may have been removed." });
   }
 
   const projects = await Projects.find({ services: service._id, status: "Published" })
@@ -110,7 +110,7 @@ export const getServiceBySlug = asyncHandler(async (req, res) => {
 export const getServiceById = asyncHandler(async (req, res) => {
   const service = await Services.findById(req.params.id).lean();
   if (!service) {
-    return res.status(404).json({ success: false, message: "Service not found" });
+    return res.status(404).json({ success: false, message: "We couldn't find this service. It may have been removed." });
   }
 
   const projects = await Projects.find({ services: service._id, status: "Published" })
@@ -140,7 +140,7 @@ export const updateService = asyncHandler(async (req, res) => {
   if (display_order !== undefined) {
     const orderTaken = await Services.findOne({ display_order: Number(display_order), _id: { $ne: req.params.id } });
     if (orderTaken) {
-      return res.status(409).json({ success: false, message: "Display order already in use by another service" });
+      return res.status(409).json({ success: false, message: "This display order is already taken by another service. Please choose a different number." });
     }
   }
 
@@ -174,7 +174,7 @@ export const updateService = asyncHandler(async (req, res) => {
     { new: true, runValidators: true },
   );
   if (!service) {
-    return res.status(404).json({ success: false, message: "Service not found" });
+    return res.status(404).json({ success: false, message: "We couldn't find this service. It may have been removed." });
   }
   res.status(200).json({
     success: true,
@@ -187,7 +187,7 @@ export const updateService = asyncHandler(async (req, res) => {
 export const deleteService = asyncHandler(async (req, res) => {
   const service = await Services.findByIdAndDelete(req.params.id);
   if (!service) {
-    return res.status(404).json({ success: false, message: "Service not found" });
+    return res.status(404).json({ success: false, message: "We couldn't find this service. It may have been removed." });
   }
 
   // Clean orphaned references from projects
@@ -219,7 +219,7 @@ export const getRelatedServices = asyncHandler(async (req, res) => {
 
   const currentService = await Services.findById(id).lean();
   if (!currentService) {
-    return res.status(404).json({ success: false, message: "Service not found" });
+    return res.status(404).json({ success: false, message: "We couldn't find this service. It may have been removed." });
   }
 
   const related = await Services.find({

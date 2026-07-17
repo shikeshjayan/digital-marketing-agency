@@ -1,6 +1,7 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
 import useSiteContentStore from "../../store/siteContentStore.js";
+import useTeamStore from "../../store/teamStore.js";
 import AdminPageHeader from "../../components/ui/AdminPageHeader.jsx";
 import ErrorBanner from "../../components/ui/ErrorBanner.jsx";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -26,10 +27,27 @@ export default function AdminSiteContent() {
   const [confirmMarqueeIdx, setConfirmMarqueeIdx] = useState(null);
   const [confirmStatIdx, setConfirmStatIdx] = useState(null);
   const [confirmReset, setConfirmReset] = useState(false);
+  const [teamCount, setTeamCount] = useState(0);
+  const { fetchAdminTeam } = useTeamStore();
 
   useEffect(() => {
     fetchSiteContent();
   }, [fetchSiteContent]);
+
+  useEffect(() => {
+    fetchAdminTeam({ limit: 1, page: 1 }).then((result) => {
+      if (result?.pagination?.total) setTeamCount(result.pagination.total);
+    });
+  }, [fetchAdminTeam]);
+
+  const hasChanges = useMemo(() => {
+    if (!content) return false;
+    return (
+      JSON.stringify(content.technologyStackItems ?? []) !== JSON.stringify(techItems) ||
+      JSON.stringify(content.trustMarqueeLogos ?? []) !== JSON.stringify(marqueeLogos) ||
+      JSON.stringify(content.companyStats ?? []) !== JSON.stringify(companyStats)
+    );
+  }, [content, techItems, marqueeLogos, companyStats]);
 
   useEffect(() => {
     if (content) {
@@ -313,44 +331,56 @@ className="w-24 max-w-full rounded border border-border bg-surface px-3 py-2 tex
         </p>
 
         <div className="mt-4 space-y-4">
-          {companyStats.map((stat, i) => (
-            <div key={i} className="flex flex-col sm:flex-row sm:flex-wrap items-stretch sm:items-center gap-2">
-              <div className="flex items-center gap-2 w-full sm:w-auto">
-                <input
-                  className="flex-1 sm:w-24 sm:flex-none rounded border border-border bg-surface px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-primary-light"
-                  placeholder="Target"
-                  type="number"
-                  step="any"
-                  value={stat.target}
-                  onChange={(e) => updateCompanyStat(i, "target", e.target.value)}
-                />
-                <input
-                  className="w-20 rounded border border-border bg-surface px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-primary-light"
-                  placeholder="Suffix"
-                  value={stat.suffix}
-                  onChange={(e) => updateCompanyStat(i, "suffix", e.target.value)}
-                  maxLength={20}
-                />
+          {companyStats.map((stat, i) => {
+            const isDefault = DEFAULT_STAT_KEYS.has(stat.key);
+            const isTeamMembers = stat.key === "teamMembers";
+            return (
+              <div key={i} className="flex flex-col sm:flex-row sm:flex-wrap items-stretch sm:items-center gap-2">
+                <div className="flex items-center gap-2 w-full sm:w-auto">
+                  <input
+                    className="flex-1 sm:w-24 sm:flex-none rounded border border-border bg-surface px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-primary-light disabled:opacity-50 disabled:cursor-not-allowed"
+                    placeholder="Target"
+                    type="number"
+                    step="any"
+                    min={0}
+                    max={99999}
+                    value={isTeamMembers ? teamCount : stat.target}
+                    disabled={isTeamMembers}
+                    onChange={(e) => updateCompanyStat(i, "target", e.target.value)}
+                  />
+                  <input
+                    className="w-20 rounded border border-border bg-surface px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-primary-light disabled:opacity-50 disabled:cursor-not-allowed"
+                    placeholder="Suffix"
+                    value={stat.suffix}
+                    disabled={isDefault}
+                    onChange={(e) => updateCompanyStat(i, "suffix", e.target.value)}
+                    maxLength={5}
+                  />
+                </div>
+                <div className="flex items-center gap-2 flex-1 w-full sm:flex-1 sm:min-w-0">
+                  <input
+                    className="flex-1 rounded border border-border bg-surface px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-primary-light disabled:opacity-50 disabled:cursor-not-allowed"
+                    placeholder="Label (e.g. Years of Experience)"
+                    value={stat.label}
+                    disabled={isDefault}
+                    onChange={(e) => updateCompanyStat(i, "label", e.target.value)}
+                    maxLength={20}
+                  />
+                  {isTeamMembers && (
+                    <span className="text-xs text-muted italic shrink-0">auto</span>
+                  )}
+                  {!isDefault && (
+                    <button
+                      type="button"
+                      onClick={() => setConfirmStatIdx(i)}
+                      className="p-2 text-danger hover:text-red-700 hover:bg-red-50 rounded transition cursor-pointer shrink-0">
+                      <FontAwesomeIcon icon={faTrash} className="w-4 h-4" />
+                    </button>
+                  )}
+                </div>
               </div>
-              <div className="flex items-center gap-2 flex-1 w-full sm:flex-1 sm:min-w-0">
-                <input
-                  className="flex-1 rounded border border-border bg-surface px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-primary-light"
-                  placeholder="Label (e.g. Years of Experience)"
-                  value={stat.label}
-                  onChange={(e) => updateCompanyStat(i, "label", e.target.value)}
-                  maxLength={100}
-                />
-                {!DEFAULT_STAT_KEYS.has(stat.key) && (
-                  <button
-                    type="button"
-                    onClick={() => setConfirmStatIdx(i)}
-                    className="p-2 text-danger hover:text-red-700 hover:bg-red-50 rounded transition cursor-pointer shrink-0">
-                    <FontAwesomeIcon icon={faTrash} className="w-4 h-4" />
-                  </button>
-                )}
-              </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
 
         <button
@@ -387,7 +417,7 @@ className="w-24 max-w-full rounded border border-border bg-surface px-3 py-2 tex
         <button
           type="button"
           onClick={handleSave}
-          disabled={saving}
+          disabled={saving || !hasChanges}
           className="rounded bg-primary text-white px-6 py-2.5 font-extrabold hover:bg-primary-hover transition disabled:opacity-50 cursor-pointer">
           {saving ? "Saving..." : "Save Changes"}
         </button>

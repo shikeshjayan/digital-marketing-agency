@@ -60,16 +60,26 @@ async function processBuffer(buffer, originalname) {
 
 export const processImage = async (req, res, next) => {
   try {
-    // Handle upload.single() — file is on req.file (singular)
     if (req.file) {
-      req.file.url = await processBuffer(req.file.buffer, req.file.originalname);
+      try {
+        req.file.url = await processBuffer(req.file.buffer, req.file.originalname);
+      } catch (err) {
+        err.statusCode = 400;
+        err.message = `We couldn't process the image "${req.file.originalname}". It may be corrupted or in an unsupported format. Please try a different image.`;
+        return next(err);
+      }
     }
 
-    // Handle upload.fields() / upload.array() — files are on req.files (plural)
     if (req.files) {
       for (const [fieldname, fileArr] of Object.entries(req.files)) {
         for (const file of fileArr) {
-          file.url = await processBuffer(file.buffer, file.originalname);
+          try {
+            file.url = await processBuffer(file.buffer, file.originalname);
+          } catch (err) {
+            err.statusCode = 400;
+            err.message = `We couldn't process the image "${file.originalname}". It may be corrupted or in an unsupported format. Please try a different image.`;
+            return next(err);
+          }
         }
       }
     }

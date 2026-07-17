@@ -80,7 +80,7 @@ export default function WhyChooseUs({
                   direction="up"
                   className="h-full">
                   {/* Fixed: Changed rounded-c to rounded-sm to adopt the 0.125rem radius cleanly */}
-                  <div className="h-full bg-background border border-border rounded-sm p-5 hover: hover:-translate-y-0.5 transition-all duration-300 group card-shadow">
+                   <div className="h-full bg-background border border-border rounded-sm p-5 hover:-translate-y-0.5 transition-all duration-300 group card-shadow">
                     <div className="w-10 h-10 bg-primary-light flex items-center justify-center shrink-0 group-hover:bg-primary transition-colors rounded-sm">
                       <FontAwesomeIcon
                         icon={r.icon}
@@ -91,8 +91,7 @@ export default function WhyChooseUs({
                       {r.title}
                     </h3>
                     <p
-                      className="mt-1.5 text-sm text-text leading-relaxed"
-                      style={{ fontSize: "14px" }}>
+                      className="mt-1.5 text-sm text-text leading-relaxed">
                       {r.desc}
                     </p>
                   </div>
@@ -106,7 +105,7 @@ export default function WhyChooseUs({
             {({ isInView, ref }) => (
               <div
                 ref={ref}
-                className={`border border-border rounded-lg p-8 flex flex-col justify-center items-center transition-colors duration-700 ease-out ${isInView ? 'bg-background' : 'bg-transparent'}`}>
+                className={`border border-border rounded-lg p-8 flex flex-col justify-center items-center card-shadow transition-colors duration-700 ease-out ${isInView ? 'bg-background' : 'bg-transparent'}`}>
                 <div className="grid grid-cols-2 gap-4 w-full">
                   {stats.map((stat) => (
                     <div key={stat.label} className="text-center p-4">
@@ -123,8 +122,7 @@ export default function WhyChooseUs({
                         )}
                       </div>
                       <div
-                        className="mt-1 text-xs text-muted"
-                        style={{ fontSize: "14px" }}>
+                        className="mt-1 text-xs text-muted small-text">
                         {stat.label}
                       </div>
                     </div>

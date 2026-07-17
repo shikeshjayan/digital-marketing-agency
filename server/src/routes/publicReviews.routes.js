@@ -15,7 +15,7 @@ const submitLimiterMiddleware = async (req, res, next) => {
     await submitLimiter.consume(req.ip);
     next();
   } catch {
-    res.status(429).json({ success: false, message: "Too Many Requests (Rate limit tripped to prevent spam)" });
+    res.status(429).json({ success: false, message: "You've submitted too many reviews recently. Please wait a few minutes and try again." });
   }
 };
 

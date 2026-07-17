@@ -15,7 +15,7 @@ const submitLimiterMiddleware = async (req, res, next) => {
     await submitLimiter.consume(req.ip);
     next();
   } catch {
-    res.status(429).json({ success: false, message: "Too Many Requests (Rate limit triggered to stop bot spam)" });
+    res.status(429).json({ success: false, message: "You've sent too many messages in a short time. Please wait a few minutes and try again." });
   }
 };
 

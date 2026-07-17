@@ -21,6 +21,7 @@ import LogoMarquee from "../../components/public/LogoMarquee.jsx";
 import TestimonialsSection from "../../components/public/TestimonialsSection.jsx";
 import FinalCTA from "../../components/public/FinalCTA.jsx";
 import usePageStore from "../../store/pageStore.js";
+import useTeamStore from "../../store/teamStore.js";
 
 /* ─── Section: Who We Are ─────────────────────────────────── */
 function WhoWeAre({ stats = [] }) {
@@ -39,7 +40,7 @@ function WhoWeAre({ stats = [] }) {
                 title="A Team Built on Passion & Purpose"
                 subtitle=""
               />
-              <div className="mt-4 space-y-4 text-sm text-text leading-relaxed text-justify md:text-left">
+              <div className="mt-4 space-y-4 text-sm text-text leading-relaxed text-left">
                 <p>
                   We are a collective of designers, developers, and digital
                   strategists who believe that great digital experiences are
@@ -78,8 +79,7 @@ function WhoWeAre({ stats = [] }) {
                       />
                     </div>
                     <div
-                      className="text-muted mt-1"
-                      style={{ fontSize: "12px" }}>
+                      className="text-muted mt-1 text-xs font-normal">
                       {stat.label}
                     </div>
                   </div>
@@ -108,7 +108,7 @@ function MissionVision() {
 
         <div className="mt-10 grid grid-cols-1 md:grid-cols-2 gap-8">
           <FadeIn direction="left">
-            <div className="bg-background border border-border rounded-lg p-8 h-full hover: transition card-shadow">
+            <div className="bg-background border border-border rounded-lg p-8 h-full hover:shadow-md transition card-shadow">
               <div className="w-14 h-14 rounded-lg bg-primary-light flex items-center justify-center">
                 <FontAwesomeIcon
                   icon={faBullseye}
@@ -127,7 +127,7 @@ function MissionVision() {
           </FadeIn>
 
           <FadeIn direction="right">
-            <div className="bg-background border border-border rounded-lg p-8 h-full hover: transition card-shadow">
+            <div className="bg-background border border-border rounded-lg p-8 h-full hover:shadow-md transition card-shadow">
               <div className="w-14 h-14 rounded-lg bg-primary-light flex items-center justify-center">
                 <FontAwesomeIcon
                   icon={faEye}
@@ -188,7 +188,7 @@ function OurValues() {
         <div className="mt-10 grid grid-cols-1 sm:grid-cols-2 gap-6">
           {valuesData.map((v, i) => (
             <FadeIn key={v.title} delay={i * 100}>
-              <div className="bg-surface border border-border rounded-lg p-6 h-full hover: transition group card-shadow">
+                <div className="bg-surface border border-border rounded-lg p-6 h-full hover:shadow-md transition group card-shadow">
                 <div className="w-12 h-12 rounded-lg bg-primary-light flex items-center justify-center group-hover:bg-primary group-hover:text-white transition">
                   <FontAwesomeIcon
                     icon={v.icon}
@@ -239,6 +239,7 @@ function MeetOurTeam() {
 /* ─── Main About Page ─────────────────────────────────────── */
 export default function About() {
   const { aboutPage, loading, error, fetchPageAbout } = usePageStore();
+  const { team, fetchTeam } = useTeamStore();
 
   const reviews = aboutPage?.reviews ?? [];
   const content = aboutPage?.siteContent ?? null;
@@ -247,7 +248,8 @@ export default function About() {
 
   useEffect(() => {
     fetchPageAbout();
-  }, [fetchPageAbout]);
+    fetchTeam();
+  }, [fetchPageAbout, fetchTeam]);
 
   const getStat = (key) => {
     const s = companyStats.find((st) => st.key === key);
@@ -311,7 +313,7 @@ export default function About() {
         imageSrc="/aboutus.webp"
         imageAlt="About Us"
         trustIndicators={[
-          { value: getStat("teamMembers") || "25+", label: "Team\nMembers" },
+          { value: team.length > 0 ? `${team.length}+` : getStat("teamMembers") || "25+", label: "Team\nMembers" },
           {
             value: getStat("projectsCompleted") || "500+",
             label: "Projects\nDelivered",
@@ -332,7 +334,7 @@ export default function About() {
                 Hello, <span className="text-primary">Welcome</span> to Digital
                 Marketing
               </h2>
-              <div className="mt-4 small-text text-text leading-relaxed max-w-7xl mx-auto text-justify space-y-3">
+              <div className="mt-4 small-text text-text leading-relaxed max-w-7xl mx-auto text-left md:text-justify space-y-3">
                 <p className="small-text text-text body-text break-words">
                   We help brands navigate and scale modern digital landscapes by
                   executing high-performance web engineering alongside robust
@@ -360,7 +362,7 @@ export default function About() {
           <div className="max-w-6xl mx-auto px-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-10 md:gap-16 items-center">
               <div className="space-y-4 animate-pulse">
-                <div className="h-4 w-20 bg-surface-border rounded" />
+                <div                     className="h-4 w-20 bg-border rounded" />
                 <div className="h-8 w-3/4 bg-surface-border rounded" />
                 <div className="h-4 w-full bg-surface-border rounded" />
                 <div className="h-4 w-5/6 bg-surface-border rounded" />

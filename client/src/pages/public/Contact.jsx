@@ -511,8 +511,7 @@ export default function Contact() {
                   {(localError || storeError) && (
                     <FadeIn direction="none">
                       <div
-                        className="text-sm text-primary text-center"
-                        style={{ fontSize: "12.5px" }}>
+                        className="text-sm text-primary text-center text-xs">
                         {localError || storeError}
                       </div>
                     </FadeIn>

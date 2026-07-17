@@ -10,9 +10,8 @@ import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
 export default function ForgotPassword() {
   const navigate = useNavigate();
   const location = useLocation();
-  const prefilledEmail = location.state?.email || "";
   const [step, setStep] = useState(1);
-  const [email, setEmail] = useState(prefilledEmail);
+  const [email, setEmail] = useState(location.state?.email || "");
   const [otp, setOtp] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -51,6 +50,12 @@ export default function ForgotPassword() {
 
     setLoading(true);
     try {
+      const check = await apiService.post("/admin/check-email", { email });
+      if (!check.data?.data?.exists) {
+        toast.error("No account found with this email address.");
+        return;
+      }
+
       const res = await apiService.post("/admin/forgot-password", { email });
       setOtpToken(res.data?.data?.otpToken || "");
       setStep(2);
@@ -140,7 +145,6 @@ export default function ForgotPassword() {
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="Enter your email"
                 autoComplete="email"
-                readOnly={!!prefilledEmail}
               />
 
               <button

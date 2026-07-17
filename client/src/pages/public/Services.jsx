@@ -30,7 +30,7 @@ import ImageLoader from "../../components/ui/ImageLoader.jsx";
 const ServiceCard = ({ service }) => (
   <Link
     to={`/services/${slugify(service.service_name)}`}
-    className="flex flex-col bg-background border border-border rounded-lg h-full w-full overflow-hidden group hover:-translate-y-1 transition-all duration-300 card-shadow">
+    className="flex flex-col bg-background border border-border rounded-lg h-full w-full overflow-hidden group hover:-translate-y-1 transition-all duration-300">
     {/* Image Container */}
     <div className="h-48 w-full overflow-hidden shrink-0">
       <ImageLoader
@@ -102,7 +102,7 @@ function IndustriesWeServe({ industries = [] }) {
           {industries.slice(0, 8).map((ind, i) => {
             return (
               <FadeIn key={ind._id || i} delay={i * 40} className="flex">
-                <div className="bg-surface w-full border border-border rounded-lg p-5 text-center hover: hover:-translate-y-0.5 transition-all duration-300 group cursor-default h-full flex flex-col justify-center card-shadow">
+                <div className="bg-surface w-full border border-border rounded-lg p-5 text-center hover:-translate-y-0.5 transition-all duration-300 group cursor-default h-full flex flex-col justify-center card-shadow">
                   <div className="w-12 h-12 mx-auto rounded-lg bg-primary-light flex items-center justify-center group-hover:bg-primary transition-colors">
                     {ind.iconType === "image" && ind.icon ? (
                       <img
@@ -176,7 +176,7 @@ function FeaturedCaseStudies({ caseStudies, loading }) {
                 key={cs._id}
                 delay={i * 40}
                 className="w-full md:basis-[calc(50%-12px)] lg:basis-[calc(33.33%-16px)] max-w-sm lg:max-w-none flex min-w-0">
-                <div className="bg-background border border-border rounded-lg p-6 w-full flex flex-col justify-between hover: transition group card-shadow min-w-0">
+                 <div className="bg-background border border-border rounded-lg p-6 w-full flex flex-col justify-between hover:shadow-md transition group card-shadow min-w-0">
                   <div className="flex flex-col flex-1 min-w-0">
                     {cs.hero_image && (
                       <div className="-mx-6 -mt-6 mb-4 overflow-hidden rounded-t-lg bg-surface shrink-0 min-w-0 h-40 relative">
@@ -249,7 +249,7 @@ function TechnologiesPlatforms({ technologies = [] }) {
         <div className="mt-10 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
           {technologies.map((tech, i) => (
             <FadeIn key={tech._id || i} delay={i * 30}>
-              <div className="flex items-center gap-3 bg-surface border border-border rounded-lg px-4 py-3 hover: hover:border-primary/30 transition-all duration-200 cursor-default card-shadow">
+              <div className="flex items-center gap-3 bg-surface border border-border rounded-lg px-4 py-3 hover:border-primary/30 transition-all duration-200 cursor-default card-shadow">
                 <div className="w-9 h-9 rounded-md bg-primary-light flex items-center justify-center shrink-0">
                   {tech.iconType === "image" && tech.icon ? (
                     <img
@@ -308,7 +308,7 @@ function ResultsStatistics({ stats = [] }) {
                 return (
                   <div
                     key={stat.key || i}
-                    className="bg-surface border border-border rounded-lg p-6 text-center hover: transition card-shadow">
+                    className="bg-surface border border-border rounded-lg p-6 text-center hover:shadow-md transition card-shadow">
                     <div className="text-4xl font-extrabold text-primary">
                       <AnimatedCounter
                         target={numericTarget}
@@ -398,14 +398,14 @@ function PaginatedServicesSection({ services = [] }) {
               <button
                 type="button"
                 onClick={prev}
-                className="w-10 h-10 rounded-lg bg-surface border border-border flex items-center justify-center text-primary hover:bg-primary hover:text-white transition cursor-pointer card-shadow"
+                className="w-10 h-10 rounded-lg bg-surface border border-border flex items-center justify-center text-primary hover:bg-primary hover:text-white transition cursor-pointer"
                 aria-label="Previous services">
                 <FontAwesomeIcon icon={faAngleLeft} className="text-sm" />
               </button>
               <button
                 type="button"
                 onClick={next}
-                className="w-10 h-10 rounded-lg bg-surface border border-border flex items-center justify-center text-primary hover:bg-primary hover:text-white transition cursor-pointer card-shadow"
+                className="w-10 h-10 rounded-lg bg-surface border border-border flex items-center justify-center text-primary hover:bg-primary hover:text-white transition cursor-pointer"
                 aria-label="Next services">
                 <FontAwesomeIcon icon={faAngleRight} className="text-sm" />
               </button>
@@ -582,7 +582,7 @@ export default function Services() {
       {/* 11. FAQ */}
       <FadeIn>
         <FAQSection
-          items={faqs.map((f) => ({ q: f.question, a: f.answer }))}
+          items={faqs.slice(0, 5).map((f) => ({ q: f.question, a: f.answer }))}
           bg="bg-background-section"
         />
       </FadeIn>

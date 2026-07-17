@@ -247,7 +247,7 @@ export default function CaseStudyDetail() {
                 <div className="flex flex-wrap gap-4 justify-center items-center max-w-5xl mx-auto">
                   {cs.deliverables.map((d, i) => (
                     <FadeIn key={i} delay={i * 20}>
-                      <span className="inline-block bg-background border border-border/80 text-heading text-sm font-body px-5 py-3 rounded-none text-center card-shadow break-words">
+                      <span className="inline-block bg-background border border-border/80 text-heading text-sm font-body px-5 py-3 rounded-none text-center wrap-break-word">
                         {d}
                       </span>
                     </FadeIn>

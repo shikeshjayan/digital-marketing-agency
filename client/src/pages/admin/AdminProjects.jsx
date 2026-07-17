@@ -19,7 +19,7 @@ import TableEmptyState from "../../components/ui/TableEmptyState.jsx";
 import FormField from "../../components/ui/FormField.jsx";
 import FileUploadField from "../../components/ui/FileUploadField.jsx";
 import FormActions from "../../components/ui/FormActions.jsx";
-import ErrorBanner from "../../components/ui/ErrorBanner.jsx";
+
 import resolveImagePath from "../../utils/resolveImagePath.js";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTrash, faPen } from "@fortawesome/free-solid-svg-icons";
@@ -72,7 +72,6 @@ export default function AdminProjects() {
   const [pagination, setPagination] = useState({ total: 0, page: 1, pages: 1 });
   const galleryRef = useRef(null);
   const [form, setForm] = useState(EMPTY_FORM);
-  const [error, setError] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const formRef = useRef(null);
   const [deleteTarget, setDeleteTarget] = useState(null);
@@ -99,7 +98,6 @@ export default function AdminProjects() {
 
   const load = async () => {
     setLoading(true);
-    setError("");
     try {
       const result = await fetchAdminProjects({
         search: search || undefined,
@@ -111,12 +109,11 @@ export default function AdminProjects() {
       setItems(result?.items ?? []);
       setPagination(result?.pagination ?? { total: 0, page: 1, pages: 1 });
     } catch (err) {
-      const msg =
+      toast.error(
         err?.response?.data?.message ||
         err?.message ||
-        "Failed to load projects.";
-      setError(msg);
-      toast.error(msg);
+        "Failed to load projects."
+      );
     } finally {
       setLoading(false);
     }
@@ -154,7 +151,6 @@ export default function AdminProjects() {
 
   async function onSubmit(e) {
     e.preventDefault();
-    setError("");
     setSubmitting(true);
 
     if (
@@ -162,19 +158,19 @@ export default function AdminProjects() {
       !form.short_description.trim() ||
       !form.description.trim()
     ) {
-      setError("Please fill Project Name, Short Description, and Description.");
+      toast.error("Please fill Project Name, Short Description, and Description.");
       setSubmitting(false);
       return;
     }
 
     if (!form.thumbnail && !form.project_id) {
-      setError("Please upload a thumbnail image.");
+      toast.error("Please upload a thumbnail image.");
       setSubmitting(false);
       return;
     }
 
     if (form.services.length === 0) {
-      setError("Please select at least one service.");
+      toast.error("Please select at least one service.");
       setSubmitting(false);
       return;
     }
@@ -234,10 +230,9 @@ export default function AdminProjects() {
       setForm(EMPTY_FORM);
       await load();
     } catch (err) {
-      const msg =
-        err?.response?.data?.message || err?.message || "Operation failed.";
-      setError(msg);
-      toast.error(msg);
+      toast.error(
+        err?.response?.data?.message || err?.message || "Operation failed."
+      );
     } finally {
       setSubmitting(false);
     }
@@ -285,9 +280,7 @@ export default function AdminProjects() {
       setDeleteTarget(null);
       await load();
     } catch (err) {
-      const msg = err?.response?.data?.message || "Delete failed.";
-      setError(msg);
-      toast.error(msg);
+      toast.error(err?.response?.data?.message || "Delete failed.");
       setDeleteTarget(null);
     }
   }
@@ -299,9 +292,7 @@ export default function AdminProjects() {
       setDeleteAllTarget(false);
       await load();
     } catch (err) {
-      const msg = err?.response?.data?.message || "Delete all failed.";
-      setError(msg);
-      toast.error(msg);
+      toast.error(err?.response?.data?.message || "Delete all failed.");
       setDeleteAllTarget(false);
     }
   }
@@ -633,8 +624,6 @@ export default function AdminProjects() {
             </div>
 
             <div className="shrink-0">
-              <ErrorBanner message={error} />
-
               <FormActions
                 submitting={submitting}
                 editId={form.project_id}
