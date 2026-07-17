@@ -27,7 +27,7 @@ const EMPTY_FORM = {
   description: "",
   linkedin: "",
   email: "",
-  display_order: 1,
+  display_order: 0,
   status: "Active",
 };
 

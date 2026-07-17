@@ -22,20 +22,20 @@ const inputCls =
   "w-full rounded border border-border bg-surface px-4 py-2 text-sm text-text outline-none transition focus:border-primary focus:bg-background focus:ring-2 focus:ring-primary-light placeholder:text-muted";
 
 const EMPTY_FORM = {
-    service_id: null,
-    service_name: "",
-    slug: "",
-    short_description: "",
-    description: "",
-    status: "Active",
-    hero_image: "",
-    icon: "",
-    deliverables: [],
-    benefits: [],
-    featured: false,
-    display_order: 0,
-    seo: { meta_title: "", meta_description: "" },
-  };
+  service_id: null,
+  service_name: "",
+  slug: "",
+  short_description: "",
+  description: "",
+  status: "Active",
+  hero_image: "",
+  icon: "",
+  deliverables: [],
+  benefits: [],
+  featured: false,
+  display_order: 0,
+  seo: { meta_title: "", meta_description: "" },
+};
 
 export default function AdminServices() {
   const {
@@ -85,14 +85,18 @@ export default function AdminServices() {
     try {
       const result = await fetchAdminServices({
         search: search || undefined,
-        status: status || undefined,
+        status: status === "Featured" ? undefined : status || undefined,
+        featured: status === "Featured" ? "true" : undefined,
         page,
         limit: isMobile ? 200 : 8,
       });
       setItems(result?.items ?? []);
       setPagination(result?.pagination ?? { total: 0, page: 1, pages: 1 });
     } catch (err) {
-      const msg = err?.response?.data?.message || err?.message || "Failed to load services.";
+      const msg =
+        err?.response?.data?.message ||
+        err?.message ||
+        "Failed to load services.";
       setError(msg);
       toast.error(msg);
     } finally {
@@ -241,11 +245,12 @@ export default function AdminServices() {
           <Select
             value={status}
             onChange={setStatus}
-            placeholder="All statuses"
+            placeholder="All items"
             options={[
-              { value: "", label: "All statuses" },
+              { value: "", label: "All items" },
               { value: "Active", label: "Active" },
               { value: "Inactive", label: "Inactive" },
+              { value: "Featured", label: "Featured" },
             ]}
           />
         </div>
@@ -259,7 +264,9 @@ export default function AdminServices() {
             {form.service_id ? "Edit Service" : "Add New Service"}
           </div>
 
-          <form onSubmit={onSubmit} className="mt-4 flex flex-col flex-1 min-h-0 gap-3">
+          <form
+            onSubmit={onSubmit}
+            className="mt-4 flex flex-col flex-1 min-h-0 gap-3">
             <div className="flex-1 overflow-y-auto space-y-3">
               <FormField
                 label="Service Name"
@@ -272,7 +279,9 @@ export default function AdminServices() {
 
               {form.slug && (
                 <div>
-                  <label className="text-sm font-semibold text-heading">Slug</label>
+                  <label className="text-sm font-semibold text-heading">
+                    Slug
+                  </label>
                   <input
                     className={`${inputCls} bg-surface/50 cursor-not-allowed`}
                     value={form.slug}
@@ -346,8 +355,12 @@ export default function AdminServices() {
                 <FileUploadField
                   label="Hero Image"
                   required
-                  file={form.hero_image instanceof File ? form.hero_image : null}
-                  existingUrl={typeof form.hero_image === "string" ? form.hero_image : ""}
+                  file={
+                    form.hero_image instanceof File ? form.hero_image : null
+                  }
+                  existingUrl={
+                    typeof form.hero_image === "string" ? form.hero_image : ""
+                  }
                   onChange={onPickHeroImage}
                   onRemove={() => setForm((f) => ({ ...f, hero_image: "" }))}
                   confirmText="Remove hero image?"
@@ -385,7 +398,10 @@ export default function AdminServices() {
                   className={`mt-2 ${inputCls}`}
                   value={tagInputs.deliverables}
                   onChange={(e) =>
-                    setTagInputs((t) => ({ ...t, deliverables: e.target.value }))
+                    setTagInputs((t) => ({
+                      ...t,
+                      deliverables: e.target.value,
+                    }))
                   }
                   onKeyDown={(e) => {
                     if (e.key === "Enter") {
@@ -490,11 +506,12 @@ export default function AdminServices() {
               <Select
                 value={status}
                 onChange={setStatus}
-                placeholder="All statuses"
+                placeholder="All items"
                 options={[
-                  { value: "", label: "All statuses" },
+                  { value: "", label: "All items" },
                   { value: "Active", label: "Active" },
                   { value: "Inactive", label: "Inactive" },
+                  { value: "Featured", label: "Featured" },
                 ]}
               />
             </div>
@@ -530,7 +547,9 @@ export default function AdminServices() {
                       key={s._id}
                       className="block sm:table-row border sm:border-t border-border mb-3 sm:mb-0 p-3 sm:p-0 rounded-lg sm:rounded-none bg-surface/50 sm:bg-transparent">
                       <td className="block sm:table-cell py-1 sm:py-3 pl-0 sm:pl-3 pr-0 sm:pr-3 text-text">
-                        <span className="text-xs font-semibold text-muted uppercase tracking-wide block sm:hidden mb-1">ID</span>
+                        <span className="text-xs font-semibold text-muted uppercase tracking-wide block sm:hidden mb-1">
+                          ID
+                        </span>
                         <span
                           className="block break-all sm:truncate sm:max-w-[80px]"
                           title={s._id}>
@@ -538,7 +557,9 @@ export default function AdminServices() {
                         </span>
                       </td>
                       <td className="block sm:table-cell py-1 sm:py-3 pr-0 sm:pr-3">
-                        <span className="text-xs font-semibold text-muted uppercase tracking-wide block sm:hidden mb-1">Service</span>
+                        <span className="text-xs font-semibold text-muted uppercase tracking-wide block sm:hidden mb-1">
+                          Service
+                        </span>
                         <div className="font-bold text-heading sm:truncate sm:max-w-[200px]">
                           {s.service_name}
                         </div>
@@ -547,7 +568,9 @@ export default function AdminServices() {
                         </div>
                       </td>
                       <td className="block sm:table-cell py-1 sm:py-3 pr-0 sm:pr-3">
-                        <span className="text-xs font-semibold text-muted uppercase tracking-wide block sm:hidden mb-1">Featured</span>
+                        <span className="text-xs font-semibold text-muted uppercase tracking-wide block sm:hidden mb-1">
+                          Featured
+                        </span>
                         {s.featured && (
                           <span className="inline-flex items-center rounded-full px-3 py-1 text-sm font-semibold border bg-info/10 text-info border-info/20">
                             Featured
@@ -555,7 +578,9 @@ export default function AdminServices() {
                         )}
                       </td>
                       <td className="block sm:table-cell py-1 sm:py-3 pr-0 sm:pr-3">
-                        <span className="text-xs font-semibold text-muted uppercase tracking-wide block sm:hidden mb-1">Status</span>
+                        <span className="text-xs font-semibold text-muted uppercase tracking-wide block sm:hidden mb-1">
+                          Status
+                        </span>
                         <span
                           className={`inline-flex items-center rounded-full px-3 py-1 text-sm font-semibold border ${
                             s.status === "Active"
@@ -566,7 +591,9 @@ export default function AdminServices() {
                         </span>
                       </td>
                       <td className="block sm:table-cell py-1 sm:py-3">
-                        <span className="text-xs font-semibold text-muted uppercase tracking-wide block sm:hidden mb-1">Actions</span>
+                        <span className="text-xs font-semibold text-muted uppercase tracking-wide block sm:hidden mb-1">
+                          Actions
+                        </span>
                         <div className="flex gap-2 flex-wrap">
                           <button
                             type="button"
@@ -585,7 +612,10 @@ export default function AdminServices() {
                                 benefits: s.benefits ?? [],
                                 featured: s.featured ?? false,
                                 display_order: s.display_order ?? 0,
-                                seo: s.seo ?? { meta_title: "", meta_description: "" },
+                                seo: s.seo ?? {
+                                  meta_title: "",
+                                  meta_description: "",
+                                },
                               });
                               formRef.current?.scrollIntoView({
                                 behavior: "smooth",
@@ -602,7 +632,10 @@ export default function AdminServices() {
                             title="Delete"
                             aria-label="Delete"
                             onClick={() => onDelete(s._id)}>
-                            <FontAwesomeIcon icon={faTrash} className="w-4 h-4" />
+                            <FontAwesomeIcon
+                              icon={faTrash}
+                              className="w-4 h-4"
+                            />
                           </button>
                         </div>
                       </td>

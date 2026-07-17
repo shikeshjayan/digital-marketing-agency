@@ -50,6 +50,7 @@ export default function DatePicker({
   id: externalId,
   disabled = false,
   className = "",
+  dropdownAlign = "left",
 }) {
   const generatedId = useId();
   const id = externalId || generatedId;
@@ -121,7 +122,11 @@ export default function DatePicker({
         )}
       </div>
       {isOpen && !disabled && (
-        <div className="absolute top-full left-0 z-50 mt-1 w-72 rounded border border-border bg-surface shadow-lg p-3">
+        <div className={`absolute top-full z-50 mt-1 w-[calc(100vw-2rem)] sm:w-72 max-w-sm rounded border border-border bg-surface shadow-lg p-3 ${
+              dropdownAlign === "right"
+                ? "left-1/2 -translate-x-1/2 sm:left-auto sm:right-0 sm:translate-x-0"
+                : "left-1/2 -translate-x-1/2 sm:left-0 sm:translate-x-0"
+            }`}>
           <div className="flex items-center justify-between mb-2">
             <button
               type="button"
