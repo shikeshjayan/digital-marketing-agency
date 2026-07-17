@@ -236,7 +236,8 @@ export default function CategoryManagement({ config }) {
               label="Name"
               value={form.name}
               onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))}
-              maxLength={100}
+              maxLength={30}
+              maxWords={4}
               showWordCount
               placeholder={`e.g. ${searchPlaceholder.replace("Search by ", "")}`}
             />
@@ -246,7 +247,8 @@ export default function CategoryManagement({ config }) {
               rows={2}
               value={form.description}
               onChange={(e) => setForm((f) => ({ ...f, description: e.target.value }))}
-              maxLength={500}
+              maxLength={200}
+              maxWords={30}
               showWordCount
               placeholder={`Brief description of this ${label.toLowerCase()}`}
             />

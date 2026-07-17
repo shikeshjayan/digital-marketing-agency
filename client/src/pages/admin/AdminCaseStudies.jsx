@@ -417,7 +417,8 @@ export default function AdminCaseStudies() {
                 onChange={(e) =>
                   setForm((f) => ({ ...f, title: e.target.value }))
                 }
-                maxLength={200}
+                maxLength={80}
+                maxWords={10}
                 showWordCount
                 placeholder="e.g. E-commerce Growth Strategy"
               />
@@ -453,6 +454,7 @@ export default function AdminCaseStudies() {
                   setForm((f) => ({ ...f, overview: e.target.value }))
                 }
                 maxLength={2000}
+                maxWords={250}
                 showWordCount
                 placeholder="Brief overview of the case study"
               />
@@ -466,6 +468,7 @@ export default function AdminCaseStudies() {
                   setForm((f) => ({ ...f, challenge: e.target.value }))
                 }
                 maxLength={2000}
+                maxWords={250}
                 showWordCount
                 placeholder="What challenge did the client face?"
               />
@@ -479,6 +482,7 @@ export default function AdminCaseStudies() {
                   setForm((f) => ({ ...f, strategy: e.target.value }))
                 }
                 maxLength={2000}
+                maxWords={250}
                 showWordCount
                 placeholder="High-level strategy overview"
               />
@@ -492,6 +496,7 @@ export default function AdminCaseStudies() {
                   setForm((f) => ({ ...f, solution: e.target.value }))
                 }
                 maxLength={2000}
+                maxWords={250}
                 showWordCount
                 placeholder="How did you solve the problem?"
               />
@@ -601,7 +606,7 @@ export default function AdminCaseStudies() {
                       onChange={(e) =>
                         updateArrayItem("objectives", idx, e.target.value)
                       }
-                      maxLength={200}
+                      maxLength={60}
                       className="flex-1 rounded-lg border border-border bg-background px-3 py-2 text-sm text-heading focus:border-primary focus:ring-1 focus:ring-primary-light outline-none"
                       placeholder="Objective"
                     />
@@ -638,7 +643,7 @@ export default function AdminCaseStudies() {
                       onChange={(e) =>
                         updateArrayItem("deliverables", idx, e.target.value)
                       }
-                      maxLength={200}
+                      maxLength={60}
                       className="flex-1 rounded-lg border border-border bg-background px-3 py-2 text-sm text-heading focus:border-primary focus:ring-1 focus:ring-primary-light outline-none"
                       placeholder="Deliverable"
                     />
@@ -673,6 +678,7 @@ export default function AdminCaseStudies() {
                       }))
                     }
                     maxLength={50}
+                    maxWords={6}
                     showWordCount
                     placeholder="e.g. 3 months"
                   />
@@ -732,20 +738,22 @@ export default function AdminCaseStudies() {
                           e.target.value,
                         )
                       }
-                      maxLength={200}
+                      maxLength={80}
                       className="w-full rounded border border-border bg-background px-3 py-2 text-sm text-heading focus:border-primary focus:ring-1 focus:ring-primary-light outline-none"
                       placeholder="Step title"
                     />
                     <textarea
                       value={item.description}
-                      onChange={(e) =>
+                      onChange={(e) => {
+                        const val = e.target.value;
+                        if (val.split(/\s+/).filter(Boolean).length > 80) return;
                         updateObjectItem(
                           "development_process",
                           idx,
                           "description",
-                          e.target.value,
-                        )
-                      }
+                          val,
+                        );
+                      }}
                       rows={2}
                       maxLength={500}
                       className="w-full rounded border border-border bg-background px-3 py-2 text-sm text-heading focus:border-primary focus:ring-1 focus:ring-primary-light outline-none"
@@ -785,14 +793,16 @@ export default function AdminCaseStudies() {
                     className="border border-border rounded p-2 mb-2 space-y-2">
                     <textarea
                       value={item.challenge}
-                      onChange={(e) =>
+                      onChange={(e) => {
+                        const val = e.target.value;
+                        if (val.split(/\s+/).filter(Boolean).length > 80) return;
                         updateObjectItem(
                           "challenges_and_solutions",
                           idx,
                           "challenge",
-                          e.target.value,
+                          val,
                         )
-                      }
+                      }}
                       rows={2}
                       maxLength={500}
                       className="w-full rounded border border-border bg-background px-3 py-2 text-sm text-heading focus:border-primary focus:ring-1 focus:ring-primary-light outline-none"
@@ -800,14 +810,16 @@ export default function AdminCaseStudies() {
                     />
                     <textarea
                       value={item.solution}
-                      onChange={(e) =>
+                      onChange={(e) => {
+                        const val = e.target.value;
+                        if (val.split(/\s+/).filter(Boolean).length > 80) return;
                         updateObjectItem(
                           "challenges_and_solutions",
                           idx,
                           "solution",
-                          e.target.value,
+                          val,
                         )
-                      }
+                      }}
                       rows={2}
                       maxLength={500}
                       className="w-full rounded border border-border bg-background px-3 py-2 text-sm text-heading focus:border-primary focus:ring-1 focus:ring-primary-light outline-none"
@@ -854,7 +866,7 @@ export default function AdminCaseStudies() {
                           e.target.value,
                         )
                       }
-                      maxLength={200}
+                      maxLength={60}
                       className="rounded border border-border bg-background px-3 py-2 text-sm text-heading focus:border-primary focus:ring-1 focus:ring-primary-light outline-none"
                       placeholder="Metric name"
                     />
@@ -870,7 +882,7 @@ export default function AdminCaseStudies() {
                             e.target.value,
                           )
                         }
-                        maxLength={200}
+                        maxLength={60}
                         className="flex-1 rounded border border-border bg-background px-3 py-2 text-sm text-heading focus:border-primary focus:ring-1 focus:ring-primary-light outline-none"
                         placeholder="Value"
                       />
@@ -907,7 +919,8 @@ export default function AdminCaseStudies() {
                         client_testimonial_quote: e.target.value,
                       }))
                     }
-                    maxLength={300}
+                    maxLength={500}
+                    maxWords={80}
                     showWordCount
                     placeholder="Client testimonial quote"
                   />
@@ -920,7 +933,8 @@ export default function AdminCaseStudies() {
                         client_testimonial_name: e.target.value,
                       }))
                     }
-                    maxLength={100}
+                    maxLength={60}
+                    maxWords={6}
                     showWordCount
                     placeholder="e.g. John Smith"
                   />
@@ -934,7 +948,8 @@ export default function AdminCaseStudies() {
                           client_testimonial_designation: e.target.value,
                         }))
                       }
-                      maxLength={100}
+                      maxLength={60}
+                      maxWords={8}
                       showWordCount
                       placeholder="e.g. CEO"
                     />
@@ -947,7 +962,8 @@ export default function AdminCaseStudies() {
                           client_testimonial_company: e.target.value,
                         }))
                       }
-                      maxLength={100}
+                      maxLength={60}
+                      maxWords={8}
                       showWordCount
                       placeholder="e.g. Acme Corp"
                     />
@@ -965,7 +981,8 @@ export default function AdminCaseStudies() {
                     onChange={(e) =>
                       setForm((f) => ({ ...f, seo_meta_title: e.target.value }))
                     }
-                    maxLength={70}
+                    maxLength={60}
+                    maxWords={10}
                     showWordCount
                     placeholder="SEO title for the case study page"
                   />
@@ -980,7 +997,8 @@ export default function AdminCaseStudies() {
                         seo_meta_description: e.target.value,
                       }))
                     }
-                    maxLength={160}
+                    maxLength={155}
+                    maxWords={25}
                     showWordCount
                     placeholder="SEO description for the case study page"
                   />

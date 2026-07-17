@@ -85,7 +85,7 @@ export default function ProjectDetail() {
   const caseStudy = project.caseStudy;
 
   return (
-    <div className="bg-background min-h-screen animate-page-fade">
+    <div className="bg-background min-h-screen">
       {/* Hero */}
       <section className="relative bg-secondary overflow-hidden">
         <div className="absolute inset-0 pointer-events-none">

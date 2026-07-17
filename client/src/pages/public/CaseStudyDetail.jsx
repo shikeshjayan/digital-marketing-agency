@@ -78,7 +78,7 @@ export default function CaseStudyDetail() {
     : (project?.project_name || "Case Study Success Story");
 
   return (
-    <div className="bg-background min-h-screen animate-page-fade">
+    <div className="bg-background min-h-screen">
       {/* Hero Section */}
       <section className="relative bg-secondary overflow-hidden">
         <div className="max-w-7xl mx-auto px-4 py-16 md:py-20">

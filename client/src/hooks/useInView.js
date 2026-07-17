@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from 'react'
 
-export default function useInView({ threshold = 0.15, rootMargin = '0px 0px -40px 0px' } = {}) {
+export default function useInView({ threshold = 0.15, rootMargin = '0px 0px -40px 0px', once = true } = {}) {
   const [node, setNode] = useState(null)
   const [isInView, setIsInView] = useState(false)
 
@@ -11,7 +11,10 @@ export default function useInView({ threshold = 0.15, rootMargin = '0px 0px -40p
       ([entry]) => {
         if (entry.isIntersecting) {
           setIsInView(true)
-        } else {
+          if (once) {
+            observer.unobserve(node)
+          }
+        } else if (!once) {
           setIsInView(false)
         }
       },
@@ -20,7 +23,7 @@ export default function useInView({ threshold = 0.15, rootMargin = '0px 0px -40p
 
     observer.observe(node)
     return () => observer.disconnect()
-  }, [node, threshold, rootMargin])
+  }, [node, threshold, rootMargin, once])
 
   const ref = useCallback((el) => {
     setNode(el)

@@ -513,7 +513,7 @@ export default function Services() {
     );
 
   return (
-    <div className="animate-page-fade">
+    <div>
       {/* 1. Hero */}
       <HeroSplit
         title="Services"
