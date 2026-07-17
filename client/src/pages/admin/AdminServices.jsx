@@ -164,7 +164,7 @@ export default function AdminServices() {
     payload.append("description", form.description.trim());
     payload.append("status", form.status);
     payload.append("featured", String(form.featured));
-    payload.append("display_order", String(form.display_order));
+    payload.append("display_order", String(form.display_order || 0));
     payload.append("deliverables", JSON.stringify(form.deliverables));
     payload.append("benefits", JSON.stringify(form.benefits));
     payload.append("seo", JSON.stringify(form.seo));
@@ -274,6 +274,8 @@ export default function AdminServices() {
                 onChange={(e) =>
                   setForm((f) => ({ ...f, service_name: e.target.value }))
                 }
+                maxLength={200}
+                showWordCount
                 placeholder="e.g. SEO Optimization"
               />
 
@@ -296,6 +298,8 @@ export default function AdminServices() {
                 onChange={(e) =>
                   setForm((f) => ({ ...f, short_description: e.target.value }))
                 }
+                maxLength={300}
+                showWordCount
                 placeholder="Brief summary of the service"
               />
               <FormField
@@ -306,6 +310,8 @@ export default function AdminServices() {
                 onChange={(e) =>
                   setForm((f) => ({ ...f, description: e.target.value }))
                 }
+                maxLength={5000}
+                showWordCount
                 placeholder="Detailed description of the service"
               />
 
@@ -323,12 +329,13 @@ export default function AdminServices() {
                   label="Display Order"
                   type="number"
                   value={form.display_order}
-                  onChange={(e) =>
+                  onChange={(e) => {
+                    const raw = e.target.value;
                     setForm((f) => ({
                       ...f,
-                      display_order: Math.max(0, Number(e.target.value)),
-                    }))
-                  }
+                      display_order: raw === "" ? raw : Math.max(0, Number(raw)),
+                    }));
+                  }}
                   min={0}
                   placeholder="0"
                 />
@@ -409,6 +416,7 @@ export default function AdminServices() {
                       onAddTag("deliverables", tagInputs.deliverables);
                     }
                   }}
+                  maxLength={200}
                   placeholder="e.g. Keyword Research, On-Page SEO, Link Building"
                 />
               </div>
@@ -444,6 +452,7 @@ export default function AdminServices() {
                       onAddTag("benefits", tagInputs.benefits);
                     }
                   }}
+                  maxLength={200}
                   placeholder="e.g. Increased ROI, Faster Results"
                 />
               </div>
@@ -461,6 +470,8 @@ export default function AdminServices() {
                       seo: { ...f.seo, meta_title: e.target.value },
                     }))
                   }
+                  maxLength={70}
+                  showWordCount
                   placeholder="SEO page title"
                 />
                 <FormField
@@ -474,6 +485,8 @@ export default function AdminServices() {
                       seo: { ...f.seo, meta_description: e.target.value },
                     }))
                   }
+                  maxLength={160}
+                  showWordCount
                   placeholder="SEO page description"
                 />
               </div>
@@ -531,8 +544,7 @@ export default function AdminServices() {
             <table className="w-full text-sm block sm:table">
               <thead className="hidden sm:table-header-group">
                 <tr className="text-left text-text">
-                  <th className="py-2 pr-3 pl-3 hidden sm:table-cell">ID</th>
-                  <th className="py-2 pr-3">Service</th>
+                  <th className="py-2 pr-3 pl-3">Service</th>
                   <th className="py-2 pr-3 hidden md:table-cell">Featured</th>
                   <th className="py-2 pr-3">Status</th>
                   <th className="py-2">Actions</th>
@@ -540,30 +552,20 @@ export default function AdminServices() {
               </thead>
               <tbody className="block sm:table-row-group">
                 {loading && !items.length ? (
-                  <TableSkeleton rows={5} cols={5} />
+                  <TableSkeleton rows={5} cols={4} />
                 ) : (
                   items.map((s) => (
                     <tr
                       key={s._id}
                       className="block sm:table-row border sm:border-t border-border mb-3 sm:mb-0 p-3 sm:p-0 rounded-lg sm:rounded-none bg-surface/50 sm:bg-transparent">
-                      <td className="block sm:table-cell py-1 sm:py-3 pl-0 sm:pl-3 pr-0 sm:pr-3 text-text">
-                        <span className="text-xs font-semibold text-muted uppercase tracking-wide block sm:hidden mb-1">
-                          ID
-                        </span>
-                        <span
-                          className="block break-all sm:truncate sm:max-w-[80px]"
-                          title={s._id}>
-                          {s._id}
-                        </span>
-                      </td>
-                      <td className="block sm:table-cell py-1 sm:py-3 pr-0 sm:pr-3">
+                      <td className="block sm:table-cell py-1 sm:py-3 pl-0 sm:pl-3 pr-0 sm:pr-3">
                         <span className="text-xs font-semibold text-muted uppercase tracking-wide block sm:hidden mb-1">
                           Service
                         </span>
-                        <div className="font-bold text-heading sm:truncate sm:max-w-[200px]">
+                        <div className="font-bold text-heading break-words sm:truncate sm:max-w-[200px]">
                           {s.service_name}
                         </div>
-                        <div className="text-muted text-sm sm:truncate sm:max-w-[200px]">
+                        <div className="text-muted text-sm break-words sm:truncate sm:max-w-[200px]">
                           {s.short_description}
                         </div>
                       </td>
@@ -644,7 +646,7 @@ export default function AdminServices() {
                 )}
                 {!items.length && !loading && (
                   <TableEmptyState
-                    colSpan={5}
+                    colSpan={4}
                     message="No services found"
                     submessage="Create a new service to get started."
                   />

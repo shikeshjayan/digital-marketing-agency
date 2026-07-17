@@ -10,7 +10,6 @@ import { TableSkeleton } from "../../components/ui/Skeleton.jsx";
 import AdminPageHeader from "../../components/ui/AdminPageHeader.jsx";
 import AdminListFooter from "../../components/ui/AdminListFooter.jsx";
 import SearchInput from "../../components/ui/SearchInput.jsx";
-import DatePicker from "../../components/ui/DatePicker.jsx";
 import TableEmptyState from "../../components/ui/TableEmptyState.jsx";
 import ErrorBanner from "../../components/ui/ErrorBanner.jsx";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -160,9 +159,11 @@ export default function AdminMessages() {
               { value: "Spam", label: "Spam" },
             ]}
           />
-          <DatePicker
+          <input
+            type="date"
             value={date}
             onChange={(e) => setDate(e.target.value)}
+            className="w-full rounded border border-border bg-surface px-4 py-2 text-sm text-heading outline-none transition focus:border-primary focus:bg-background focus:ring-2 focus:ring-primary-light placeholder:text-muted"
           />
           <button
             type="button"
@@ -247,14 +248,14 @@ export default function AdminMessages() {
                     </td>
                     <td className="block sm:table-cell py-1 sm:py-3 pr-0 sm:pr-3">
                         <span className="text-xs font-semibold text-muted uppercase tracking-wide block sm:hidden mb-1">Sender</span>
-                      <div className="font-bold text-heading sm:truncate sm:max-w-[150px]">
+                      <div className="font-bold text-heading break-words sm:truncate sm:max-w-[150px]">
                         {e.name}
                       </div>
-                      <div className="text-sm text-muted sm:truncate sm:max-w-[150px]">
+                      <div className="text-sm text-muted break-words sm:truncate sm:max-w-[150px]">
                         {e.email}
                       </div>
                     </td>
-                    <td className="block sm:table-cell py-1 sm:py-3 pr-0 sm:pr-3 text-text sm:truncate sm:max-w-[120px]">
+                    <td className="block sm:table-cell py-1 sm:py-3 pr-0 sm:pr-3 text-text break-words sm:truncate sm:max-w-[120px]">
                         <span className="text-xs font-semibold text-muted uppercase tracking-wide block sm:hidden mb-1">Service</span>
                       {e.service}
                     </td>

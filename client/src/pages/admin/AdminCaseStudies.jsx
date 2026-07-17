@@ -230,6 +230,16 @@ export default function AdminCaseStudies() {
       return;
     }
 
+    if (
+      form.timeline_started_at &&
+      form.timeline_completed_at &&
+      form.timeline_completed_at < form.timeline_started_at
+    ) {
+      setError("Completion date cannot be before start date.");
+      setSubmitting(false);
+      return;
+    }
+
     const payload = new FormData();
 
     if (form.hero_image instanceof File) {
@@ -417,6 +427,8 @@ export default function AdminCaseStudies() {
                 onChange={(e) =>
                   setForm((f) => ({ ...f, title: e.target.value }))
                 }
+                maxLength={200}
+                showWordCount
                 placeholder="e.g. E-commerce Growth Strategy"
               />
 
@@ -450,6 +462,8 @@ export default function AdminCaseStudies() {
                 onChange={(e) =>
                   setForm((f) => ({ ...f, overview: e.target.value }))
                 }
+                maxLength={2000}
+                showWordCount
                 placeholder="Brief overview of the case study"
               />
 
@@ -461,6 +475,8 @@ export default function AdminCaseStudies() {
                 onChange={(e) =>
                   setForm((f) => ({ ...f, challenge: e.target.value }))
                 }
+                maxLength={2000}
+                showWordCount
                 placeholder="What challenge did the client face?"
               />
 
@@ -472,6 +488,8 @@ export default function AdminCaseStudies() {
                 onChange={(e) =>
                   setForm((f) => ({ ...f, strategy: e.target.value }))
                 }
+                maxLength={2000}
+                showWordCount
                 placeholder="High-level strategy overview"
               />
 
@@ -483,6 +501,8 @@ export default function AdminCaseStudies() {
                 onChange={(e) =>
                   setForm((f) => ({ ...f, solution: e.target.value }))
                 }
+                maxLength={2000}
+                showWordCount
                 placeholder="How did you solve the problem?"
               />
 
@@ -591,6 +611,7 @@ export default function AdminCaseStudies() {
                       onChange={(e) =>
                         updateArrayItem("objectives", idx, e.target.value)
                       }
+                      maxLength={200}
                       className="flex-1 rounded-lg border border-border bg-background px-3 py-2 text-sm text-heading focus:border-primary focus:ring-1 focus:ring-primary-light outline-none"
                       placeholder="Objective"
                     />
@@ -627,6 +648,7 @@ export default function AdminCaseStudies() {
                       onChange={(e) =>
                         updateArrayItem("deliverables", idx, e.target.value)
                       }
+                      maxLength={200}
                       className="flex-1 rounded-lg border border-border bg-background px-3 py-2 text-sm text-heading focus:border-primary focus:ring-1 focus:ring-primary-light outline-none"
                       placeholder="Deliverable"
                     />
@@ -660,6 +682,8 @@ export default function AdminCaseStudies() {
                         timeline_duration: e.target.value,
                       }))
                     }
+                    maxLength={50}
+                    showWordCount
                     placeholder="e.g. 3 months"
                   />
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -684,6 +708,7 @@ export default function AdminCaseStudies() {
                           timeline_completed_at: e.target.value,
                         }))
                       }
+                      min={form.timeline_started_at || undefined}
                     />
                   </div>
                 </div>
@@ -717,6 +742,7 @@ export default function AdminCaseStudies() {
                           e.target.value,
                         )
                       }
+                      maxLength={200}
                       className="w-full rounded border border-border bg-background px-3 py-2 text-sm text-heading focus:border-primary focus:ring-1 focus:ring-primary-light outline-none"
                       placeholder="Step title"
                     />
@@ -731,6 +757,7 @@ export default function AdminCaseStudies() {
                         )
                       }
                       rows={2}
+                      maxLength={500}
                       className="w-full rounded border border-border bg-background px-3 py-2 text-sm text-heading focus:border-primary focus:ring-1 focus:ring-primary-light outline-none"
                       placeholder="Step description"
                     />
@@ -777,6 +804,7 @@ export default function AdminCaseStudies() {
                         )
                       }
                       rows={2}
+                      maxLength={500}
                       className="w-full rounded border border-border bg-background px-3 py-2 text-sm text-heading focus:border-primary focus:ring-1 focus:ring-primary-light outline-none"
                       placeholder="Challenge"
                     />
@@ -791,6 +819,7 @@ export default function AdminCaseStudies() {
                         )
                       }
                       rows={2}
+                      maxLength={500}
                       className="w-full rounded border border-border bg-background px-3 py-2 text-sm text-heading focus:border-primary focus:ring-1 focus:ring-primary-light outline-none"
                       placeholder="Solution"
                     />
@@ -822,7 +851,7 @@ export default function AdminCaseStudies() {
                     + Add
                   </button>
                 </div>
-                {form.results.map((item, idx) => (
+                  {form.results.map((item, idx) => (
                   <div key={idx} className="flex flex-col gap-2 mb-2">
                     <input
                       type="text"
@@ -835,6 +864,7 @@ export default function AdminCaseStudies() {
                           e.target.value,
                         )
                       }
+                      maxLength={200}
                       className="rounded border border-border bg-background px-3 py-2 text-sm text-heading focus:border-primary focus:ring-1 focus:ring-primary-light outline-none"
                       placeholder="Metric name"
                     />
@@ -850,6 +880,7 @@ export default function AdminCaseStudies() {
                             e.target.value,
                           )
                         }
+                        maxLength={200}
                         className="flex-1 rounded border border-border bg-background px-3 py-2 text-sm text-heading focus:border-primary focus:ring-1 focus:ring-primary-light outline-none"
                         placeholder="Value"
                       />
@@ -886,6 +917,8 @@ export default function AdminCaseStudies() {
                         client_testimonial_quote: e.target.value,
                       }))
                     }
+                    maxLength={300}
+                    showWordCount
                     placeholder="Client testimonial quote"
                   />
                   <FormField
@@ -897,6 +930,8 @@ export default function AdminCaseStudies() {
                         client_testimonial_name: e.target.value,
                       }))
                     }
+                    maxLength={100}
+                    showWordCount
                     placeholder="e.g. John Smith"
                   />
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -909,6 +944,8 @@ export default function AdminCaseStudies() {
                           client_testimonial_designation: e.target.value,
                         }))
                       }
+                      maxLength={100}
+                      showWordCount
                       placeholder="e.g. CEO"
                     />
                     <FormField
@@ -920,6 +957,8 @@ export default function AdminCaseStudies() {
                           client_testimonial_company: e.target.value,
                         }))
                       }
+                      maxLength={100}
+                      showWordCount
                       placeholder="e.g. Acme Corp"
                     />
                   </div>
@@ -936,6 +975,8 @@ export default function AdminCaseStudies() {
                     onChange={(e) =>
                       setForm((f) => ({ ...f, seo_meta_title: e.target.value }))
                     }
+                    maxLength={70}
+                    showWordCount
                     placeholder="SEO title for the case study page"
                   />
                   <FormField
@@ -949,6 +990,8 @@ export default function AdminCaseStudies() {
                         seo_meta_description: e.target.value,
                       }))
                     }
+                    maxLength={160}
+                    showWordCount
                     placeholder="SEO description for the case study page"
                   />
                 </div>
@@ -1007,8 +1050,7 @@ export default function AdminCaseStudies() {
             <table className="w-full text-sm block sm:table">
               <thead className="hidden sm:table-header-group">
                 <tr className="text-left text-text">
-                  <th className="py-2 pr-3 pl-3 hidden sm:table-cell">ID</th>
-                  <th className="py-2 pr-3">Title</th>
+                  <th className="py-2 pr-3 pl-3">Title</th>
                   <th className="py-2 pr-3">Project</th>
                   <th className="py-2 pr-3">Status</th>
                   <th className="py-2">Actions</th>
@@ -1016,23 +1058,13 @@ export default function AdminCaseStudies() {
               </thead>
               <tbody className="block sm:table-row-group">
                 {loading && !items.length ? (
-                  <TableSkeleton rows={5} cols={5} />
+                  <TableSkeleton rows={5} cols={4} />
                 ) : (
                   items.map((cs) => (
                     <tr
                       key={cs._id}
                       className="block sm:table-row border sm:border-t border-border mb-3 sm:mb-0 p-3 sm:p-0 rounded-lg sm:rounded-none bg-surface/50 sm:bg-transparent">
-                      <td className="block sm:table-cell py-1 sm:py-3 pl-0 sm:pl-3 pr-0 sm:pr-3 text-text">
-                        <span className="text-xs font-semibold text-muted uppercase tracking-wide block sm:hidden mb-1">
-                          ID
-                        </span>
-                        <span
-                          className="block break-all sm:truncate sm:max-w-20"
-                          title={cs._id}>
-                          {cs._id}
-                        </span>
-                      </td>
-                      <td className="block sm:table-cell py-1 sm:py-3 pr-0 sm:pr-3">
+                      <td className="block sm:table-cell py-1 sm:py-3 pl-0 sm:pl-3 pr-0 sm:pr-3">
                         <span className="text-xs font-semibold text-muted uppercase tracking-wide block sm:hidden mb-1">
                           Title
                         </span>
@@ -1044,11 +1076,11 @@ export default function AdminCaseStudies() {
                               className="w-10 h-10 rounded object-cover border border-border shrink-0"
                             />
                           )}
-                          <div>
-                            <div className="font-bold text-heading sm:truncate sm:max-w-50">
+                          <div className="min-w-0">
+                            <div className="font-bold text-heading break-words sm:truncate sm:max-w-50">
                               {cs.title}
                             </div>
-                            <div className="text-muted text-sm sm:truncate sm:max-w-50">
+                            <div className="text-muted text-sm break-words sm:truncate sm:max-w-50">
                               {cs.overview}
                             </div>
                             {cs.featured && (
@@ -1063,7 +1095,9 @@ export default function AdminCaseStudies() {
                         <span className="text-xs font-semibold text-muted uppercase tracking-wide block sm:hidden mb-1">
                           Project
                         </span>
-                        <span className="text-sm text-text">
+                        <span
+                          className="block text-sm text-text truncate sm:max-w-32"
+                          title={typeof cs.project === "object" ? cs.project.project_name : "N/A"}>
                           {typeof cs.project === "object"
                             ? cs.project.project_name
                             : "N/A"}
@@ -1113,7 +1147,7 @@ export default function AdminCaseStudies() {
                 )}
                 {!items.length && !loading && (
                   <TableEmptyState
-                    colSpan={5}
+                    colSpan={4}
                     message="No case studies found"
                     submessage="Create a new case study to get started."
                   />

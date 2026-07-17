@@ -256,11 +256,11 @@ export default function AdminReviews() {
                           );
                         })()}
                         <div className="min-w-0">
-                          <div className="font-bold text-heading sm:truncate sm:max-w-[130px]">
+                          <div className="font-bold text-heading break-words sm:truncate sm:max-w-[130px]">
                             {r.name}
                           </div>
                           {r.location && (
-                            <div className="text-sm text-muted sm:truncate sm:max-w-[130px]">
+                            <div className="text-sm text-muted break-words sm:truncate sm:max-w-[130px]">
                               {r.location}
                             </div>
                           )}
@@ -271,10 +271,10 @@ export default function AdminReviews() {
                         <span className="text-xs font-semibold text-muted uppercase tracking-wide block sm:hidden mb-1">Rating</span>
                       <Stars rating={r.rating} />
                     </td>
-                    <td className="block sm:table-cell py-1 sm:py-3 pr-0 sm:pr-3 sm:max-w-[240px] sm:min-w-[160px]">
+                    <td className="block sm:table-cell py-1 sm:py-3 pr-0 sm:pr-3 break-words sm:max-w-[240px] sm:min-w-[160px]">
                         <span className="text-xs font-semibold text-muted uppercase tracking-wide block sm:hidden mb-1">Review Comment</span>
                       <div className="flex items-start gap-1">
-                        <span className="sm:truncate text-sm text-text" title={r.review_text}>
+                        <span className="sm:truncate text-sm text-text break-words" title={r.review_text}>
                           {r.review_text}
                         </span>
                         {r.review_text.length > 150 && (
