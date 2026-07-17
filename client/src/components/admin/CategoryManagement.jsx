@@ -131,7 +131,7 @@ export default function CategoryManagement({ config }) {
         payload.append("name", form.name.trim());
         payload.append("description", form.description.trim());
         payload.append("iconType", form.iconType);
-        payload.append("display_order", String(form.display_order));
+        payload.append("display_order", String(form.display_order || 0));
         payload.append("status", form.status);
         payload.append("icon", iconFile);
       } else {
@@ -139,7 +139,7 @@ export default function CategoryManagement({ config }) {
         payload.description = form.description.trim();
         payload.icon = form.icon.trim();
         payload.iconType = form.iconType;
-        payload.display_order = form.display_order;
+        payload.display_order = form.display_order || 0;
         payload.status = form.status;
         if (!form.icon && form._id) payload.removeIcon = "true";
       }
@@ -248,6 +248,8 @@ export default function CategoryManagement({ config }) {
               label="Name"
               value={form.name}
               onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))}
+              maxLength={100}
+              showWordCount
               placeholder={`e.g. ${searchPlaceholder.replace("Search by ", "")}`}
             />
             <FormField
@@ -256,6 +258,8 @@ export default function CategoryManagement({ config }) {
               rows={2}
               value={form.description}
               onChange={(e) => setForm((f) => ({ ...f, description: e.target.value }))}
+              maxLength={500}
+              showWordCount
               placeholder={`Brief description of this ${label.toLowerCase()}`}
             />
             <div>
@@ -291,6 +295,8 @@ export default function CategoryManagement({ config }) {
                 label="FontAwesome Class"
                 value={form.icon}
                 onChange={(e) => setForm((f) => ({ ...f, icon: e.target.value }))}
+                maxLength={50}
+                showWordCount
                 placeholder={`e.g. fa-${label.toLowerCase()} (optional)`}
               />
             ) : (
@@ -323,9 +329,10 @@ export default function CategoryManagement({ config }) {
                 label="Display Order"
                 type="number"
                 value={form.display_order}
-                onChange={(e) =>
-                  setForm((f) => ({ ...f, display_order: Math.max(0, Number(e.target.value)) }))
-                }
+                onChange={(e) => {
+                  const raw = e.target.value;
+                  setForm((f) => ({ ...f, display_order: raw === "" ? raw : Math.max(0, Number(raw)) }));
+                }}
                 min={0}
               />
               <FormField
@@ -387,8 +394,7 @@ export default function CategoryManagement({ config }) {
             <table className="w-full text-sm block sm:table">
               <thead className="hidden sm:table-header-group">
                 <tr className="text-left text-text">
-                  <th className="py-2 pr-3 pl-3 hidden sm:table-cell">ID</th>
-                  <th className="py-2 pr-3">Name</th>
+                  <th className="py-2 pr-3 pl-3">Name</th>
                   <th className="py-2 pr-3">Order</th>
                   <th className="py-2 pr-3">Status</th>
                   <th className="py-2">Actions</th>
@@ -396,17 +402,11 @@ export default function CategoryManagement({ config }) {
               </thead>
               <tbody className="block sm:table-row-group">
                 {loading && !items.length ? (
-                  <TableSkeleton rows={5} cols={5} />
+                  <TableSkeleton rows={5} cols={4} />
                 ) : (
                   items.map((item) => (
                     <tr key={item._id} className="block sm:table-row border sm:border-t border-border mb-3 sm:mb-0 p-3 sm:p-0 rounded-lg sm:rounded-none bg-surface/50 sm:bg-transparent">
-                      <td className="block sm:table-cell py-1 sm:py-3 pl-0 sm:pl-3 pr-0 sm:pr-3 text-text">
-                        <span className="text-xs font-semibold text-muted uppercase tracking-wide block sm:hidden mb-1">ID</span>
-                        <span className="block break-all sm:truncate sm:max-w-[80px]" title={item._id}>
-                          {item._id}
-                        </span>
-                      </td>
-                      <td className="block sm:table-cell py-1 sm:py-3 pr-0 sm:pr-3">
+                      <td className="block sm:table-cell py-1 sm:py-3 pl-0 sm:pl-3 pr-0 sm:pr-3">
                         <span className="text-xs font-semibold text-muted uppercase tracking-wide block sm:hidden mb-1">Name</span>
                         <div className="font-bold text-heading sm:truncate sm:max-w-[200px]">
                           {item.name}
@@ -458,7 +458,7 @@ export default function CategoryManagement({ config }) {
                 )}
                 {!items.length && !loading && (
                   <TableEmptyState
-                    colSpan={5}
+                    colSpan={4}
                     message={`No ${labelPlural.toLowerCase()} found`}
                     submessage={`Add a new ${label.toLowerCase()} to get started.`}
                   />

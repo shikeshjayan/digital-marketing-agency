@@ -217,12 +217,14 @@ export default function AdminSiteContent() {
                 placeholder="Name (e.g. WordPress)"
                 value={item.name}
                 onChange={(e) => updateTechItem(i, "name", e.target.value)}
+                maxLength={100}
               />
               <input
-                className="w-24 rounded border border-border bg-surface px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-primary-light"
-                placeholder="Code (e.g. WP)"
+className="w-24 max-w-full rounded border border-border bg-surface px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-primary-light"
+              placeholder="Code (e.g. WP)"
                 value={item.code}
                 onChange={(e) => updateTechItem(i, "code", e.target.value)}
+                maxLength={20}
               />
               <button
                 type="button"
@@ -270,6 +272,7 @@ export default function AdminSiteContent() {
                 placeholder="Brand name (e.g. NovaTech)"
                 value={logo}
                 onChange={(e) => updateMarqueeLogo(i, e.target.value)}
+                maxLength={100}
               />
               <button
                 type="button"
@@ -326,6 +329,7 @@ export default function AdminSiteContent() {
                   placeholder="Suffix"
                   value={stat.suffix}
                   onChange={(e) => updateCompanyStat(i, "suffix", e.target.value)}
+                  maxLength={20}
                 />
               </div>
               <div className="flex items-center gap-2 flex-1 w-full sm:flex-1 sm:min-w-0">
@@ -334,6 +338,7 @@ export default function AdminSiteContent() {
                   placeholder="Label (e.g. Years of Experience)"
                   value={stat.label}
                   onChange={(e) => updateCompanyStat(i, "label", e.target.value)}
+                  maxLength={100}
                 />
                 {!DEFAULT_STAT_KEYS.has(stat.key) && (
                   <button

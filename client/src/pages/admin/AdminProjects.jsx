@@ -354,6 +354,8 @@ export default function AdminProjects() {
                 onChange={(e) =>
                   setForm((f) => ({ ...f, project_name: e.target.value }))
                 }
+                maxLength={200}
+                showWordCount
                 placeholder="e.g. E-commerce Website"
               />
               <FormField
@@ -362,6 +364,8 @@ export default function AdminProjects() {
                 onChange={(e) =>
                   setForm((f) => ({ ...f, short_description: e.target.value }))
                 }
+                maxLength={200}
+                showWordCount
                 placeholder="Brief summary (max 200 chars)"
               />
               <FormField
@@ -372,6 +376,8 @@ export default function AdminProjects() {
                 onChange={(e) =>
                   setForm((f) => ({ ...f, description: e.target.value }))
                 }
+                maxLength={5000}
+                showWordCount
                 placeholder="Detailed description of the project"
               />
 
@@ -515,6 +521,8 @@ export default function AdminProjects() {
                     onChange={(e) =>
                       setForm((f) => ({ ...f, client_name: e.target.value }))
                     }
+                    maxLength={100}
+                    showWordCount
                     placeholder="e.g. John Smith"
                   />
                   <FormField
@@ -523,6 +531,8 @@ export default function AdminProjects() {
                     onChange={(e) =>
                       setForm((f) => ({ ...f, client_company: e.target.value }))
                     }
+                    maxLength={100}
+                    showWordCount
                     placeholder="e.g. Acme Corp"
                   />
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -535,6 +545,8 @@ export default function AdminProjects() {
                           client_website: e.target.value,
                         }))
                       }
+                      maxLength={500}
+                      showWordCount
                       placeholder="https://example.com"
                     />
                     <FormField
@@ -546,6 +558,8 @@ export default function AdminProjects() {
                           client_location: e.target.value,
                         }))
                       }
+                      maxLength={100}
+                      showWordCount
                       placeholder="e.g. New York, USA"
                     />
                   </div>
@@ -560,6 +574,8 @@ export default function AdminProjects() {
                   onChange={(e) =>
                     setForm((f) => ({ ...f, project_url: e.target.value }))
                   }
+                  maxLength={500}
+                  showWordCount
                   placeholder="https://live-project.com"
                 />
                 <FormField
@@ -568,6 +584,8 @@ export default function AdminProjects() {
                   onChange={(e) =>
                     setForm((f) => ({ ...f, github_url: e.target.value }))
                   }
+                  maxLength={500}
+                  showWordCount
                   placeholder="https://github.com/..."
                 />
               </div>
@@ -591,6 +609,8 @@ export default function AdminProjects() {
                     onChange={(e) =>
                       setForm((f) => ({ ...f, seo_meta_title: e.target.value }))
                     }
+                    maxLength={70}
+                    showWordCount
                     placeholder="SEO title for the project page"
                   />
                   <FormField
@@ -604,6 +624,8 @@ export default function AdminProjects() {
                         seo_meta_description: e.target.value,
                       }))
                     }
+                    maxLength={160}
+                    showWordCount
                     placeholder="SEO description for the project page"
                   />
                 </div>
@@ -659,35 +681,24 @@ export default function AdminProjects() {
           />
 
           <div className="mt-4 overflow-auto flex-1">
-            <table className="w-full text-sm block sm:table">
+            <table className="w-full text-sm block sm:table table-fixed">
               <thead className="hidden sm:table-header-group">
                 <tr className="text-left text-text">
-                  <th className="py-2 pr-3 pl-3 hidden sm:table-cell">ID</th>
-                  <th className="py-2 pr-3">Project</th>
-                  <th className="py-2 pr-3">Services</th>
-                  <th className="py-2 pr-3">Status</th>
-                  <th className="py-2">Actions</th>
+                  <th className="py-2 pr-3 pl-3 w-[38%]">Project</th>
+                  <th className="py-2 pr-3 w-[22%]">Services</th>
+                  <th className="py-2 pr-3 w-[13%]">Status</th>
+                  <th className="py-2 w-[17%]">Actions</th>
                 </tr>
               </thead>
               <tbody className="block sm:table-row-group">
                 {loading && !items.length ? (
-                  <TableSkeleton rows={5} cols={5} />
+                  <TableSkeleton rows={5} cols={4} />
                 ) : (
                   items.map((p) => (
                     <tr
                       key={p._id}
                       className="block sm:table-row border sm:border-t border-border mb-3 sm:mb-0 p-3 sm:p-0 rounded-lg sm:rounded-none bg-surface/50 sm:bg-transparent">
-                      <td className="block sm:table-cell py-1 sm:py-3 pl-0 sm:pl-3 pr-0 sm:pr-3 text-text">
-                        <span className="text-xs font-semibold text-muted uppercase tracking-wide block sm:hidden mb-1">
-                          ID
-                        </span>
-                        <span
-                          className="block break-all sm:truncate sm:max-w-[80px]"
-                          title={p._id}>
-                          {p._id}
-                        </span>
-                      </td>
-                      <td className="block sm:table-cell py-1 sm:py-3 pr-0 sm:pr-3">
+                      <td className="block sm:table-cell py-1 sm:py-3 pl-0 sm:pl-3 pr-0 sm:pr-3">
                         <span className="text-xs font-semibold text-muted uppercase tracking-wide block sm:hidden mb-1">
                           Project
                         </span>
@@ -699,11 +710,11 @@ export default function AdminProjects() {
                               className="w-10 h-10 rounded object-cover border border-border shrink-0"
                             />
                           )}
-                          <div>
-                            <div className="font-bold text-heading sm:truncate sm:max-w-[200px]">
+                          <div className="min-w-0">
+                            <div className="font-bold text-heading break-words sm:truncate sm:max-w-[200px]">
                               {p.project_name}
                             </div>
-                            <div className="text-muted text-sm sm:truncate sm:max-w-[200px]">
+                            <div className="text-muted text-sm break-words sm:truncate sm:max-w-[200px]">
                               {p.short_description}
                             </div>
                             {p.featured && (
@@ -718,18 +729,25 @@ export default function AdminProjects() {
                         <span className="text-xs font-semibold text-muted uppercase tracking-wide block sm:hidden mb-1">
                           Services
                         </span>
-                        <div className="flex flex-wrap gap-1">
+                        <div className="flex flex-wrap items-center gap-1 min-w-0">
                           {(p.services || []).slice(0, 2).map((s, i) => (
                             <span
                               key={i}
-                              className="inline-block px-2 py-0.5 text-[10px] bg-surface border border-border rounded text-text">
+                              className="inline-block px-2 py-0.5 text-[10px] bg-surface border border-border rounded text-text truncate max-w-27.5"
+                              title={
+                                typeof s === "object"
+                                  ? s.service_name
+                                  : "Service"
+                              }
+                            >
                               {typeof s === "object"
                                 ? s.service_name
                                 : "Service"}
                             </span>
                           ))}
+
                           {(p.services || []).length > 2 && (
-                            <span className="text-[10px] text-muted">
+                            <span className="text-[10px] text-muted shrink-0">
                               +{p.services.length - 2}
                             </span>
                           )}
@@ -779,7 +797,7 @@ export default function AdminProjects() {
                 )}
                 {!items.length && !loading && (
                   <TableEmptyState
-                    colSpan={5}
+                    colSpan={4}
                     message="No projects found"
                     submessage="Create a new project to get started."
                   />

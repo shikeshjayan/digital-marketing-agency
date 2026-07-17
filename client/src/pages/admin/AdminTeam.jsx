@@ -124,7 +124,7 @@ export default function AdminTeam() {
     payload.append("description", form.description.trim());
     payload.append("linkedin", form.linkedin.trim());
     payload.append("email", form.email.trim());
-    payload.append("display_order", form.display_order);
+    payload.append("display_order", form.display_order || 0);
     payload.append("status", form.status);
 
     try {
@@ -232,6 +232,8 @@ export default function AdminTeam() {
                 label="Name"
                 value={form.name}
                 onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))}
+                maxLength={100}
+                showWordCount
                 placeholder="e.g. John Doe"
               />
               <FormField
@@ -240,6 +242,8 @@ export default function AdminTeam() {
                 onChange={(e) =>
                   setForm((f) => ({ ...f, designation: e.target.value }))
                 }
+                maxLength={100}
+                showWordCount
                 placeholder="e.g. Frontend Developer"
               />
               <FormField
@@ -250,6 +254,8 @@ export default function AdminTeam() {
                 onChange={(e) =>
                   setForm((f) => ({ ...f, description: e.target.value }))
                 }
+                maxLength={1000}
+                showWordCount
                 placeholder="Brief bio or details about the member"
               />
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -259,6 +265,8 @@ export default function AdminTeam() {
                   onChange={(e) =>
                     setForm((f) => ({ ...f, linkedin: e.target.value }))
                   }
+                  maxLength={500}
+                  showWordCount
                   placeholder="https://linkedin.com/in/..."
                 />
                 <FormField
@@ -268,6 +276,8 @@ export default function AdminTeam() {
                   onChange={(e) =>
                     setForm((f) => ({ ...f, email: e.target.value }))
                   }
+                  maxLength={254}
+                  showWordCount
                   placeholder="member@example.com"
                 />
               </div>
@@ -276,12 +286,13 @@ export default function AdminTeam() {
                   label="Display Order"
                   type="number"
                   value={form.display_order}
-                  onChange={(e) =>
+                  onChange={(e) => {
+                    const raw = e.target.value;
                     setForm((f) => ({
                       ...f,
-                      display_order: Math.max(0, Number(e.target.value)),
-                    }))
-                  }
+                      display_order: raw === "" ? raw : Math.max(0, Number(raw)),
+                    }));
+                  }}
                   min={0}
                 />
                 <FormField
@@ -345,8 +356,7 @@ export default function AdminTeam() {
             <table className="w-full text-sm block sm:table">
               <thead className="hidden sm:table-header-group">
                 <tr className="text-left text-text">
-                  <th className="py-2 pr-3 pl-3 hidden sm:table-cell">ID</th>
-                  <th className="py-2 pr-3">Member</th>
+                  <th className="py-2 pr-3 pl-3">Member</th>
                   <th className="py-2 pr-3">Designation</th>
                   <th className="py-2 pr-3">Status</th>
                   <th className="py-2">Actions</th>
@@ -354,21 +364,13 @@ export default function AdminTeam() {
               </thead>
               <tbody className="block sm:table-row-group">
                 {loading && !items.length ? (
-                  <TableSkeleton rows={5} cols={5} />
+                  <TableSkeleton rows={5} cols={4} />
                 ) : (
                   items.map((m) => (
                     <tr
                       key={m._id}
                       className="block sm:table-row border sm:border-t border-border mb-3 sm:mb-0 p-3 sm:p-0 rounded-lg sm:rounded-none bg-surface/50 sm:bg-transparent">
-                      <td className="block sm:table-cell py-1 sm:py-3 pl-0 sm:pl-3 pr-0 sm:pr-3 text-text">
-                        <span className="text-xs font-semibold text-muted uppercase tracking-wide block sm:hidden mb-1">ID</span>
-                        <span
-                          className="block break-all sm:truncate sm:max-w-[80px]"
-                          title={m._id}>
-                          {m._id}
-                        </span>
-                      </td>
-                      <td className="block sm:table-cell py-1 sm:py-3 pr-0 sm:pr-3">
+                      <td className="block sm:table-cell py-1 sm:py-3 pl-0 sm:pl-3 pr-0 sm:pr-3">
                         <span className="text-xs font-semibold text-muted uppercase tracking-wide block sm:hidden mb-1">Member</span>
                         <div className="flex items-center gap-3">
                           <div className="w-10 h-10 rounded bg-surface border border-border overflow-hidden flex items-center justify-center shrink-0">
@@ -384,8 +386,8 @@ export default function AdminTeam() {
                               </span>
                             )}
                           </div>
-                          <div>
-                            <div className="font-bold text-heading sm:truncate sm:max-w-[150px]">
+                          <div className="min-w-0">
+                            <div className="font-bold text-heading break-words sm:truncate sm:max-w-[150px]">
                               {m.name}
                             </div>
                             <div className="text-sm text-muted">
@@ -394,8 +396,8 @@ export default function AdminTeam() {
                           </div>
                         </div>
                       </td>
-                      <td className="block sm:table-cell py-1 sm:py-3 pr-0 sm:pr-3 text-text sm:truncate sm:max-w-[150px]">
-                        <span className="text-xs font-semibold text-muted uppercase tracking-wide block sm:hidden mb-1">Designation</span>
+<td className="block sm:table-cell py-1 sm:py-3 pr-0 sm:pr-3 text-text break-words sm:truncate sm:max-w-[150px]">
+                          <span className="text-xs font-semibold text-muted uppercase tracking-wide block sm:hidden mb-1">Designation</span>
                         {m.designation}
                       </td>
                       <td className="block sm:table-cell py-1 sm:py-3 pr-0 sm:pr-3">
@@ -451,7 +453,7 @@ export default function AdminTeam() {
                 )}
                 {!items.length && !loading && (
                   <TableEmptyState
-                    colSpan={5}
+                    colSpan={4}
                     message="No members found"
                     submessage="Add a new team member to get started."
                     icon={

@@ -129,6 +129,7 @@ export default function AdminBrandSettings() {
               placeholder="CrawlCrown"
               value={brand.name}
               onChange={(e) => setBrand((prev) => ({ ...prev, name: e.target.value }))}
+              maxLength={100}
             />
           </div>
           <div className="w-[100px]">
@@ -150,6 +151,7 @@ export default function AdminBrandSettings() {
               placeholder="Full-service digital marketing agency..."
               value={brand.tagline}
               onChange={(e) => setBrand((prev) => ({ ...prev, tagline: e.target.value }))}
+              maxLength={300}
             />
           </div>
         </div>
@@ -172,6 +174,7 @@ export default function AdminBrandSettings() {
                   next[i] = { ...next[i], platform: e.target.value };
                   setSocialLinks(next);
                 }}
+                maxLength={50}
               />
               <input
                 className="w-full sm:flex-[2] sm:min-w-[200px] rounded border border-border bg-surface px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-primary-light"
@@ -182,6 +185,7 @@ export default function AdminBrandSettings() {
                   next[i] = { ...next[i], url: e.target.value };
                   setSocialLinks(next);
                 }}
+                maxLength={500}
               />
               <div className="flex items-center gap-2 w-full sm:w-auto">
                 <input
@@ -193,6 +197,7 @@ export default function AdminBrandSettings() {
                     next[i] = { ...next[i], icon: e.target.value };
                     setSocialLinks(next);
                   }}
+                  maxLength={50}
                 />
                 <button
                   type="button"
@@ -237,6 +242,7 @@ export default function AdminBrandSettings() {
               placeholder="+91 8891212323"
               value={contact.phone}
               onChange={(e) => setContact((prev) => ({ ...prev, phone: e.target.value }))}
+              maxLength={20}
             />
           </div>
           <div>
@@ -246,6 +252,7 @@ export default function AdminBrandSettings() {
               placeholder="crawlcrown@gmail.com"
               value={contact.email}
               onChange={(e) => setContact((prev) => ({ ...prev, email: e.target.value }))}
+              maxLength={254}
             />
           </div>
           <div>
@@ -255,6 +262,7 @@ export default function AdminBrandSettings() {
               placeholder="Ernakulam, Kochi, Kerala, India"
               value={contact.address}
               onChange={(e) => setContact((prev) => ({ ...prev, address: e.target.value }))}
+              maxLength={200}
             />
           </div>
           <div>
@@ -264,6 +272,7 @@ export default function AdminBrandSettings() {
               placeholder="WhatsApp number or link"
               value={contact.whatsapp}
               onChange={(e) => setContact((prev) => ({ ...prev, whatsapp: e.target.value }))}
+              maxLength={100}
             />
           </div>
           <div>
@@ -273,6 +282,7 @@ export default function AdminBrandSettings() {
               placeholder="Mon – Sat: 10:00 AM – 6:00 PM"
               value={contact.working_hours}
               onChange={(e) => setContact((prev) => ({ ...prev, working_hours: e.target.value }))}
+              maxLength={200}
             />
           </div>
           <div>
@@ -282,6 +292,7 @@ export default function AdminBrandSettings() {
               placeholder="Ernakulam, Kochi, Kerala, India"
               value={contact.location}
               onChange={(e) => setContact((prev) => ({ ...prev, location: e.target.value }))}
+              maxLength={200}
             />
           </div>
         </div>
@@ -304,6 +315,7 @@ export default function AdminBrandSettings() {
                   next[i] = { ...next[i], label: e.target.value };
                   setCompanyLinks(next);
                 }}
+                maxLength={100}
               />
               <div className="flex items-center gap-2 w-full sm:flex-1">
                 <input
@@ -315,6 +327,7 @@ export default function AdminBrandSettings() {
                     next[i] = { ...next[i], path: e.target.value };
                     setCompanyLinks(next);
                   }}
+                  maxLength={500}
                 />
                 <button
                   type="button"

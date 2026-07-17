@@ -280,6 +280,7 @@ export default function AdminSettings() {
                   }
                   placeholder="e.g. admin"
                   autoComplete="off"
+                  maxLength={100}
                 />
               </div>
               <div>
