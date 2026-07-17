@@ -145,7 +145,7 @@ export const getPageProjects = asyncHandler(async (req, res) => {
 
   const skip = (Number(page) - 1) * Number(limit);
 
-  const [projects, total, reviews, siteContentDoc, services] =
+  const [projects, total, reviews, siteContentDoc, services, caseStudies] =
     await Promise.all([
       Projects.find(projectFilter)
         .populate("services", "service_name slug")
@@ -161,6 +161,10 @@ export const getPageProjects = asyncHandler(async (req, res) => {
       Services.find({ status: "Active" })
         .sort({ display_order: 1, createdAt: -1 })
         .lean(),
+      CaseStudy.find({ status: "Published", featured: true })
+        .sort({ createdAt: -1 })
+        .limit(3)
+        .lean(),
     ]);
 
   res.status(200).json({
@@ -175,6 +179,7 @@ export const getPageProjects = asyncHandler(async (req, res) => {
       reviews: mapReviews(reviews),
       siteContent: siteContentDoc?.content || null,
       services: services || [],
+      caseStudies: caseStudies || [],
     },
   });
 });

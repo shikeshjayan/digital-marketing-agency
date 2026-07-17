@@ -434,7 +434,16 @@ export default function ProjectDetail() {
             </FadeIn>
             <FadeIn delay={40}>
               <div className="mt-8 bg-background p-6 border border-border rounded-lg card-shadow">
-                <p className="text-text leading-relaxed body-text mb-4">{caseStudy.overview || caseStudy.challenge}</p>
+                <p
+                  className="text-text leading-relaxed body-text mb-4 break-words"
+                  style={{
+                    display: "-webkit-box",
+                    WebkitLineClamp: 3,
+                    WebkitBoxOrient: "vertical",
+                    overflow: "hidden",
+                  }}>
+                  {caseStudy.overview || caseStudy.challenge}
+                </p>
                 <Link
                   to={`/case-studies/${caseStudy.slug}`}
                   className="inline-flex items-center gap-2 text-primary hover:text-primary-hover font-semibold transition-colors button-text">

@@ -175,25 +175,24 @@ function FeaturedCaseStudies({ caseStudies, loading }) {
               <FadeIn
                 key={cs._id}
                 delay={i * 40}
-                className="w-full md:basis-[calc(50%-12px)] lg:basis-[calc(33.33%-16px)] max-w-sm lg:max-w-none flex">
-                <div className="bg-background border border-border rounded-lg p-6 w-full flex flex-col justify-between hover: transition group card-shadow">
-                  <div className="flex flex-col flex-1">
+                className="w-full md:basis-[calc(50%-12px)] lg:basis-[calc(33.33%-16px)] max-w-sm lg:max-w-none flex min-w-0">
+                <div className="bg-background border border-border rounded-lg p-6 w-full flex flex-col justify-between hover: transition group card-shadow min-w-0">
+                  <div className="flex flex-col flex-1 min-w-0">
                     {cs.hero_image && (
-                      <div className="-mx-6 -mt-6 mb-4 overflow-hidden rounded-t-lg">
-                        <img
-                          src={resolveImagePath(cs.hero_image)}
+                      <div className="-mx-6 -mt-6 mb-4 overflow-hidden rounded-t-lg bg-surface shrink-0 min-w-0 h-40 relative">
+                        <ImageLoader
+                          src={cs.hero_image}
                           alt={cs.title}
-                          loading="lazy"
-                          decoding="async"
-                          className="w-full h-40 object-cover"
+                          type="case-study"
+                          className="w-full h-full object-cover"
                         />
                       </div>
                     )}
-                    <span className="text-xs font-semibold text-primary bg-primary-light px-2.5 py-1 rounded-sb w-fit text-xxs">
+                    <span className="text-xs font-semibold text-primary bg-primary-light px-2.5 py-1 rounded-sb w-fit text-xxs truncate max-w-full">
                       {cs.results?.[0]?.title || "Case Study"}
                     </span>
 
-                    <h3 className="mt-3 text-base font-bold text-heading line-clamp-1">
+                    <h3 className="mt-3 text-base font-bold text-heading line-clamp-1 break-words">
                       {cs.title}
                     </h3>
 
