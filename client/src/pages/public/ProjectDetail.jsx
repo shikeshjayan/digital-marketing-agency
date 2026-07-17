@@ -102,8 +102,8 @@ export default function ProjectDetail() {
                   </div>
                 )}
 
-                <h1 className="hero-heading text-white">{project.project_name}</h1>
-                <p className="mt-4 text-white/70 text-lg leading-relaxed body-text">{project.short_description}</p>
+                <h1 className="hero-heading text-white break-words">{project.project_name}</h1>
+                <p className="mt-4 text-white/70 text-lg leading-relaxed body-text break-words">{project.short_description}</p>
 
                 <div className="flex flex-wrap gap-3 mt-6">
                   {project.services?.slice(0, 2).map((s, i) => (
@@ -208,7 +208,7 @@ export default function ProjectDetail() {
               <SectionHeading eyebrow="About" title="Project Overview" />
             </FadeIn>
             <FadeIn delay={40}>
-              <div className="mt-8 text-text leading-relaxed body-text whitespace-pre-line text-justify md:text-left">
+              <div className="mt-8 text-text leading-relaxed body-text whitespace-pre-line text-justify md:text-left break-words">
                 {project.description}
               </div>
             </FadeIn>
@@ -459,7 +459,7 @@ export default function ProjectDetail() {
                 <FadeIn key={rp._id} delay={i * 40}>
                   <Link
                     to={`/projects/${rp.slug}`}
-                    className="flex flex-col bg-[#FAFAFA] border border-border rounded-sm h-full overflow-hidden hover:-translate-y-1 transition-all duration-300">
+                    className="flex flex-col bg-[#FAFAFA] border border-border rounded-sm h-full w-full overflow-hidden hover:-translate-y-1 transition-all duration-300">
                     <div className="h-44 overflow-hidden">
                       <img
                         src={resolveImagePath(rp.thumbnail)}

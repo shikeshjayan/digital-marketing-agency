@@ -40,6 +40,7 @@ export default function FormField({
           onChange={onChange}
           disabled={disabled}
           className="mt-2"
+          dropdownAlign={rest.dropdownAlign}
         />
       ) : textarea ? (
         <textarea

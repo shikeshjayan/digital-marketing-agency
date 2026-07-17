@@ -71,7 +71,7 @@ export default function TeamCard({ member }) {
 
         <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent px-5 pb-5 pt-16">
           <h3 className="subheading text-white leading-tight">{member.name}</h3>
-          <p className="mt-1 text-sm text-white/80 line-clamp-2">{member.designation}</p>
+          <p className="mt-1 text-sm text-white/80 line-clamp-2 break-words">{member.designation}</p>
         </div>
       </div>
     </div>

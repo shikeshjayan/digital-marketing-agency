@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import useDebounce from "../../hooks/useDebounce.js";
+import useIsMobile from "../../hooks/useIsMobile.js";
 import { toast } from "sonner";
 import useProjectStore from "../../store/projectStore.js";
 import useServiceStore from "../../store/serviceStore.js";
@@ -61,6 +62,8 @@ export default function AdminProjects() {
   const { fetchAdminIndustries, adminIndustries } = useIndustryStore();
   const { fetchAdminTeam, adminTeam } = useTeamStore();
 
+  const isMobile = useIsMobile();
+
   const [items, setItems] = useState([]);
   const [search, setSearch] = useState("");
   const [status, setStatus] = useState("");
@@ -83,7 +86,9 @@ export default function AdminProjects() {
   }
 
   useEffect(() => {
-    galleryUrlsRef.current = form.gallery.filter((i) => i?.url).map((i) => i.url);
+    galleryUrlsRef.current = form.gallery
+      .filter((i) => i?.url)
+      .map((i) => i.url);
   }, [form.gallery]);
 
   useEffect(() => {
@@ -98,14 +103,18 @@ export default function AdminProjects() {
     try {
       const result = await fetchAdminProjects({
         search: search || undefined,
-        status: status || undefined,
+        status: status === "Featured" ? undefined : status || undefined,
+        featured: status === "Featured" ? "true" : undefined,
         page,
-        limit: 7,
+        limit: isMobile ? 200 : 7,
       });
       setItems(result?.items ?? []);
       setPagination(result?.pagination ?? { total: 0, page: 1, pages: 1 });
     } catch (err) {
-      const msg = err?.response?.data?.message || err?.message || "Failed to load projects.";
+      const msg =
+        err?.response?.data?.message ||
+        err?.message ||
+        "Failed to load projects.";
       setError(msg);
       toast.error(msg);
     } finally {
@@ -148,7 +157,11 @@ export default function AdminProjects() {
     setError("");
     setSubmitting(true);
 
-    if (!form.project_name.trim() || !form.short_description.trim() || !form.description.trim()) {
+    if (
+      !form.project_name.trim() ||
+      !form.short_description.trim() ||
+      !form.description.trim()
+    ) {
       setError("Please fill Project Name, Short Description, and Description.");
       setSubmitting(false);
       return;
@@ -187,20 +200,26 @@ export default function AdminProjects() {
     payload.append("technologies", JSON.stringify(form.technologies));
     payload.append("industries", JSON.stringify(form.industries));
     payload.append("team", JSON.stringify(form.team));
-    payload.append("client", JSON.stringify({
-      name: form.client_name.trim(),
-      company: form.client_company.trim(),
-      website: form.client_website.trim(),
-      location: form.client_location.trim(),
-    }));
+    payload.append(
+      "client",
+      JSON.stringify({
+        name: form.client_name.trim(),
+        company: form.client_company.trim(),
+        website: form.client_website.trim(),
+        location: form.client_location.trim(),
+      }),
+    );
     payload.append("project_url", form.project_url.trim());
     payload.append("github_url", form.github_url.trim());
     payload.append("completion_date", form.completion_date || "");
     payload.append("featured", form.featured);
-    payload.append("seo", JSON.stringify({
-      meta_title: form.seo_meta_title.trim(),
-      meta_description: form.seo_meta_description.trim(),
-    }));
+    payload.append(
+      "seo",
+      JSON.stringify({
+        meta_title: form.seo_meta_title.trim(),
+        meta_description: form.seo_meta_description.trim(),
+      }),
+    );
     payload.append("status", form.status);
 
     try {
@@ -215,7 +234,8 @@ export default function AdminProjects() {
       setForm(EMPTY_FORM);
       await load();
     } catch (err) {
-      const msg = err?.response?.data?.message || err?.message || "Operation failed.";
+      const msg =
+        err?.response?.data?.message || err?.message || "Operation failed.";
       setError(msg);
       toast.error(msg);
     } finally {
@@ -232,9 +252,15 @@ export default function AdminProjects() {
       description: p.description ?? "",
       thumbnail: p.thumbnail ?? "",
       gallery: p.gallery ?? [],
-      services: (p.services || []).map((s) => (typeof s === "object" ? s._id : s)),
-      technologies: (p.technologies || []).map((t) => (typeof t === "object" ? t._id : t)),
-      industries: (p.industries || []).map((i) => (typeof i === "object" ? i._id : i)),
+      services: (p.services || []).map((s) =>
+        typeof s === "object" ? s._id : s,
+      ),
+      technologies: (p.technologies || []).map((t) =>
+        typeof t === "object" ? t._id : t,
+      ),
+      industries: (p.industries || []).map((i) =>
+        typeof i === "object" ? i._id : i,
+      ),
       team: (p.team || []).map((t) => (typeof t === "object" ? t._id : t)),
       client_name: clientObj.name ?? "",
       client_company: clientObj.company ?? "",
@@ -289,8 +315,8 @@ export default function AdminProjects() {
         />
       </div>
 
-      <div className="mt-6 bg-background border border-border rounded p-5 shadow-xs">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+      <div className="mt-6 bg-background border border-border rounded p-5 shadow-xs hidden md:block">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
           <SearchInput
             value={search}
             onChange={setSearch}
@@ -299,11 +325,12 @@ export default function AdminProjects() {
           <Select
             value={status}
             onChange={setStatus}
-            placeholder="All statuses"
+            placeholder="All items"
             options={[
-              { value: "", label: "All statuses" },
+              { value: "", label: "All items" },
               { value: "Draft", label: "Draft" },
               { value: "Published", label: "Published" },
+              { value: "Featured", label: "Featured" },
             ]}
           />
         </div>
@@ -317,18 +344,24 @@ export default function AdminProjects() {
             {form.project_id ? "Edit Project" : "Add New Project"}
           </div>
 
-          <form onSubmit={onSubmit} className="mt-4 flex flex-col flex-1 min-h-0 gap-3">
+          <form
+            onSubmit={onSubmit}
+            className="mt-4 flex flex-col flex-1 min-h-0 gap-3">
             <div className="flex-1 overflow-y-auto space-y-3">
               <FormField
                 label="Project Name"
                 value={form.project_name}
-                onChange={(e) => setForm((f) => ({ ...f, project_name: e.target.value }))}
+                onChange={(e) =>
+                  setForm((f) => ({ ...f, project_name: e.target.value }))
+                }
                 placeholder="e.g. E-commerce Website"
               />
               <FormField
                 label="Short Description"
                 value={form.short_description}
-                onChange={(e) => setForm((f) => ({ ...f, short_description: e.target.value }))}
+                onChange={(e) =>
+                  setForm((f) => ({ ...f, short_description: e.target.value }))
+                }
                 placeholder="Brief summary (max 200 chars)"
               />
               <FormField
@@ -336,7 +369,9 @@ export default function AdminProjects() {
                 textarea
                 rows={3}
                 value={form.description}
-                onChange={(e) => setForm((f) => ({ ...f, description: e.target.value }))}
+                onChange={(e) =>
+                  setForm((f) => ({ ...f, description: e.target.value }))
+                }
                 placeholder="Detailed description of the project"
               />
 
@@ -356,12 +391,16 @@ export default function AdminProjects() {
                       <input
                         type="checkbox"
                         checked={form.featured}
-                        onChange={(e) => setForm((f) => ({ ...f, featured: e.target.checked }))}
+                        onChange={(e) =>
+                          setForm((f) => ({ ...f, featured: e.target.checked }))
+                        }
                         className="sr-only peer"
                       />
                       <div className="w-9 h-5 bg-border rounded-full peer peer-checked:bg-primary peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all" />
                     </label>
-                    <span className="text-sm font-semibold text-heading">Featured Project</span>
+                    <span className="text-sm font-semibold text-heading">
+                      Featured Project
+                    </span>
                   </div>
                 </div>
               </div>
@@ -370,14 +409,20 @@ export default function AdminProjects() {
                 label="Thumbnail"
                 required
                 file={form.thumbnail instanceof File ? form.thumbnail : null}
-                existingUrl={typeof form.thumbnail === "string" ? resolveImagePath(form.thumbnail) : ""}
+                existingUrl={
+                  typeof form.thumbnail === "string"
+                    ? resolveImagePath(form.thumbnail)
+                    : ""
+                }
                 onChange={onPickThumbnail}
                 onRemove={() => setForm((f) => ({ ...f, thumbnail: "" }))}
                 confirmText="Remove thumbnail?"
               />
 
               <div>
-                <label className="block text-sm font-medium text-heading mb-1">Gallery Images</label>
+                <label className="block text-sm font-medium text-heading mb-1">
+                  Gallery Images
+                </label>
                 <input
                   ref={galleryRef}
                   type="file"
@@ -389,7 +434,9 @@ export default function AdminProjects() {
                 {form.gallery.length > 0 && (
                   <div className="mt-2 flex flex-wrap gap-2">
                     {form.gallery.map((img, idx) => (
-                      <div key={idx} className="relative w-16 h-16 border border-border rounded overflow-hidden">
+                      <div
+                        key={idx}
+                        className="relative w-16 h-16 border border-border rounded overflow-hidden">
                         <img
                           src={getGallerySrc(img)}
                           alt=""
@@ -410,7 +457,10 @@ export default function AdminProjects() {
               <MultiSelect
                 label="Services"
                 required
-                options={adminServices.map((s) => ({ value: s._id, label: s.service_name }))}
+                options={adminServices.map((s) => ({
+                  value: s._id,
+                  label: s.service_name,
+                }))}
                 value={form.services}
                 onChange={(vals) => setForm((f) => ({ ...f, services: vals }))}
                 emptyMessage="No services found. Create services first."
@@ -418,23 +468,36 @@ export default function AdminProjects() {
 
               <MultiSelect
                 label="Technologies"
-                options={adminTechnologies.map((t) => ({ value: t._id, label: t.name }))}
+                options={adminTechnologies.map((t) => ({
+                  value: t._id,
+                  label: t.name,
+                }))}
                 value={form.technologies}
-                onChange={(vals) => setForm((f) => ({ ...f, technologies: vals }))}
+                onChange={(vals) =>
+                  setForm((f) => ({ ...f, technologies: vals }))
+                }
                 emptyMessage="No technologies found. Create them first."
               />
 
               <MultiSelect
                 label="Industries"
-                options={adminIndustries.map((ind) => ({ value: ind._id, label: ind.name }))}
+                options={adminIndustries.map((ind) => ({
+                  value: ind._id,
+                  label: ind.name,
+                }))}
                 value={form.industries}
-                onChange={(vals) => setForm((f) => ({ ...f, industries: vals }))}
+                onChange={(vals) =>
+                  setForm((f) => ({ ...f, industries: vals }))
+                }
                 emptyMessage="No industries found. Create them first."
               />
 
               <MultiSelect
                 label="Team Members"
-                options={adminTeam.map((m) => ({ value: m._id, label: m.name }))}
+                options={adminTeam.map((m) => ({
+                  value: m._id,
+                  label: m.name,
+                }))}
                 value={form.team}
                 onChange={(vals) => setForm((f) => ({ ...f, team: vals }))}
                 emptyMessage="No team members found."
@@ -442,31 +505,47 @@ export default function AdminProjects() {
 
               {/* Client info */}
               <div className="border-t border-border pt-3">
-                <div className="text-sm font-bold text-heading mb-2">Client Information</div>
+                <div className="text-sm font-bold text-heading mb-2">
+                  Client Information
+                </div>
                 <div className="space-y-3">
                   <FormField
                     label="Client Name"
                     value={form.client_name}
-                    onChange={(e) => setForm((f) => ({ ...f, client_name: e.target.value }))}
+                    onChange={(e) =>
+                      setForm((f) => ({ ...f, client_name: e.target.value }))
+                    }
                     placeholder="e.g. John Smith"
                   />
                   <FormField
                     label="Company"
                     value={form.client_company}
-                    onChange={(e) => setForm((f) => ({ ...f, client_company: e.target.value }))}
+                    onChange={(e) =>
+                      setForm((f) => ({ ...f, client_company: e.target.value }))
+                    }
                     placeholder="e.g. Acme Corp"
                   />
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <FormField
                       label="Website"
                       value={form.client_website}
-                      onChange={(e) => setForm((f) => ({ ...f, client_website: e.target.value }))}
+                      onChange={(e) =>
+                        setForm((f) => ({
+                          ...f,
+                          client_website: e.target.value,
+                        }))
+                      }
                       placeholder="https://example.com"
                     />
                     <FormField
                       label="Location"
                       value={form.client_location}
-                      onChange={(e) => setForm((f) => ({ ...f, client_location: e.target.value }))}
+                      onChange={(e) =>
+                        setForm((f) => ({
+                          ...f,
+                          client_location: e.target.value,
+                        }))
+                      }
                       placeholder="e.g. New York, USA"
                     />
                   </div>
@@ -478,13 +557,17 @@ export default function AdminProjects() {
                 <FormField
                   label="Project URL"
                   value={form.project_url}
-                  onChange={(e) => setForm((f) => ({ ...f, project_url: e.target.value }))}
+                  onChange={(e) =>
+                    setForm((f) => ({ ...f, project_url: e.target.value }))
+                  }
                   placeholder="https://live-project.com"
                 />
                 <FormField
                   label="GitHub URL"
                   value={form.github_url}
-                  onChange={(e) => setForm((f) => ({ ...f, github_url: e.target.value }))}
+                  onChange={(e) =>
+                    setForm((f) => ({ ...f, github_url: e.target.value }))
+                  }
                   placeholder="https://github.com/..."
                 />
               </div>
@@ -493,7 +576,9 @@ export default function AdminProjects() {
                 label="Completion Date"
                 type="date"
                 value={form.completion_date}
-                onChange={(e) => setForm((f) => ({ ...f, completion_date: e.target.value }))}
+                onChange={(e) =>
+                  setForm((f) => ({ ...f, completion_date: e.target.value }))
+                }
               />
 
               {/* SEO */}
@@ -503,7 +588,9 @@ export default function AdminProjects() {
                   <FormField
                     label="Meta Title"
                     value={form.seo_meta_title}
-                    onChange={(e) => setForm((f) => ({ ...f, seo_meta_title: e.target.value }))}
+                    onChange={(e) =>
+                      setForm((f) => ({ ...f, seo_meta_title: e.target.value }))
+                    }
                     placeholder="SEO title for the project page"
                   />
                   <FormField
@@ -511,7 +598,12 @@ export default function AdminProjects() {
                     textarea
                     rows={2}
                     value={form.seo_meta_description}
-                    onChange={(e) => setForm((f) => ({ ...f, seo_meta_description: e.target.value }))}
+                    onChange={(e) =>
+                      setForm((f) => ({
+                        ...f,
+                        seo_meta_description: e.target.value,
+                      }))
+                    }
                     placeholder="SEO description for the project page"
                   />
                 </div>
@@ -526,13 +618,38 @@ export default function AdminProjects() {
                 editId={form.project_id}
                 onSubmit={onSubmit}
                 onReset={() => setForm(EMPTY_FORM)}
-                submitLabel={form.project_id ? "Update Project" : "Create Project"}
+                submitLabel={
+                  form.project_id ? "Update Project" : "Create Project"
+                }
               />
             </div>
           </form>
         </div>
 
-        <div className="lg:col-span-3 bg-background border border-border rounded p-5 shadow-xs flex flex-col lg:h-[80vh]">
+        <div className="md:hidden">
+          <div className="bg-background border border-border rounded p-5 shadow-xs">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+              <SearchInput
+                value={search}
+                onChange={setSearch}
+                placeholder="Search by project name..."
+              />
+              <Select
+                value={status}
+                onChange={setStatus}
+                placeholder="All items"
+                options={[
+                  { value: "", label: "All items" },
+                  { value: "Draft", label: "Draft" },
+                  { value: "Published", label: "Published" },
+                  { value: "Featured", label: "Featured" },
+                ]}
+              />
+            </div>
+          </div>
+        </div>
+
+        <div className="lg:col-span-3 bg-background border border-border rounded p-5 shadow-xs flex flex-col sm:max-h-none max-h-[70vh] lg:h-[80vh]">
           <AdminListFooter
             loading={loading}
             total={pagination.total}
@@ -545,27 +662,35 @@ export default function AdminProjects() {
             <table className="w-full text-sm block sm:table">
               <thead className="hidden sm:table-header-group">
                 <tr className="text-left text-text">
-                  <th className="py-2 pr-3 hidden sm:table-cell">ID</th>
+                  <th className="py-2 pr-3 pl-3 hidden sm:table-cell">ID</th>
                   <th className="py-2 pr-3">Project</th>
                   <th className="py-2 pr-3">Services</th>
                   <th className="py-2 pr-3">Status</th>
                   <th className="py-2">Actions</th>
                 </tr>
               </thead>
-              <tbody>
+              <tbody className="block sm:table-row-group">
                 {loading && !items.length ? (
                   <TableSkeleton rows={5} cols={5} />
                 ) : (
                   items.map((p) => (
-                    <tr key={p._id} className="block sm:table-row border sm:border-t border-border mb-3 sm:mb-0 p-3 sm:p-0 rounded-lg sm:rounded-none bg-surface/50 sm:bg-transparent">
-                      <td className="block sm:table-cell py-1 sm:py-3 pr-0 sm:pr-3 text-text">
-                        <span className="text-xs font-semibold text-muted uppercase tracking-wide block sm:hidden mb-1">ID</span>
-                        <span className="block break-all sm:truncate sm:max-w-[80px]" title={p._id}>
+                    <tr
+                      key={p._id}
+                      className="block sm:table-row border sm:border-t border-border mb-3 sm:mb-0 p-3 sm:p-0 rounded-lg sm:rounded-none bg-surface/50 sm:bg-transparent">
+                      <td className="block sm:table-cell py-1 sm:py-3 pl-0 sm:pl-3 pr-0 sm:pr-3 text-text">
+                        <span className="text-xs font-semibold text-muted uppercase tracking-wide block sm:hidden mb-1">
+                          ID
+                        </span>
+                        <span
+                          className="block break-all sm:truncate sm:max-w-[80px]"
+                          title={p._id}>
                           {p._id}
                         </span>
                       </td>
                       <td className="block sm:table-cell py-1 sm:py-3 pr-0 sm:pr-3">
-                        <span className="text-xs font-semibold text-muted uppercase tracking-wide block sm:hidden mb-1">Project</span>
+                        <span className="text-xs font-semibold text-muted uppercase tracking-wide block sm:hidden mb-1">
+                          Project
+                        </span>
                         <div className="flex items-center gap-3">
                           {p.thumbnail && (
                             <img
@@ -590,20 +715,30 @@ export default function AdminProjects() {
                         </div>
                       </td>
                       <td className="block sm:table-cell py-1 sm:py-3 pr-0 sm:pr-3">
-                        <span className="text-xs font-semibold text-muted uppercase tracking-wide block sm:hidden mb-1">Services</span>
+                        <span className="text-xs font-semibold text-muted uppercase tracking-wide block sm:hidden mb-1">
+                          Services
+                        </span>
                         <div className="flex flex-wrap gap-1">
                           {(p.services || []).slice(0, 2).map((s, i) => (
-                            <span key={i} className="inline-block px-2 py-0.5 text-[10px] bg-surface border border-border rounded text-text">
-                              {typeof s === "object" ? s.service_name : "Service"}
+                            <span
+                              key={i}
+                              className="inline-block px-2 py-0.5 text-[10px] bg-surface border border-border rounded text-text">
+                              {typeof s === "object"
+                                ? s.service_name
+                                : "Service"}
                             </span>
                           ))}
                           {(p.services || []).length > 2 && (
-                            <span className="text-[10px] text-muted">+{p.services.length - 2}</span>
+                            <span className="text-[10px] text-muted">
+                              +{p.services.length - 2}
+                            </span>
                           )}
                         </div>
                       </td>
                       <td className="block sm:table-cell py-1 sm:py-3 pr-0 sm:pr-3">
-                        <span className="text-xs font-semibold text-muted uppercase tracking-wide block sm:hidden mb-1">Status</span>
+                        <span className="text-xs font-semibold text-muted uppercase tracking-wide block sm:hidden mb-1">
+                          Status
+                        </span>
                         <span
                           className={`inline-flex items-center rounded-full px-3 py-1 text-sm font-semibold border ${
                             p.status === "Published"
@@ -614,7 +749,9 @@ export default function AdminProjects() {
                         </span>
                       </td>
                       <td className="block sm:table-cell py-1 sm:py-3">
-                        <span className="text-xs font-semibold text-muted uppercase tracking-wide block sm:hidden mb-1">Actions</span>
+                        <span className="text-xs font-semibold text-muted uppercase tracking-wide block sm:hidden mb-1">
+                          Actions
+                        </span>
                         <div className="flex gap-2">
                           <button
                             type="button"
@@ -630,7 +767,10 @@ export default function AdminProjects() {
                             title="Delete"
                             aria-label="Delete"
                             onClick={() => setDeleteTarget(p._id)}>
-                            <FontAwesomeIcon icon={faTrash} className="w-4 h-4" />
+                            <FontAwesomeIcon
+                              icon={faTrash}
+                              className="w-4 h-4"
+                            />
                           </button>
                         </div>
                       </td>
@@ -647,11 +787,13 @@ export default function AdminProjects() {
               </tbody>
             </table>
           </div>
-          <Pagination
-            page={pagination.page}
-            pages={pagination.pages}
-            onPageChange={setPage}
-          />
+          <div className="hidden sm:block">
+            <Pagination
+              page={pagination.page}
+              pages={pagination.pages}
+              onPageChange={setPage}
+            />
+          </div>
         </div>
       </div>
 
@@ -678,7 +820,10 @@ export default function AdminProjects() {
           const img = form.gallery[confirmGalleryIdx];
           if (img?.url) URL.revokeObjectURL(img.url);
           if (galleryRef.current) galleryRef.current.value = "";
-          setForm((f) => ({ ...f, gallery: f.gallery.filter((_, i) => i !== confirmGalleryIdx) }));
+          setForm((f) => ({
+            ...f,
+            gallery: f.gallery.filter((_, i) => i !== confirmGalleryIdx),
+          }));
           setConfirmGalleryIdx(null);
         }}
         message="Remove this gallery image?"

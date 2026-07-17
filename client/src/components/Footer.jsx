@@ -145,7 +145,7 @@ export default function Footer() {
                       <FontAwesomeIcon icon={faWhatsapp} />
                     </span>
                     <a href={`https://wa.me/${contact.whatsapp?.replace(/[^0-9]/g, "") || "918891212323"}`} target="_blank" rel="noopener noreferrer" className="text-white/80 hover:text-primary transition-colors">
-                      {contact.whatsapp || "+91 8891212323"}
+                      {contact.whatsapp ? `+${contact.whatsapp.replace(/[^0-9]/g, "")}` : "+91 8891212323"}
                     </a>
                   </div>
                   <div className="flex items-center gap-3">

@@ -104,10 +104,10 @@ export default function CaseStudyDetail() {
                     </div>
                   </div>
                 )}
-                <h1 className="hero-heading text-white">
+                <h1 className="hero-heading text-white break-words">
                   {displayTitle}
                 </h1>
-                <p className="mt-4 text-white/70 text-lg leading-relaxed body-text">{cs.overview}</p>
+                <p className="mt-4 text-white/70 text-lg leading-relaxed body-text break-words">{cs.overview}</p>
 
                 <div className="flex flex-wrap gap-3 mt-6 justify-center lg:justify-start">
                   {project.project_name && (
@@ -160,7 +160,7 @@ export default function CaseStudyDetail() {
               <div className="flex flex-col items-center justify-center gap-2 mb-4">
                 <h2 className="section-heading text-heading">Overview</h2>
               </div>
-              <p className="text-text leading-relaxed body-text max-w-3xl mx-auto">{cs.overview}</p>
+              <p className="text-text leading-relaxed body-text max-w-3xl mx-auto break-words">{cs.overview}</p>
             </div>
           </FadeIn>
         </div>
@@ -177,7 +177,7 @@ export default function CaseStudyDetail() {
                 </span>
                 <h2 className="section-heading text-heading">The Challenge</h2>
               </div>
-              <p className="text-text leading-relaxed body-text max-w-3xl mx-auto">{cs.challenge}</p>
+              <p className="text-text leading-relaxed body-text max-w-3xl mx-auto break-words">{cs.challenge}</p>
             </div>
           </FadeIn>
         </div>
@@ -195,7 +195,7 @@ export default function CaseStudyDetail() {
                     <FadeIn key={i} delay={i * 20} className="w-full sm:basis-[calc(50%-6px)] max-w-md">
                       <div className="flex flex-col items-center justify-center gap-3 p-5 bg-[#FAFAFA] border border-border rounded-sm text-center shadow-xs h-full">
                         <FontAwesomeIcon icon={faCheckCircle} className="text-primary text-lg" />
-                        <span className="text-text body-text font-medium">{obj}</span>
+                        <span className="text-text body-text font-medium break-words">{obj}</span>
                       </div>
                     </FadeIn>
                   ))}
@@ -213,7 +213,7 @@ export default function CaseStudyDetail() {
             <FadeIn>
               <div>
                 <h2 className="section-heading text-heading mb-4">Strategy</h2>
-                <p className="text-text leading-relaxed body-text max-w-3xl mx-auto">{cs.strategy}</p>
+                <p className="text-text leading-relaxed body-text max-w-3xl mx-auto break-words">{cs.strategy}</p>
               </div>
             </FadeIn>
           </div>
@@ -231,7 +231,7 @@ export default function CaseStudyDetail() {
                 </span>
                 <h2 className="section-heading text-heading">The Solution</h2>
               </div>
-              <p className="text-text leading-relaxed body-text max-w-3xl mx-auto">{cs.solution}</p>
+              <p className="text-text leading-relaxed body-text max-w-3xl mx-auto break-words">{cs.solution}</p>
             </div>
           </FadeIn>
         </div>
@@ -247,7 +247,7 @@ export default function CaseStudyDetail() {
                 <div className="flex flex-wrap gap-4 justify-center items-center max-w-5xl mx-auto">
                   {cs.deliverables.map((d, i) => (
                     <FadeIn key={i} delay={i * 20}>
-                      <span className="inline-block bg-background border border-border/80 text-heading text-sm font-body px-5 py-3 rounded-none  text-center card-shadow">
+                      <span className="inline-block bg-background border border-border/80 text-heading text-sm font-body px-5 py-3 rounded-none text-center card-shadow break-words">
                         {d}
                       </span>
                     </FadeIn>
@@ -318,8 +318,8 @@ export default function CaseStudyDetail() {
                           {i + 1}
                         </span>
                         <div>
-                          <div className="font-bold text-heading text-base subheading">{step.title}</div>
-                          <p className="text-text text-sm mt-2 body-text">{step.description}</p>
+                          <div className="font-bold text-heading text-base subheading break-words">{step.title}</div>
+                          <p className="text-text text-sm mt-2 body-text break-words">{step.description}</p>
                         </div>
                       </div>
                     </FadeIn>
@@ -344,11 +344,11 @@ export default function CaseStudyDetail() {
                       <div className="border border-border rounded-sm overflow-hidden shadow-xs">
                         <div className="p-4 bg-warning/5 border-b border-border text-center">
                           <div className="text-xs font-bold uppercase tracking-wider text-warning mb-1 text-xxs">Challenge</div>
-                          <p className="text-text body-text">{item.challenge}</p>
+                          <p className="text-text body-text break-words">{item.challenge}</p>
                         </div>
                         <div className="p-4 bg-info/5 text-center">
                           <div className="text-xs font-bold uppercase tracking-wider text-info mb-1 text-xxs">Solution</div>
-                          <p className="text-text body-text">{item.solution}</p>
+                          <p className="text-text body-text break-words">{item.solution}</p>
                         </div>
                       </div>
                     </FadeIn>
@@ -422,7 +422,7 @@ export default function CaseStudyDetail() {
             <FadeIn>
               <div className="p-6 md:p-8 bg-[#FAFAFA] border border-border rounded-sm max-w-2xl mx-auto shadow-xs">
                 <FontAwesomeIcon icon={faQuoteLeft} className="text-primary text-2xl mb-4 mx-auto" />
-                <blockquote className="text-text text-lg leading-relaxed italic body-text">
+                <blockquote className="text-text text-lg leading-relaxed italic body-text break-words">
                   &ldquo;{cs.client_testimonial.quote}&rdquo;
                 </blockquote>
                 <div className="mt-4 flex flex-col items-center gap-1">

@@ -44,7 +44,7 @@ export default function FAQSection({
               </button>
               {activeIndex === i && (
                 <div id={`faq-panel-${i}`} role="region" className="px-6 pb-4">
-                  <p className="small-text text-text body-text">{item.a}</p>
+                  <p className="small-text text-text body-text break-words">{item.a}</p>
                 </div>
               )}
             </div>

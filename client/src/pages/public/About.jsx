@@ -333,7 +333,7 @@ export default function About() {
                 Marketing
               </h2>
               <div className="mt-4 small-text text-text leading-relaxed max-w-7xl mx-auto text-justify space-y-3">
-                <p className="small-text text-text body-text">
+                <p className="small-text text-text body-text break-words">
                   We help brands navigate and scale modern digital landscapes by
                   executing high-performance web engineering alongside robust
                   marketing strategy. Our engineering principles cut out
@@ -341,7 +341,7 @@ export default function About() {
                   customer pipelines, building platforms with structural
                   cleanliness, and monitoring active engagement behaviours.
                 </p>
-                <p className="small-text text-text body-text">
+                <p className="small-text text-text body-text break-words">
                   By linking functional data capture analytics directly with
                   human-centric interfaces, we transform your digital channels
                   from static online bookmarks into high-velocity engines that

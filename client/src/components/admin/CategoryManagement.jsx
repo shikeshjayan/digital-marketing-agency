@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
+import useIsMobile from "../../hooks/useIsMobile.js";
 import ConfirmModal from "../ui/ConfirmModal.jsx";
 import Select from "../ui/Select.jsx";
 import Pagination from "../ui/Pagination.jsx";
@@ -48,6 +49,8 @@ export default function CategoryManagement({ config }) {
   const deleteItem = store[deleteKey];
   const deleteAllItems = store[deleteAllKey];
 
+  const isMobile = useIsMobile();
+
   const [items, setItems] = useState([]);
   const [search, setSearch] = useState("");
   const [status, setStatus] = useState("");
@@ -72,7 +75,7 @@ export default function CategoryManagement({ config }) {
         search: search || undefined,
         status: status || undefined,
         page,
-        limit: 5,
+        limit: isMobile ? 200 : 5,
       });
       setItems(result?.items ?? []);
       setPagination(result?.pagination ?? { total: 0, page: 1, pages: 1 });
@@ -212,7 +215,7 @@ export default function CategoryManagement({ config }) {
         />
       </div>
 
-      <div className="mt-6 bg-background border border-border rounded p-5 shadow-xs">
+      <div className="mt-6 bg-background border border-border rounded p-5 shadow-xs hidden md:block">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
           <SearchInput
             value={search}
@@ -348,7 +351,29 @@ export default function CategoryManagement({ config }) {
           </form>
         </div>
 
-        <div className="lg:col-span-3 bg-background border border-border rounded p-5 shadow-xs flex flex-col lg:overflow-y-auto"
+        <div className="md:hidden">
+          <div className="bg-background border border-border rounded p-5 shadow-xs">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+              <SearchInput
+                value={search}
+                onChange={setSearch}
+                placeholder={searchPlaceholder}
+              />
+              <Select
+                value={status}
+                onChange={setStatus}
+                placeholder="All statuses"
+                options={[
+                  { value: "", label: "All statuses" },
+                  { value: "Active", label: "Active" },
+                  { value: "Inactive", label: "Inactive" },
+                ]}
+              />
+            </div>
+          </div>
+        </div>
+
+        <div className="lg:col-span-3 bg-background border border-border rounded p-5 shadow-xs flex flex-col sm:max-h-none max-h-[70vh]"
           style={leftHeight ? { height: leftHeight } : undefined}>
           <AdminListFooter
             loading={loading}
@@ -358,24 +383,24 @@ export default function CategoryManagement({ config }) {
             label={labelPlural}
           />
 
-          <div className="mt-4 overflow-auto flex-1">
+          <div className="mt-4 sm:overflow-auto overflow-y-auto flex-1 min-h-0">
             <table className="w-full text-sm block sm:table">
               <thead className="hidden sm:table-header-group">
                 <tr className="text-left text-text">
-                  <th className="py-2 pr-3 hidden sm:table-cell">ID</th>
+                  <th className="py-2 pr-3 pl-3 hidden sm:table-cell">ID</th>
                   <th className="py-2 pr-3">Name</th>
                   <th className="py-2 pr-3">Order</th>
                   <th className="py-2 pr-3">Status</th>
                   <th className="py-2">Actions</th>
                 </tr>
               </thead>
-              <tbody>
+              <tbody className="block sm:table-row-group">
                 {loading && !items.length ? (
                   <TableSkeleton rows={5} cols={5} />
                 ) : (
                   items.map((item) => (
                     <tr key={item._id} className="block sm:table-row border sm:border-t border-border mb-3 sm:mb-0 p-3 sm:p-0 rounded-lg sm:rounded-none bg-surface/50 sm:bg-transparent">
-                      <td className="block sm:table-cell py-1 sm:py-3 pr-0 sm:pr-3 text-text">
+                      <td className="block sm:table-cell py-1 sm:py-3 pl-0 sm:pl-3 pr-0 sm:pr-3 text-text">
                         <span className="text-xs font-semibold text-muted uppercase tracking-wide block sm:hidden mb-1">ID</span>
                         <span className="block break-all sm:truncate sm:max-w-[80px]" title={item._id}>
                           {item._id}
@@ -441,11 +466,13 @@ export default function CategoryManagement({ config }) {
               </tbody>
             </table>
           </div>
-          <Pagination
-            page={pagination.page}
-            pages={pagination.pages}
-            onPageChange={setPage}
-          />
+          <div className="hidden sm:block pb-3">
+            <Pagination
+              page={pagination.page}
+              pages={pagination.pages}
+              onPageChange={setPage}
+            />
+          </div>
         </div>
       </div>
 

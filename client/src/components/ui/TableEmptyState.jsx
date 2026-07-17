@@ -5,8 +5,10 @@ export default function TableEmptyState({
   colSpan = 4,
 }) {
   return (
-    <tr>
-      <td colSpan={colSpan} className="py-12 text-center">
+    <tr className="block sm:table-row">
+      <td
+        colSpan={colSpan}
+        className="block sm:table-cell border sm:border-t border-border mb-3 sm:mb-0 p-6 sm:p-0 rounded-lg sm:rounded-none bg-surface/50 sm:bg-transparent py-8 sm:py-12 text-center">
         <div className="flex flex-col items-center text-muted">
           {icon || (
             <svg
