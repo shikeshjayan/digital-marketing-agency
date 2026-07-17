@@ -1,5 +1,29 @@
 const errorHandler = (err, req, res, next) => {
-  console.error(`[API Error] ${req.method} ${req.originalUrl}:`, err.message);
+  console.error(`[API Error] ${req.method} ${req.originalUrl}:`, err);
+
+  // Multer: file too large
+  if (err.code === "LIMIT_FILE_SIZE") {
+    return res.status(400).json({
+      success: false,
+      message: "The image you uploaded is too large. Please use an image smaller than 4 MB.",
+    });
+  }
+
+  // Multer: unexpected field or too many files
+  if (err.code === "LIMIT_UNEXPECTED_FILE" || err.code === "LIMIT_FILE_COUNT") {
+    return res.status(400).json({
+      success: false,
+      message: "There was a problem with the file upload. Please try again.",
+    });
+  }
+
+  // Multer / upload: rejected file type
+  if (err.message === "Only image files are allowed") {
+    return res.status(400).json({
+      success: false,
+      message: "Only image files are allowed (JPEG, PNG, GIF, WebP). Please choose a different file.",
+    });
+  }
 
   // Mongoose bad ObjectId
   if (err.name === "CastError") {
@@ -45,6 +69,7 @@ const errorHandler = (err, req, res, next) => {
     });
   }
 
+  // Use the error's own statusCode if set (e.g. from processImage), otherwise 500
   const statusCode = err.statusCode || 500;
   const message =
     statusCode === 500

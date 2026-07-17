@@ -9,18 +9,18 @@ export const createTechnology = asyncHandler(async (req, res) => {
   const icon = req.file ? req.file.url : req.body.icon;
 
   if (!name) {
-    return res.status(400).json({ success: false, message: "Technology name is required" });
+    return res.status(400).json({ success: false, message: "Please enter a technology name." });
   }
 
   const existing = await Technology.findOne({ name });
   if (existing) {
-    return res.status(409).json({ success: false, message: "Technology already exists" });
+    return res.status(409).json({ success: false, message: "A technology with this name already exists. Please choose a different name." });
   }
 
   if (display_order !== undefined) {
     const orderTaken = await Technology.findOne({ display_order: Number(display_order) });
     if (orderTaken) {
-      return res.status(409).json({ success: false, message: "Display order already in use by another technology" });
+      return res.status(409).json({ success: false, message: "This display order is already taken by another technology. Please choose a different number." });
     }
   }
 
@@ -72,7 +72,7 @@ export const getAllTechnologies = asyncHandler(async (req, res) => {
 export const getTechnologyById = asyncHandler(async (req, res) => {
   const technology = await Technology.findById(req.params.id);
   if (!technology) {
-    return res.status(404).json({ success: false, message: "Technology not found" });
+    return res.status(404).json({ success: false, message: "We couldn't find this technology. It may have been removed." });
   }
   res.status(200).json({ success: true, data: technology });
 });
@@ -84,7 +84,7 @@ export const updateTechnology = asyncHandler(async (req, res) => {
   if (display_order !== undefined) {
     const orderTaken = await Technology.findOne({ display_order: Number(display_order), _id: { $ne: req.params.id } });
     if (orderTaken) {
-      return res.status(409).json({ success: false, message: "Display order already in use by another technology" });
+      return res.status(409).json({ success: false, message: "This display order is already taken by another technology. Please choose a different number." });
     }
   }
 
@@ -110,7 +110,7 @@ export const updateTechnology = asyncHandler(async (req, res) => {
     { new: true, runValidators: true },
   );
   if (!technology) {
-    return res.status(404).json({ success: false, message: "Technology not found" });
+    return res.status(404).json({ success: false, message: "We couldn't find this technology. It may have been removed." });
   }
   res.status(200).json({
     success: true,
@@ -123,7 +123,7 @@ export const updateTechnology = asyncHandler(async (req, res) => {
 export const deleteTechnology = asyncHandler(async (req, res) => {
   const technology = await Technology.findByIdAndDelete(req.params.id);
   if (!technology) {
-    return res.status(404).json({ success: false, message: "Technology not found" });
+    return res.status(404).json({ success: false, message: "We couldn't find this technology. It may have been removed." });
   }
   res.status(200).json({ success: true, message: "Technology deleted successfully" });
 });

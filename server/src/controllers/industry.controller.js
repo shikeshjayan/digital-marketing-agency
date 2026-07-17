@@ -9,18 +9,18 @@ export const createIndustry = asyncHandler(async (req, res) => {
   const icon = req.file ? req.file.url : req.body.icon;
 
   if (!name) {
-    return res.status(400).json({ success: false, message: "Industry name is required" });
+    return res.status(400).json({ success: false, message: "Please enter an industry name." });
   }
 
   const existing = await Industry.findOne({ name });
   if (existing) {
-    return res.status(409).json({ success: false, message: "Industry already exists" });
+    return res.status(409).json({ success: false, message: "An industry with this name already exists. Please choose a different name." });
   }
 
   if (display_order !== undefined) {
     const orderTaken = await Industry.findOne({ display_order: Number(display_order) });
     if (orderTaken) {
-      return res.status(409).json({ success: false, message: "Display order already in use by another industry" });
+      return res.status(409).json({ success: false, message: "This display order is already taken by another industry. Please choose a different number." });
     }
   }
 
@@ -72,7 +72,7 @@ export const getAllIndustries = asyncHandler(async (req, res) => {
 export const getIndustryById = asyncHandler(async (req, res) => {
   const industry = await Industry.findById(req.params.id);
   if (!industry) {
-    return res.status(404).json({ success: false, message: "Industry not found" });
+    return res.status(404).json({ success: false, message: "We couldn't find this industry. It may have been removed." });
   }
   res.status(200).json({ success: true, data: industry });
 });
@@ -84,7 +84,7 @@ export const updateIndustry = asyncHandler(async (req, res) => {
   if (display_order !== undefined) {
     const orderTaken = await Industry.findOne({ display_order: Number(display_order), _id: { $ne: req.params.id } });
     if (orderTaken) {
-      return res.status(409).json({ success: false, message: "Display order already in use by another industry" });
+      return res.status(409).json({ success: false, message: "This display order is already taken by another industry. Please choose a different number." });
     }
   }
 
@@ -110,7 +110,7 @@ export const updateIndustry = asyncHandler(async (req, res) => {
     { new: true, runValidators: true },
   );
   if (!industry) {
-    return res.status(404).json({ success: false, message: "Industry not found" });
+    return res.status(404).json({ success: false, message: "We couldn't find this industry. It may have been removed." });
   }
   res.status(200).json({
     success: true,
@@ -123,7 +123,7 @@ export const updateIndustry = asyncHandler(async (req, res) => {
 export const deleteIndustry = asyncHandler(async (req, res) => {
   const industry = await Industry.findByIdAndDelete(req.params.id);
   if (!industry) {
-    return res.status(404).json({ success: false, message: "Industry not found" });
+    return res.status(404).json({ success: false, message: "We couldn't find this industry. It may have been removed." });
   }
   res.status(200).json({ success: true, message: "Industry deleted successfully" });
 });

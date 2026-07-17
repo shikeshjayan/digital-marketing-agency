@@ -17,7 +17,7 @@ export const protect = async (req, res, next) => {
 
     // If no token found, reject the request
     if (!token) {
-      return res.status(401).json({ success: false, message: "Not authorized, no token" });
+      return res.status(401).json({ success: false, message: "You need to be logged in to access this page." });
     }
 
     // Decode the token and find the admin in the database
@@ -26,14 +26,14 @@ export const protect = async (req, res, next) => {
 
     // If admin not found, reject
     if (!req.admin) {
-      return res.status(401).json({ success: false, message: "Not authorized, admin not found" });
+      return res.status(401).json({ success: false, message: "Your account could not be found. Please contact support." });
     }
 
     // All good, move to the next function
     next();
   } catch (error) {
     // Token is invalid or expired
-    res.status(401).json({ success: false, message: "Not authorized, token failed" });
+    res.status(401).json({ success: false, message: "Your session is invalid. Please log in again." });
   }
 };
 
@@ -41,7 +41,7 @@ export const protect = async (req, res, next) => {
 export const authorize = (...roles) => {
   return (req, res, next) => {
     if (!roles.includes(req.admin.role)) {
-      return res.status(403).json({ success: false, message: "Forbidden" });
+      return res.status(403).json({ success: false, message: "You don't have permission to perform this action." });
     }
     next();
   };

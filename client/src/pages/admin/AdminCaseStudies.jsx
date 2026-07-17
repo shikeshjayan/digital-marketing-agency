@@ -15,7 +15,6 @@ import TableEmptyState from "../../components/ui/TableEmptyState.jsx";
 import FormField from "../../components/ui/FormField.jsx";
 import FileUploadField from "../../components/ui/FileUploadField.jsx";
 import FormActions from "../../components/ui/FormActions.jsx";
-import ErrorBanner from "../../components/ui/ErrorBanner.jsx";
 import resolveImagePath from "../../utils/resolveImagePath.js";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTrash, faPen } from "@fortawesome/free-solid-svg-icons";
@@ -69,7 +68,6 @@ export default function AdminCaseStudies() {
   const [pagination, setPagination] = useState({ total: 0, page: 1, pages: 1 });
   const galleryRef = useRef(null);
   const [form, setForm] = useState(EMPTY_FORM);
-  const [error, setError] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const formRef = useRef(null);
   const [deleteTarget, setDeleteTarget] = useState(null);
@@ -96,7 +94,6 @@ export default function AdminCaseStudies() {
 
   const load = async () => {
     setLoading(true);
-    setError("");
     try {
       const result = await fetchAdminCaseStudies({
         search: search || undefined,
@@ -108,12 +105,11 @@ export default function AdminCaseStudies() {
       setItems(result?.items ?? []);
       setPagination(result?.pagination ?? { total: 0, page: 1, pages: 1 });
     } catch (err) {
-      const msg =
+      toast.error(
         err?.response?.data?.message ||
         err?.message ||
-        "Failed to load case studies.";
-      setError(msg);
-      toast.error(msg);
+        "Failed to load case studies."
+      );
     } finally {
       setLoading(false);
     }
@@ -204,7 +200,6 @@ export default function AdminCaseStudies() {
 
   async function onSubmit(e) {
     e.preventDefault();
-    setError("");
     setSubmitting(true);
 
     if (
@@ -213,19 +208,19 @@ export default function AdminCaseStudies() {
       !form.challenge.trim() ||
       !form.solution.trim()
     ) {
-      setError("Please fill Title, Overview, Challenge, and Solution.");
+      toast.error("Please fill Title, Overview, Challenge, and Solution.");
       setSubmitting(false);
       return;
     }
 
     if (!form.hero_image && !form.case_study_id) {
-      setError("Please upload a hero image.");
+      toast.error("Please upload a hero image.");
       setSubmitting(false);
       return;
     }
 
     if (!form.project) {
-      setError("Please select a project.");
+      toast.error("Please select a project.");
       setSubmitting(false);
       return;
     }
@@ -235,7 +230,7 @@ export default function AdminCaseStudies() {
       form.timeline_completed_at &&
       form.timeline_completed_at < form.timeline_started_at
     ) {
-      setError("Completion date cannot be before start date.");
+      toast.error("Completion date cannot be before start date.");
       setSubmitting(false);
       return;
     }
@@ -306,10 +301,9 @@ export default function AdminCaseStudies() {
       setForm(EMPTY_FORM);
       await load();
     } catch (err) {
-      const msg =
-        err?.response?.data?.message || err?.message || "Operation failed.";
-      setError(msg);
-      toast.error(msg);
+      toast.error(
+        err?.response?.data?.message || err?.message || "Operation failed."
+      );
     } finally {
       setSubmitting(false);
     }
@@ -358,9 +352,7 @@ export default function AdminCaseStudies() {
       setDeleteTarget(null);
       await load();
     } catch (err) {
-      const msg = err?.response?.data?.message || "Delete failed.";
-      setError(msg);
-      toast.error(msg);
+      toast.error(err?.response?.data?.message || "Delete failed.");
       setDeleteTarget(null);
     }
   }
@@ -372,9 +364,7 @@ export default function AdminCaseStudies() {
       setDeleteAllTarget(false);
       await load();
     } catch (err) {
-      const msg = err?.response?.data?.message || "Delete all failed.";
-      setError(msg);
-      toast.error(msg);
+      toast.error(err?.response?.data?.message || "Delete all failed.");
       setDeleteAllTarget(false);
     }
   }
@@ -999,8 +989,6 @@ export default function AdminCaseStudies() {
             </div>
 
             <div className="shrink-0">
-              <ErrorBanner message={error} />
-
               <FormActions
                 submitting={submitting}
                 editId={form.case_study_id}

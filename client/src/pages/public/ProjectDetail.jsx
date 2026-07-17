@@ -1,8 +1,10 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faArrowRight,
+  faAngleLeft,
+  faAngleRight,
   faBuilding,
   faMapMarkerAlt,
   faCalendar,
@@ -46,6 +48,14 @@ export default function ProjectDetail() {
       fetchRelatedProjects(firstServiceId, 3);
     }
   }, [selectedProject, fetchRelatedProjects]);
+
+  const team = selectedProject?.team ?? [];
+  const [teamPage, setTeamPage] = useState(0);
+  const teamPerPage = 3;
+  const totalTeamPages = Math.ceil(team.length / teamPerPage);
+  const visibleTeam = team.slice(teamPage * teamPerPage, teamPage * teamPerPage + teamPerPage);
+  const prevTeam = () => setTeamPage((v) => (v - 1 + totalTeamPages) % totalTeamPages);
+  const nextTeam = () => setTeamPage((v) => (v + 1) % totalTeamPages);
 
   if (loading && !selectedProject) {
     return (
@@ -156,42 +166,40 @@ export default function ProjectDetail() {
             <FadeIn>
               <SectionHeading eyebrow="Details" title="Project Overview" />
             </FadeIn>
-            <div className="mt-10 grid grid-cols-2 sm:grid-cols-4 gap-4">
+            <div className="mt-10 flex flex-wrap justify-center gap-4">
               {client.name && (
                 <FadeIn delay={20}>
-                  <div className="bg-background-section border border-border rounded-lg p-4 text-center card-shadow">
+                  <div className="w-[160px] h-[140px] bg-background-section border border-border rounded-lg p-4 text-center card-shadow flex flex-col items-center justify-center overflow-hidden">
                     <FontAwesomeIcon icon={faBuilding} className="text-primary text-lg" />
                     <div className="mt-2 text-xs text-muted uppercase tracking-wider text-xxs">Client</div>
-                    <div className="mt-1 text-sm font-semibold text-heading truncate subheading text-sm">{client.name}</div>
+                    <div className="mt-1 text-sm font-semibold text-heading truncate w-full">{client.name}</div>
                   </div>
                 </FadeIn>
               )}
               {project.industries?.length > 0 && (
                 <FadeIn delay={40}>
-                  <div className="bg-background-section border border-border rounded-lg p-4 text-center card-shadow">
+                  <div className="w-[160px] h-[140px] bg-background-section border border-border rounded-lg p-4 text-center card-shadow flex flex-col items-center justify-center overflow-hidden">
                     <FontAwesomeIcon icon={faIndustry} className="text-primary text-lg" />
                     <div className="mt-2 text-xs text-muted uppercase tracking-wider text-xxs">Industry</div>
-                    <div className="mt-1 text-sm font-semibold text-heading truncate subheading text-sm">
-                      {typeof project.industries[0] === "object" ? project.industries[0].name : "Industry"}
-                    </div>
+                    <div className="mt-1 text-sm font-semibold text-heading truncate w-full">{typeof project.industries[0] === "object" ? project.industries[0].name : "Industry"}</div>
                   </div>
                 </FadeIn>
               )}
               {client.location && (
                 <FadeIn delay={60}>
-                  <div className="bg-background-section border border-border rounded-lg p-4 text-center card-shadow">
+                  <div className="w-[160px] h-[140px] bg-background-section border border-border rounded-lg p-4 text-center card-shadow flex flex-col items-center justify-center overflow-hidden">
                     <FontAwesomeIcon icon={faMapMarkerAlt} className="text-primary text-lg" />
                     <div className="mt-2 text-xs text-muted uppercase tracking-wider text-xxs">Location</div>
-                    <div className="mt-1 text-sm font-semibold text-heading truncate subheading text-sm">{client.location}</div>
+                    <div className="mt-1 text-sm font-semibold text-heading truncate w-full">{client.location}</div>
                   </div>
                 </FadeIn>
               )}
               {project.completion_date && (
                 <FadeIn delay={80}>
-                  <div className="bg-background-section border border-border rounded-lg p-4 text-center card-shadow">
+                  <div className="w-[160px] h-[140px] bg-background-section border border-border rounded-lg p-4 text-center card-shadow flex flex-col items-center justify-center overflow-hidden">
                     <FontAwesomeIcon icon={faCalendar} className="text-primary text-lg" />
                     <div className="mt-2 text-xs text-muted uppercase tracking-wider text-xxs">Completed</div>
-                    <div className="mt-1 text-sm font-semibold text-heading truncate subheading text-sm">{formatDate(project.completion_date)}</div>
+                    <div className="mt-1 text-sm font-semibold text-heading truncate w-full">{formatDate(project.completion_date)}</div>
                   </div>
                 </FadeIn>
               )}
@@ -249,7 +257,7 @@ export default function ProjectDetail() {
             <div className="mt-10 flex flex-wrap justify-center gap-3">
               {project.services.map((s, i) => (
                 <FadeIn key={i} delay={i * 20}>
-                  <span className="px-4 py-2 bg-background border border-border text-text text-sm rounded-sm small-text card-shadow">
+                  <span className="w-[180px] h-[44px] inline-flex items-center justify-center px-4 py-2 bg-background border border-border text-text text-sm rounded-sm small-text overflow-hidden truncate">
                     {typeof s === "object" ? s.service_name : "Service"}
                   </span>
                 </FadeIn>
@@ -275,7 +283,7 @@ export default function ProjectDetail() {
                 const name = typeof tech === "object" ? tech.name : tech;
                 return (
                   <FadeIn key={i} delay={i * 30}>
-                    <span className="inline-flex items-center gap-2 px-4 py-2 rounded-sm bg-background-section border border-border text-heading text-sm font-semibold hover:border-primary/40 transition small-text font-bold card-shadow">
+                    <span className="inline-flex items-center gap-2 px-4 py-2 rounded-sm bg-background-section border border-border text-heading text-sm font-semibold hover:border-primary/40 transition small-text font-bold">
                       {name}
                     </span>
                   </FadeIn>
@@ -296,7 +304,7 @@ export default function ProjectDetail() {
             <div className="mt-10 flex flex-wrap justify-center gap-4">
               {project.industries.map((ind, i) => (
                 <FadeIn key={ind._id || i} delay={i * 30} className="w-[calc(50%-8px)] sm:w-[calc(33.33%-11px)] lg:w-[calc(25%-12px)] min-w-[140px]">
-                  <div className="bg-background border border-border rounded-lg p-5 flex flex-col items-center text-center hover: transition h-full w-full card-shadow">
+                   <div className="bg-background border border-border rounded-lg p-5 flex flex-col items-center text-center hover:shadow-md transition h-full w-full card-shadow">
                     {ind.icon ? (
                       <img
                         src={resolveImagePath(ind.icon)}
@@ -309,7 +317,7 @@ export default function ProjectDetail() {
                         <FontAwesomeIcon icon={faIndustry} className="text-primary text-lg" />
                       </div>
                     )}
-                    <h3 className="font-semibold text-heading text-sm subheading text-sm">{ind.name}</h3>
+                    <h3 className="font-semibold text-heading text-sm">{ind.name}</h3>
                     {ind.description && (
                       <p className="mt-2 text-xs text-text leading-relaxed text-xxs">{ind.description}</p>
                     )}
@@ -328,8 +336,28 @@ export default function ProjectDetail() {
             <FadeIn>
               <SectionHeading eyebrow="People" title="Team" subtitle="The team members who worked on this project." />
             </FadeIn>
-            <div className="mt-10 flex flex-wrap justify-center gap-6">
-              {project.team.map((m, i) => (
+            {totalTeamPages > 1 && (
+              <FadeIn>
+                <div className="flex items-center justify-center sm:justify-end gap-2 mt-2">
+                  <button
+                    type="button"
+                    onClick={prevTeam}
+                    className="w-10 h-10 rounded-lg bg-surface border border-border flex items-center justify-center text-primary hover:bg-primary hover:text-white transition cursor-pointer"
+                    aria-label="Previous team members">
+                    <FontAwesomeIcon icon={faAngleLeft} className="text-sm" />
+                  </button>
+                  <button
+                    type="button"
+                    onClick={nextTeam}
+                    className="w-10 h-10 rounded-lg bg-surface border border-border flex items-center justify-center text-primary hover:bg-primary hover:text-white transition cursor-pointer"
+                    aria-label="Next team members">
+                    <FontAwesomeIcon icon={faAngleRight} className="text-sm" />
+                  </button>
+                </div>
+              </FadeIn>
+            )}
+            <div key={teamPage} className="mt-10 flex flex-wrap justify-center gap-6 animate-page-fade">
+              {visibleTeam.map((m, i) => (
                 <FadeIn key={i} delay={i * 40}>
                   <TeamCard member={m} />
                 </FadeIn>
@@ -410,7 +438,7 @@ export default function ProjectDetail() {
             <div className="mt-10 flex flex-wrap justify-center gap-4">
               {caseStudy.results.map((r, i) => (
                 <FadeIn key={i} delay={i * 30} className="w-[calc(50%-8px)] md:w-[calc(25%-12px)] min-w-[140px]">
-                  <div className="h-full flex flex-col justify-between bg-background-section border border-border rounded-lg p-5 text-center hover: transition card-shadow">
+                   <div className="h-full flex flex-col justify-between bg-background-section border border-border rounded-lg p-5 text-center hover:shadow-md transition card-shadow">
                     <div>
                       <div className="text-2xl font-bold text-primary">{r.value}</div>
                     </div>
@@ -484,7 +512,7 @@ export default function ProjectDetail() {
                     </div>
                     <div className="flex flex-col p-5 flex-1">
                       <div className="flex-1">
-                        <h3 className="text-lg font-extrabold text-heading subheading text-sm">{rp.project_name}</h3>
+                        <h3 className="text-lg font-extrabold text-heading subheading">{rp.project_name}</h3>
                         <p className="mt-2 text-sm text-text leading-relaxed line-clamp-2 small-text">{rp.short_description}</p>
                         {rp.industries?.length > 0 && (
                           <div className="mt-3 flex flex-wrap gap-2">

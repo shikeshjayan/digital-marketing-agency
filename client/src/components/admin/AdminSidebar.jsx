@@ -123,7 +123,13 @@ const MessagesIcon = memo(function MessagesIcon() {
 
 const FooterIcon = memo(function FooterIcon() {
   return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round">
       <rect x="3" y="15" width="18" height="4" rx="1" />
       <line x1="3" y1="9" x2="21" y2="9" />
       <line x1="7" y1="5" x2="7" y2="9" />
@@ -135,7 +141,13 @@ const FooterIcon = memo(function FooterIcon() {
 
 const ContentIcon = memo(function ContentIcon() {
   return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round">
       <rect x="3" y="3" width="7" height="7" rx="1" />
       <rect x="14" y="3" width="7" height="7" rx="1" />
       <rect x="3" y="14" width="7" height="7" rx="1" />
@@ -229,7 +241,11 @@ const navSections = [
     label: "System",
     items: [
       { to: "/admin/settings", label: "Settings", icon: SettingsIcon },
-      { to: "/admin/brand-settings", label: "Brand Settings", icon: FooterIcon },
+      {
+        to: "/admin/brand-settings",
+        label: "Brand Settings",
+        icon: FooterIcon,
+      },
     ],
   },
 ];
@@ -458,7 +474,7 @@ export default function AdminSidebar() {
             <div className="flex gap-3 mt-6">
               <button
                 type="button"
-                className="flex-1 px-4 py-2.5 rounded-lg border border-border hover:bg-surface text-sm font-medium transition-colors duration-150 cursor-pointer"
+                className="flex-1 px-4 py-2.5 rounded-lg border border-border hover:border-primary text-sm font-medium transition-colors duration-150 cursor-pointer"
                 onClick={() => setLogoutOpen(false)}
                 disabled={isLoggingOut}>
                 Cancel

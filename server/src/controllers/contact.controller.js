@@ -9,13 +9,13 @@ export const submitEnquiry = asyncHandler(async (req, res) => {
 
   // Make sure required fields are present
   if (!name || !email || !message) {
-    return res.status(400).json({ success: false, message: "Bad Request (Missing fields or invalid email schema)" });
+    return res.status(400).json({ success: false, message: "Please fill in your name, email address, and message before sending." });
   }
 
   // Check if the email looks valid
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   if (!emailRegex.test(email)) {
-    return res.status(400).json({ success: false, message: "Bad Request (Missing fields or invalid email schema)" });
+    return res.status(400).json({ success: false, message: "Please enter a valid email address." });
   }
 
   // Save the enquiry to the database
@@ -102,7 +102,7 @@ export const updateEnquiryStatus = asyncHandler(async (req, res) => {
 
   // Validate the status value
   if (!status || !validStatuses.includes(status)) {
-    return res.status(400).json({ success: false, message: "Bad Request (Invalid workflow status)" });
+    return res.status(400).json({ success: false, message: "Please select a valid status option." });
   }
 
   const enquiry = await Contact.findByIdAndUpdate(
@@ -112,12 +112,12 @@ export const updateEnquiryStatus = asyncHandler(async (req, res) => {
   );
 
   if (!enquiry) {
-    return res.status(404).json({ success: false, message: "Target Record ID Not Found" });
+    return res.status(404).json({ success: false, message: "We couldn't find this enquiry. It may have been deleted." });
   }
 
   res.status(200).json({
     success: true,
-    message: "Enquiry status transitioned successfully.",
+    message: "Enquiry status updated.",
     data: {
       enquiry_id: enquiry._id,
       status: enquiry.status,
@@ -130,12 +130,12 @@ export const deleteEnquiry = asyncHandler(async (req, res) => {
   const enquiry = await Contact.findByIdAndDelete(req.params.id);
 
   if (!enquiry) {
-    return res.status(404).json({ success: false, message: "Record index not found" });
+    return res.status(404).json({ success: false, message: "We couldn't find this enquiry. It may have been deleted." });
   }
 
   res.status(200).json({
     success: true,
-    message: "Enquiry record successfully purged from active logs.",
+    message: "Enquiry deleted successfully.",
   });
 });
 

@@ -12,7 +12,6 @@ import TableEmptyState from "../ui/TableEmptyState.jsx";
 import FormField from "../ui/FormField.jsx";
 import FileUploadField from "../ui/FileUploadField.jsx";
 import FormActions from "../ui/FormActions.jsx";
-import ErrorBanner from "../ui/ErrorBanner.jsx";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTrash, faPen } from "@fortawesome/free-solid-svg-icons";
 import resolveImagePath from "../../utils/resolveImagePath.js";
@@ -60,7 +59,6 @@ export default function CategoryManagement({ config }) {
 
   const [form, setForm] = useState(EMPTY_FORM);
   const [iconFile, setIconFile] = useState(null);
-  const [error, setError] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [leftHeight, setLeftHeight] = useState(null);
   const formRef = useRef(null);
@@ -69,7 +67,6 @@ export default function CategoryManagement({ config }) {
 
   const load = async () => {
     setLoading(true);
-    setError("");
     try {
       const result = await fetchItems({
         search: search || undefined,
@@ -80,9 +77,7 @@ export default function CategoryManagement({ config }) {
       setItems(result?.items ?? []);
       setPagination(result?.pagination ?? { total: 0, page: 1, pages: 1 });
     } catch (err) {
-      const msg = err?.response?.data?.message || err?.message || `Failed to load ${labelPlural.toLowerCase()}.`;
-      setError(msg);
-      toast.error(msg);
+      toast.error(err?.response?.data?.message || err?.message || `Failed to load ${labelPlural.toLowerCase()}.`);
     } finally {
       setLoading(false);
     }
@@ -114,11 +109,10 @@ export default function CategoryManagement({ config }) {
 
   async function onSubmit(e) {
     e.preventDefault();
-    setError("");
     setSubmitting(true);
 
     if (!form.name.trim()) {
-      setError(`${label} name is required.`);
+      toast.error(`${label} name is required.`);
       setSubmitting(false);
       return;
     }
@@ -155,9 +149,7 @@ export default function CategoryManagement({ config }) {
       setIconFile(null);
       await load();
     } catch (err) {
-      const msg = err?.response?.data?.message || err?.message || "Operation failed.";
-      setError(msg);
-      toast.error(msg);
+      toast.error(err?.response?.data?.message || err?.message || "Operation failed.");
     } finally {
       setSubmitting(false);
     }
@@ -185,9 +177,7 @@ export default function CategoryManagement({ config }) {
       setDeleteTarget(null);
       await load();
     } catch (err) {
-      const msg = err?.response?.data?.message || "Delete failed.";
-      setError(msg);
-      toast.error(msg);
+      toast.error(err?.response?.data?.message || "Delete failed.");
       setDeleteTarget(null);
     }
   }
@@ -199,9 +189,7 @@ export default function CategoryManagement({ config }) {
       setDeleteAllTarget(false);
       await load();
     } catch (err) {
-      const msg = err?.response?.data?.message || "Delete all failed.";
-      setError(msg);
-      toast.error(msg);
+      toast.error(err?.response?.data?.message || "Delete all failed.");
       setDeleteAllTarget(false);
     }
   }
@@ -345,8 +333,6 @@ export default function CategoryManagement({ config }) {
                 ]}
               />
             </div>
-
-            <ErrorBanner message={error} />
 
             <FormActions
               submitting={submitting}

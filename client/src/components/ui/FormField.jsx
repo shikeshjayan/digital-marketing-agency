@@ -22,12 +22,25 @@ export default function FormField({
   selectOptions = null,
   disabled = false,
   maxLength,
+  maxWords,
   showWordCount = false,
   ...rest
 }) {
   const id = useId();
   const charLen = value?.length ?? 0;
   const words = wordCount(value);
+  const overMaxWords = maxWords !== undefined && words > maxWords;
+
+  function handleChange(e) {
+    const next = e.target.value;
+    if (maxWords !== undefined) {
+      const nextWords = wordCount(next);
+      if (nextWords > maxWords) return;
+    }
+    onChange(e);
+  }
+
+  const showFooter = maxLength !== undefined || showWordCount || maxWords !== undefined;
 
   return (
     <div className={className}>
@@ -58,7 +71,7 @@ export default function FormField({
           rows={rows}
           className={`${inputCls} resize-none`}
           value={value}
-          onChange={onChange}
+          onChange={handleChange}
           placeholder={placeholder}
           disabled={disabled}
           maxLength={maxLength}
@@ -70,16 +83,19 @@ export default function FormField({
           type={type}
           className={inputCls}
           value={value}
-          onChange={onChange}
+          onChange={handleChange}
           placeholder={placeholder}
           disabled={disabled}
           maxLength={maxLength}
           {...rest}
         />
       )}
-      {(maxLength !== undefined || showWordCount) && (
-        <div className="mt-1 text-xs text-muted text-right">
-          {[maxLength !== undefined && `${charLen}/${maxLength} chars`, showWordCount && `${words} words`]
+      {showFooter && (
+        <div className={`mt-1 text-xs text-right ${overMaxWords ? "text-danger" : "text-muted"}`}>
+          {[
+            maxLength !== undefined && `${charLen}/${maxLength} chars`,
+            (maxWords !== undefined || showWordCount) && `${words}${maxWords !== undefined ? `/${maxWords}` : ""} words`,
+          ]
             .filter(Boolean)
             .join("  |  ")}
         </div>

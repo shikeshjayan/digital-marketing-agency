@@ -19,17 +19,8 @@ export default function AdminLogin() {
   const [adminExists, setAdminExists] = useState(null);
   const { content, fetchBrandSettings } = useBrandSettingsStore();
 
-  async function handleForgotPassword() {
-    try {
-      const res = await apiService.post("/admin/check-email", { email });
-      if (!res.data?.data?.exists) {
-        toast.error("No account found with this email address.");
-        return;
-      }
-      navigate("/admin/forgot-password", { state: { email } });
-    } catch {
-      toast.error("Something went wrong. Please try again.");
-    }
+  function handleForgotPassword() {
+    navigate("/admin/forgot-password", { state: { email } });
   }
 
   useEffect(() => {
@@ -142,21 +133,12 @@ export default function AdminLogin() {
             )}
 
             <div className="mt-2 text-right">
-              {email.trim().length > 0 ? (
-                <button
-                  type="button"
-                  onClick={handleForgotPassword}
-                  className="text-sm text-primary hover:underline cursor-pointer">
-                  Forgot Password?
-                </button>
-              ) : (
-                <button
-                  type="button"
-                  onClick={() => toast.error("Please enter your email first.")}
-                  className="text-sm text-muted cursor-pointer hover:text-muted/80">
-                  Forgot Password?
-                </button>
-              )}
+              <button
+                type="button"
+                onClick={handleForgotPassword}
+                className="text-sm text-primary hover:underline cursor-pointer">
+                Forgot Password?
+              </button>
             </div>
 
             {/* Remember Me */}

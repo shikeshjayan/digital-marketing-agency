@@ -3,6 +3,7 @@ import { useParams, Link } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faAngleLeft,
+  faAngleRight,
   faCheckCircle,
   faArrowRight,
   faHeartPulse,
@@ -79,6 +80,13 @@ export default function ServiceDetail() {
   }, [service?.seo]);
 
   const projects = useMemo(() => service?.projects ?? [], [service]);
+
+  const [projectPage, setProjectPage] = useState(0);
+  const projectsPerPage = 3;
+  const totalProjectPages = Math.ceil(projects.length / projectsPerPage);
+  const visibleProjects = projects.slice(projectPage * projectsPerPage, projectPage * projectsPerPage + projectsPerPage);
+  const prevProjects = () => setProjectPage((v) => (v - 1 + totalProjectPages) % totalProjectPages);
+  const nextProjects = () => setProjectPage((v) => (v + 1) % totalProjectPages);
 
   const uniqueTechnologies = useMemo(() => {
     const map = new Map();
@@ -230,7 +238,7 @@ export default function ServiceDetail() {
             <div className="mt-10 flex flex-wrap justify-center gap-4">
               {service.deliverables.map((item, i) => (
                 <FadeIn key={i} delay={i * 30} className="w-full sm:basis-[calc(50%-8px)] lg:basis-[calc(33.33%-11px)] max-w-sm lg:max-w-none">
-                  <div className="bg-[#FAFAFA] border border-border rounded-sm p-5 flex items-start gap-3 hover:shadow-sm transition h-full w-full">
+                   <div className="bg-[#FAFAFA] border border-border rounded-sm p-5 flex items-start gap-3 hover:shadow-md transition h-full w-full card-shadow">
                     <div className="flex items-center justify-center h-9 w-9 rounded-sm bg-primary-light text-primary font-extrabold text-sm shrink-0">
                       {i + 1}
                     </div>
@@ -253,7 +261,7 @@ export default function ServiceDetail() {
             <div className="mt-10 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
               {service.benefits.map((item, i) => (
                 <FadeIn key={i} delay={i * 30}>
-                  <div className="bg-[#FAFAFA] border border-border rounded-sm p-5 flex items-start gap-3 hover:shadow-sm transition h-full">
+                   <div className="bg-[#FAFAFA] border border-border rounded-sm p-5 flex items-start gap-3 hover:shadow-md transition h-full card-shadow">
                     <FontAwesomeIcon icon={faCheckCircle} className="text-primary mt-0.5 shrink-0" />
                     <p className="text-text leading-relaxed text-sm md:text-base body-text break-words">{item}</p>
                   </div>
@@ -286,7 +294,7 @@ export default function ServiceDetail() {
             <div className="mt-10 flex flex-wrap justify-center gap-3">
               {uniqueTechnologies.map((tech, i) => (
                 <FadeIn key={tech.id} delay={i * 30}>
-                  <span className="inline-flex items-center gap-2 px-4 py-2 rounded-sm bg-background-section border border-border text-heading text-sm font-semibold hover:border-primary/40 transition small-text font-semibold card-shadow">
+                   <span className="inline-flex items-center gap-2 px-4 py-2 rounded-sm bg-background-section border border-border text-heading text-sm font-semibold hover:border-primary/40 transition">
                     {tech.name}
                   </span>
                 </FadeIn>
@@ -306,11 +314,11 @@ export default function ServiceDetail() {
             <div className="mt-10 flex flex-wrap justify-center gap-4">
               {uniqueIndustries.map((ind, i) => (
                 <FadeIn key={ind.id} delay={i * 30} className="basis-[calc(50%-8px)] sm:basis-[calc(33.33%-11px)] lg:basis-[calc(25%-12px)] min-w-[140px]">
-                  <div className="bg-[#FAFAFA] border border-border rounded-sm p-5 flex flex-col items-center text-center hover:shadow-sm transition h-full w-full">
+                   <div className="bg-[#FAFAFA] border border-border rounded-sm p-5 flex flex-col items-center text-center hover:shadow-md transition h-full w-full card-shadow">
                     <div className="w-12 h-12 rounded-sm bg-primary-light flex items-center justify-center mb-3">
                       <FontAwesomeIcon icon={getIndustryIcon(ind.name)} className="text-primary text-lg" />
                     </div>
-                    <h3 className="font-semibold text-heading text-sm subheading text-sm">{ind.name}</h3>
+                     <h3 className="font-semibold text-heading text-sm">{ind.name}</h3>
                   </div>
                 </FadeIn>
               ))}
@@ -326,8 +334,28 @@ export default function ServiceDetail() {
             <FadeIn>
               <SectionHeading eyebrow="Our Work" title="Projects We've Delivered" subtitle="Real results from real projects." />
             </FadeIn>
-            <div className="mt-10 flex flex-wrap justify-center gap-6">
-              {projects.map((project, i) => (
+            {totalProjectPages > 1 && (
+              <FadeIn>
+                <div className="flex items-center justify-center sm:justify-end gap-2 mt-2">
+                  <button
+                    type="button"
+                    onClick={prevProjects}
+                    className="w-10 h-10 rounded-lg bg-surface border border-border flex items-center justify-center text-primary hover:bg-primary hover:text-white transition cursor-pointer"
+                    aria-label="Previous projects">
+                    <FontAwesomeIcon icon={faAngleLeft} className="text-sm" />
+                  </button>
+                  <button
+                    type="button"
+                    onClick={nextProjects}
+                    className="w-10 h-10 rounded-lg bg-surface border border-border flex items-center justify-center text-primary hover:bg-primary hover:text-white transition cursor-pointer"
+                    aria-label="Next projects">
+                    <FontAwesomeIcon icon={faAngleRight} className="text-sm" />
+                  </button>
+                </div>
+              </FadeIn>
+            )}
+            <div key={projectPage} className="mt-10 flex flex-wrap justify-center gap-6 animate-page-fade">
+              {visibleProjects.map((project, i) => (
                 <FadeIn key={project._id} delay={i * 40} className="w-full sm:basis-[calc(50%-12px)] lg:basis-[calc(33.33%-16px)] max-w-sm lg:max-w-none">
                   <div className="flex flex-col bg-[#FAFAFA] border border-border rounded-sm h-full w-full overflow-hidden hover:-translate-y-1 transition-all duration-300">
                     <div className="h-44 overflow-hidden">
@@ -345,7 +373,7 @@ export default function ServiceDetail() {
                     </div>
                     
                     <div className="flex flex-col p-5 flex-1">
-                      <h3 className="text-lg font-extrabold text-heading subheading text-sm line-clamp-1">{project.project_name}</h3>
+                      <h3 className="text-lg font-extrabold text-heading subheading line-clamp-1">{project.project_name}</h3>
                       
                       {/* Fixed: Removed the rigid height restriction 'h-10' and 'overflow-hidden' so your full description shows up seamlessly */}
                       <p className="mt-2 text-sm text-text leading-relaxed small-text">{project.short_description}</p>
@@ -365,7 +393,7 @@ export default function ServiceDetail() {
                         {project.technologies?.length > 0 && (
                           <div className="mt-2 flex flex-wrap gap-1.5">
                             {project.technologies.slice(0, 3).map((t, idx) => (
-                              <span key={idx} className="text-xs px-2 py-0.5 rounded-sb bg-surface border border-border text-muted text-xxs card-shadow">
+                              <span key={idx} className="text-xs px-2 py-0.5 rounded-sb bg-surface border border-border text-muted text-xxs">
                                 {typeof t === "object" ? t.name : t}
                               </span>
                             ))}
@@ -390,7 +418,7 @@ export default function ServiceDetail() {
       {/* 9. Frequently Asked Questions   */}
       <FadeIn>
         <FAQSection
-          items={faqs.map((f) => ({ q: f.question, a: f.answer }))}
+          items={faqs.slice(0, 5).map((f) => ({ q: f.question, a: f.answer }))}
           eyebrow="Questions"
           title="Frequently Asked Questions"
           subtitle="Find answers to common questions about this service."

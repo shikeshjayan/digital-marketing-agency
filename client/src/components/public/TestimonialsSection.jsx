@@ -73,14 +73,14 @@ export default function TestimonialsSection({
               <button
                 type="button"
                 onClick={prev}
-                className="w-10 h-10 rounded-lg bg-surface border border-border flex items-center justify-center text-primary hover:bg-primary hover:text-white transition cursor-pointer card-shadow"
+                className="w-10 h-10 rounded-lg bg-surface border border-border flex items-center justify-center text-primary hover:bg-primary hover:text-white transition cursor-pointer"
                 aria-label="Previous reviews">
                 <FontAwesomeIcon icon={faAngleLeft} className="text-sm" />
               </button>
               <button
                 type="button"
                 onClick={next}
-                className="w-10 h-10 rounded-lg bg-surface border border-border flex items-center justify-center text-primary hover:bg-primary hover:text-white transition cursor-pointer card-shadow"
+                className="w-10 h-10 rounded-lg bg-surface border border-border flex items-center justify-center text-primary hover:bg-primary hover:text-white transition cursor-pointer"
                 aria-label="Next reviews">
                 <FontAwesomeIcon icon={faAngleRight} className="text-sm" />
               </button>

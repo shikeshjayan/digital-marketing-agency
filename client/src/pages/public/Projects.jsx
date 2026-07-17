@@ -5,6 +5,8 @@ import {
   faBuilding,
   faClock,
   faCogs,
+  faAngleLeft,
+  faAngleRight,
   faChevronLeft,
   faChevronRight,
   faArrowRight,
@@ -51,14 +53,14 @@ const ProjectCard = ({ project }) => {
         {/* Categories / Badges (flex-wrap with truncation) */}
         <div className="mt-2 flex items-center gap-2 text-xs flex-wrap min-w-0">
           {project.services?.length > 0 && (
-            <span className="inline-block px-2.5 py-0.5 rounded-sb bg-primary-light text-primary font-semibold text-xxs truncate max-w-[150px]">
+            <span className="inline-block px-2.5 py-0.5 rounded-sb bg-primary-light text-primary font-semibold text-xxs truncate max-w-37.5">
               {typeof project.services[0] === "object"
                 ? project.services[0].service_name
                 : "Service"}
             </span>
           )}
           {project.industries?.length > 0 && (
-            <span className="inline-block px-2.5 py-0.5 rounded-sb bg-surface text-text font-semibold border border-border text-xxs card-shadow truncate max-w-[150px]">
+            <span className="inline-block px-2.5 py-0.5 rounded-sb bg-surface text-text font-semibold border border-border text-xxs truncate max-w-37.5">
               {typeof project.industries[0] === "object"
                 ? project.industries[0].name
                 : "Industry"}
@@ -191,6 +193,13 @@ function ProjectStatistics({ stats = [] }) {
    Featured Case Studies Component
    ========================================== */
 function FeaturedCaseStudies({ caseStudies, loading }) {
+  const [csPage, setCsPage] = useState(0);
+  const csPerPage = 3;
+  const totalCsPages = Math.ceil((caseStudies?.length ?? 0) / csPerPage);
+  const visibleCs = (caseStudies ?? []).slice(csPage * csPerPage, csPage * csPerPage + csPerPage);
+  const prevCs = () => setCsPage((v) => (v - 1 + totalCsPages) % totalCsPages);
+  const nextCs = () => setCsPage((v) => (v + 1) % totalCsPages);
+
   return (
     <section className="py-16 md:py-20 bg-background-section">
       <div className="max-w-6xl mx-auto px-4">
@@ -215,20 +224,41 @@ function FeaturedCaseStudies({ caseStudies, loading }) {
               </div>
             ))}
           </div>
-        ) : (!caseStudies || caseStudies.length === 0) ? (
+        ) : !caseStudies || caseStudies.length === 0 ? (
           <div className="mt-10 text-center py-12">
             <p className="text-muted">
               No featured case studies available yet.
             </p>
           </div>
         ) : (
-          <div className="mt-10 flex flex-wrap justify-center gap-6 items-stretch">
-            {caseStudies.map((cs, i) => (
+          <>
+            {totalCsPages > 1 && (
+              <FadeIn>
+                <div className="flex items-center justify-center sm:justify-end gap-2 mt-2">
+                  <button
+                    type="button"
+                    onClick={prevCs}
+                    className="w-10 h-10 rounded-lg bg-surface border border-border flex items-center justify-center text-primary hover:bg-primary hover:text-white transition cursor-pointer"
+                    aria-label="Previous case studies">
+                    <FontAwesomeIcon icon={faAngleLeft} className="text-sm" />
+                  </button>
+                  <button
+                    type="button"
+                    onClick={nextCs}
+                    className="w-10 h-10 rounded-lg bg-surface border border-border flex items-center justify-center text-primary hover:bg-primary hover:text-white transition cursor-pointer"
+                    aria-label="Next case studies">
+                    <FontAwesomeIcon icon={faAngleRight} className="text-sm" />
+                  </button>
+                </div>
+              </FadeIn>
+            )}
+            <div key={csPage} className="mt-10 flex flex-wrap justify-center gap-6 items-stretch animate-page-fade">
+              {visibleCs.map((cs, i) => (
               <FadeIn
                 key={cs._id}
                 delay={i * 40}
                 className="w-full md:basis-[calc(50%-12px)] lg:basis-[calc(33.33%-16px)] max-w-sm lg:max-w-none flex min-w-0">
-                <div className="bg-background border border-border rounded-lg p-6 w-full flex flex-col justify-between hover: transition group card-shadow min-w-0">
+                <div className="bg-background border border-border rounded-lg p-6 w-full flex flex-col justify-between hover:shadow-md transition group min-w-0">
                   <div className="flex flex-col flex-1 min-w-0">
                     {cs.hero_image && (
                       <div className="-mx-6 -mt-6 mb-4 overflow-hidden rounded-t-lg bg-surface shrink-0 min-w-0 h-40 relative">
@@ -276,7 +306,8 @@ function FeaturedCaseStudies({ caseStudies, loading }) {
                 </div>
               </FadeIn>
             ))}
-          </div>
+            </div>
+          </>
         )}
       </div>
     </section>
@@ -346,7 +377,7 @@ function ResultsAnalytics({ stats = [] }) {
               {metrics.map((m) => (
                 <div
                   key={m.label}
-                  className="bg-surface border border-border rounded-lg p-6 text-center h-full hover: transition group flex flex-col items-center card-shadow">
+                  className="bg-surface border border-border rounded-lg p-6 text-center h-full hover:shadow-md transition group flex flex-col items-center card-shadow">
                   <div className="w-12 h-12 rounded-lg bg-primary-light flex items-center justify-center mx-auto group-hover:bg-primary group-hover:text-white transition shrink-0">
                     <FontAwesomeIcon
                       icon={m.icon}
@@ -397,7 +428,7 @@ function ClientLogos({ logos = [] }) {
               key={i}
               delay={i * 30}
               className="w-[calc(50%-8px)] sm:w-[calc(33.33%-11px)] md:w-[calc(25%-12px)] lg:w-[calc(20%-12px)] min-w-[140px]">
-              <div className="flex items-center justify-center bg-background border border-border rounded-lg px-4 py-5 hover: hover:border-primary/30 transition-all duration-200 cursor-default h-full w-full card-shadow">
+              <div className="flex items-center justify-center bg-background border border-border rounded-lg px-4 py-5 hover:border-primary/30 transition-all duration-200 cursor-default h-full w-full">
                 <span className="text-sm font-semibold text-muted text-center small-text">
                   {logo}
                 </span>
@@ -434,7 +465,7 @@ function BeforeAfterResults() {
         <div className="mt-10 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
           {beforeAfterData.map((item, i) => (
             <FadeIn key={item.metric} delay={i * 40}>
-              <div className="bg-surface border border-border rounded-lg p-6 text-center hover: transition-all duration-300 h-full flex flex-col justify-between card-shadow">
+              <div className="bg-surface border border-border rounded-lg p-6 text-center hover:shadow-md transition-all duration-300 h-full flex flex-col justify-between card-shadow">
                 <div className="text-base font-bold text-heading small-text tracking-wide mb-4">
                   {item.metric}
                 </div>
@@ -485,6 +516,13 @@ const Projects = () => {
   const caseStudies = projectsPage?.caseStudies ?? [];
   const scrollContainerRef = useRef(null);
 
+  const [projectPage, setProjectPage] = useState(0);
+  const projectsPerPage = 6;
+  const totalProjectPages = Math.ceil(projects.length / projectsPerPage);
+  const visibleProjects = projects.slice(projectPage * projectsPerPage, projectPage * projectsPerPage + projectsPerPage);
+  const prevProjects = () => setProjectPage((v) => (v - 1 + totalProjectPages) % totalProjectPages);
+  const nextProjects = () => setProjectPage((v) => (v + 1) % totalProjectPages);
+
   const categoryFilters = [
     { id: "All", label: "All" },
     ...services.map((s) => ({ id: s._id, label: s.service_name })),
@@ -499,6 +537,10 @@ const Projects = () => {
   useEffect(() => {
     fetchPageProjects(active);
   }, [active, fetchPageProjects]);
+
+  useEffect(() => {
+    setProjectPage(0);
+  }, [active]);
 
   const scroll = (direction) => {
     if (scrollContainerRef.current) {
@@ -556,7 +598,7 @@ const Projects = () => {
             <button
               type="button"
               onClick={() => scroll("left")}
-              className="w-9 h-9 flex items-center justify-center text-text bg-background border border-border rounded-lg hover:text-primary hover:border-primary/50 transition shrink-0 z-10 cursor-pointer card-shadow"
+              className="w-9 h-9 flex items-center justify-center text-text bg-background border border-border rounded-lg hover:text-primary hover:border-primary/50 transition shrink-0 z-10 cursor-pointer"
               aria-label="Scroll Left">
               <FontAwesomeIcon icon={faChevronLeft} className="text-xs" />
             </button>
@@ -586,11 +628,31 @@ const Projects = () => {
             <button
               type="button"
               onClick={() => scroll("right")}
-              className="w-9 h-9 flex items-center justify-center text-text bg-background border border-border rounded-lg hover:text-primary hover:border-primary/50 transition shrink-0 z-10 cursor-pointer card-shadow"
+              className="w-9 h-9 flex items-center justify-center text-text bg-background border border-border rounded-lg hover:text-primary hover:border-primary/50 transition shrink-0 z-10 cursor-pointer"
               aria-label="Scroll Right">
               <FontAwesomeIcon icon={faChevronRight} className="text-xs" />
             </button>
           </div>
+          {totalProjectPages > 1 && (
+            <FadeIn>
+              <div className="flex items-center justify-center sm:justify-end gap-2 mt-2">
+                <button
+                  type="button"
+                  onClick={prevProjects}
+                  className="w-10 h-10 rounded-lg bg-surface border border-border flex items-center justify-center text-primary hover:bg-primary hover:text-white transition cursor-pointer"
+                  aria-label="Previous projects">
+                  <FontAwesomeIcon icon={faAngleLeft} className="text-sm" />
+                </button>
+                <button
+                  type="button"
+                  onClick={nextProjects}
+                  className="w-10 h-10 rounded-lg bg-surface border border-border flex items-center justify-center text-primary hover:bg-primary hover:text-white transition cursor-pointer"
+                  aria-label="Next projects">
+                  <FontAwesomeIcon icon={faAngleRight} className="text-sm" />
+                </button>
+              </div>
+            </FadeIn>
+          )}
           {loading ? (
             <div className="mt-10 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
               {[...Array(6)].map((_, i) => (
@@ -631,8 +693,8 @@ const Projects = () => {
               </div>
             </div>
           ) : (
-            <div className="mt-10 flex flex-wrap justify-center gap-6">
-              {projects.map((p, i) => (
+            <div key={projectPage} className="mt-10 flex flex-wrap justify-center gap-6 animate-page-fade">
+              {visibleProjects.map((p, i) => (
                 <FadeIn
                   key={p._id}
                   delay={i * 40}

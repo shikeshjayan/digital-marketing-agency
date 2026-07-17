@@ -70,7 +70,7 @@ export const updateSiteContent = asyncHandler(async (req, res) => {
   const { content } = req.body;
 
   if (!content || typeof content !== "object") {
-    return res.status(400).json({ success: false, message: "Content object is required" });
+    return res.status(400).json({ success: false, message: "Please provide valid content to update." });
   }
 
   let doc = await SiteContent.findOne();

@@ -45,7 +45,7 @@ export const getAllAdminFAQs = asyncHandler(async (req, res) => {
 export const createFAQ = asyncHandler(async (req, res) => {
   const { question, answer, service, display_order, status } = req.body;
   if (!question || !answer || !service) {
-    return res.status(400).json({ success: false, message: "Missing required fields" });
+    return res.status(400).json({ success: false, message: "Please fill in the question, answer, and assign a service before saving." });
   }
   const faq = await FAQ.create({ question, answer, service, display_order, status });
   res.status(201).json({ success: true, message: "FAQ created successfully", data: faq });
@@ -65,7 +65,7 @@ export const updateFAQ = asyncHandler(async (req, res) => {
     { new: true, runValidators: true },
   );
   if (!faq) {
-    return res.status(404).json({ success: false, message: "FAQ not found" });
+    return res.status(404).json({ success: false, message: "We couldn't find this FAQ. It may have been removed." });
   }
   res.status(200).json({ success: true, message: "FAQ updated successfully", data: faq });
 });
@@ -73,7 +73,7 @@ export const updateFAQ = asyncHandler(async (req, res) => {
 export const deleteFAQ = asyncHandler(async (req, res) => {
   const faq = await FAQ.findByIdAndDelete(req.params.id);
   if (!faq) {
-    return res.status(404).json({ success: false, message: "FAQ not found" });
+    return res.status(404).json({ success: false, message: "We couldn't find this FAQ. It may have been removed." });
   }
   res.status(200).json({ success: true, message: "FAQ deleted successfully" });
 });

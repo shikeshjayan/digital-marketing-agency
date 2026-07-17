@@ -78,7 +78,7 @@ function HeroCarousel() {
       </div>
 
       <div className="relative mx-auto max-w-7xl px-6 py-16 md:py-20 lg:py-24">
-        <div className="grid cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-center">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-center">
           <div
             className={`relative transition-all duration-700 ease-out ${loaded ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"}`}>
             <img
@@ -94,7 +94,7 @@ function HeroCarousel() {
             />
             <div className="absolute -bottom-8 -right-8 -z-10 h-36 w-36 rounded-full bg-white/10 blur-3xl" />
           </div>
-          <div className="text-white min-h-50" key={index}>
+          <div className="text-white min-h-[12.5rem] lg:min-h-[14rem]" key={index}>
             <div className="animate-page-fade">
               <div className="small-text font-bold tracking-widest uppercase inline-block px-3 py-1 rounded">
                 DIGITAL MARKETING AGENCY
@@ -146,14 +146,24 @@ function ServicesCarousel({ services }) {
   const [index, setIndex] = useState(0);
   const [paused, setPaused] = useState(false);
   const touchRef = useRef(null);
+  const [isMobile, setIsMobile] = useState(
+    typeof window !== "undefined" ? window.innerWidth < 768 : false,
+  );
+
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth < 768);
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   const chunks = useMemo(() => {
+    const size = isMobile ? 1 : 3;
     const res = [];
-    for (let i = 0; i < displayServices.length; i += 3) {
-      res.push(displayServices.slice(i, i + 3));
+    for (let i = 0; i < displayServices.length; i += size) {
+      res.push(displayServices.slice(i, i + size));
     }
     return res;
-  }, [displayServices]);
+  }, [displayServices, isMobile]);
 
   useEffect(() => {
     if (chunks.length <= 1 || paused) return;
@@ -202,7 +212,7 @@ function ServicesCarousel({ services }) {
     );
   }
 
-  const currentChunk = chunks[index] || [];
+  const currentChunk = chunks[Math.min(index, chunks.length - 1)] || [];
 
   return (
     <section className="py-12 bg-background-section">
@@ -276,18 +286,34 @@ function ServicesCarousel({ services }) {
           </div>
 
           {chunks.length > 1 && (
-            <div className="flex items-center justify-center gap-2 mt-6">
-              {chunks.map((_, i) => (
-                <button
-                  key={i}
-                  type="button"
-                  className={`w-2.5 h-2.5 rounded-full transition cursor-pointer ${
-                    i === index ? "bg-primary" : "bg-primary-light hover:bg-primary-hover"
-                  }`}
-                  onClick={() => go(i)}
-                  aria-label={`Go to slide panel index ${i + 1}`}
-                />
-              ))}
+            <div className="flex items-center justify-center gap-4 mt-6">
+              <button
+                type="button"
+                className="md:hidden w-9 h-9 rounded-full bg-background border border-border hover:bg-surface flex items-center justify-center cursor-pointer card-shadow"
+                onClick={() => go((index - 1 + chunks.length) % chunks.length)}
+                aria-label="Previous slide">
+                <FontAwesomeIcon icon={faAngleLeft} />
+              </button>
+              <div className="hidden md:flex items-center gap-2">
+                {chunks.map((_, i) => (
+                  <button
+                    key={i}
+                    type="button"
+                    className={`w-2.5 h-2.5 rounded-full transition cursor-pointer ${
+                      i === index ? "bg-primary" : "bg-primary-light hover:bg-primary-hover"
+                    }`}
+                    onClick={() => go(i)}
+                    aria-label={`Go to slide panel index ${i + 1}`}
+                  />
+                ))}
+              </div>
+              <button
+                type="button"
+                className="md:hidden w-9 h-9 rounded-full bg-background border border-border hover:bg-surface flex items-center justify-center cursor-pointer card-shadow"
+                onClick={() => go((index + 1) % chunks.length)}
+                aria-label="Next slide">
+                <FontAwesomeIcon icon={faAngleRight} />
+              </button>
             </div>
           )}
         </div>
@@ -299,10 +325,10 @@ function ServicesCarousel({ services }) {
 function TechnologyStack({ items = [] }) {
   if (!items.length) return null;
   return (
-    <section className="bg-secondary py-14">
+    <section className="bg-secondary py-14 text-center">
       <div className="max-w-6xl mx-auto px-4">
-        <FadeIn>
-          <div className="text-center text-white">
+        <FadeIn className="w-full">
+          <div className="text-white">
             <div className="font-headings text-4xl  font-bold text-primary">Our</div>
             <h2 className="mt-2 section-heading">Technology Stack</h2>
           </div>
@@ -448,7 +474,7 @@ export default function Home() {
           <FadeIn delay={200}>
             <button
               type="button"
-              className="inline-flex items-center rounded-lg bg-primary px-6 py-3 text-sm font-b hover:bg-primary-hover transition cursor-pointer"
+              className="inline-flex items-center rounded-lg bg-primary px-6 py-3 text-sm font-bold hover:bg-primary-hover transition cursor-pointer"
               onClick={() => navigate("/team")}>
               Read More
             </button>

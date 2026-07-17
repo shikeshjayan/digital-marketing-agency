@@ -23,16 +23,16 @@ export const createProject = asyncHandler(async (req, res) => {
   const seo = parseJsonObject(req.body.seo);
 
   if (!project_name || !short_description || !description || !thumbnail) {
-    return res.status(400).json({ success: false, message: "Missing required fields" });
+    return res.status(400).json({ success: false, message: "Please fill in all required fields before saving." });
   }
 
   if (!services || services.length === 0) {
-    return res.status(400).json({ success: false, message: "At least one service is required" });
+    return res.status(400).json({ success: false, message: "Please select at least one service for this project." });
   }
 
   const existing = await Projects.findOne({ project_name });
   if (existing) {
-    return res.status(409).json({ success: false, message: "Project already exists" });
+    return res.status(409).json({ success: false, message: "A project with this name already exists. Please choose a different name." });
   }
 
   const project = await Projects.create({
@@ -103,7 +103,7 @@ export const getProjectById = asyncHandler(async (req, res) => {
     .lean();
 
   if (!project) {
-    return res.status(404).json({ success: false, message: "Project not found" });
+    return res.status(404).json({ success: false, message: "We couldn't find this project. It may have been removed." });
   }
 
   const caseStudy = await CaseStudy.findOne({ project: project._id, status: "Published" })
@@ -123,7 +123,7 @@ export const getProjectBySlug = asyncHandler(async (req, res) => {
     .lean();
 
   if (!project) {
-    return res.status(404).json({ success: false, message: "Project not found" });
+    return res.status(404).json({ success: false, message: "We couldn't find this project. It may have been removed." });
   }
 
   const caseStudy = await CaseStudy.findOne({ project: project._id, status: "Published" })
@@ -180,7 +180,7 @@ export const updateProject = asyncHandler(async (req, res) => {
     { new: true, runValidators: true },
   );
   if (!project) {
-    return res.status(404).json({ success: false, message: "Project not found" });
+    return res.status(404).json({ success: false, message: "We couldn't find this project. It may have been removed." });
   }
   res.status(200).json({
     success: true,
@@ -193,7 +193,7 @@ export const updateProject = asyncHandler(async (req, res) => {
 export const deleteProject = asyncHandler(async (req, res) => {
   const project = await Projects.findByIdAndDelete(req.params.id);
   if (!project) {
-    return res.status(404).json({ success: false, message: "Project not found" });
+    return res.status(404).json({ success: false, message: "We couldn't find this project. It may have been removed." });
   }
 
   // Cascade delete the related case study
